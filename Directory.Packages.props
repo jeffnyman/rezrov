@@ -5,7 +5,8 @@
 
       <PackageReference Include="System.CommandLine" />
 
-    and the version is resolved from this file. One version of a dependency across Rezrov.Core, the frontends, and the tests, changed in one place.
+    and the version is resolved from this file. One version of a dependency
+    across Rezrov.Core, the frontends, and the tests, changed in one place.
 
     Versions verified against nuget.org on 2026-09-08.
   -->
@@ -15,7 +16,8 @@
   </PropertyGroup>
 
   <!--
-    CLI frontend. This is the first milestone: core library plus a minimal CLI, per the design notes, before committing to a TUI or GUI framework.
+    CLI frontend. This is the first milestone: core library plus a minimal
+    CLI, per the design notes, before committing to a TUI or GUI framework.
   -->
 
   <ItemGroup>
@@ -25,7 +27,13 @@
   <!--
     Tests.
 
-    xunit.runner.visualstudio is what lets the VS Code C# Dev Kit test explorer discover and run these. coverlet.collector produces coverage through `dotnet test --collect:"XPlat Code Coverage"`, which lands in the TestResults/ directory that .gitignore already excludes.
+    xunit.runner.visualstudio is what lets the VS Code C# Dev Kit test
+    explorer discover and run these. coverlet.collector produces coverage
+    when `dotnet test` runs with the XPlat Code Coverage collector, which
+    lands in the TestResults/ directory that .gitignore already excludes.
+
+    Note that an XML comment cannot contain a double hyphen, so the collect
+    flag is described here rather than written out.
   -->
 
   <ItemGroup>
@@ -38,7 +46,10 @@
   <!--
     Deliberately not declared yet: Avalonia (GUI) and Terminal.Gui (TUI).
 
-    Both are pinned only when a project actually references them. Declaring a version months before first use just guarantees it is stale on arrival. For reference, the current releases as of the date above are Avalonia 12.1.2 and Terminal.Gui 2.4.17.
+    Both are pinned only when a project actually references them. Declaring
+    a version months before first use just guarantees it is stale on
+    arrival. For reference, the current releases as of the date above are
+    Avalonia 12.1.2 and Terminal.Gui 2.4.17.
   -->
 
 </Project>
