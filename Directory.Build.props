@@ -1,0 +1,59 @@
+<Project>
+
+  <!--
+    Defaults shared by every project in the repository. Individual projects override whatever they need; nothing here is meant to be final.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!--
+    Reproducibility and NativeAOT.
+
+    InvariantGlobalization drops the ICU dependency. That shrinks the native binary, but the more important effect is removing a class of machine-to-machine variation: no culture-dependent casing, comparison, or number formatting. The Z-Machine and Glulx specs define their own text handling, so nothing in the interpreter should vary by locale, and a recorded session must replay identically on every platform.
+  -->
+
+  <PropertyGroup>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <!--
+    Enable the trim, single-file, and AOT analyzers so AOT-hostile code is reported while building the library it lives in, rather than discovered much later at `dotnet publish -p:PublishAot=true`.
+
+    Test projects are excluded because test frameworks use reflection by design and would report warnings that cannot be acted on.
+
+    PublishAot itself belongs on the executable projects, not here.
+  -->
+
+  <PropertyGroup Condition="!$(MSBuildProjectName.EndsWith('.Tests'))">
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+
+  <!--
+    Make .editorconfig mean something at the command line and in CI, not only inside an editor.
+  -->
+
+  <PropertyGroup>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisMode>Recommended</AnalysisMode>
+  </PropertyGroup>
+
+  <!--
+    Warnings stay advisory while working locally and become fatal in CI, so exploratory work stays comfortable without letting anything reach main. CI opts in with `-p:ContinuousIntegrationBuild=true`, which also normalizes embedded source paths for deterministic output.
+  -->
+
+  <PropertyGroup Condition="'$(ContinuousIntegrationBuild)' == 'true'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Authors>Jeff Nyman</Authors>
+    <Product>Rezrov</Product>
+    <Copyright>Copyright (c) 2026 Jeff Nyman</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+</Project>

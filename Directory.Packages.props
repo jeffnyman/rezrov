@@ -1,0 +1,44 @@
+<Project>
+
+  <!--
+    Central Package Management. Projects reference a package by name only:
+
+      <PackageReference Include="System.CommandLine" />
+
+    and the version is resolved from this file. One version of a dependency across Rezrov.Core, the frontends, and the tests, changed in one place.
+
+    Versions verified against nuget.org on 2026-09-08.
+  -->
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <!--
+    CLI frontend. This is the first milestone: core library plus a minimal CLI, per the design notes, before committing to a TUI or GUI framework.
+  -->
+
+  <ItemGroup>
+    <PackageVersion Include="System.CommandLine" Version="2.0.12" />
+  </ItemGroup>
+
+  <!--
+    Tests.
+
+    xunit.runner.visualstudio is what lets the VS Code C# Dev Kit test explorer discover and run these. coverlet.collector produces coverage through `dotnet test --collect:"XPlat Code Coverage"`, which lands in the TestResults/ directory that .gitignore already excludes.
+  -->
+
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
+    <PackageVersion Include="xunit.v3" Version="4.0.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />
+    <PackageVersion Include="coverlet.collector" Version="10.0.1" />
+  </ItemGroup>
+
+  <!--
+    Deliberately not declared yet: Avalonia (GUI) and Terminal.Gui (TUI).
+
+    Both are pinned only when a project actually references them. Declaring a version months before first use just guarantees it is stale on arrival. For reference, the current releases as of the date above are Avalonia 12.1.2 and Terminal.Gui 2.4.17.
+  -->
+
+</Project>
