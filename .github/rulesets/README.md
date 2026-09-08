@@ -26,25 +26,19 @@ If you edit a ruleset through the web interface instead, export it and commit th
 
 `release-tags.json` applies to `refs/tags/v*`. It blocks deleting or moving a release tag once it exists, with no bypass for anyone.
 
-## Status checks are deliberately absent
+## Status checks
 
-`protect-main.json` has no `required_status_checks` rule yet, because a required check that no workflow ever reports stays pending forever and blocks every pull request permanently. Add the rule once CI exists and has reported the contexts at least once. It looks like this, where `integration_id` 15368 is GitHub Actions:
+`protect-main.json` requires one check, `pr-title`, produced by the `pr` workflow. The `integration_id` of 15368 identifies GitHub Actions as the app reporting it.
+
+That check matters more than it looks. Because merges are squashed and the repository is set to take the squash subject from the pull request title, the title is what actually lands in history. The `commit-msg` hook only governs the working commits on a branch, and those get squashed away, so the pull request title is where the Conventional Commits format has to be enforced.
+
+Build and test checks are not required yet, because there is nothing to build. Add them alongside the scaffold, as entries in the same `required_status_checks` array:
 
 ```json
-{
-  "type": "required_status_checks",
-  "parameters": {
-    "strict_required_status_checks_policy": false,
-    "do_not_enforce_on_create": false,
-    "required_status_checks": [
-      { "context": "pr-title", "integration_id": 15368 },
-      { "context": "build", "integration_id": 15368 },
-      { "context": "test (ubuntu-latest)", "integration_id": 15368 },
-      { "context": "test (windows-latest)", "integration_id": 15368 },
-      { "context": "test (macos-latest)", "integration_id": 15368 }
-    ]
-  }
-}
+{ "context": "build", "integration_id": 15368 },
+{ "context": "test (ubuntu-latest)", "integration_id": 15368 },
+{ "context": "test (windows-latest)", "integration_id": 15368 },
+{ "context": "test (macos-latest)", "integration_id": 15368 }
 ```
 
-The `pr-title` check matters more than it looks. Because merges are squashed and the repository is set to take the squash subject from the pull request title, the title is what actually lands in history. The `commit-msg` hook only governs the working commits on a branch, and those get squashed away, so the pull request title is where the Conventional Commits format has to be enforced.
+The order matters when adding any of these. A required check that no workflow reports stays pending forever and blocks every pull request, so merge the workflow that produces a context before requiring it.

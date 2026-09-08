@@ -1,0 +1,36 @@
+# Checks that run against a pull request rather than against a branch.
+#
+# The title check exists because merges here are squashed and the repository
+# takes the squash subject from the pull request title, so the title is what
+# actually lands in history. The commit-msg hook only sees the working
+# commits on a branch, and those get squashed away.
+#
+# It runs the hook itself rather than reimplementing the rules, so the two
+# can never disagree about what a valid subject looks like.
+
+name: pr
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  pr-title:
+    name: pr-title
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # The title is passed through the environment rather than interpolated
+      # into the script. On a public repository anyone can open a pull
+      # request, and a title substituted directly into a run block is a
+      # shell injection.
+      - name: Check the pull request title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          printf '%s\n' "$PR_TITLE" > "$RUNNER_TEMP/pr-title"
+          sh .githooks/commit-msg "$RUNNER_TEMP/pr-title"

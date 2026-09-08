@@ -2,21 +2,27 @@
 #
 # Reject commit messages that do not follow Conventional Commits.
 #
-# The shape is `type(optional scope)!: description`, where the optional `!` marks a breaking change. Plain POSIX shell with no dependencies, so it behaves the same in Git Bash on Windows as it does on macOS and Linux.
+# The shape is `type(optional scope)!: description`, where the optional `!`
+# marks a breaking change. Plain POSIX shell with no dependencies, so it
+# behaves the same in Git Bash on Windows as it does on macOS and Linux.
 #
-# Activate it with `git config core.hooksPath .githooks` from the repository root. Bypass it for a single commit with `git commit --no-verify` if you genuinely need to.
+# Activate it with `git config core.hooksPath .githooks` from the repository
+# root. Bypass it for a single commit with `git commit --no-verify` if you
+# genuinely need to.
 
 message_file="$1"
 
-# The subject is the first line that is neither blank nor a comment, since Git writes its own help text into this file as comments.
+# The subject is the first line that is neither blank nor a comment, since
+# Git writes its own help text into this file as comments.
 subject=$(grep -v '^#' "$message_file" | grep -v '^[[:space:]]*$' | head -n 1)
 
-# An empty message is Git's problem, not ours. It aborts the commit on its own.
+# An empty message is Git's problem, not ours; it aborts on its own.
 if [ -z "$subject" ]; then
     exit 0
 fi
 
-# Git writes these itself during merges, reverts, and autosquash rebases, so they are not ours to police.
+# Git writes these itself during merges, reverts, and autosquash rebases,
+# so they are not ours to police.
 case "$subject" in
     'Merge '*) exit 0 ;;
     'Revert "'*) exit 0 ;;
