@@ -59,30 +59,7 @@ public class ZTextDecoderTests
     /// word, and with the top bit set on that last word. Tests give their
     /// input as Z-characters so each one reads like the clause it checks.
     /// </summary>
-    private static byte[] Words(params int[] zCharacters)
-    {
-        var padded = zCharacters.ToList();
-        while (padded.Count % 3 != 0)
-        {
-            // [zm 3.6] Padding is conventionally 5s.
-            padded.Add(5);
-        }
-
-        var bytes = new byte[padded.Count / 3 * 2];
-        for (var i = 0; i < padded.Count; i += 3)
-        {
-            var word = (padded[i] << 10) | (padded[i + 1] << 5) | padded[i + 2];
-            if (i + 3 == padded.Count)
-            {
-                word |= 0x8000;
-            }
-
-            bytes[i / 3 * 2] = (byte)(word >> 8);
-            bytes[(i / 3 * 2) + 1] = (byte)word;
-        }
-
-        return bytes;
-    }
+    private static byte[] Words(params int[] zCharacters) => ZChars.Words(zCharacters);
 
     private static string Decode(ZMachineVersion version, params int[] zCharacters)
     {
@@ -92,7 +69,7 @@ public class ZTextDecoderTests
     }
 
     // Z-characters for lower case letters, from [zm 3.5.3]: 'a' is 6.
-    private static int L(char c) => c - 'a' + 6;
+    private static int L(char c) => ZChars.Letter(c);
 
     [Fact]
     public void DecodesLowerCaseLettersAndSpaces()
