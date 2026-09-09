@@ -1,6 +1,7 @@
 using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
 using Rezrov.ZMachine.Input;
+using Rezrov.ZMachine.Screen;
 using Rezrov.ZMachine.Text;
 using static Rezrov.Tests.Assembler;
 
@@ -222,16 +223,16 @@ public partial class InterpreterTests
     /// generous instruction limit so a broken loop fails rather than
     /// hangs.
     /// </summary>
-    private static Run Execute(Assembler code, Action<Story>? setup = null, ZMachineVersion version = ZMachineVersion.V5, IInput? input = null)
+    private static Run Execute(
+        Assembler code, Action<Story>? setup = null, ZMachineVersion version = ZMachineVersion.V5, IInput? input = null, IScreen? screen = null)
     {
         var story = new Story(version);
         story.Put(Code, code.ToArray());
         setup?.Invoke(story);
 
         var memory = new ZMemory(story.Bytes);
-        var header = new StoryHeader(memory);
         var writer = new StringWriter();
-        var interpreter = new Interpreter(memory, new TextWriterOutput(writer, header, memory), input ?? new ScriptedInput());
+        var interpreter = new Interpreter(memory, screen ?? new TextWriterScreen(writer), input ?? new ScriptedInput());
 
         interpreter.Run(10000);
         Assert.True(interpreter.HasQuit, "The program did not quit within 10000 instructions.");
@@ -749,7 +750,7 @@ public partial class InterpreterTests
         story.Put(Code, new Assembler().Variable(Op.Pull, true, Small(G0)).Quit().ToArray());
 
         var memory = new ZMemory(story.Bytes);
-        var interpreter = new Interpreter(memory, new TextWriterOutput(new StringWriter(), new StoryHeader(memory), memory), new ScriptedInput())
+        var interpreter = new Interpreter(memory, new TextWriterScreen(new StringWriter()), new ScriptedInput())
         {
             ErrorLevel = ErrorLevel.Fatal,
         };
@@ -765,7 +766,7 @@ public partial class InterpreterTests
         story.Put(Code, new Assembler().Short1(Op.GetParent, Small(0)).Store(G0).Quit().ToArray());
 
         var memory = new ZMemory(story.Bytes);
-        var interpreter = new Interpreter(memory, new TextWriterOutput(new StringWriter(), new StoryHeader(memory), memory), new ScriptedInput())
+        var interpreter = new Interpreter(memory, new TextWriterScreen(new StringWriter()), new ScriptedInput())
         {
             ErrorLevel = ErrorLevel.Fatal,
         };
@@ -1002,10 +1003,25 @@ public partial class InterpreterTests
     [Fact]
     public void OpcodesThatAreNotImplementedYetSaySo()
     {
-        // [zm op:save_undo] Saved games are not built yet.
-        var code = new Assembler().Ext(9).Store(G0).Quit();
+        // [zm op:sound_effect] Sound is not built yet.
+        var code = new Assembler().Variable(Op.SoundEffect, true, Small(1)).Quit();
 
         Assert.Throws<NotSupportedException>(() => Execute(code));
+    }
+
+    [Fact]
+    public void UndoAnswersAsAnInterpreterWithoutItMust()
+    {
+        // [zm op:save_undo] -1 when undo cannot be provided, and
+        // [zm op:restore_undo] a failed restore, 0, in the same case.
+        var run = Execute(new Assembler()
+            .Ext(9).Store(G0)
+            .Ext(10).Store(G1)
+            .Quit());
+
+        Assert.Equal(0xFFFF, run.Global(G0));
+        Assert.Equal(0, run.Global(G1));
+        Assert.False(run.Interpreter.Header.Flags2.HasFlag(Flags2.WantsUndo));
     }
 
     [Fact]
@@ -1029,7 +1045,7 @@ public partial class InterpreterTests
         story.Put(Code, new Assembler().Short0(Op.Nop).Quit().ToArray());
 
         var memory = new ZMemory(story.Bytes);
-        var interpreter = new Interpreter(memory, new TextWriterOutput(new StringWriter(), new StoryHeader(memory), memory), new ScriptedInput());
+        var interpreter = new Interpreter(memory, new TextWriterScreen(new StringWriter()), new ScriptedInput());
 
         Assert.Equal("nop", interpreter.Step().Name);
         Assert.Equal("quit", interpreter.Step().Name);
