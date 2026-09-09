@@ -1,4 +1,5 @@
 using Rezrov.ZMachine;
+using Rezrov.ZMachine.Instructions;
 using Rezrov.ZMachine.Lexing;
 using Rezrov.ZMachine.Objects;
 using Rezrov.ZMachine.Text;
@@ -110,17 +111,173 @@ public class StoryCorpusTests
         {
             var memory = new ZMemory(File.ReadAllBytes(file));
             var header = new StoryHeader(memory);
-            var decoder = new ZTextDecoder(memory, header);
+            var text = new ZTextDecoder(memory, header);
+            var decoder = new InstructionDecoder(memory, header, text);
 
-            var text = decoder.Decode(SimpleTestSentenceAddress(memory, header));
+            // Inform wraps Main in a stub that calls it. The stub is the
+            // first code executed: [zm 5.5] at the initial program counter
+            // in most versions, and [zm 5.4] the code of the main routine
+            // in Version 6.
+            var start = header.Version == ZMachineVersion.V6
+                ? RoutineHeader.Read(memory, header.Version, header.UnpackRoutineAddress(header.MainRoutinePackedAddress)).CodeAddress
+                : header.InitialProgramCounter;
 
-            if (text != "hello from all z machine versions")
+            var call = decoder.Decode(start);
+            var main = RoutineHeader.Read(memory, header.Version, header.UnpackRoutineAddress(call.Operands[0].Value));
+
+            // Main's first instruction prints the sentence by packed
+            // address, since Inform stores literal strings out of line.
+            var print = decoder.Decode(main.CodeAddress);
+
+            if (call.Opcode is not (Opcode.Call or Opcode.CallVs) || print.Opcode != Opcode.PrintPaddr)
             {
-                failures.Add($"{Path.GetFileName(file)} decoded as \"{text}\"");
+                failures.Add($"{Path.GetFileName(file)}: expected a call then print_paddr, found {call} then {print}");
+                continue;
+            }
+
+            var sentence = text.Decode(header.UnpackStringAddress(print.Operands[0].Value));
+            if (sentence != "hello from all z machine versions")
+            {
+                failures.Add($"{Path.GetFileName(file)} decoded as \"{sentence}\"");
             }
         }
 
         Assert.Empty(failures);
+    }
+
+    [Fact]
+    public void EveryReachableInstructionDecodes()
+    {
+        var files = Corpus.StoryFiles();
+        Assert.SkipUnless(files.Count > 0, SubmoduleAbsent);
+
+        var failures = new List<string>();
+        var instructions = 0;
+        var routines = 0;
+
+        foreach (var file in files)
+        {
+            var name = Path.GetFileName(file);
+            var memory = new ZMemory(File.ReadAllBytes(file));
+            var header = new StoryHeader(memory);
+            var decoder = new InstructionDecoder(memory, header, new ZTextDecoder(memory, header));
+
+            var walk = new CodeWalk(memory, header, decoder);
+
+            try
+            {
+                walk.Run();
+            }
+            catch (InvalidDataException e)
+            {
+                failures.Add($"{name}: {e.Message}");
+            }
+
+            instructions += walk.Instructions.Count;
+            routines += walk.Routines.Count;
+        }
+
+        Report(failures);
+
+        // Around 9,400 routines and well over 100,000 instructions when
+        // this was written. The thresholds are there to catch the walk
+        // silently reaching nothing, not to pin the exact figures.
+        Assert.True(instructions > 100000, $"Only {instructions} instructions reached across the corpus.");
+        Assert.True(routines > 5000, $"Only {routines} routines reached across the corpus.");
+    }
+
+    /// <summary>
+    /// Walks every instruction that can be reached from a story's entry
+    /// point by following branches, jumps, and calls to constant
+    /// addresses, decoding each one. Any instruction the decoder cannot
+    /// read is an error, so this checks the decoder and the opcode table
+    /// against every version and both compilers at once.
+    /// </summary>
+    /// <remarks>
+    /// This is roughly what the txd disassembler does. Calls through
+    /// variables cannot be followed, so it does not reach everything,
+    /// but it reaches most of a game.
+    /// </remarks>
+    private sealed class CodeWalk(ZMemory memory, StoryHeader header, InstructionDecoder decoder)
+    {
+        private static readonly HashSet<Opcode> Calls =
+        [
+            Opcode.Call, Opcode.CallVs, Opcode.CallVs2, Opcode.CallVn, Opcode.CallVn2,
+            Opcode.Call1s, Opcode.Call1n, Opcode.Call2s, Opcode.Call2n,
+        ];
+
+        // Instructions after which execution never simply continues.
+        private static readonly HashSet<Opcode> Ends =
+        [
+            Opcode.Rtrue, Opcode.Rfalse, Opcode.Ret, Opcode.RetPopped, Opcode.PrintRet,
+            Opcode.Jump, Opcode.Quit, Opcode.Restart, Opcode.Throw,
+        ];
+
+        public HashSet<int> Instructions { get; } = [];
+
+        public HashSet<int> Routines { get; } = [];
+
+        public void Run()
+        {
+            var blocks = new Stack<int>();
+
+            // [zm 5.4] and [zm 5.5] Where execution starts.
+            if (header.Version == ZMachineVersion.V6)
+            {
+                EnterRoutine(header.UnpackRoutineAddress(header.MainRoutinePackedAddress), blocks);
+            }
+            else
+            {
+                blocks.Push(header.InitialProgramCounter);
+            }
+
+            while (blocks.Count > 0)
+            {
+                var address = blocks.Pop();
+
+                while (Instructions.Add(address))
+                {
+                    var instruction = decoder.Decode(address);
+
+                    if (instruction.Branch is { } branch && !branch.ReturnsFalse && !branch.ReturnsTrue)
+                    {
+                        blocks.Push(branch.Target(instruction.NextAddress));
+                    }
+
+                    if (instruction.Opcode == Opcode.Jump && instruction.Operands[0].Type != OperandType.Variable)
+                    {
+                        // [zm op:jump] A signed offset from the address
+                        // after the instruction, less 2.
+                        blocks.Push(instruction.NextAddress + (short)instruction.Operands[0].Value - 2);
+                    }
+
+                    if (Calls.Contains(instruction.Opcode)
+                        && instruction.Operands.Count > 0
+                        && instruction.Operands[0].Type == OperandType.LargeConstant
+                        && instruction.Operands[0].Value != 0)
+                    {
+                        // [zm op:call] Calling address 0 does nothing, so
+                        // only a real packed address names a routine.
+                        EnterRoutine(header.UnpackRoutineAddress(instruction.Operands[0].Value), blocks);
+                    }
+
+                    if (Ends.Contains(instruction.Opcode))
+                    {
+                        break;
+                    }
+
+                    address = instruction.NextAddress;
+                }
+            }
+        }
+
+        private void EnterRoutine(int address, Stack<int> blocks)
+        {
+            if (Routines.Add(address))
+            {
+                blocks.Push(RoutineHeader.Read(memory, header.Version, address).CodeAddress);
+            }
+        }
     }
 
     [Fact]
@@ -712,34 +869,4 @@ public class StoryCorpusTests
         return complete;
     }
 
-    /// <summary>
-    /// Finds the address of the sentence in a simple-test fixture.
-    /// </summary>
-    /// <remarks>
-    /// Inform compiles a print of a literal string as print_paddr with a
-    /// packed address, not as an inline print, and it wraps Main in a stub
-    /// that calls it. Inspecting the eight fixtures shows the same shape in
-    /// every one: from the entry point, the first byte $8D is the
-    /// print_paddr instruction in short form with a large constant
-    /// operand, and the word after it is the packed address of the
-    /// string. This scan relies on that inspection rather than on a real
-    /// instruction decoder, and it should be replaced with one once that
-    /// exists.
-    /// </remarks>
-    private static int SimpleTestSentenceAddress(ZMemory memory, StoryHeader header)
-    {
-        // [zm 11.1] Version 6 starts by calling a packed main routine, and
-        // every other version starts executing at a byte address.
-        var start = header.Version == ZMachineVersion.V6
-            ? header.UnpackRoutineAddress(header.MainRoutinePackedAddress)
-            : header.InitialProgramCounter;
-
-        var at = start;
-        while (memory.ReadByte(at) != 0x8D)
-        {
-            at++;
-        }
-
-        return header.UnpackStringAddress(memory.ReadWord(at + 1));
-    }
 }
