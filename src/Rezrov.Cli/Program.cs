@@ -1,4 +1,5 @@
 using Rezrov.Core;
+using Rezrov.ZMachine;
 
 namespace Rezrov.Cli;
 
@@ -20,22 +21,54 @@ internal static class Program
             return 1;
         }
 
-        // Only the leading bytes distinguish the formats, so there is no
-        // reason to pull a whole story file into memory to answer this.
-        // Some Infocom files are small, so a short read is expected rather
-        // than exceptional.
-        Span<byte> prefix = stackalloc byte[64];
-
-        int read;
-        using (var stream = File.OpenRead(path))
-        {
-            read = stream.ReadAtLeast(prefix, prefix.Length, throwOnEndOfStream: false);
-        }
-
-        var format = StoryFormatDetector.Detect(prefix[..read]);
+        // [zm 1.1.4] A story file is at most 512K, so reading the whole
+        // thing up front costs nothing worth avoiding.
+        var bytes = File.ReadAllBytes(path);
+        var format = StoryFormatDetector.Detect(bytes);
 
         Console.WriteLine($"{Path.GetFileName(path)}: {format}");
 
-        return format is StoryFormat.Unknown ? 1 : 0;
+        return format switch
+        {
+            StoryFormat.ZMachine => DescribeZMachine(bytes),
+            StoryFormat.Unknown => 1,
+            _ => 0,
+        };
+    }
+
+    private static int DescribeZMachine(byte[] bytes)
+    {
+        StoryHeader header;
+        try
+        {
+            header = new StoryHeader(new ZMemory(bytes));
+        }
+        catch (InvalidDataException e)
+        {
+            Console.Error.WriteLine($"rezrov: {e.Message}");
+            return 1;
+        }
+
+        Console.WriteLine($"  version {(int)header.Version}, release {header.Release}, serial {header.SerialCode}");
+
+        if (header.InformVersion.Trim('\0').Length > 0)
+        {
+            Console.WriteLine($"  compiled by Inform {header.InformVersion}");
+        }
+
+        Console.WriteLine(
+            $"  dynamic memory to {header.StaticMemoryBase:X4}, high memory from {header.HighMemoryBase:X4}, {bytes.Length} bytes on disk");
+
+        if (header.HasFileLength)
+        {
+            var verdict = header.VerifyChecksum() ? "matches" : "does not match";
+            Console.WriteLine($"  declared length {header.FileLength}, checksum {header.Checksum:X4} {verdict}");
+        }
+        else
+        {
+            Console.WriteLine("  no length or checksum recorded");
+        }
+
+        return 0;
     }
 }

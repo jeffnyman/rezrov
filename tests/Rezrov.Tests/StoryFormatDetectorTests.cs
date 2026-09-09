@@ -49,7 +49,8 @@ public class StoryFormatDetectorTests
     [Fact]
     public void RecognizesBlorbByItsFormType()
     {
-        // [blorb #overall-structure] 'FORM', a length, then the 'IFRS' type.
+        // [blorb #overall-structure] 'FORM', a length, then the 'IFRS'
+        // type.
         var story = new byte[]
         {
             (byte)'F', (byte)'O', (byte)'R', (byte)'M',

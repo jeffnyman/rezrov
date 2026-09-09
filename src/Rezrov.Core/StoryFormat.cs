@@ -5,7 +5,9 @@ namespace Rezrov.Core;
 /// </summary>
 public enum StoryFormat
 {
-    /// <summary>The leading bytes match no format Rezrov recognizes.</summary>
+    /// <summary>
+    /// The leading bytes match no format Rezrov recognizes.
+    /// </summary>
     Unknown,
 
     /// <summary>Bare Z-code, as in a .z3 or .z5 file.</summary>
