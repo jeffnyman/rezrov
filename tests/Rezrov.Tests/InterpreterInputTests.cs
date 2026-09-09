@@ -1,5 +1,6 @@
 using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
+using Rezrov.ZMachine.Screen;
 using Rezrov.ZMachine.Text;
 using static Rezrov.Tests.Assembler;
 
@@ -456,7 +457,7 @@ public partial class InterpreterTests
         story.Bytes[0x01] = 0x80;
         story.PutWord(0x10, 0x0120);
         var memory = new ZMemory(story.Bytes);
-        var output = new TextWriterOutput(new StringWriter(), new StoryHeader(memory), memory);
+        var output = new TextWriterScreen(new StringWriter());
 
         var interpreter = new Interpreter(memory, output, new ScriptedInput { SupportsTimedInput = false });
 

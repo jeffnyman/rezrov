@@ -15,9 +15,10 @@ namespace Rezrov.ZMachine.Input;
 /// terminal that reads a line at a time can honestly offer, and a screen
 /// model will do better.
 ///
-/// When the reader runs out, reading throws <see cref="EndOfStreamException"/>
-/// rather than inventing a command, so that a caller driving a game from
-/// a script finds out the script was too short.
+/// When the reader runs out, reading throws an
+/// <see cref="EndOfStreamException"/> rather than inventing a command,
+/// so that a caller driving a game from a script finds out the script
+/// was too short.
 /// </remarks>
 public sealed class TextReaderInput : IInput
 {

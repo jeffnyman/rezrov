@@ -4,6 +4,7 @@ using Rezrov.ZMachine.Input;
 using Rezrov.ZMachine.Instructions;
 using Rezrov.ZMachine.Lexing;
 using Rezrov.ZMachine.Objects;
+using Rezrov.ZMachine.Screen;
 using Rezrov.ZMachine.Text;
 
 namespace Rezrov.Tests;
@@ -159,7 +160,7 @@ public class StoryCorpusTests
         {
             var memory = new ZMemory(File.ReadAllBytes(file));
             var writer = new StringWriter();
-            var interpreter = new Interpreter(memory, new TextWriterOutput(writer, new StoryHeader(memory), memory), new ScriptedInput());
+            var interpreter = new Interpreter(memory, new TextWriterScreen(writer), new ScriptedInput());
 
             // The whole machine, end to end: decode, call, print, quit.
             interpreter.Run(1000);
@@ -188,6 +189,8 @@ public class StoryCorpusTests
         var quit = 0;
         var wantedMore = 0;
         var zork = "";
+        var zorkStatus = "";
+        var adventUpper = "";
 
         foreach (var file in files)
         {
@@ -197,7 +200,7 @@ public class StoryCorpusTests
             var writer = new StringWriter();
             var interpreter = new Interpreter(
                 memory,
-                new TextWriterOutput(writer, header, memory),
+                new TextWriterScreen(writer),
                 new TextReaderInput(TextReader.Null, header, memory),
                 new RandomGenerator(1234));
             interpreter.PlayCommands(new StringReader(script));
@@ -232,11 +235,26 @@ public class StoryCorpusTests
             if (name == "zork1-r88-s840726.z3")
             {
                 zork = writer.ToString();
+                zorkStatus = interpreter.Screen.StatusLineText ?? "";
+            }
+
+            if (name == "advent-r9-s260512.z5")
+            {
+                adventUpper = interpreter.Screen.UpperWindow.RowText(1);
             }
         }
 
         Report(failures);
         Assert.True(quit + wantedMore > 0, "No game got as far as taking a command.");
+
+        // [zm 8.2] Zork I's status line as last drawn, before the quit
+        // question: still West of House, no points, four moves. [zm 8.7]
+        // Adventure, a Version 5 Inform game, draws its own status line
+        // in the upper window, as every Inform game does.
+        Assert.Contains("West of House", zorkStatus);
+        Assert.Contains("0/4", zorkStatus);
+        Assert.Contains("At End Of Road", adventUpper);
+        Assert.Contains("Score: 36", adventUpper);
 
         // Zork I from its banner through the leaflet to the end: the
         // parser understood the commands, so the text buffer, the parse

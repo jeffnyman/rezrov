@@ -3,6 +3,7 @@ using Rezrov.ZMachine.Input;
 using Rezrov.ZMachine.Instructions;
 using Rezrov.ZMachine.Lexing;
 using Rezrov.ZMachine.Objects;
+using Rezrov.ZMachine.Screen;
 using Rezrov.ZMachine.Text;
 
 namespace Rezrov.ZMachine.Execution;
@@ -14,9 +15,9 @@ namespace Rezrov.ZMachine.Execution;
 /// <remarks>
 /// Everything before this was a data structure. This is the loop that
 /// uses them, and the opcodes of section 15 are implemented here, each
-/// one cited. Opcodes that need the screen model, sound, or saved games
-/// are not implemented yet and say so when reached, rather than doing
-/// something approximate.
+/// one cited. Opcodes that need sound, saved games, or the Version 6
+/// screen are not implemented yet and say so when reached, rather than
+/// doing something approximate.
 ///
 /// The loop sets the program counter to the next instruction before
 /// carrying out the current one. The remarks on section 4 explain why
@@ -25,16 +26,17 @@ namespace Rezrov.ZMachine.Execution;
 /// </remarks>
 public sealed class Interpreter
 {
-    public Interpreter(ZMemory memory, IOutput output, IInput input, RandomGenerator? random = null)
+    public Interpreter(ZMemory memory, IScreen screen, IInput input, RandomGenerator? random = null)
     {
         ArgumentNullException.ThrowIfNull(memory);
-        ArgumentNullException.ThrowIfNull(output);
+        ArgumentNullException.ThrowIfNull(screen);
         ArgumentNullException.ThrowIfNull(input);
 
         Memory = memory;
-        Output = output;
         Input = input;
         Header = new StoryHeader(memory);
+        Screen = new ScreenModel(screen, Header, memory);
+        Output = Screen;
         Text = new ZTextDecoder(memory, Header);
         Encoder = ZTextEncoder.ForStory(Header, memory);
         ExtraCharacters = UnicodeTranslationTable.ForStory(Header, memory);
@@ -49,7 +51,16 @@ public sealed class Interpreter
 
     public ZMemory Memory { get; }
 
+    /// <summary>
+    /// Where printed text goes: output stream 1, the screen, until the
+    /// output streams of section 7 arrive to sit in between.
+    /// </summary>
     public IOutput Output { get; }
+
+    /// <summary>
+    /// [zm 8] The screen model, over the frontend's screen.
+    /// </summary>
+    public ScreenModel Screen { get; }
 
     /// <summary>Input stream 0, the keyboard.</summary>
     public IInput Input { get; }
@@ -605,15 +616,19 @@ public sealed class Interpreter
                 break;
             case Opcode.Quit:
                 // [zm op:quit] The only legal way to stop, since the
-                // starting routine cannot return.
+                // starting routine cannot return. Whatever is still
+                // buffered is shown first.
+                Screen.Flush();
                 HasQuit = true;
                 break;
             case Opcode.Restart:
                 // [zm op:restart] Everything back to the start except the
                 // transcript and fixed-pitch bits of Flags 2, which the
                 // state preserves, and then [zm 6.1.3] the interpreter's
-                // own header fields are set again.
+                // own header fields are set again and the screen is as
+                // at the start of a game.
                 State.Restart();
+                Screen.Reset();
                 DescribeInterpreterInHeader();
                 break;
             case Opcode.Nop:
@@ -625,9 +640,114 @@ public sealed class Interpreter
                 // accident in later versions.
                 if (Header.Version == ZMachineVersion.V3)
                 {
-                    ShowStatusLine();
+                    ShowStatusLine(instruction);
                 }
 
+                break;
+
+            // The screen. Version 6 has a model of its own, [zm 8.8],
+            // which is not built, so its games stop here rather than
+            // run under the wrong one.
+            case Opcode.SplitWindow when Header.Version == ZMachineVersion.V6:
+            case Opcode.SetWindow when Header.Version == ZMachineVersion.V6:
+            case Opcode.EraseWindow when Header.Version == ZMachineVersion.V6:
+            case Opcode.EraseLine when Header.Version == ZMachineVersion.V6:
+            case Opcode.SetCursor when Header.Version == ZMachineVersion.V6:
+            case Opcode.GetCursor when Header.Version == ZMachineVersion.V6:
+            case Opcode.SetTextStyle when Header.Version == ZMachineVersion.V6:
+            case Opcode.BufferMode when Header.Version == ZMachineVersion.V6:
+            case Opcode.SetColour when Header.Version == ZMachineVersion.V6:
+            case Opcode.SetTrueColour when Header.Version == ZMachineVersion.V6:
+            case Opcode.SetFont when Header.Version == ZMachineVersion.V6:
+            case Opcode.PrintTable when Header.Version == ZMachineVersion.V6:
+                throw new NotSupportedException($"{instruction.Name} needs the Version 6 screen model, which is not implemented yet.");
+            case Opcode.SplitWindow:
+                Screen.SplitWindow(a[0]);
+                break;
+            case Opcode.SetWindow:
+                // [zm op:set_window] Only 0 and 1 exist before Version 6.
+                if (a[0] > ScreenModel.Upper)
+                {
+                    ReportRuntimeError(instruction, $"there is no window {a[0]}");
+                }
+                else
+                {
+                    Screen.SetWindow(a[0]);
+                }
+
+                break;
+            case Opcode.EraseWindow:
+                if (!Screen.EraseWindow(Signed(a[0])))
+                {
+                    ReportRuntimeError(instruction, $"there is no window {Signed(a[0])}");
+                }
+
+                break;
+            case Opcode.EraseLine:
+                // [zm op:erase_line] Versions 4 and 5: only a value of 1
+                // does anything.
+                if (a[0] == 1)
+                {
+                    Screen.EraseLine();
+                }
+
+                break;
+            case Opcode.SetCursor:
+                if (!Screen.SetCursor(Signed(a[0]), Signed(a[1])))
+                {
+                    ReportRuntimeError(instruction, $"row {Signed(a[0])}, column {Signed(a[1])} is outside the upper window");
+                }
+
+                break;
+            case Opcode.GetCursor:
+            {
+                // [zm op:get_cursor] Row into word 0, column into word 1.
+                var (row, column) = Screen.GetCursor();
+                State.WriteWord(a[0], (ushort)row);
+                State.WriteWord(a[0] + 2, (ushort)column);
+                break;
+            }
+
+            case Opcode.SetTextStyle:
+                if ((a[0] & ~0x0F) != 0)
+                {
+                    ReportRuntimeError(instruction, $"{a[0]} is not a text style");
+                }
+
+                Screen.SetTextStyle(a[0]);
+                break;
+            case Opcode.BufferMode:
+                // [zm op:buffer_mode] 1 is on, 0 is off, and anything
+                // else is taken as on, as Frotz takes it.
+                Screen.SetBuffering(a[0] != 0);
+                break;
+            case Opcode.SetColour:
+                if (!Screen.SetColors((ScreenColor)Signed(a[0]), (ScreenColor)Signed(a[1])))
+                {
+                    ReportRuntimeError(instruction, $"colors {Signed(a[0])} and {Signed(a[1])} are not both available in this version");
+                }
+
+                break;
+            case Opcode.SetTrueColour:
+                if (!Screen.SetTrueColors(Signed(a[0]), Signed(a[1])))
+                {
+                    ReportRuntimeError(instruction, $"true colors {Signed(a[0])} and {Signed(a[1])} are not both available in this version");
+                }
+
+                break;
+            case Opcode.SetFont:
+                Store(instruction, (ushort)Screen.SetFont(a[0]));
+                break;
+            case Opcode.PrintTable:
+                PrintTable(a);
+                break;
+            case Opcode.PrintUnicode:
+                // [zm op:print_unicode] [zm 3.8.5.4] Straight to the
+                // screen, which knows what it can show.
+                Screen.PrintUnicode((char)a[0]);
+                break;
+            case Opcode.CheckUnicode:
+                CheckUnicode(instruction, a[0]);
                 break;
 
             // Input.
@@ -671,29 +791,27 @@ public sealed class Interpreter
             // Not yet. Each of these needs a part of the machine that does
             // not exist in this codebase so far, and saying so beats
             // guessing at it.
-            case Opcode.SplitWindow:
-            case Opcode.SetWindow:
-            case Opcode.EraseWindow:
-            case Opcode.EraseLine:
-            case Opcode.SetCursor:
-            case Opcode.GetCursor:
-            case Opcode.SetTextStyle:
-            case Opcode.BufferMode:
-            case Opcode.SetColour:
-            case Opcode.SetTrueColour:
-            case Opcode.SetFont:
-            case Opcode.PrintTable:
-            case Opcode.PrintUnicode:
-            case Opcode.CheckUnicode:
-                throw new NotSupportedException($"{instruction.Name} needs the screen model of section 8, which is not implemented yet.");
             case Opcode.OutputStream:
                 throw new NotSupportedException($"{instruction.Name} needs the output streams of section 7, which are not implemented yet.");
             case Opcode.SoundEffect:
                 throw new NotSupportedException($"{instruction.Name} needs the sound effects of section 9, which are not implemented yet.");
+            case Opcode.SaveUndo:
+                // [zm op:save_undo] An interpreter unable to provide undo
+                // must return -1, and [zm 6.1.4] has already cleared bit
+                // 4 of Flags 2 to say so. Saved games, undo included, are
+                // on the roadmap; until then this is the answer the
+                // standard prescribes rather than a guess.
+                Store(instruction, unchecked((ushort)-1));
+                break;
+            case Opcode.RestoreUndo:
+                // [zm op:restore_undo] Unspecified when no save_undo has
+                // happened, which is always the case here, and an
+                // interpreter may simply ignore it: a result of 0 is a
+                // restore that failed.
+                Store(instruction, 0);
+                break;
             case Opcode.Save:
             case Opcode.Restore:
-            case Opcode.SaveUndo:
-            case Opcode.RestoreUndo:
                 throw new NotSupportedException($"{instruction.Name} needs saved games, which are not implemented yet.");
             case Opcode.DrawPicture:
             case Opcode.PictureData:
@@ -887,13 +1005,89 @@ public sealed class Interpreter
     }
 
     /// <summary>
-    /// [zm 10.5.1] and [zm op:show_status] The status line, which has
-    /// nowhere to go until the screen model of section 8 exists. Until
-    /// then this is where both callers arrive, so that adding it is one
-    /// change.
+    /// [zm 8.2] The status line of Versions 1 to 3, shown
+    /// [zm 8.2.4] by show_status and just before read takes input.
     /// </summary>
-    private static void ShowStatusLine()
+    /// <remarks>
+    /// [zm 8.2.2] The first global names the object whose short name
+    /// goes on the left, and [zm 8.2.2.1] must be a valid object number
+    /// whenever the line is shown. The standard asks interpreters to
+    /// protect themselves when a game gets that wrong, so an invalid
+    /// number is a runtime error and the name is left blank.
+    /// [zm 8.2.1] In Versions 1 and 2 every game is a score game; in
+    /// Version 3 bit 1 of Flags 1 makes it a time game.
+    /// </remarks>
+    private void ShowStatusLine(Instruction instruction)
     {
+        if (Header.Version > ZMachineVersion.V3)
+        {
+            return;
+        }
+
+        // [zm 6.2] Globals are variables $10 upward, so the first three
+        // are $10, $11, and $12.
+        var obj = State.ReadGlobal(0x10);
+        var name = "";
+        if (obj >= 1 && obj <= Objects.Count)
+        {
+            name = Objects.ShortName(obj);
+        }
+        else
+        {
+            ReportRuntimeError(instruction, $"the status line needs an object in global 0, not {obj}");
+        }
+
+        var timeGame = Header.Version == ZMachineVersion.V3
+            && Header.Flags1Versions1To3.HasFlag(Flags1Versions1To3.TimeStatusLine);
+
+        Screen.ShowStatusLine(name, timeGame, Signed(State.ReadGlobal(0x11)), Signed(State.ReadGlobal(0x12)));
+    }
+
+    private void PrintTable(ushort[] a)
+    {
+        // [zm op:print_table] A rectangle of ZSCII text, width by height
+        // (height defaulting to 1), skipping skip characters between
+        // rows, spreading right and down from the cursor.
+        var text = a[0];
+        var width = a[1];
+        var height = a.Length > 2 ? a[2] : 1;
+        var skip = a.Length > 3 ? a[3] : 0;
+        var startColumn = Screen.UpperWindow.CursorColumn;
+
+        for (var row = 0; row < height; row++)
+        {
+            if (row > 0)
+            {
+                Screen.NextTableRow(startColumn);
+            }
+
+            for (var column = 0; column < width; column++)
+            {
+                Output.Print(Memory.ReadByte(text++));
+            }
+
+            text = (ushort)(text + skip);
+        }
+    }
+
+    private void CheckUnicode(Instruction instruction, ushort character)
+    {
+        // [zm op:check_unicode] Bit 0 if the screen can print it, bit 1
+        // if the keyboard can produce it. [zm 10.7] The keyboard only
+        // ever produces ZSCII, so a character can come in if the story's
+        // translation table has a code for it.
+        var result = 0;
+        if (Screen.CanPrint((char)character))
+        {
+            result |= 1;
+        }
+
+        if (Zscii.FromUnicode((char)character, ExtraCharacters) is not null)
+        {
+            result |= 2;
+        }
+
+        Store(instruction, (ushort)result);
     }
 
     private void Read(Instruction instruction, ushort[] a)
@@ -940,10 +1134,8 @@ public sealed class Interpreter
 
         // [zm 10.5.1] In Versions 1 to 3 the status line is redisplayed
         // before input is accepted.
-        if (Header.Version <= ZMachineVersion.V3)
-        {
-            ShowStatusLine();
-        }
+        ShowStatusLine(instruction);
+        Screen.PrepareForInput(InputStream == 1);
 
         var request = new LineInputRequest(
             maxLength,
@@ -951,6 +1143,7 @@ public sealed class Interpreter
             TerminatingCharacters.Read(Memory, Header),
             Timer(a.Length > 2 ? a[2] : (ushort)0, a.Length > 3 ? a[3] : (ushort)0));
         var line = ReadLine(request);
+        Screen.InputEnded(line.Terminator == Zscii.Newline);
 
         // [zm op:read] The text is reduced to lower case, and [zm 10.7.2]
         // only characters defined for both input and output can be
@@ -1020,6 +1213,7 @@ public sealed class Interpreter
         }
 
         var timer = Timer(a.Length > 1 ? a[1] : (ushort)0, a.Length > 2 ? a[2] : (ushort)0);
+        Screen.PrepareForInput(InputStream == 1);
         Store(instruction, ReadKey(timer));
     }
 
@@ -1219,29 +1413,98 @@ public sealed class Interpreter
     }
 
     /// <summary>
-    /// Sets the header bits that describe this interpreter, which the
+    /// Sets the header fields that describe this interpreter, which the
     /// game reads to learn what it can ask for. Done at the start and
-    /// [zm 6.1.3] again after a restart.
+    /// [zm 6.1.3] again after a restart, since these are the fields
+    /// [zm 11.1] marks Rst.
     /// </summary>
-    /// <remarks>
-    /// Only the bits section 10 speaks for are here so far. The screen
-    /// model will add the rest of [zm 11.1] when it arrives.
-    /// </remarks>
     private void DescribeInterpreterInHeader()
     {
-        // [zm 10.5.3] and [zm 10.6] Bit 7 of Flags 1 says whether input
-        // can be timed, which depends on the input source.
-        if (Header.Version >= ZMachineVersion.V4)
+        var screen = Screen.Screen;
+        var can = screen.Capabilities;
+
+        if (Header.Version <= ZMachineVersion.V3)
         {
-            Header.Flags1FromVersion4 = Input.SupportsTimedInput
-                ? Header.Flags1FromVersion4 | Flags1FromVersion4.TimedInputAvailable
-                : Header.Flags1FromVersion4 & ~Flags1FromVersion4.TimedInputAvailable;
+            // [zm 8.2] Bit 4 is set when no status line can be shown,
+            // [zm 8.6.1.2] bit 5 when an upper window can be, and
+            // [zm 11.1.4] bit 6 when the default font is proportional.
+            var flags = Header.Flags1Versions1To3;
+            flags = Set(flags, Flags1Versions1To3.StatusLineUnavailable, !can.HasFlag(ScreenCapabilities.StatusLine));
+            flags = Set(flags, Flags1Versions1To3.ScreenSplittingAvailable, can.HasFlag(ScreenCapabilities.UpperWindow));
+            flags = Set(flags, Flags1Versions1To3.VariablePitchFontDefault, can.HasFlag(ScreenCapabilities.ProportionalFont));
+            Header.Flags1Versions1To3 = flags;
+        }
+        else
+        {
+            // [zm 8.3.2] and [zm 8.3.3] Bit 0 for colors, [zm 8.7.1.1]
+            // bits 2 and 3 for bold and italic, bit 4 for fixed pitch,
+            // and [zm 10.5.3] bit 7 for timed input, which depends on
+            // the input source rather than the screen.
+            var flags = Header.Flags1FromVersion4;
+            flags = Set(flags, Flags1FromVersion4.ColorsAvailable, Header.Version >= ZMachineVersion.V5 && can.HasFlag(ScreenCapabilities.Colors));
+            flags = Set(flags, Flags1FromVersion4.BoldfaceAvailable, can.HasFlag(ScreenCapabilities.Bold));
+            flags = Set(flags, Flags1FromVersion4.ItalicAvailable, can.HasFlag(ScreenCapabilities.Italic));
+            flags = Set(flags, Flags1FromVersion4.FixedSpaceAvailable, can.HasFlag(ScreenCapabilities.FixedPitch));
+            flags = Set(flags, Flags1FromVersion4.TimedInputAvailable, Input.SupportsTimedInput);
+            Header.Flags1FromVersion4 = flags;
+
+            // [zm 11.1.3] The interpreter number most suitable for the
+            // machine, which for anything modern is the IBM PC, as
+            // Frotz also says; and [zm 11.1.3.1] a letter for the
+            // interpreter version.
+            Header.InterpreterNumber = InterpreterNumber.IbmPc;
+            Header.InterpreterVersion = (byte)'R';
+
+            // [zm 8.4] The screen's height and width.
+            Header.ScreenHeightLines = (byte)Math.Min(screen.Height, 254);
+            Header.ScreenWidthCharacters = (byte)Math.Min(screen.Width, 255);
         }
 
-        // [zm 10.3.1.1] No mouse is offered, so bit 5 of Flags 2 is
-        // cleared to say so, and [zm 10.4.1.1] likewise bit 8 for menus.
-        Header.Flags2 &= ~(Flags2.WantsMouse | Flags2.WantsMenus);
+        if (Header.Version >= ZMachineVersion.V5)
+        {
+            // [zm 8.4.2] Units are characters here, as the remarks on
+            // section 8 recommend, so [zm 8.4.3] the size in units is
+            // the size in characters and [zm 8.1.1] a font is 1 by 1.
+            Header.ScreenWidthUnits = (ushort)Math.Min(screen.Width, 255);
+            Header.ScreenHeightUnits = (ushort)Math.Min(screen.Height, 254);
+            Header.FontWidthUnits = 1;
+            Header.FontHeightUnits = 1;
+
+            // [zm 8.3.3] The default colors, whether or not [zm 8.3.2]
+            // colors can be shown, since black and white are always a
+            // truthful pair.
+            Header.DefaultBackgroundColor = (byte)screen.DefaultBackground;
+            Header.DefaultForegroundColor = (byte)screen.DefaultForeground;
+        }
+
+        // [zm 11.1.5] The revision of the standard obeyed. Stories
+        // check this before using the opcodes that Standards 1.0 and
+        // 1.1 added, all of which exist here, and that is what the
+        // number decides in practice. Saved games and sound are still
+        // to come, and the roadmap knows it.
+        Header.StandardRevisionMajor = 1;
+        Header.StandardRevisionMinor = 1;
+
+        // [zm 11.1.2] The interpreter clears the Flags 2 bits for what
+        // it cannot give: [zm 8.1.5.1] pictures and the character
+        // graphics font in Version 5 (bit 3), [zm 6.1.4] undo until
+        // saved games exist (bit 4), [zm 10.3.1.1] the mouse (bit 5),
+        // sound until section 9 exists (bit 7), and [zm 10.4.1.1]
+        // menus (bit 8).
+        var flags2 = Header.Flags2 & ~(Flags2.WantsUndo | Flags2.WantsMouse | Flags2.WantsSoundEffects | Flags2.WantsMenus);
+        if (!can.HasFlag(ScreenCapabilities.CharacterGraphicsFont))
+        {
+            flags2 &= ~Flags2.WantsPictures;
+        }
+
+        Header.Flags2 = flags2;
     }
+
+    private static Flags1Versions1To3 Set(Flags1Versions1To3 flags, Flags1Versions1To3 bit, bool on) =>
+        on ? flags | bit : flags & ~bit;
+
+    private static Flags1FromVersion4 Set(Flags1FromVersion4 flags, Flags1FromVersion4 bit, bool on) =>
+        on ? flags | bit : flags & ~bit;
 
     private void EncodeText(ushort text, ushort length, ushort from, ushort codedText)
     {

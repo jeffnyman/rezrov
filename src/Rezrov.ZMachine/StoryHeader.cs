@@ -146,6 +146,16 @@ public sealed class StoryHeader
 
             return (Flags1Versions1To3)_memory.ReadByte(Flags1Offset);
         }
+
+        set
+        {
+            if (Version >= ZMachineVersion.V4)
+            {
+                throw OnlyMeaningfulIn(nameof(Flags1Versions1To3), "Versions 1 to 3");
+            }
+
+            _memory.WriteByte(Flags1Offset, (byte)value);
+        }
     }
 
     /// <summary>
@@ -374,7 +384,11 @@ public sealed class StoryHeader
     /// Which of Infocom's platforms the interpreter claims to be. Version 4
     /// and later. Set by the interpreter.
     /// </summary>
-    public InterpreterNumber InterpreterNumber => (InterpreterNumber)_memory.ReadByte(InterpreterNumberOffset);
+    public InterpreterNumber InterpreterNumber
+    {
+        get => (InterpreterNumber)_memory.ReadByte(InterpreterNumberOffset);
+        set => _memory.WriteByte(InterpreterNumberOffset, (byte)value);
+    }
 
     /// <summary>
     /// The interpreter's version. Version 4 and later. Set by the
@@ -384,28 +398,48 @@ public sealed class StoryHeader
     /// [zm 11.1.3.1] Conventionally an ASCII upper-case letter in Versions
     /// 4 and 5, while Infocom's Version 6 interpreters stored a number.
     /// </remarks>
-    public byte InterpreterVersion => _memory.ReadByte(InterpreterVersionOffset);
+    public byte InterpreterVersion
+    {
+        get => _memory.ReadByte(InterpreterVersionOffset);
+        set => _memory.WriteByte(InterpreterVersionOffset, value);
+    }
 
     /// <summary>
     /// Screen height in lines. Version 4 and later. Set by the interpreter.
     /// </summary>
-    public byte ScreenHeightLines => _memory.ReadByte(ScreenHeightLinesOffset);
+    public byte ScreenHeightLines
+    {
+        get => _memory.ReadByte(ScreenHeightLinesOffset);
+        set => _memory.WriteByte(ScreenHeightLinesOffset, value);
+    }
 
     /// <summary>
     /// Screen width in characters. Version 4 and later. Set by the
     /// interpreter.
     /// </summary>
-    public byte ScreenWidthCharacters => _memory.ReadByte(ScreenWidthCharactersOffset);
+    public byte ScreenWidthCharacters
+    {
+        get => _memory.ReadByte(ScreenWidthCharactersOffset);
+        set => _memory.WriteByte(ScreenWidthCharactersOffset, value);
+    }
 
     /// <summary>
     /// Screen width in units. Version 5 and later. Set by the interpreter.
     /// </summary>
-    public ushort ScreenWidthUnits => _memory.ReadWord(ScreenWidthUnitsOffset);
+    public ushort ScreenWidthUnits
+    {
+        get => _memory.ReadWord(ScreenWidthUnitsOffset);
+        set => _memory.WriteWord(ScreenWidthUnitsOffset, value);
+    }
 
     /// <summary>
     /// Screen height in units. Version 5 and later. Set by the interpreter.
     /// </summary>
-    public ushort ScreenHeightUnits => _memory.ReadWord(ScreenHeightUnitsOffset);
+    public ushort ScreenHeightUnits
+    {
+        get => _memory.ReadWord(ScreenHeightUnitsOffset);
+        set => _memory.WriteWord(ScreenHeightUnitsOffset, value);
+    }
 
     /// <summary>
     /// Font width in units, defined as the width of a '0'. Version 5 and
@@ -418,15 +452,21 @@ public sealed class StoryHeader
     /// <see cref="FontHeightUnits"/> resolve that, so callers never need to
     /// know which byte is which.
     /// </remarks>
-    public byte FontWidthUnits => _memory.ReadByte(
-        Version == ZMachineVersion.V6 ? FontByte27Offset : FontByte26Offset);
+    public byte FontWidthUnits
+    {
+        get => _memory.ReadByte(Version == ZMachineVersion.V6 ? FontByte27Offset : FontByte26Offset);
+        set => _memory.WriteByte(Version == ZMachineVersion.V6 ? FontByte27Offset : FontByte26Offset, value);
+    }
 
     /// <summary>
     /// Font height in units. Version 5 and later. Set by the interpreter.
     /// See <see cref="FontWidthUnits"/> for the Version 6 byte swap.
     /// </summary>
-    public byte FontHeightUnits => _memory.ReadByte(
-        Version == ZMachineVersion.V6 ? FontByte26Offset : FontByte27Offset);
+    public byte FontHeightUnits
+    {
+        get => _memory.ReadByte(Version == ZMachineVersion.V6 ? FontByte26Offset : FontByte27Offset);
+        set => _memory.WriteByte(Version == ZMachineVersion.V6 ? FontByte26Offset : FontByte27Offset, value);
+    }
 
     /// <summary>
     /// The routines offset, already divided by 8 as stored. Versions 6
@@ -458,13 +498,21 @@ public sealed class StoryHeader
     /// which cannot be right since they would overlap, and the original
     /// 1.1 table has them at one byte each.
     /// </remarks>
-    public byte DefaultBackgroundColor => _memory.ReadByte(DefaultBackgroundColorOffset);
+    public byte DefaultBackgroundColor
+    {
+        get => _memory.ReadByte(DefaultBackgroundColorOffset);
+        set => _memory.WriteByte(DefaultBackgroundColorOffset, value);
+    }
 
     /// <summary>
     /// Default foreground color. Version 5 and later. Set by the
     /// interpreter. See <see cref="DefaultBackgroundColor"/>.
     /// </summary>
-    public byte DefaultForegroundColor => _memory.ReadByte(DefaultForegroundColorOffset);
+    public byte DefaultForegroundColor
+    {
+        get => _memory.ReadByte(DefaultForegroundColorOffset);
+        set => _memory.WriteByte(DefaultForegroundColorOffset, value);
+    }
 
     /// <summary>
     /// The byte address of the terminating characters table. Version 5 and
@@ -486,13 +534,21 @@ public sealed class StoryHeader
     /// writes n to $32 and m to $33. One that does not follow the standard
     /// leaves both as 0. These are the only two bytes Infocom never used.
     /// </remarks>
-    public byte StandardRevisionMajor => _memory.ReadByte(StandardRevisionMajorOffset);
+    public byte StandardRevisionMajor
+    {
+        get => _memory.ReadByte(StandardRevisionMajorOffset);
+        set => _memory.WriteByte(StandardRevisionMajorOffset, value);
+    }
 
     /// <summary>
     /// The minor part of the standard revision the interpreter follows.
     /// See <see cref="StandardRevisionMajor"/>.
     /// </summary>
-    public byte StandardRevisionMinor => _memory.ReadByte(StandardRevisionMinorOffset);
+    public byte StandardRevisionMinor
+    {
+        get => _memory.ReadByte(StandardRevisionMinorOffset);
+        set => _memory.WriteByte(StandardRevisionMinorOffset, value);
+    }
 
     /// <summary>
     /// The byte address of the alphabet table, or 0 to use the default

@@ -148,7 +148,10 @@ public static class OpcodeTable
         11 => new(Opcode.NewLine, "new_line"),
 
         // [zm 14] show_status exists in Version 3 only.
-        12 => Only(v, ZMachineVersion.V3, new(Opcode.ShowStatus, "show_status")),
+        // [zm op:show_status] Version 3 only in theory, but Version 5
+        // Release 23 of Wishbringer contains it by accident and the
+        // standard asks for a nop there, so it decodes from Version 3 on.
+        12 => From(v, ZMachineVersion.V3, new(Opcode.ShowStatus, "show_status")),
         13 => From(v, ZMachineVersion.V3, new(Opcode.Verify, "verify", Branch: true)),
 
         // [zm 14] 0OP:14 is the first byte of an extended opcode from

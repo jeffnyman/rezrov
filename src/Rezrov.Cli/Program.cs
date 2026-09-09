@@ -4,6 +4,7 @@ using Rezrov.ZMachine.Execution;
 using Rezrov.ZMachine.Instructions;
 using Rezrov.ZMachine.Lexing;
 using Rezrov.ZMachine.Objects;
+using Rezrov.ZMachine.Screen;
 using Rezrov.ZMachine.Text;
 
 namespace Rezrov.Cli;
@@ -96,7 +97,7 @@ internal static class Program
     {
         var memory = new ZMemory(bytes);
         var header = new StoryHeader(memory);
-        var interpreter = new Interpreter(memory, new TextWriterOutput(Console.Out, header, memory), new ConsoleInput(header, memory));
+        var interpreter = new Interpreter(memory, new TextWriterScreen(Console.Out), new ConsoleInput(header, memory));
 
         if (commands is not null)
         {

@@ -205,6 +205,7 @@ internal static class Op
     public const int Div = 23;
     public const int Mod = 24;
     public const int Call2s = 25;
+    public const int SetColour = 27;
     public const int Throw = 28;
 
     // 1OP
@@ -236,6 +237,7 @@ internal static class Op
     public const int Catch = 9;
     public const int Quit = 10;
     public const int NewLine = 11;
+    public const int ShowStatus = 12;
     public const int Verify = 13;
     public const int Piracy = 15;
 
@@ -251,14 +253,24 @@ internal static class Op
     public const int Random = 7;
     public const int Push = 8;
     public const int Pull = 9;
+    public const int SplitWindow = 10;
+    public const int SetWindow = 11;
     public const int CallVs2 = 12;
+    public const int EraseWindow = 13;
+    public const int EraseLine = 14;
+    public const int SetCursor = 15;
+    public const int GetCursor = 16;
+    public const int SetTextStyle = 17;
+    public const int BufferMode = 18;
     public const int InputStream = 20;
+    public const int SoundEffect = 21;
     public const int ReadChar = 22;
     public const int ScanTable = 23;
     public const int CallVn = 25;
     public const int Tokenise = 27;
     public const int EncodeText = 28;
     public const int CopyTable = 29;
+    public const int PrintTable = 30;
     public const int CheckArgCount = 31;
 
     // EXT
