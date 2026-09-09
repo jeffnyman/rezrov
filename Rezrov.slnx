@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Rezrov.Cli/Rezrov.Cli.csproj" />
+    <Project Path="src/Rezrov.Core/Rezrov.Core.csproj" />
+    <Project Path="src/Rezrov.ZMachine/Rezrov.ZMachine.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Rezrov.Tests/Rezrov.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Everything this project needs comes from Directory.Build.props: the
+    target framework, nullable reference types, implicit usings, invariant
+    globalization, and the AOT analyzers.
+  -->
+
+</Project>

@@ -16,31 +16,19 @@
   </PropertyGroup>
 
   <!--
-    CLI frontend. This is the first milestone: core library plus a minimal
-    CLI, per the design notes, before committing to a TUI or GUI framework.
-  -->
-
-  <ItemGroup>
-    <PackageVersion Include="System.CommandLine" Version="2.0.12" />
-  </ItemGroup>
-
-  <!--
     Tests.
 
-    xunit.runner.visualstudio is what lets the VS Code C# Dev Kit test
-    explorer discover and run these. coverlet.collector produces coverage
-    when `dotnet test` runs with the XPlat Code Coverage collector, which
-    lands in the TestResults/ directory that .gitignore already excludes.
+    xUnit v3 runs on Microsoft Testing Platform, where a test project is its
+    own executable. That removes the need for Microsoft.NET.Test.Sdk and
+    xunit.runner.visualstudio, which the older VSTest arrangement required,
+    and it keeps the test project compatible with NativeAOT.
 
-    Note that an XML comment cannot contain a double hyphen, so the collect
-    flag is described here rather than written out.
+    Code coverage is not wired up yet. When it is, it comes from
+    Microsoft.Testing.Extensions.CodeCoverage rather than coverlet.
   -->
 
   <ItemGroup>
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
     <PackageVersion Include="xunit.v3" Version="4.0.0" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />
-    <PackageVersion Include="coverlet.collector" Version="10.0.1" />
   </ItemGroup>
 
   <!--

@@ -32,13 +32,8 @@ If you edit a ruleset through the web interface instead, export it and commit th
 
 That check matters more than it looks. Because merges are squashed and the repository is set to take the squash subject from the pull request title, the title is what actually lands in history. The `commit-msg` hook only governs the working commits on a branch, and those get squashed away, so the pull request title is where the Conventional Commits format has to be enforced.
 
-Build and test checks are not required yet, because there is nothing to build. Add them alongside the scaffold, as entries in the same `required_status_checks` array:
+The `build` and `test` contexts come from the `ci` workflow. The test job uses a matrix, and GitHub appends the matrix value to the job key, which is why the contexts read `test (ubuntu-latest)` and so on. Renaming a job in `ci.yml` therefore means updating this file and reapplying the ruleset.
 
-```json
-{ "context": "build", "integration_id": 15368 },
-{ "context": "test (ubuntu-latest)", "integration_id": 15368 },
-{ "context": "test (windows-latest)", "integration_id": 15368 },
-{ "context": "test (macos-latest)", "integration_id": 15368 }
-```
+There is no separate formatting check. `Directory.Build.props` sets `EnforceCodeStyleInBuild`, and CI builds with `ContinuousIntegrationBuild=true`, which makes warnings fatal, so an `.editorconfig` violation already fails the `build` context.
 
-The order matters when adding any of these. A required check that no workflow reports stays pending forever and blocks every pull request, so merge the workflow that produces a context before requiring it.
+The order matters whenever a check is added. A required check that no workflow reports stays pending forever and blocks every pull request, so merge the workflow that produces a context before requiring it.
