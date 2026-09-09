@@ -176,6 +176,39 @@ public sealed class GameState
     }
 
     /// <summary>
+    /// Pulls the top word off the stack if the current routine has one,
+    /// for a caller that would rather report an underflow than throw.
+    /// </summary>
+    public bool TryPop(out ushort value)
+    {
+        if (_stack.Count <= CurrentFrame.StackBase)
+        {
+            value = 0;
+            return false;
+        }
+
+        value = _stack[^1];
+        _stack.RemoveAt(_stack.Count - 1);
+        return true;
+    }
+
+    /// <summary>
+    /// Reads the top word of the stack without removing it, if the
+    /// current routine has one.
+    /// </summary>
+    public bool TryPeek(out ushort value)
+    {
+        if (_stack.Count <= CurrentFrame.StackBase)
+        {
+            value = 0;
+            return false;
+        }
+
+        value = _stack[^1];
+        return true;
+    }
+
+    /// <summary>
     /// Reads a global variable, numbered $10 to $FF as variables are.
     /// </summary>
     /// <remarks>

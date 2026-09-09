@@ -7,9 +7,9 @@ namespace Rezrov.ZMachine.Text;
 /// <remarks>
 /// [zm 3.8] ZSCII codes are 10-bit values, 0 to 1023, though [zm 3.8.1]
 /// everything from 256 up is undefined so it is an 8-bit code in
-/// practice. Some codes exist only for input and some only for output.
-/// Only the output side is handled here, since this is what text decoding
-/// needs; the input side arrives with the read opcodes.
+/// practice. Some codes exist only for input and some only for output,
+/// and both sides are here: what a code prints as, for text decoding,
+/// and which codes a keyboard may produce, for the read opcodes.
 /// </remarks>
 public static class Zscii
 {
@@ -42,6 +42,147 @@ public static class Zscii
     /// [zm 3.8.3] The last of the codes that agree with ASCII.
     /// </summary>
     public const ushort Tilde = 126;
+
+    /// <summary>
+    /// [zm 3.8.4] Input only. Cursor down, left, and right follow.
+    /// </summary>
+    public const ushort CursorUp = 129;
+
+    /// <summary>[zm 3.8.4] Input only.</summary>
+    public const ushort CursorDown = 130;
+
+    /// <summary>[zm 3.8.4] Input only.</summary>
+    public const ushort CursorLeft = 131;
+
+    /// <summary>[zm 3.8.4] Input only.</summary>
+    public const ushort CursorRight = 132;
+
+    /// <summary>[zm 3.8.4] Input only. F2 to F12 follow in order.</summary>
+    public const ushort F1 = 133;
+
+    /// <summary>[zm 3.8.4] Input only.</summary>
+    public const ushort F12 = 144;
+
+    /// <summary>
+    /// [zm 3.8.4] Input only. Keypad 1 to 9 follow in order.
+    /// </summary>
+    public const ushort Keypad0 = 145;
+
+    /// <summary>[zm 3.8.4] Input only.</summary>
+    public const ushort Keypad9 = 154;
+
+    /// <summary>[zm 3.8.6] Input only, and only in Version 6.</summary>
+    public const ushort MenuClick = 252;
+
+    /// <summary>[zm 3.8.6] Input only, and only in Version 6.</summary>
+    public const ushort DoubleClick = 253;
+
+    /// <summary>[zm 3.8.6] Input only.</summary>
+    public const ushort SingleClick = 254;
+
+    /// <summary>
+    /// [zm 10.5.2.1] Not a character at all: in a terminating characters
+    /// table it means that any function key ends input.
+    /// </summary>
+    public const ushort AnyFunctionKey = 255;
+
+    /// <summary>
+    /// [zm 10.5.2.1] Whether a code is a function key, which the standard
+    /// defines as 129 to 154 together with 252, 253, and 254. These are
+    /// the only codes a terminating characters table may name.
+    /// </summary>
+    public static bool IsFunctionKey(int zscii) =>
+        zscii is (>= CursorUp and <= Keypad9) or (>= MenuClick and <= SingleClick);
+
+    /// <summary>
+    /// [zm 3.8] Whether a code is defined for input: delete, newline,
+    /// escape, the ASCII range, the function keys, the extra characters,
+    /// and the clicks.
+    /// </summary>
+    public static bool IsDefinedForInput(int zscii) =>
+        zscii is Delete or Newline or Escape
+            or (>= Space and <= Tilde)
+            or (>= UnicodeTranslationTable.FirstZscii and <= UnicodeTranslationTable.LastZscii)
+            || IsFunctionKey(zscii);
+
+    /// <summary>
+    /// [zm 10.7.2] Whether a code is defined for both input and output,
+    /// which is what the read opcode may store in its text buffer: the
+    /// ASCII range and the extra characters.
+    /// </summary>
+    public static bool IsDefinedForInputAndOutput(int zscii) =>
+        zscii is (>= Space and <= Tilde)
+            or (>= UnicodeTranslationTable.FirstZscii and <= UnicodeTranslationTable.LastZscii);
+
+    /// <summary>
+    /// Converts a typed character into the ZSCII code a keyboard would
+    /// produce, or null if no input code stands for it.
+    /// </summary>
+    /// <remarks>
+    /// The inverse of <see cref="ToUnicode"/> for the input side. Either
+    /// line ending becomes [zm 3.8.2.5] newline, since the read opcode's
+    /// text says the interpreter must return 13 whichever key the machine
+    /// has. Backspace and the ASCII delete both become [zm 3.8.2.2]
+    /// delete. Extra characters come back through the story's translation
+    /// table, so a French game gets its accents and a game without a table
+    /// entry for a character does not see it at all.
+    /// </remarks>
+    public static ushort? FromUnicode(char unicode, UnicodeTranslationTable extraCharacters)
+    {
+        ArgumentNullException.ThrowIfNull(extraCharacters);
+
+        switch (unicode)
+        {
+            case (char)0x0A:
+            case (char)0x0D:
+                return Newline;
+
+            case (char)0x08:
+            case (char)0x7F:
+                return Delete;
+
+            case (char)0x1B:
+                return Escape;
+
+            case >= (char)Space and <= (char)Tilde:
+                return unicode;
+
+            default:
+                return extraCharacters.TryGetZscii(unicode, out var zscii) ? zscii : null;
+        }
+    }
+
+    /// <summary>
+    /// [zm op:read] Reduces a typed character to lower case, which is how
+    /// the read opcode stores text so that the game can print it back
+    /// tidily.
+    /// </summary>
+    /// <remarks>
+    /// ASCII letters are simple. An extra character is lowered through the
+    /// translation table, to Unicode and back, and stays as it was when
+    /// the table has no code for its lower case form, since there is then
+    /// nothing the game could have matched it against anyway.
+    /// </remarks>
+    public static ushort ToLower(ushort zscii, UnicodeTranslationTable extraCharacters)
+    {
+        ArgumentNullException.ThrowIfNull(extraCharacters);
+
+        if (zscii is >= 'A' and <= 'Z')
+        {
+            return (ushort)(zscii + ('a' - 'A'));
+        }
+
+        if (extraCharacters.TryGetUnicode(zscii, out var unicode))
+        {
+            var lowered = char.ToLowerInvariant(unicode);
+            if (lowered != unicode && extraCharacters.TryGetZscii(lowered, out var lowerZscii))
+            {
+                return lowerZscii;
+            }
+        }
+
+        return zscii;
+    }
 
     /// <summary>
     /// Converts a ZSCII code into the character it prints as, or null if

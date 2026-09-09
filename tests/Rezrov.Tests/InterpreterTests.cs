@@ -1,10 +1,12 @@
 using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
+using Rezrov.ZMachine.Input;
+using Rezrov.ZMachine.Text;
 using static Rezrov.Tests.Assembler;
 
 namespace Rezrov.Tests;
 
-public class InterpreterTests
+public partial class InterpreterTests
 {
     private const int Globals = 0x100;
     private const int Objects = 0x200;
@@ -22,11 +24,14 @@ public class InterpreterTests
     /// A story whose code starts at $1000, with dynamic memory ending at
     /// $400, a globals table at $100, and an object table at $200 holding
     /// a room with a lamp inside it. Routines A and B can be filled in
-    /// per test. Dictionary and abbreviation tables point at harmless
-    /// empty space.
+    /// per test. The dictionary at $380 is empty until a test fills it
+    /// with <see cref="Words"/>, and the abbreviation table points at
+    /// harmless empty space.
     /// </summary>
     private sealed class Story
     {
+        public const int DictionaryAddress = 0x380;
+
         public byte[] Bytes { get; } = new byte[8192];
 
         public ZMachineVersion Version { get; }
@@ -37,14 +42,14 @@ public class InterpreterTests
             Bytes[0x00] = (byte)version;
             PutWord(0x04, 0x0400);
             PutWord(0x06, version == ZMachineVersion.V6 ? Packed(RoutineB) : Code);
-            PutWord(0x08, 0x0380);
+            PutWord(0x08, DictionaryAddress);
             PutWord(0x0A, Objects);
             PutWord(0x0C, Globals);
             PutWord(0x0E, 0x0400);
             PutWord(0x18, 0x0300);
 
             // An empty dictionary: no separators, six-byte entries, none.
-            Bytes[0x0381] = 6;
+            Bytes[DictionaryAddress + 1] = 6;
 
             BuildObjects();
         }
@@ -64,6 +69,46 @@ public class InterpreterTests
         }
 
         public void Put(int address, byte[] data) => data.CopyTo(Bytes, address);
+
+        /// <summary>
+        /// Fills the game's dictionary with words, sorted as [zm 13.2]
+        /// requires, with comma and period as the word separators.
+        /// </summary>
+        public void Words(params string[] words) => WriteDictionary(DictionaryAddress, ",."u8.ToArray(), sorted: true, words);
+
+        /// <summary>
+        /// Writes a user dictionary for tokenise: no separators, and
+        /// [zm op:tokenise] a negative count meaning that many entries,
+        /// unsorted, kept in the order given.
+        /// </summary>
+        public void UserWords(int address, params string[] words) => WriteDictionary(address, [], sorted: false, words);
+
+        private void WriteDictionary(int address, byte[] separators, bool sorted, string[] words)
+        {
+            var encoder = new ZTextEncoder(Version, Version == ZMachineVersion.V1 ? AlphabetTable.Version1 : AlphabetTable.Default);
+            var entries = words.Select(encoder.EncodeWord).ToList();
+            if (sorted)
+            {
+                entries.Sort((a, b) => a.AsSpan().SequenceCompareTo(b));
+            }
+
+            // [zm 13.2] Separator count and separators, the entry length,
+            // the count, then the entries: the encoded word plus one byte
+            // of data each.
+            var at = address;
+            Bytes[at++] = (byte)separators.Length;
+            Put(at, separators);
+            at += separators.Length;
+            Bytes[at++] = (byte)(encoder.EncodedLength + 1);
+            PutWord(at, sorted ? entries.Count : -entries.Count & 0xFFFF);
+            at += 2;
+
+            foreach (var entry in entries)
+            {
+                Put(at, entry);
+                at += encoder.EncodedLength + 1;
+            }
+        }
 
         /// <summary>
         /// Writes a routine: the local count, defaults in versions that
@@ -177,7 +222,7 @@ public class InterpreterTests
     /// generous instruction limit so a broken loop fails rather than
     /// hangs.
     /// </summary>
-    private static Run Execute(Assembler code, Action<Story>? setup = null, ZMachineVersion version = ZMachineVersion.V5)
+    private static Run Execute(Assembler code, Action<Story>? setup = null, ZMachineVersion version = ZMachineVersion.V5, IInput? input = null)
     {
         var story = new Story(version);
         story.Put(Code, code.ToArray());
@@ -186,7 +231,7 @@ public class InterpreterTests
         var memory = new ZMemory(story.Bytes);
         var header = new StoryHeader(memory);
         var writer = new StringWriter();
-        var interpreter = new Interpreter(memory, new TextWriterOutput(writer, header, memory));
+        var interpreter = new Interpreter(memory, new TextWriterOutput(writer, header, memory), input ?? new ScriptedInput());
 
         interpreter.Run(10000);
         Assert.True(interpreter.HasQuit, "The program did not quit within 10000 instructions.");
@@ -676,6 +721,43 @@ public class InterpreterTests
     }
 
     [Fact]
+    public void PullingFromAnEmptyStackIsReportedAndGivesZero()
+    {
+        // [zm 6.3.2] and [zm op:pull deviates] Zork I release 2 does this,
+        // so it is a runtime error and the missing value is 0, whether
+        // pulled by the opcode, read as an operand, or seen in place.
+        var run = Execute(new Assembler()
+            .Long(Op.Store, Small(G0), Small(7))
+            .Variable(Op.Pull, true, Small(G0))
+            .Long(Op.Add, Var(0), Small(5)).Store(G1)
+            .Short1(Op.Load, Small(0)).Store(G2)
+            .Quit());
+
+        Assert.Equal(0, run.Global(G0));
+        Assert.Equal(5, run.Global(G1));
+        Assert.Equal(0, run.Global(G2));
+
+        var errors = run.Interpreter.RuntimeErrors;
+        Assert.Equal(3, errors.Count);
+        Assert.All(errors, e => Assert.Contains("stack is empty", e));
+    }
+
+    [Fact]
+    public void PullingFromAnEmptyStackIsFatalAtTheStrictestLevel()
+    {
+        var story = new Story(ZMachineVersion.V5);
+        story.Put(Code, new Assembler().Variable(Op.Pull, true, Small(G0)).Quit().ToArray());
+
+        var memory = new ZMemory(story.Bytes);
+        var interpreter = new Interpreter(memory, new TextWriterOutput(new StringWriter(), new StoryHeader(memory), memory), new ScriptedInput())
+        {
+            ErrorLevel = ErrorLevel.Fatal,
+        };
+
+        Assert.Throws<InvalidOperationException>(() => interpreter.Run(10));
+    }
+
+    [Fact]
     public void ObjectZeroIsFatalAtTheStrictestLevel()
     {
         // [zm A] Treat every error as fatal and end the game.
@@ -683,7 +765,7 @@ public class InterpreterTests
         story.Put(Code, new Assembler().Short1(Op.GetParent, Small(0)).Store(G0).Quit().ToArray());
 
         var memory = new ZMemory(story.Bytes);
-        var interpreter = new Interpreter(memory, new TextWriterOutput(new StringWriter(), new StoryHeader(memory), memory))
+        var interpreter = new Interpreter(memory, new TextWriterOutput(new StringWriter(), new StoryHeader(memory), memory), new ScriptedInput())
         {
             ErrorLevel = ErrorLevel.Fatal,
         };
@@ -920,9 +1002,10 @@ public class InterpreterTests
     [Fact]
     public void OpcodesThatAreNotImplementedYetSaySo()
     {
-        var code = new Assembler().Variable(Op.Sread, true, Large(0x0300), Large(0x0340)).Quit();
+        // [zm op:save_undo] Saved games are not built yet.
+        var code = new Assembler().Ext(9).Store(G0).Quit();
 
-        Assert.Throws<NotSupportedException>(() => Execute(code, version: ZMachineVersion.V3));
+        Assert.Throws<NotSupportedException>(() => Execute(code));
     }
 
     [Fact]
@@ -946,7 +1029,7 @@ public class InterpreterTests
         story.Put(Code, new Assembler().Short0(Op.Nop).Quit().ToArray());
 
         var memory = new ZMemory(story.Bytes);
-        var interpreter = new Interpreter(memory, new TextWriterOutput(new StringWriter(), new StoryHeader(memory), memory));
+        var interpreter = new Interpreter(memory, new TextWriterOutput(new StringWriter(), new StoryHeader(memory), memory), new ScriptedInput());
 
         Assert.Equal("nop", interpreter.Step().Name);
         Assert.Equal("quit", interpreter.Step().Name);

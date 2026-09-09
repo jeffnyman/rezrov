@@ -1,5 +1,7 @@
 using System.Globalization;
+using Rezrov.ZMachine.Input;
 using Rezrov.ZMachine.Instructions;
+using Rezrov.ZMachine.Lexing;
 using Rezrov.ZMachine.Objects;
 using Rezrov.ZMachine.Text;
 
@@ -12,9 +14,9 @@ namespace Rezrov.ZMachine.Execution;
 /// <remarks>
 /// Everything before this was a data structure. This is the loop that
 /// uses them, and the opcodes of section 15 are implemented here, each
-/// one cited. Opcodes that need input, the screen model, sound, or
-/// saved games are not implemented yet and say so when reached, rather
-/// than doing something approximate.
+/// one cited. Opcodes that need the screen model, sound, or saved games
+/// are not implemented yet and say so when reached, rather than doing
+/// something approximate.
 ///
 /// The loop sets the program counter to the next instruction before
 /// carrying out the current one. The remarks on section 4 explain why
@@ -23,25 +25,40 @@ namespace Rezrov.ZMachine.Execution;
 /// </remarks>
 public sealed class Interpreter
 {
-    public Interpreter(ZMemory memory, IOutput output, RandomGenerator? random = null)
+    public Interpreter(ZMemory memory, IOutput output, IInput input, RandomGenerator? random = null)
     {
         ArgumentNullException.ThrowIfNull(memory);
         ArgumentNullException.ThrowIfNull(output);
+        ArgumentNullException.ThrowIfNull(input);
 
         Memory = memory;
         Output = output;
+        Input = input;
         Header = new StoryHeader(memory);
         Text = new ZTextDecoder(memory, Header);
         Encoder = ZTextEncoder.ForStory(Header, memory);
+        ExtraCharacters = UnicodeTranslationTable.ForStory(Header, memory);
         Objects = new ObjectTable(memory, Header, Text);
+        Dictionary = DictionaryTable.Standard(memory, Header, Text, Encoder);
         Decoder = new InstructionDecoder(memory, Header, Text);
         State = new GameState(memory, Header);
         Random = random ?? new RandomGenerator();
+
+        DescribeInterpreterInHeader();
     }
 
     public ZMemory Memory { get; }
 
     public IOutput Output { get; }
+
+    /// <summary>Input stream 0, the keyboard.</summary>
+    public IInput Input { get; }
+
+    /// <summary>
+    /// [zm 10.2] Which input stream is current: 0 for the keyboard or 1
+    /// for a file of commands.
+    /// </summary>
+    public int InputStream => _commandFile is null ? 0 : 1;
 
     public StoryHeader Header { get; }
 
@@ -49,7 +66,19 @@ public sealed class Interpreter
 
     public ZTextEncoder Encoder { get; }
 
+    /// <summary>
+    /// [zm 3.8.5] The story's extra characters, needed on the way in as
+    /// well as the way out.
+    /// </summary>
+    public UnicodeTranslationTable ExtraCharacters { get; }
+
     public ObjectTable Objects { get; }
+
+    /// <summary>
+    /// [zm 13.1] The game's own dictionary, read once since it lives in
+    /// static memory and cannot change.
+    /// </summary>
+    public DictionaryTable Dictionary { get; }
 
     public InstructionDecoder Decoder { get; }
 
@@ -78,6 +107,21 @@ public sealed class Interpreter
 
     private readonly List<string> _runtimeErrors = [];
     private readonly HashSet<string> _reportedKinds = [];
+    private CommandFile? _commandFile;
+
+    /// <summary>
+    /// [zm 10.2.2] Plays commands from a file for as long as it lasts,
+    /// as if the game had selected input stream 1, which lets a whole
+    /// game be run from a script for testing. The file's format is the
+    /// one <see cref="CommandFile"/> describes.
+    /// </summary>
+    public void PlayCommands(TextReader commands)
+    {
+        ArgumentNullException.ThrowIfNull(commands);
+
+        _commandFile?.Close();
+        _commandFile = new CommandFile(commands, ExtraCharacters);
+    }
 
     /// <summary>
     /// Carries out the instruction at the program counter and returns it.
@@ -97,7 +141,7 @@ public sealed class Interpreter
         var arguments = new ushort[instruction.Operands.Count];
         for (var i = 0; i < arguments.Length; i++)
         {
-            arguments[i] = Evaluate(instruction.Operands[i]);
+            arguments[i] = Evaluate(instruction, instruction.Operands[i]);
         }
 
         try
@@ -132,8 +176,60 @@ public sealed class Interpreter
 
     // [zm 4.2.3] A variable operand means the variable's value, and
     // [zm 6.3] reading variable 0 pops the stack.
-    private ushort Evaluate(Operand operand) =>
-        operand.Type == OperandType.Variable ? State.ReadVariable(operand.Value) : operand.Value;
+    private ushort Evaluate(Instruction instruction, Operand operand)
+    {
+        if (operand.Type != OperandType.Variable)
+        {
+            return operand.Value;
+        }
+
+        return operand.Value == 0 ? Pop(instruction) : State.ReadVariable(operand.Value);
+    }
+
+    /// <summary>
+    /// Pops the stack, or reports an underflow and gives 0.
+    /// </summary>
+    /// <remarks>
+    /// [zm 6.3.2] It is illegal to pull from the stack unless values were
+    /// first pushed, and [zm op:pull deviates] the pull opcode says the
+    /// interpreter should halt. Zork I release 2 does it anyway: the
+    /// routine at $5816 in its parser tests a called routine's result
+    /// with je, which pops it, then pulls it a second time. Infocom's
+    /// interpreter kept locals and stack together with no frame check,
+    /// so the pull quietly read a local, and Frotz's layout does the
+    /// same. So this is an error in the sense of [zm A], reported at the
+    /// level chosen and fatal only at the strictest, and the value that
+    /// was not there is 0.
+    /// </remarks>
+    private ushort Pop(Instruction instruction)
+    {
+        if (State.TryPop(out var value))
+        {
+            return value;
+        }
+
+        ReportRuntimeError(instruction, "the stack is empty for the current routine");
+        return 0;
+    }
+
+    // [zm 6.3.4] A variable reference by number, where 0 means the top of
+    // the stack in place rather than a pop, with the same leniency as
+    // <see cref="Pop"/> when there is no top.
+    private ushort ReadInPlace(Instruction instruction, ushort variable)
+    {
+        if (variable != 0)
+        {
+            return State.ReadVariable(variable);
+        }
+
+        if (State.TryPeek(out var value))
+        {
+            return value;
+        }
+
+        ReportRuntimeError(instruction, "the stack is empty for the current routine");
+        return 0;
+    }
 
     private void Execute(Instruction instruction, ushort[] a)
     {
@@ -197,15 +293,15 @@ public sealed class Interpreter
             // pointer reads or writes the top of the stack in place.
             case Opcode.Inc:
                 // [zm op:inc] Signed, so -1 goes to 0.
-                State.WriteVariableInPlace(a[0], Unsigned(Signed(State.ReadVariableInPlace(a[0])) + 1));
+                State.WriteVariableInPlace(a[0], Unsigned(Signed(ReadInPlace(instruction, a[0])) + 1));
                 break;
             case Opcode.Dec:
-                State.WriteVariableInPlace(a[0], Unsigned(Signed(State.ReadVariableInPlace(a[0])) - 1));
+                State.WriteVariableInPlace(a[0], Unsigned(Signed(ReadInPlace(instruction, a[0])) - 1));
                 break;
             case Opcode.IncChk:
             {
                 // [zm op:inc_chk] Increment, then branch if now greater.
-                var value = Unsigned(Signed(State.ReadVariableInPlace(a[0])) + 1);
+                var value = Unsigned(Signed(ReadInPlace(instruction, a[0])) + 1);
                 State.WriteVariableInPlace(a[0], value);
                 Branch(instruction, Signed(value) > Signed(a[1]));
                 break;
@@ -213,7 +309,7 @@ public sealed class Interpreter
             case Opcode.DecChk:
             {
                 // [zm op:dec_chk] Decrement, then branch if now less.
-                var value = Unsigned(Signed(State.ReadVariableInPlace(a[0])) - 1);
+                var value = Unsigned(Signed(ReadInPlace(instruction, a[0])) - 1);
                 State.WriteVariableInPlace(a[0], value);
                 Branch(instruction, Signed(value) < Signed(a[1]));
                 break;
@@ -224,7 +320,7 @@ public sealed class Interpreter
                 break;
             case Opcode.Load:
                 // [zm op:load]
-                Store(instruction, State.ReadVariableInPlace(a[0]));
+                Store(instruction, ReadInPlace(instruction, a[0]));
                 break;
             case Opcode.Push:
                 // [zm op:push]
@@ -237,20 +333,20 @@ public sealed class Interpreter
                     // the stack may be a user stack named by the operand.
                     Store(instruction, a.Length > 0 && a[0] != 0
                         ? UserStackTable.Pull(Memory, a[0])
-                        : State.Pop());
+                        : Pop(instruction));
                 }
                 else
                 {
                     // [zm op:pull] Elsewhere the operand names the variable
                     // to pull into, in place if it is the stack pointer.
-                    var value = State.Pop();
+                    var value = Pop(instruction);
                     State.WriteVariableInPlace(a[0], value);
                 }
 
                 break;
             case Opcode.Pop:
                 // [zm op:pop] Throw away the top of the stack.
-                State.Pop();
+                Pop(instruction);
                 break;
 
             // Comparisons and branches.
@@ -338,7 +434,7 @@ public sealed class Interpreter
                 break;
             case Opcode.RetPopped:
                 // [zm op:ret_popped] Equivalent to ret sp.
-                State.Return(State.Pop());
+                State.Return(Pop(instruction));
                 break;
             case Opcode.Catch:
                 // [zm op:catch]
@@ -515,8 +611,10 @@ public sealed class Interpreter
             case Opcode.Restart:
                 // [zm op:restart] Everything back to the start except the
                 // transcript and fixed-pitch bits of Flags 2, which the
-                // state preserves.
+                // state preserves, and then [zm 6.1.3] the interpreter's
+                // own header fields are set again.
                 State.Restart();
+                DescribeInterpreterInHeader();
                 break;
             case Opcode.Nop:
                 // [zm op:nop] Never used by any Infocom game, apparently.
@@ -524,9 +622,27 @@ public sealed class Interpreter
             case Opcode.ShowStatus:
                 // [zm op:show_status] Redraws the Version 3 status line,
                 // and is to be treated as a nop where it appears by
-                // accident in later versions. There is no status line
-                // until the screen model exists, so for now it is a nop
-                // everywhere.
+                // accident in later versions.
+                if (Header.Version == ZMachineVersion.V3)
+                {
+                    ShowStatusLine();
+                }
+
+                break;
+
+            // Input.
+            case Opcode.Sread:
+            case Opcode.Aread:
+                Read(instruction, a);
+                break;
+            case Opcode.ReadChar:
+                ReadChar(instruction, a);
+                break;
+            case Opcode.Tokenise:
+                Tokenise(a);
+                break;
+            case Opcode.InputStream:
+                SelectInputStream(instruction, a[0]);
                 break;
             case Opcode.PopStack:
                 // [zm op:pop_stack] From a user stack if one is named,
@@ -539,7 +655,7 @@ public sealed class Interpreter
                 {
                     for (var i = 0; i < a[0]; i++)
                     {
-                        State.Pop();
+                        Pop(instruction);
                     }
                 }
 
@@ -555,12 +671,6 @@ public sealed class Interpreter
             // Not yet. Each of these needs a part of the machine that does
             // not exist in this codebase so far, and saying so beats
             // guessing at it.
-            case Opcode.Sread:
-            case Opcode.Aread:
-            case Opcode.ReadChar:
-            case Opcode.Tokenise:
-            case Opcode.InputStream:
-                throw new NotSupportedException($"{instruction.Name} needs the input side of section 10, which is not implemented yet.");
             case Opcode.SplitWindow:
             case Opcode.SetWindow:
             case Opcode.EraseWindow:
@@ -774,6 +884,363 @@ public sealed class Interpreter
 
         Store(instruction, 0);
         Branch(instruction, false);
+    }
+
+    /// <summary>
+    /// [zm 10.5.1] and [zm op:show_status] The status line, which has
+    /// nowhere to go until the screen model of section 8 exists. Until
+    /// then this is where both callers arrive, so that adding it is one
+    /// change.
+    /// </summary>
+    private static void ShowStatusLine()
+    {
+    }
+
+    private void Read(Instruction instruction, ushort[] a)
+    {
+        // Etude, Andrew Plotkin's interpreter test, calls aread with the
+        // text buffer alone, which the operand table allows, and a parse
+        // buffer that was never given is the same as one given as 0.
+        var text = a[0];
+        var parse = a.Length > 1 ? a[1] : (ushort)0;
+        var early = Header.Version <= ZMachineVersion.V4;
+
+        // [zm op:read] Byte 0 of the text buffer holds the most letters
+        // that may be typed, plus one for the zero terminator in Versions
+        // 1 to 4. The standard asks for a halt with a message when either
+        // buffer is too small to be real, since that usually means an
+        // array before it was overrun, and is otherwise a bug that is very
+        // hard to find.
+        var maxLength = early ? Memory.ReadByte(text) - 1 : Memory.ReadByte(text);
+        if (maxLength < 1)
+        {
+            throw Fail(instruction, $"The text buffer at {text:X4} cannot hold a single character, which usually means an array before it was overrun.");
+        }
+
+        // [zm op:read] In Versions 5 and later a parse buffer of 0 means
+        // no lexical analysis at all.
+        var lexing = early || parse != 0;
+        if (lexing && Memory.ReadByte(parse) < 1)
+        {
+            throw Fail(instruction, $"The parse buffer at {parse:X4} cannot hold a single word, which usually means an array before it was overrun.");
+        }
+
+        // [zm op:read] In Versions 5 and later, a positive byte 1 is a
+        // count of characters left over from an interrupted read, which
+        // the new input continues from. The game redisplays them itself.
+        var initial = new List<ushort>();
+        if (!early)
+        {
+            var leftover = Math.Min(Memory.ReadByte(text + 1), maxLength);
+            for (var i = 0; i < leftover; i++)
+            {
+                initial.Add(Memory.ReadByte(text + 2 + i));
+            }
+        }
+
+        // [zm 10.5.1] In Versions 1 to 3 the status line is redisplayed
+        // before input is accepted.
+        if (Header.Version <= ZMachineVersion.V3)
+        {
+            ShowStatusLine();
+        }
+
+        var request = new LineInputRequest(
+            maxLength,
+            initial,
+            TerminatingCharacters.Read(Memory, Header),
+            Timer(a.Length > 2 ? a[2] : (ushort)0, a.Length > 3 ? a[3] : (ushort)0));
+        var line = ReadLine(request);
+
+        // [zm op:read] The text is reduced to lower case, and [zm 10.7.2]
+        // only characters defined for both input and output can be
+        // stored, so anything else a source let through is dropped.
+        // Nothing above 255 can appear, since [zm 3.8.1] no input code
+        // does, so a byte holds each one.
+        var typed = new List<byte>(line.Text.Count);
+        foreach (var code in line.Text)
+        {
+            if (typed.Count == maxLength)
+            {
+                break;
+            }
+
+            if (Zscii.IsDefinedForInputAndOutput(code))
+            {
+                typed.Add((byte)Zscii.ToLower(code, ExtraCharacters));
+            }
+        }
+
+        // [zm op:read] Versions 1 to 4 store the text from byte 1 with a
+        // zero terminator. Versions 5 and later store the count in byte 1
+        // and the text from byte 2, with no terminator.
+        var offset = early ? 1 : 2;
+        for (var i = 0; i < typed.Count; i++)
+        {
+            State.WriteByte(text + offset + i, typed[i]);
+        }
+
+        if (early)
+        {
+            State.WriteByte(text + 1 + typed.Count, 0);
+        }
+        else
+        {
+            State.WriteByte(text + 1, (byte)typed.Count);
+        }
+
+        // [zm op:read deviates] The standard says an interrupt routine
+        // returning true erases all input, but the remarks on section 7
+        // show a timed-out command being continued from what was typed,
+        // and Frotz keeps the text, which Beyond Zork and Zork Zero rely
+        // on through the leftover count in byte 1. So the text stays, and
+        // only the terminator says the read was cut short.
+        if (lexing)
+        {
+            WriteParseTable(parse, typed.ToArray(), offset, Dictionary, keepUnknownSlots: false);
+        }
+
+        // [zm op:read] In Version 5 and later this is a store instruction
+        // whose result is the terminating character: 13 for the enter
+        // key, whatever the keyboard called it, and 0 for a timeout.
+        if (!early)
+        {
+            Store(instruction, line.Terminator);
+        }
+    }
+
+    private void ReadChar(Instruction instruction, ushort[] a)
+    {
+        // [zm op:read_char] The first operand must be 1, presumably for
+        // input devices that were never built. Anything else is an error
+        // in the game, and there is still only the keyboard to read.
+        if (a[0] != 1)
+        {
+            ReportRuntimeError(instruction, $"the input device must be 1, not {a[0]}");
+        }
+
+        var timer = Timer(a.Length > 1 ? a[1] : (ushort)0, a.Length > 2 ? a[2] : (ushort)0);
+        Store(instruction, ReadKey(timer));
+    }
+
+    /// <summary>
+    /// [zm op:read] The timer for a read or read_char: only in Version 4
+    /// and later, and only when both the time and the routine are
+    /// supplied and non-zero.
+    /// </summary>
+    private InputTimer? Timer(ushort time, ushort routine)
+    {
+        if (Header.Version < ZMachineVersion.V4 || time == 0 || routine == 0)
+        {
+            return null;
+        }
+
+        return new InputTimer(time, () => CallInterrupt(routine));
+    }
+
+    /// <summary>
+    /// [zm op:read] Calls the interrupt routine in the middle of an input
+    /// and reports whether it returned true, meaning stop reading.
+    /// </summary>
+    /// <remarks>
+    /// The routine runs to completion here, inside the instruction that
+    /// is waiting, by stepping the machine until the call chain is back
+    /// to where it was. The return address is the instruction after the
+    /// read, which the program counter already holds, and the result is
+    /// pushed onto the caller's stack and popped straight off again,
+    /// which leaves the state exactly as the read found it. A routine
+    /// that quits or restarts the game ends the input too, since there
+    /// is nothing to continue.
+    /// </remarks>
+    private bool CallInterrupt(ushort routine)
+    {
+        var depth = State.FrameNumber;
+        State.CallRoutine(routine, [], storeVariable: 0, returnAddress: State.ProgramCounter);
+
+        while (!HasQuit && State.FrameNumber > depth)
+        {
+            Step();
+        }
+
+        if (HasQuit || State.FrameNumber < depth)
+        {
+            return true;
+        }
+
+        return State.Pop() != 0;
+    }
+
+    // [zm 10.2] From the file of commands while there is one, and from
+    // the keyboard when it runs out, so that a script can hand the game
+    // back to the player.
+    private LineInput ReadLine(LineInputRequest request)
+    {
+        if (_commandFile is not null)
+        {
+            if (_commandFile.ReadLine(request) is { } replayed)
+            {
+                // [zm 7.1.1.1] Input is echoed to the screen. The keyboard
+                // does that as the player types, but nobody typed this,
+                // so the interpreter shows what the file said.
+                foreach (var code in replayed.Text)
+                {
+                    Output.Print(code);
+                }
+
+                if (replayed.Terminator == Zscii.Newline)
+                {
+                    Output.Print(Zscii.Newline);
+                }
+
+                return replayed;
+            }
+
+            CloseCommandFile();
+        }
+
+        return Input.ReadLine(request);
+    }
+
+    private ushort ReadKey(InputTimer? timer)
+    {
+        if (_commandFile is not null)
+        {
+            if (_commandFile.ReadKey() is { } replayed)
+            {
+                return replayed;
+            }
+
+            CloseCommandFile();
+        }
+
+        return Input.ReadKey(timer);
+    }
+
+    private void SelectInputStream(Instruction instruction, ushort number)
+    {
+        // [zm op:input_stream] and [zm 10.2] There are two: 0 for the
+        // keyboard and 1 for a file of commands.
+        switch (number)
+        {
+            case 0:
+                CloseCommandFile();
+                break;
+            case 1:
+                // [zm 10.2.3] The frontend chooses the file however it
+                // likes, and if it chooses none the keyboard stays.
+                if (_commandFile is null && Input.OpenCommandFile() is { } commands)
+                {
+                    PlayCommands(commands);
+                }
+
+                break;
+            default:
+                ReportRuntimeError(instruction, $"there is no input stream {number}");
+                break;
+        }
+    }
+
+    private void CloseCommandFile()
+    {
+        _commandFile?.Close();
+        _commandFile = null;
+    }
+
+    private void Tokenise(ushort[] a)
+    {
+        var text = a[0];
+        var parse = a[1];
+        var dictionaryAddress = a.Length > 2 ? a[2] : 0;
+        var keepUnknownSlots = a.Length > 3 && a[3] != 0;
+
+        // [zm op:tokenise] Lexical analysis of a text buffer as the read
+        // opcode lays it out, which is the Version 5 layout, since the
+        // opcode exists only from Version 5: a count in byte 1 and the
+        // characters from byte 2.
+        int length = Memory.ReadByte(text + 1);
+        var characters = Memory.Slice(text + 2, length).ToArray();
+
+        // [zm op:tokenise] The game's own dictionary unless another is
+        // named. A user dictionary is read afresh each time, since
+        // [zm 13.6] the point of one is that the game can alter it in
+        // play, for instance when the player names things.
+        var dictionary = dictionaryAddress == 0
+            ? Dictionary
+            : new DictionaryTable(Memory, dictionaryAddress, Text, Encoder);
+
+        WriteParseTable(parse, characters, 2, dictionary, keepUnknownSlots);
+    }
+
+    /// <summary>
+    /// [zm 13.6.3] and [zm op:read] Writes the parse table for a text.
+    /// </summary>
+    /// <param name="parse">The parse buffer's address.</param>
+    /// <param name="text">The characters to analyze.</param>
+    /// <param name="textOffset">
+    /// Where the first character sits in the text buffer, since the table
+    /// records positions relative to the buffer's start.
+    /// </param>
+    /// <param name="dictionary">The dictionary to look words up in.</param>
+    /// <param name="keepUnknownSlots">
+    /// [zm op:tokenise] Whether a word not in the dictionary leaves its
+    /// slot untouched instead of writing 0, so that several tokenise
+    /// calls can fill in a table between them.
+    /// </param>
+    /// <remarks>
+    /// [zm op:read] Byte 0 of the parse buffer holds the most words it
+    /// can take. The count found goes in byte 1, and then a 4-byte block
+    /// for each word: the byte address of its dictionary entry or 0, its
+    /// length in letters, and its position in the text buffer. Words past
+    /// the maximum are dropped rather than written beyond the buffer. A
+    /// word whose slot is kept still counts, as Frotz has it, so that the
+    /// slots line up with the words.
+    /// </remarks>
+    private void WriteParseTable(ushort parse, byte[] text, int textOffset, DictionaryTable dictionary, bool keepUnknownSlots)
+    {
+        var maxWords = Memory.ReadByte(parse);
+        var tokens = Lexer.Analyze(text, dictionary);
+        var count = Math.Min(tokens.Count, maxWords);
+
+        for (var i = 0; i < count; i++)
+        {
+            var token = tokens[i];
+            if (token.DictionaryAddress == 0 && keepUnknownSlots)
+            {
+                continue;
+            }
+
+            var block = parse + 2 + (4 * i);
+            State.WriteWord(block, (ushort)token.DictionaryAddress);
+            State.WriteByte(block + 2, (byte)token.Length);
+            State.WriteByte(block + 3, (byte)(textOffset + token.Start));
+        }
+
+        State.WriteByte(parse + 1, (byte)count);
+    }
+
+    /// <summary>
+    /// Sets the header bits that describe this interpreter, which the
+    /// game reads to learn what it can ask for. Done at the start and
+    /// [zm 6.1.3] again after a restart.
+    /// </summary>
+    /// <remarks>
+    /// Only the bits section 10 speaks for are here so far. The screen
+    /// model will add the rest of [zm 11.1] when it arrives.
+    /// </remarks>
+    private void DescribeInterpreterInHeader()
+    {
+        // [zm 10.5.3] and [zm 10.6] Bit 7 of Flags 1 says whether input
+        // can be timed, which depends on the input source.
+        if (Header.Version >= ZMachineVersion.V4)
+        {
+            Header.Flags1FromVersion4 = Input.SupportsTimedInput
+                ? Header.Flags1FromVersion4 | Flags1FromVersion4.TimedInputAvailable
+                : Header.Flags1FromVersion4 & ~Flags1FromVersion4.TimedInputAvailable;
+        }
+
+        // [zm 10.3.1.1] No mouse is offered, so bit 5 of Flags 2 is
+        // cleared to say so, and [zm 10.4.1.1] likewise bit 8 for menus.
+        Header.Flags2 &= ~(Flags2.WantsMouse | Flags2.WantsMenus);
     }
 
     private void EncodeText(ushort text, ushort length, ushort from, ushort codedText)

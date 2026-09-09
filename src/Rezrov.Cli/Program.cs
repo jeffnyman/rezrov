@@ -12,22 +12,48 @@ internal static class Program
 {
     internal static int Main(string[] args)
     {
-        var flags = args.Skip(1).ToHashSet(StringComparer.Ordinal);
-        flags.ExceptWith(["--run", "--trace"]);
+        var run = false;
+        var trace = false;
+        string? commands = null;
+        var usage = args.Length < 1;
 
-        if (args.Length < 1 || flags.Count > 0)
+        for (var i = 1; i < args.Length && !usage; i++)
         {
-            Console.Error.WriteLine("usage: rezrov <story-file> [--run] [--trace]");
+            switch (args[i])
+            {
+                case "--run":
+                    run = true;
+                    break;
+                case "--trace":
+                    trace = true;
+                    break;
+                case "--commands" when i + 1 < args.Length:
+                    run = true;
+                    commands = args[++i];
+                    break;
+                default:
+                    usage = true;
+                    break;
+            }
+        }
+
+        if (usage)
+        {
+            Console.Error.WriteLine("usage: rezrov <story-file> [--run] [--trace] [--commands <file>]");
             return 2;
         }
 
         var path = args[0];
-        var run = args.Contains("--run");
-        var trace = args.Contains("--trace");
 
         if (!File.Exists(path))
         {
             Console.Error.WriteLine($"rezrov: no such file: {path}");
+            return 1;
+        }
+
+        if (commands is not null && !File.Exists(commands))
+        {
+            Console.Error.WriteLine($"rezrov: no such file: {commands}");
             return 1;
         }
 
@@ -44,7 +70,7 @@ internal static class Program
                 return 1;
             }
 
-            return RunZMachine(bytes, trace);
+            return RunZMachine(bytes, trace, commands);
         }
 
         Console.WriteLine($"{Path.GetFileName(path)}: {format}");
@@ -59,15 +85,23 @@ internal static class Program
 
     /// <summary>
     /// Runs the story until it quits or reaches something the interpreter
-    /// cannot do yet, printing its output as it goes. With tracing on,
-    /// every instruction is written to standard error before it runs,
-    /// which is the quickest way to see how a game arrived somewhere.
+    /// cannot do yet, printing its output as it goes and taking commands
+    /// from the console. With tracing on, every instruction is written
+    /// to standard error before it runs, which is the quickest way to see
+    /// how a game arrived somewhere. With a file of commands, [zm 10.2.2]
+    /// the game plays from the file first and the console takes over
+    /// when it ends.
     /// </summary>
-    private static int RunZMachine(byte[] bytes, bool trace)
+    private static int RunZMachine(byte[] bytes, bool trace, string? commands)
     {
         var memory = new ZMemory(bytes);
         var header = new StoryHeader(memory);
-        var interpreter = new Interpreter(memory, new TextWriterOutput(Console.Out, header, memory));
+        var interpreter = new Interpreter(memory, new TextWriterOutput(Console.Out, header, memory), new ConsoleInput(header, memory));
+
+        if (commands is not null)
+        {
+            interpreter.PlayCommands(new StreamReader(commands));
+        }
 
         try
         {
@@ -91,6 +125,16 @@ internal static class Program
             Console.Error.WriteLine();
             Console.Error.WriteLine($"rezrov: stopped after {interpreter.InstructionsExecuted} instructions: {e.Message}");
             return 3;
+        }
+        catch (EndOfStreamException)
+        {
+            // The console was a pipe or a file and it ran dry while the
+            // game still wanted a command, which is a normal way for a
+            // scripted run to end.
+            Console.Out.Flush();
+            Console.Error.WriteLine();
+            Console.Error.WriteLine($"rezrov: input ended after {interpreter.InstructionsExecuted} instructions");
+            return 0;
         }
         catch (Exception e) when (e is InvalidOperationException or InvalidDataException)
         {
