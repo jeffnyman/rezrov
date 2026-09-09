@@ -1,3 +1,4 @@
+using Rezrov.Core.Blorb;
 using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
 using Rezrov.ZMachine.Input;
@@ -857,6 +858,141 @@ public class StoryCorpusTests
 
         Report(failures);
         Assert.True(compared > 10000);
+    }
+
+    [Fact]
+    public void EveryBlorbFileReadsAndMatchesItsStory()
+    {
+        var files = Corpus.BlorbFiles();
+        Assert.SkipUnless(files.Count > 0, SubmoduleAbsent);
+
+        var failures = new List<string>();
+        var identified = 0;
+        var packaged = 0;
+
+        foreach (var file in files)
+        {
+            var name = Path.GetFileName(file);
+            BlorbFile blorb;
+            try
+            {
+                blorb = BlorbFile.Read(File.ReadAllBytes(file));
+            }
+            catch (InvalidDataException e)
+            {
+                failures.Add($"{name}: {e.Message}");
+                continue;
+            }
+
+            if (blorb.Executable is not null)
+            {
+                packaged++;
+            }
+
+            // [blorb 6] A resource file that names its game must name the
+            // story beside it, which has the same name and a version
+            // extension.
+            var story = Directory.EnumerateFiles(Path.GetDirectoryName(file)!)
+                .FirstOrDefault(f => Path.GetFileNameWithoutExtension(f) == Path.GetFileNameWithoutExtension(file) && Path.GetExtension(f) is ['.', 'z', >= '1' and <= '8']);
+            if (blorb.GameIdentifier is { } id && story is not null)
+            {
+                var header = new StoryHeader(new ZMemory(File.ReadAllBytes(story)));
+                if (id.Release != header.Release || id.Serial != header.SerialCode || id.Checksum != header.Checksum)
+                {
+                    failures.Add($"{name}: identifies release {id.Release} serial {id.Serial}, but the story is release {header.Release} serial {header.SerialCode}");
+                }
+
+                identified++;
+            }
+        }
+
+        Report(failures);
+        Assert.True(identified > 0, "No resource file identified its story.");
+        Assert.True(packaged > 0, "No resource file packaged a game.");
+    }
+
+    [Fact]
+    public void TheLurkingHorrorPlaysItsSoundsFromItsBlorbFile()
+    {
+        var story = Corpus.StoryFiles("zcode-infocom")
+            .FirstOrDefault(f => Path.GetFileName(f) == "lurkinghorror-r221-s870918.z3");
+        Assert.SkipUnless(story is not null, SubmoduleAbsent);
+        var blorbPath = Path.ChangeExtension(story, ".blb");
+        Assert.SkipUnless(File.Exists(blorbPath), SubmoduleAbsent);
+
+        var memory = new ZMemory(File.ReadAllBytes(story));
+        var header = new StoryHeader(memory);
+        var writer = new StringWriter();
+        var sound = new RecordingSound();
+        var interpreter = new Interpreter(
+            memory,
+            new TextWriterScreen(writer),
+            new TextReaderInput(TextReader.Null, header, memory),
+            new RandomGenerator(1234),
+            sound: sound);
+        interpreter.UseResources(BlorbFile.Read(File.ReadAllBytes(blorbPath)));
+
+        // [zm 9] The game with sampled sounds: with a frontend that can
+        // play them and the resource file beside it, it runs its opening
+        // and asks the frontend for a sound, rather than stopping.
+        interpreter.PlayCommands(new StringReader("look\ninventory\nquit\ny\n"));
+        try
+        {
+            interpreter.Run(500000);
+        }
+        catch (EndOfStreamException)
+        {
+        }
+
+        Assert.Equal(14, interpreter.Sound.Resources.Count);
+        Assert.NotEmpty(sound.Calls);
+        Assert.Contains("Terminal Room", writer.ToString());
+    }
+
+    [Fact]
+    public void GamesPackagedInBlorbFilesRun()
+    {
+        var files = Corpus.BlorbFiles().Where(f => Path.GetExtension(f) == ".zblorb").ToList();
+        Assert.SkipUnless(files.Count > 0, SubmoduleAbsent);
+
+        var failures = new List<string>();
+
+        foreach (var file in files)
+        {
+            var name = Path.GetFileName(file);
+            var blorb = BlorbFile.Read(File.ReadAllBytes(file));
+            if (blorb.Executable is not { ChunkType: "ZCOD" } executable)
+            {
+                failures.Add($"{name}: no Z-code executable");
+                continue;
+            }
+
+            // [blorb 5] The game is the executable resource, and the
+            // file it came from is its resources.
+            var memory = new ZMemory(executable.Data.ToArray());
+            var header = new StoryHeader(memory);
+            var interpreter = new Interpreter(
+                memory,
+                new TextWriterScreen(new StringWriter()),
+                new TextReaderInput(TextReader.Null, header, memory),
+                new RandomGenerator(1234));
+            interpreter.UseResources(blorb);
+            interpreter.PlayCommands(new StringReader("look\nquit\ny\n"));
+
+            try
+            {
+                interpreter.Run(500000);
+            }
+            catch (EndOfStreamException)
+            {
+            }
+            catch (Exception e) when (e is InvalidOperationException or InvalidDataException or NotSupportedException)
+            {
+                failures.Add($"{name}: {e.Message}");
+            }
+        }
+
+        Report(failures);
     }
 
     [Fact]

@@ -1,4 +1,5 @@
 using Rezrov.Core;
+using Rezrov.Core.Blorb;
 using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
 using Rezrov.ZMachine.Instructions;
@@ -19,6 +20,7 @@ internal static class Program
         string? transcript = null;
         string? record = null;
         string? save = null;
+        string? blorb = null;
         var usage = args.Length < 1;
 
         for (var i = 1; i < args.Length && !usage; i++)
@@ -47,6 +49,9 @@ internal static class Program
                     run = true;
                     save = args[++i];
                     break;
+                case "--blorb" when i + 1 < args.Length:
+                    blorb = args[++i];
+                    break;
                 default:
                     usage = true;
                     break;
@@ -55,7 +60,7 @@ internal static class Program
 
         if (usage)
         {
-            Console.Error.WriteLine("usage: rezrov <story-file> [--run] [--trace] [--commands <file>] [--transcript <file>] [--record <file>] [--save <file>]");
+            Console.Error.WriteLine("usage: rezrov <story-file> [--run] [--trace] [--commands <file>] [--transcript <file>] [--record <file>] [--save <file>] [--blorb <file>]");
             return 2;
         }
 
@@ -80,13 +85,37 @@ internal static class Program
 
         if (run || trace)
         {
-            if (format != StoryFormat.ZMachine)
+            BlorbFile? resources;
+
+            if (format == StoryFormat.Blorb)
+            {
+                // [blorb 5] A resource file with an executable chunk has
+                // everything needed to run the game.
+                if (ReadBlorb(bytes, path) is not { } packaged)
+                {
+                    return 1;
+                }
+
+                if (packaged.Executable is not { ChunkType: "ZCOD" } executable)
+                {
+                    Console.Error.WriteLine($"rezrov: {Path.GetFileName(path)} has no Z-code game in it");
+                    return 1;
+                }
+
+                bytes = executable.Data.ToArray();
+                resources = packaged;
+            }
+            else if (format != StoryFormat.ZMachine)
             {
                 Console.Error.WriteLine($"rezrov: only Z-machine story files can be run yet, and this is {format}");
                 return 1;
             }
+            else
+            {
+                resources = FindResources(path, blorb);
+            }
 
-            return RunZMachine(bytes, trace, commands, transcript, record, save);
+            return RunZMachine(bytes, trace, commands, transcript, record, save, resources);
         }
 
         Console.WriteLine($"{Path.GetFileName(path)}: {format}");
@@ -94,9 +123,93 @@ internal static class Program
         return format switch
         {
             StoryFormat.ZMachine => DescribeZMachine(bytes),
+            StoryFormat.Blorb => DescribeBlorb(bytes, path),
             StoryFormat.Unknown => 1,
             _ => 0,
         };
+    }
+
+    private static BlorbFile? ReadBlorb(byte[] bytes, string path)
+    {
+        try
+        {
+            return BlorbFile.Read(bytes);
+        }
+        catch (InvalidDataException e)
+        {
+            Console.Error.WriteLine($"rezrov: {Path.GetFileName(path)}: {e.Message}");
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// [blorb 5] A resource file without an executable is used in tandem
+    /// with the story: the one named on the command line, or else one
+    /// beside the story with the same name and a Blorb extension, which
+    /// is how the Infocom sound files are distributed.
+    /// </summary>
+    private static BlorbFile? FindResources(string storyPath, string? blorbPath)
+    {
+        if (blorbPath is null)
+        {
+            foreach (var extension in new[] { ".blb", ".blorb", ".zblorb" })
+            {
+                var candidate = Path.ChangeExtension(storyPath, extension);
+                if (File.Exists(candidate))
+                {
+                    blorbPath = candidate;
+                    break;
+                }
+            }
+        }
+
+        if (blorbPath is null)
+        {
+            return null;
+        }
+
+        if (!File.Exists(blorbPath))
+        {
+            Console.Error.WriteLine($"rezrov: no such file: {blorbPath}");
+            return null;
+        }
+
+        return ReadBlorb(File.ReadAllBytes(blorbPath), blorbPath);
+    }
+
+    private static int DescribeBlorb(byte[] bytes, string path)
+    {
+        if (ReadBlorb(bytes, path) is not { } blorb)
+        {
+            return 1;
+        }
+
+        var kinds = blorb.Resources
+            .GroupBy(r => r.Usage)
+            .Select(g => $"{g.Count()} {g.Key.ToString().ToLowerInvariant()}{(g.Count() == 1 ? "" : "s")} ({string.Join(", ", g.Select(r => r.ChunkType.Trim()).Distinct())})");
+        Console.WriteLine($"  {string.Join(", ", kinds)}");
+
+        if (blorb.GameIdentifier is { } id)
+        {
+            Console.WriteLine($"  for release {id.Release}, serial {id.Serial}, checksum {id.Checksum:X4}");
+        }
+
+        if (blorb.Executable is { } executable)
+        {
+            Console.WriteLine($"  runs its own {executable.ChunkType.Trim()} game of {executable.Data.Length} bytes");
+        }
+
+        if (blorb.LoopingSounds.Count > 0)
+        {
+            Console.WriteLine($"  {blorb.LoopingSounds.Count(l => l.Value)} sounds loop until stopped");
+        }
+
+        if (blorb.Author is not null)
+        {
+            Console.WriteLine($"  by {blorb.Author}");
+        }
+
+        return 0;
     }
 
     /// <summary>
@@ -109,9 +222,10 @@ internal static class Program
     /// when it ends. A transcript or record file named here is used
     /// when the game turns [zm 7] stream 2 or 4 on, without asking, and
     /// a save file named here is where [zm op:save] and [zm op:restore]
-    /// go without asking either.
+    /// go without asking either. Resources, if there are any, give the
+    /// game its sounds, though the console can only ring its bell.
     /// </summary>
-    private static int RunZMachine(byte[] bytes, bool trace, string? commands, string? transcript, string? record, string? save)
+    private static int RunZMachine(byte[] bytes, bool trace, string? commands, string? transcript, string? record, string? save, BlorbFile? resources)
     {
         var memory = new ZMemory(bytes);
         var header = new StoryHeader(memory);
@@ -119,7 +233,21 @@ internal static class Program
             memory,
             new TextWriterScreen(Console.Out),
             new ConsoleInput(header, memory),
-            files: new ConsoleFiles(transcript, record, save));
+            files: new ConsoleFiles(transcript, record, save),
+            sound: new ConsoleSound());
+
+        if (resources is not null)
+        {
+            try
+            {
+                interpreter.UseResources(resources);
+            }
+            catch (InvalidDataException e)
+            {
+                // [blorb 6] Complain righteously, then carry on without.
+                Console.Error.WriteLine($"rezrov: ignoring the resource file: {e.Message}");
+            }
+        }
 
         if (commands is not null)
         {
