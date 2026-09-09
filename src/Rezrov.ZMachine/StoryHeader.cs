@@ -149,7 +149,8 @@ public sealed class StoryHeader
     }
 
     /// <summary>
-    /// Flags 1 as laid out from Version 4 onward.
+    /// Flags 1 as laid out from Version 4 onward. The interpreter writes
+    /// it to say what it can do, which is why there is a setter.
     /// </summary>
     /// <exception cref="InvalidOperationException">
     /// The version is 3 or earlier.
@@ -164,6 +165,16 @@ public sealed class StoryHeader
             }
 
             return (Flags1FromVersion4)_memory.ReadByte(Flags1Offset);
+        }
+
+        set
+        {
+            if (Version <= ZMachineVersion.V3)
+            {
+                throw OnlyMeaningfulIn(nameof(Flags1FromVersion4), "Version 4 and later");
+            }
+
+            _memory.WriteByte(Flags1Offset, (byte)value);
         }
     }
 
@@ -244,9 +255,15 @@ public sealed class StoryHeader
     public ushort StaticMemoryBase => _memory.ReadWord(StaticMemoryBaseOffset);
 
     /// <summary>
-    /// Flags 2. See <see cref="ZMachine.Flags2"/> for the bits.
+    /// Flags 2. See <see cref="ZMachine.Flags2"/> for the bits. Both the
+    /// game and the interpreter write to it: the game to ask for things,
+    /// and the interpreter to clear the bits for things it cannot give.
     /// </summary>
-    public Flags2 Flags2 => (Flags2)_memory.ReadWord(Flags2Offset);
+    public Flags2 Flags2
+    {
+        get => (Flags2)_memory.ReadWord(Flags2Offset);
+        set => _memory.WriteWord(Flags2Offset, (ushort)value);
+    }
 
     /// <summary>
     /// Six characters of ASCII. Conventional.

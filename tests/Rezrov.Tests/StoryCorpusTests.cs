@@ -1,5 +1,6 @@
 using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
+using Rezrov.ZMachine.Input;
 using Rezrov.ZMachine.Instructions;
 using Rezrov.ZMachine.Lexing;
 using Rezrov.ZMachine.Objects;
@@ -158,7 +159,7 @@ public class StoryCorpusTests
         {
             var memory = new ZMemory(File.ReadAllBytes(file));
             var writer = new StringWriter();
-            var interpreter = new Interpreter(memory, new TextWriterOutput(writer, new StoryHeader(memory), memory));
+            var interpreter = new Interpreter(memory, new TextWriterOutput(writer, new StoryHeader(memory), memory), new ScriptedInput());
 
             // The whole machine, end to end: decode, call, print, quit.
             interpreter.Run(1000);
@@ -173,32 +174,49 @@ public class StoryCorpusTests
     }
 
     [Fact]
-    public void EveryStoryRunsUntilItNeedsSomethingNotBuiltYet()
+    public void EveryStoryPlaysAFewCommandsOrStopsAtSomethingNotBuiltYet()
     {
         var files = Corpus.StoryFiles();
         Assert.SkipUnless(files.Count > 0, SubmoduleAbsent);
 
+        // [zm 10.2.2] A whole game can be run from a file of commands.
+        // These are commands every parser understands, ending with the
+        // quit and the confirmation most games ask for.
+        const string script = "look\nopen mailbox\nread leaflet\ninventory\nquit\ny\n";
+
         var failures = new List<string>();
-        var reachedInput = 0;
-        var zorkBanner = false;
+        var quit = 0;
+        var wantedMore = 0;
+        var zork = "";
 
         foreach (var file in files)
         {
             var name = Path.GetFileName(file);
             var memory = new ZMemory(File.ReadAllBytes(file));
+            var header = new StoryHeader(memory);
             var writer = new StringWriter();
-            var interpreter = new Interpreter(memory, new TextWriterOutput(writer, new StoryHeader(memory), memory), new RandomGenerator(1234));
+            var interpreter = new Interpreter(
+                memory,
+                new TextWriterOutput(writer, header, memory),
+                new TextReaderInput(TextReader.Null, header, memory),
+                new RandomGenerator(1234));
+            interpreter.PlayCommands(new StringReader(script));
 
-            // Every game either quits, asks for input, or reaches an
-            // opcode that is not implemented yet. Anything else is a bug
-            // in the interpreter, since these are real, working games.
+            // Every game either quits, runs out of script and asks the
+            // empty keyboard for more, or reaches an opcode that is not
+            // implemented yet. Anything else is a bug in the interpreter,
+            // since these are real, working games.
             try
             {
-                interpreter.Run(200000);
+                interpreter.Run(500000);
+                if (interpreter.HasQuit)
+                {
+                    quit++;
+                }
             }
-            catch (NotSupportedException e) when (e.Message.Contains("section 10"))
+            catch (EndOfStreamException)
             {
-                reachedInput++;
+                wantedMore++;
             }
             catch (NotSupportedException)
             {
@@ -206,20 +224,26 @@ public class StoryCorpusTests
                 // now, and the count of games stopped here will fall as
                 // those arrive.
             }
-            catch (Exception e) when (e is InvalidOperationException or InvalidDataException or ArgumentOutOfRangeException)
+            catch (Exception e) when (e is InvalidOperationException or InvalidDataException or ArgumentOutOfRangeException or IndexOutOfRangeException)
             {
-                failures.Add($"{name}: {e.Message}");
+                failures.Add($"{name}: {e.GetType().Name}: {e.Message}");
             }
 
             if (name == "zork1-r88-s840726.z3")
             {
-                zorkBanner = writer.ToString().Contains("ZORK I: The Great Underground Empire");
+                zork = writer.ToString();
             }
         }
 
         Report(failures);
-        Assert.True(reachedInput > 0, "No game got as far as asking for input.");
-        Assert.True(zorkBanner, "Zork I did not print its banner.");
+        Assert.True(quit + wantedMore > 0, "No game got as far as taking a command.");
+
+        // Zork I from its banner through the leaflet to the end: the
+        // parser understood the commands, so the text buffer, the parse
+        // buffer, and the dictionary lookup all agree with the game.
+        Assert.Contains("ZORK I: The Great Underground Empire", zork);
+        Assert.Contains("WELCOME TO ZORK!", zork);
+        Assert.Contains("You are carrying:", zork);
     }
 
     [Fact]

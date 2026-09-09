@@ -190,4 +190,28 @@ public sealed class UnicodeTranslationTable
         unicode = _unicode[index];
         return true;
     }
+
+    /// <summary>
+    /// Looks up the extra character that stands for a Unicode character,
+    /// returning false if the table has none. The first entry wins if the
+    /// table lists a character twice.
+    /// </summary>
+    /// <remarks>
+    /// The table is defined in the ZSCII to Unicode direction, and the
+    /// standard never asks for the reverse, but the keyboard needs it:
+    /// [zm 10.7] only ZSCII characters can be read, so a typed accent has
+    /// to be found in the table before the game can see it.
+    /// </remarks>
+    public bool TryGetZscii(char unicode, out ushort zscii)
+    {
+        var index = Array.IndexOf(_unicode, unicode);
+        if (index < 0)
+        {
+            zscii = 0;
+            return false;
+        }
+
+        zscii = (ushort)(FirstZscii + index);
+        return true;
+    }
 }
