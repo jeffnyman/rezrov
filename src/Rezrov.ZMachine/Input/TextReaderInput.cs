@@ -36,11 +36,6 @@ public sealed class TextReaderInput : IInput
     /// <summary>A reader has no clock.</summary>
     public bool SupportsTimedInput => false;
 
-    /// <summary>
-    /// [zm 10.2.3] There is no way to ask, so there is no file.
-    /// </summary>
-    public TextReader? OpenCommandFile() => null;
-
     public LineInput ReadLine(LineInputRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);

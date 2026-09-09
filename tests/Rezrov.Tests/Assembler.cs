@@ -262,6 +262,7 @@ internal static class Op
     public const int GetCursor = 16;
     public const int SetTextStyle = 17;
     public const int BufferMode = 18;
+    public const int OutputStream = 19;
     public const int InputStream = 20;
     public const int SoundEffect = 21;
     public const int ReadChar = 22;

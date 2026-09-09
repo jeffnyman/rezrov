@@ -16,6 +16,8 @@ internal static class Program
         var run = false;
         var trace = false;
         string? commands = null;
+        string? transcript = null;
+        string? record = null;
         var usage = args.Length < 1;
 
         for (var i = 1; i < args.Length && !usage; i++)
@@ -32,6 +34,14 @@ internal static class Program
                     run = true;
                     commands = args[++i];
                     break;
+                case "--transcript" when i + 1 < args.Length:
+                    run = true;
+                    transcript = args[++i];
+                    break;
+                case "--record" when i + 1 < args.Length:
+                    run = true;
+                    record = args[++i];
+                    break;
                 default:
                     usage = true;
                     break;
@@ -40,7 +50,7 @@ internal static class Program
 
         if (usage)
         {
-            Console.Error.WriteLine("usage: rezrov <story-file> [--run] [--trace] [--commands <file>]");
+            Console.Error.WriteLine("usage: rezrov <story-file> [--run] [--trace] [--commands <file>] [--transcript <file>] [--record <file>]");
             return 2;
         }
 
@@ -71,7 +81,7 @@ internal static class Program
                 return 1;
             }
 
-            return RunZMachine(bytes, trace, commands);
+            return RunZMachine(bytes, trace, commands, transcript, record);
         }
 
         Console.WriteLine($"{Path.GetFileName(path)}: {format}");
@@ -91,13 +101,18 @@ internal static class Program
     /// to standard error before it runs, which is the quickest way to see
     /// how a game arrived somewhere. With a file of commands, [zm 10.2.2]
     /// the game plays from the file first and the console takes over
-    /// when it ends.
+    /// when it ends. A transcript or record file named here is used
+    /// when the game turns [zm 7] stream 2 or 4 on, without asking.
     /// </summary>
-    private static int RunZMachine(byte[] bytes, bool trace, string? commands)
+    private static int RunZMachine(byte[] bytes, bool trace, string? commands, string? transcript, string? record)
     {
         var memory = new ZMemory(bytes);
         var header = new StoryHeader(memory);
-        var interpreter = new Interpreter(memory, new TextWriterScreen(Console.Out), new ConsoleInput(header, memory));
+        var interpreter = new Interpreter(
+            memory,
+            new TextWriterScreen(Console.Out),
+            new ConsoleInput(header, memory),
+            files: new ConsoleFiles(transcript, record));
 
         if (commands is not null)
         {
@@ -146,6 +161,8 @@ internal static class Program
         }
         finally
         {
+            interpreter.Streams.Flush();
+
             // [zm A] Whatever the game did that it should not have, at
             // the level the interpreter was asked to notice.
             foreach (var error in interpreter.RuntimeErrors)

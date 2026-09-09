@@ -11,10 +11,8 @@ namespace Rezrov.Cli;
 /// </summary>
 /// <remarks>
 /// When standard input is a pipe or a file nothing shows the commands
-/// as they are consumed, so they are echoed, which keeps a transcript
-/// readable. And [zm 10.2.3] when the game asks for input stream 1 the
-/// player is asked for a file name, which is the simplest of the "any
-/// method" the standard allows.
+/// as they are consumed, so they are echoed, which keeps the output
+/// readable.
 /// </remarks>
 internal sealed class ConsoleInput : IInput
 {
@@ -47,23 +45,4 @@ internal sealed class ConsoleInput : IInput
     }
 
     public ushort ReadKey(InputTimer? timer) => _keyboard.ReadKey(timer);
-
-    public TextReader? OpenCommandFile()
-    {
-        Console.Error.Write("Command file: ");
-        var path = Console.In.ReadLine()?.Trim();
-
-        if (string.IsNullOrEmpty(path))
-        {
-            return null;
-        }
-
-        if (!File.Exists(path))
-        {
-            Console.Error.WriteLine($"rezrov: no such file: {path}");
-            return null;
-        }
-
-        return new StreamReader(path);
-    }
 }

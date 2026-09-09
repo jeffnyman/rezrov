@@ -4,6 +4,7 @@ using Rezrov.ZMachine.Instructions;
 using Rezrov.ZMachine.Lexing;
 using Rezrov.ZMachine.Objects;
 using Rezrov.ZMachine.Screen;
+using Rezrov.ZMachine.Streams;
 using Rezrov.ZMachine.Text;
 
 namespace Rezrov.ZMachine.Execution;
@@ -26,7 +27,7 @@ namespace Rezrov.ZMachine.Execution;
 /// </remarks>
 public sealed class Interpreter
 {
-    public Interpreter(ZMemory memory, IScreen screen, IInput input, RandomGenerator? random = null)
+    public Interpreter(ZMemory memory, IScreen screen, IInput input, RandomGenerator? random = null, IFileChooser? files = null)
     {
         ArgumentNullException.ThrowIfNull(memory);
         ArgumentNullException.ThrowIfNull(screen);
@@ -34,9 +35,9 @@ public sealed class Interpreter
 
         Memory = memory;
         Input = input;
+        Files = files ?? NoFileChooser.Instance;
         Header = new StoryHeader(memory);
         Screen = new ScreenModel(screen, Header, memory);
-        Output = Screen;
         Text = new ZTextDecoder(memory, Header);
         Encoder = ZTextEncoder.ForStory(Header, memory);
         ExtraCharacters = UnicodeTranslationTable.ForStory(Header, memory);
@@ -45,6 +46,8 @@ public sealed class Interpreter
         Decoder = new InstructionDecoder(memory, Header, Text);
         State = new GameState(memory, Header);
         Random = random ?? new RandomGenerator();
+        Streams = new OutputStreams(Screen, State, Header, ExtraCharacters, Files);
+        Output = Streams;
 
         DescribeInterpreterInHeader();
     }
@@ -52,15 +55,21 @@ public sealed class Interpreter
     public ZMemory Memory { get; }
 
     /// <summary>
-    /// Where printed text goes: output stream 1, the screen, until the
-    /// output streams of section 7 arrive to sit in between.
+    /// Where printed text goes: [zm 7] the output streams, of which the
+    /// screen is the first.
     /// </summary>
     public IOutput Output { get; }
+
+    /// <summary>[zm 7] The output streams.</summary>
+    public OutputStreams Streams { get; }
 
     /// <summary>
     /// [zm 8] The screen model, over the frontend's screen.
     /// </summary>
     public ScreenModel Screen { get; }
+
+    /// <summary>[zm 7.6] The frontend's way of choosing files.</summary>
+    public IFileChooser Files { get; }
 
     /// <summary>Input stream 0, the keyboard.</summary>
     public IInput Input { get; }
@@ -244,6 +253,14 @@ public sealed class Interpreter
 
     private void Execute(Instruction instruction, ushort[] a)
     {
+        // [zm 7.4] The game may have set or cleared the transcript bit
+        // directly since the last instruction, and stream 2 must agree
+        // with it before anything is printed.
+        if (!Streams.SyncWithHeader())
+        {
+            ReportRuntimeError(instruction, "no transcript file is available");
+        }
+
         switch (instruction.Opcode)
         {
             // Arithmetic. [zm 2.2.1] Addition, subtraction, multiplication,
@@ -617,8 +634,8 @@ public sealed class Interpreter
             case Opcode.Quit:
                 // [zm op:quit] The only legal way to stop, since the
                 // starting routine cannot return. Whatever is still
-                // buffered is shown first.
-                Screen.Flush();
+                // buffered is shown and written first.
+                Streams.Flush();
                 HasQuit = true;
                 break;
             case Opcode.Restart:
@@ -629,6 +646,7 @@ public sealed class Interpreter
                 // at the start of a game.
                 State.Restart();
                 Screen.Reset();
+                Streams.Reset();
                 DescribeInterpreterInHeader();
                 break;
             case Opcode.Nop:
@@ -742,9 +760,12 @@ public sealed class Interpreter
                 PrintTable(a);
                 break;
             case Opcode.PrintUnicode:
-                // [zm op:print_unicode] [zm 3.8.5.4] Straight to the
-                // screen, which knows what it can show.
-                Screen.PrintUnicode((char)a[0]);
+                // [zm op:print_unicode] [zm 7.5] To every stream, each
+                // in its own form.
+                Streams.PrintUnicode((char)a[0]);
+                break;
+            case Opcode.OutputStream:
+                SelectOutputStream(instruction, a);
                 break;
             case Opcode.CheckUnicode:
                 CheckUnicode(instruction, a[0]);
@@ -791,8 +812,6 @@ public sealed class Interpreter
             // Not yet. Each of these needs a part of the machine that does
             // not exist in this codebase so far, and saying so beats
             // guessing at it.
-            case Opcode.OutputStream:
-                throw new NotSupportedException($"{instruction.Name} needs the output streams of section 7, which are not implemented yet.");
             case Opcode.SoundEffect:
                 throw new NotSupportedException($"{instruction.Name} needs the sound effects of section 9, which are not implemented yet.");
             case Opcode.SaveUndo:
@@ -1205,11 +1224,12 @@ public sealed class Interpreter
     private void ReadChar(Instruction instruction, ushort[] a)
     {
         // [zm op:read_char] The first operand must be 1, presumably for
-        // input devices that were never built. Anything else is an error
-        // in the game, and there is still only the keyboard to read.
-        if (a[0] != 1)
+        // input devices that were never built. Anything else, including
+        // no operand at all as strictz tries, is an error in the game,
+        // and there is still only the keyboard to read.
+        if (a.Length == 0 || a[0] != 1)
         {
-            ReportRuntimeError(instruction, $"the input device must be 1, not {a[0]}");
+            ReportRuntimeError(instruction, $"the input device must be 1, not {(a.Length == 0 ? "omitted" : a[0].ToString(CultureInfo.InvariantCulture))}");
         }
 
         var timer = Timer(a.Length > 1 ? a[1] : (ushort)0, a.Length > 2 ? a[2] : (ushort)0);
@@ -1269,45 +1289,77 @@ public sealed class Interpreter
     // back to the player.
     private LineInput ReadLine(LineInputRequest request)
     {
-        if (_commandFile is not null)
+        LineInput line;
+
+        if (_commandFile is not null && _commandFile.ReadLine(request) is { } replayed)
         {
-            if (_commandFile.ReadLine(request) is { } replayed)
+            // [zm 7.1.1.1] Input is echoed to the screen. The keyboard
+            // does that as the player types, but nobody typed this, so
+            // the interpreter shows what the file said.
+            foreach (var code in replayed.Text)
             {
-                // [zm 7.1.1.1] Input is echoed to the screen. The keyboard
-                // does that as the player types, but nobody typed this,
-                // so the interpreter shows what the file said.
-                foreach (var code in replayed.Text)
-                {
-                    Output.Print(code);
-                }
-
-                if (replayed.Terminator == Zscii.Newline)
-                {
-                    Output.Print(Zscii.Newline);
-                }
-
-                return replayed;
+                Screen.Print(code);
             }
 
+            if (replayed.Terminator == Zscii.Newline)
+            {
+                Screen.Print(Zscii.Newline);
+            }
+
+            line = replayed;
+        }
+        else
+        {
             CloseCommandFile();
+            line = Input.ReadLine(request);
+
+            // [zm 7.1.2.3] Stream 4 records what the player typed, and
+            // nothing that was played back to them.
+            Streams.RecordCommand(line.Text, line.Terminator);
         }
 
-        return Input.ReadLine(request);
+        // [zm 7.1.1.1] The transcript gets the command either way.
+        Streams.EchoInput(line.Text, line.Terminator);
+        return line;
     }
 
     private ushort ReadKey(InputTimer? timer)
     {
-        if (_commandFile is not null)
+        if (_commandFile is not null && _commandFile.ReadKey() is { } replayed)
         {
-            if (_commandFile.ReadKey() is { } replayed)
-            {
-                return replayed;
-            }
-
-            CloseCommandFile();
+            return replayed;
         }
 
-        return Input.ReadKey(timer);
+        CloseCommandFile();
+        var key = Input.ReadKey(timer);
+        Streams.RecordKey(key);
+        return key;
+    }
+
+    private void SelectOutputStream(Instruction instruction, ushort[] a)
+    {
+        // [zm op:output_stream] A stream number, and for stream 3 the
+        // table to write into. The Version 6 width operand is not used.
+        var number = Signed(a[0]);
+        var table = a.Length > 1 ? a[1] : (ushort)0;
+
+        switch (Streams.Select(number, table))
+        {
+            case StreamSelection.Unknown:
+                ReportRuntimeError(instruction, $"there is no output stream {Math.Abs(number)}");
+                break;
+            case StreamSelection.TooDeep:
+                // [zm 7.1.2.1.1] A seventeenth nesting of stream 3 halts
+                // the interpreter with an error message.
+                throw Fail(instruction, $"Output stream 3 is already nested {OutputStreams.MaxMemoryDepth} deep.");
+            case StreamSelection.Unavailable:
+                // [zm 7.6.5.2] A warning to the player, and otherwise
+                // nothing.
+                ReportRuntimeError(instruction, number == 2 ? "no transcript file is available" : "no file is available to record commands");
+                break;
+            default:
+                break;
+        }
     }
 
     private void SelectInputStream(Instruction instruction, ushort number)
@@ -1322,7 +1374,7 @@ public sealed class Interpreter
             case 1:
                 // [zm 10.2.3] The frontend chooses the file however it
                 // likes, and if it chooses none the keyboard stays.
-                if (_commandFile is null && Input.OpenCommandFile() is { } commands)
+                if (_commandFile is null && Files.OpenCommandFile() is { } commands)
                 {
                     PlayCommands(commands);
                 }

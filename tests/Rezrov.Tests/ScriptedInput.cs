@@ -45,11 +45,6 @@ internal sealed class ScriptedInput : IInput
     /// <summary>The key that ends every scripted line.</summary>
     public ushort Terminator { get; set; } = Zscii.Newline;
 
-    /// <summary>
-    /// What <see cref="OpenCommandFile"/> hands over, once.
-    /// </summary>
-    public TextReader? CommandFile { get; set; }
-
     public LineInput ReadLine(LineInputRequest request)
     {
         Requests.Add(request);
@@ -94,13 +89,6 @@ internal sealed class ScriptedInput : IInput
         }
 
         return Keys.Dequeue();
-    }
-
-    public TextReader? OpenCommandFile()
-    {
-        var file = CommandFile;
-        CommandFile = null;
-        return file;
     }
 
     private static List<ushort> Codes(IReadOnlyList<ushort> initial, string typed)

@@ -8,7 +8,9 @@ namespace Rezrov.ZMachine.Input;
 /// [zm 10.2] Keypresses are drawn from the current input stream, of
 /// which there are two: the keyboard and a file of commands. The file is
 /// the interpreter's to read, since [zm 10.2.1] its format is the
-/// machine's own, so this interface is only the keyboard side. Whatever
+/// machine's own, and the frontend's to choose, through
+/// <see cref="Streams.IFileChooser"/>, so this interface is only the
+/// keyboard side. Whatever
 /// sits behind it produces ZSCII, because [zm 10.7] the only characters
 /// that can be read are the ZSCII characters defined for input. Turning
 /// a keystroke into one of those is the frontend's job, and
@@ -47,12 +49,4 @@ public interface IInput
     /// defined for input, or 0 if the timer's interrupt ended the wait.
     /// </summary>
     ushort ReadKey(InputTimer? timer);
-
-    /// <summary>
-    /// [zm 10.2.3] Chooses the file of commands to play when the game
-    /// selects input stream 1, by whatever means suits the frontend, or
-    /// returns null if there is none to play, in which case the keyboard
-    /// stays current.
-    /// </summary>
-    TextReader? OpenCommandFile();
 }

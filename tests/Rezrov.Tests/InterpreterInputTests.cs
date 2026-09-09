@@ -307,16 +307,21 @@ public partial class InterpreterTests
     {
         var input = new ScriptedInput();
         input.Keys.Enqueue('y');
+        input.Keys.Enqueue('n');
         var run = Execute(
             new Assembler()
                 .Variable(Op.ReadChar, true, Small(2)).Store(G0)
+                .Variable(Op.ReadChar, true).Store(G1)
                 .Quit(),
             input: input);
 
-        // [zm op:read_char] The first operand must be 1. The keyboard is
-        // read anyway, since there is nothing else it could have meant.
+        // [zm op:read_char] The first operand must be 1, and strictz
+        // leaves it out altogether. The keyboard is read anyway, since
+        // there is nothing else it could have meant.
         Assert.Equal('y', run.Global(G0));
-        Assert.Contains("read_char", Assert.Single(run.Interpreter.RuntimeErrors));
+        Assert.Equal('n', run.Global(G1));
+        Assert.Equal(2, run.Interpreter.RuntimeErrors.Count);
+        Assert.All(run.Interpreter.RuntimeErrors, e => Assert.Contains("read_char", e));
     }
 
     [Fact]
@@ -390,7 +395,8 @@ public partial class InterpreterTests
     [Fact]
     public void InputStreamOnePlaysAFileOfCommandsThenReturnsToTheKeyboard()
     {
-        var input = new ScriptedInput("wait") { CommandFile = new StringReader("look\n") };
+        var input = new ScriptedInput("wait");
+        var files = new ScriptedFiles { CommandFile = new StringReader("look\n") };
         var run = Execute(
             new Assembler()
                 .Variable(Op.InputStream, true, Small(1))
@@ -403,7 +409,8 @@ public partial class InterpreterTests
                 story.Bytes[SecondTextBuffer] = 20;
                 story.Bytes[ParseBuffer] = 5;
             },
-            input: input);
+            input: input,
+            files: files);
 
         // [zm 10.2] The first command comes from the file, echoed since
         // nobody typed it, and when the file ends the keyboard is back.
