@@ -1,5 +1,6 @@
 using Rezrov.Core;
 using Rezrov.ZMachine;
+using Rezrov.ZMachine.Instructions;
 using Rezrov.ZMachine.Lexing;
 using Rezrov.ZMachine.Objects;
 using Rezrov.ZMachine.Text;
@@ -85,6 +86,15 @@ internal static class Program
         var dictionary = DictionaryTable.Standard(memory, header, decoder, ZTextEncoder.ForStory(header, memory));
         var separators = string.Concat(dictionary.WordSeparators.Select(s => (char)s));
         Console.WriteLine($"  {dictionary.Count} dictionary words, separators {separators}");
+
+        // [zm 5.4] and [zm 5.5] The first instruction the machine would
+        // execute: inside the main routine in Version 6, and at the
+        // initial program counter everywhere else.
+        var start = header.Version == ZMachineVersion.V6
+            ? RoutineHeader.Read(memory, header.Version, header.UnpackRoutineAddress(header.MainRoutinePackedAddress)).CodeAddress
+            : header.InitialProgramCounter;
+        var first = new InstructionDecoder(memory, header, decoder).Decode(start);
+        Console.WriteLine($"  first instruction at {start:X4}: {first}");
 
         return 0;
     }

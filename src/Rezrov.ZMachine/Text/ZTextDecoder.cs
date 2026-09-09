@@ -85,6 +85,27 @@ public sealed class ZTextDecoder
     }
 
     /// <summary>
+    /// Finds where the string at <paramref name="address"/> ends without
+    /// decoding it, returning the address of the first byte after it.
+    /// </summary>
+    /// <remarks>
+    /// [zm 3.2] The top bit of a word is set only on the last word of a
+    /// string, so the end can be found by scanning words for that bit.
+    /// [zm 4.8] The print and print_ret opcodes keep their text inline,
+    /// and the instruction decoder needs the end to know where the next
+    /// instruction is, whether or not the text is ever printed.
+    /// </remarks>
+    public int SkipString(int address)
+    {
+        while ((_memory.ReadWord(address) & EndOfTextBit) == 0)
+        {
+            address += 2;
+        }
+
+        return address + 2;
+    }
+
+    /// <summary>
     /// Decodes the string at <paramref name="address"/> into ZSCII codes,
     /// appending them to <paramref name="output"/>, and returns the
     /// address of the first byte after the string.
