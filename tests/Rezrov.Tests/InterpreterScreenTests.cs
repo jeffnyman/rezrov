@@ -322,9 +322,10 @@ public partial class InterpreterTests
             header.Flags1FromVersion4);
 
         // [zm 11.1.2] The story asked for pictures, undo, colors, sound,
-        // and menus; only colors survive, since [zm 8.3.4] that bit is
-        // the game's own.
-        Assert.Equal(Flags2.WantsColors, header.Flags2);
+        // and menus; colors survive since [zm 8.3.4] that bit is the
+        // game's own, and [zm 6.1.4] undo survives because it is
+        // provided.
+        Assert.Equal(Flags2.WantsColors | Flags2.WantsUndo, header.Flags2);
     }
 
     [Fact]
