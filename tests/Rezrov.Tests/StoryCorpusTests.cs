@@ -1,4 +1,5 @@
 using Rezrov.ZMachine;
+using Rezrov.ZMachine.Objects;
 using Rezrov.ZMachine.Text;
 
 namespace Rezrov.Tests;
@@ -169,6 +170,246 @@ public class StoryCorpusTests
         }
 
         Assert.True(decoded > 0);
+    }
+
+    /// <summary>
+    /// Objects whose property tables are known to be malformed in the
+    /// shipped file, and are therefore not evidence of a bug here.
+    /// </summary>
+    /// <remarks>
+    /// Sherlock's object 308, the opal, has a sound property list down to
+    /// property 43 and garbage after it: the numbers stop descending and
+    /// a two-byte size has its second byte's top bit clear, which
+    /// [zm 12.4.2.1] says never happens. An interpreter never sees past
+    /// the break, because a property lookup scans downward and stops once
+    /// the numbers fall below the one wanted, which is what Frotz does and
+    /// what <see cref="ObjectTable.TryFindProperty"/> does.
+    /// </remarks>
+    private static readonly HashSet<(string File, int Object)> KnownMalformed =
+    [
+        ("sherlock-r26-s880127.z5", 308),
+    ];
+
+    /// <summary>
+    /// Files whose property tables are malformed throughout.
+    /// </summary>
+    /// <remarks>
+    /// Destruct is the corpus's one Version 1 file compiled by Inform 6,
+    /// which never properly supported Versions 1 and 2. In 11 of its 42
+    /// objects the property list carries junk blocks after the last real
+    /// property, out of order and in one case with a number of 0 in the
+    /// middle of the list. Infocom's own Version 1 and 2 releases of Zork
+    /// I are fine, so this is the compiler, not the layout.
+    /// </remarks>
+    private static readonly HashSet<string> KnownMalformedFiles =
+    [
+        "destruct-r1-s030509.z1",
+    ];
+
+    [Fact]
+    public void EveryObjectTableIsWellFormed()
+    {
+        var files = Corpus.StoryFiles();
+        Assert.SkipUnless(files.Count > 0, SubmoduleAbsent);
+
+        var failures = new List<string>();
+        var objects = 0;
+        var properties = 0;
+
+        foreach (var file in files)
+        {
+            var name = Path.GetFileName(file);
+            var memory = new ZMemory(File.ReadAllBytes(file));
+            var header = new StoryHeader(memory);
+            var table = new ObjectTable(memory, header, new ZTextDecoder(memory, header));
+
+            if (table.Count < 1)
+            {
+                failures.Add($"{name}: no objects found");
+                continue;
+            }
+
+            // [zm 12.4.1] and [zm 12.4.2] The most data a property can
+            // carry in each layout.
+            var longest = header.Version <= ZMachineVersion.V3 ? 8 : 64;
+
+            for (var obj = 1; obj <= table.Count; obj++)
+            {
+                objects++;
+
+                // [zm 12.3.1] The links must all hold valid object
+                // numbers, which is also the first thing to go wrong if
+                // the count or the entry size were wrong.
+                foreach (var (link, label) in new[]
+                {
+                    (table.Parent(obj), "parent"),
+                    (table.Sibling(obj), "sibling"),
+                    (table.Child(obj), "child"),
+                })
+                {
+                    if (link > table.Count)
+                    {
+                        failures.Add($"{name}: object {obj} has {label} {link}, past the last object {table.Count}");
+                    }
+                }
+
+                try
+                {
+                    _ = table.ShortName(obj);
+
+                    if (KnownMalformedFiles.Contains(name) || KnownMalformed.Contains((name, obj)))
+                    {
+                        continue;
+                    }
+
+                    var previous = int.MaxValue;
+                    foreach (var block in table.Properties(obj))
+                    {
+                        properties++;
+
+                        // [zm 12.4] Descending, though not strictly:
+                        // Inform 6 sometimes wrote the same property
+                        // number twice in a row, and Curses release 16,
+                        // Jigsaw, and The Magic Toyshop each carry an
+                        // object like that. A lookup finds the first copy
+                        // and never reaches the second.
+                        if (block.Number > previous)
+                        {
+                            failures.Add($"{name}: object {obj} has property {block.Number} after {previous}");
+                        }
+
+                        if (block.Number > table.MaxPropertyNumber || block.Length < 1 || block.Length > longest)
+                        {
+                            failures.Add($"{name}: object {obj} property {block.Number} has length {block.Length}");
+                        }
+
+                        // The backward read of the size must agree with
+                        // the forward one.
+                        if (table.PropertyLength(block.DataAddress) != block.Length)
+                        {
+                            failures.Add($"{name}: object {obj} property {block.Number} reads back a different length");
+                        }
+
+                        previous = block.Number;
+                    }
+                }
+                catch (Exception e) when (e is InvalidDataException or ArgumentOutOfRangeException)
+                {
+                    failures.Add($"{name}: object {obj}: {e.Message}");
+                }
+            }
+        }
+
+        Assert.Empty(failures.Take(20));
+        Assert.True(objects > 1000, $"Only {objects} objects across the corpus, which is too few to be right.");
+        Assert.True(properties > objects, "Fewer properties than objects, which cannot be right.");
+    }
+
+    [Fact]
+    public void EveryInitialObjectTreeIsWellFounded()
+    {
+        var files = Corpus.StoryFiles();
+        Assert.SkipUnless(files.Count > 0, SubmoduleAbsent);
+
+        var failures = new List<string>();
+
+        foreach (var file in files)
+        {
+            var name = Path.GetFileName(file);
+            var memory = new ZMemory(File.ReadAllBytes(file));
+            var header = new StoryHeader(memory);
+            var table = new ObjectTable(memory, header, new ZTextDecoder(memory, header));
+
+            // [zm 12.5] The three conditions, checked on the initial tree,
+            // which is the only state a compiler is responsible for.
+            for (var obj = 1; obj <= table.Count; obj++)
+            {
+                var parent = table.Parent(obj);
+
+                // (a) An object with a sibling also has a parent.
+                if (table.Sibling(obj) != 0 && parent == 0)
+                {
+                    failures.Add($"{name}: object {obj} has a sibling but no parent");
+                }
+
+                // (b) An object is the parent of exactly those objects in
+                // the sibling list of its child. Checked from both sides:
+                // everything in the chain claims this parent, and this
+                // object appears in its own parent's chain.
+                var seen = 0;
+                for (var child = table.Child(obj); child != 0; child = table.Sibling(child))
+                {
+                    if (table.Parent(child) != obj)
+                    {
+                        failures.Add($"{name}: object {child} is in the chain of {obj} but claims parent {table.Parent(child)}");
+                    }
+
+                    if (++seen > table.Count)
+                    {
+                        failures.Add($"{name}: the children of {obj} form a cycle");
+                        break;
+                    }
+                }
+
+                if (parent != 0)
+                {
+                    var found = false;
+                    for (var child = table.Child(parent); child != 0; child = table.Sibling(child))
+                    {
+                        if (child == obj)
+                        {
+                            found = true;
+                            break;
+                        }
+
+                        if (++seen > table.Count)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (!found)
+                    {
+                        failures.Add($"{name}: object {obj} claims parent {parent} but is not among its children");
+                    }
+                }
+
+                // (c) Every object has a finite level, so following
+                // parents upward must reach the top.
+                var depth = 0;
+                for (var up = parent; up != 0; up = table.Parent(up))
+                {
+                    if (++depth > table.Count)
+                    {
+                        failures.Add($"{name}: the ancestors of {obj} form a cycle");
+                        break;
+                    }
+                }
+            }
+        }
+
+        Assert.Empty(failures.Take(20));
+    }
+
+    [Fact]
+    public void ZorkOneNamesItsRooms()
+    {
+        var file = Corpus.StoryFiles("zcode-infocom")
+            .FirstOrDefault(f => Path.GetFileName(f) == "zork1-r88-s840726.z3");
+        Assert.SkipUnless(file is not null, SubmoduleAbsent);
+
+        var memory = new ZMemory(File.ReadAllBytes(file));
+        var header = new StoryHeader(memory);
+        var table = new ObjectTable(memory, header, new ZTextDecoder(memory, header));
+
+        var names = Enumerable.Range(1, table.Count).Select(table.ShortName).ToHashSet();
+
+        // Ground truth at last: text that a person recognizes, produced
+        // from the real file by the header, the text decoder, and the
+        // object table together.
+        Assert.Contains("West of House", names);
+        Assert.Contains("small mailbox", names);
+        Assert.Contains("brass lantern", names);
     }
 
     /// <summary>

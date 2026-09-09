@@ -1,5 +1,7 @@
 using Rezrov.Core;
 using Rezrov.ZMachine;
+using Rezrov.ZMachine.Objects;
+using Rezrov.ZMachine.Text;
 
 namespace Rezrov.Cli;
 
@@ -38,10 +40,12 @@ internal static class Program
 
     private static int DescribeZMachine(byte[] bytes)
     {
+        var memory = new ZMemory(bytes);
+
         StoryHeader header;
         try
         {
-            header = new StoryHeader(new ZMemory(bytes));
+            header = new StoryHeader(memory);
         }
         catch (InvalidDataException e)
         {
@@ -67,6 +71,12 @@ internal static class Program
         else
         {
             Console.WriteLine("  no length or checksum recorded");
+        }
+
+        var objects = new ObjectTable(memory, header, new ZTextDecoder(memory, header));
+        if (objects.Count > 0)
+        {
+            Console.WriteLine($"  {objects.Count} objects, the first named \"{objects.ShortName(1)}\"");
         }
 
         return 0;
