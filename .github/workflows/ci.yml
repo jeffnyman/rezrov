@@ -1,0 +1,58 @@
+# Build and test on every pull request and on pushes to main.
+#
+# The checkout deliberately does not fetch submodules. Entharion is about
+# 230 MB and holds specifications, story files, and reference interpreters
+# that are useful during development but that nothing in the build or the
+# test suite depends on. The tests construct their inputs by hand for
+# exactly this reason.
+
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  # The job keys below become the status check contexts. A matrix job gets
+  # its matrix values appended, so this produces `build`, and then
+  # `test (ubuntu-latest)`, `test (windows-latest)`, and
+  # `test (macos-latest)`. Those names are what the Protect Main ruleset
+  # requires, so renaming a job here means updating the ruleset too.
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      # ContinuousIntegrationBuild turns warnings into errors, per the
+      # condition in Directory.Build.props, and normalizes embedded source
+      # paths so the output is deterministic. Because EnforceCodeStyleInBuild
+      # is also on, .editorconfig violations fail here rather than needing a
+      # separate formatting job.
+      - run: dotnet build -p:ContinuousIntegrationBuild=true
+
+  test:
+    strategy:
+      # Run every platform even after one fails. Knowing that a failure is
+      # Windows-only, rather than universal, is most of the diagnosis.
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - run: dotnet test -p:ContinuousIntegrationBuild=true

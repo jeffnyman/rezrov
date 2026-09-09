@@ -4,6 +4,33 @@ _An Interactive Fiction Interpreter_
 
 Rezrov is an interpreter for interactive fiction written in C#. The most common and obvious formats there are the Z-Machine and Glulx. The plan is for the interpreter core to be a UI-agnostic library, and the command line, terminal, and graphical frontends are going to be thin shells over that one engine.
 
+## Building and Testing
+
+From the repository root:
+
+```sh
+dotnet build
+dotnet test
+```
+
+Neither needs the `entharion` submodule described further down, so a plain clone builds and tests without pulling several hundred megabytes of reference material.
+
+To run the interpreter against a story file:
+
+```sh
+dotnet run --project src/Rezrov.Cli -- entharion/zcode-infocom/ballyhoo-r97-s851218.z3
+```
+
+The `--` separates arguments meant for `dotnet run` from arguments meant for Rezrov.
+
+Tests are xUnit v3 on Microsoft Testing Platform, which means a test project is a real executable rather than a library loaded by a separate runner. You can run one directly, and it reports more detail than `dotnet test` does:
+
+```sh
+dotnet run --project tests/Rezrov.Tests
+```
+
+One thing worth knowing in advance, because the failure is misleading. In this mode `dotnet test` forwards any option it does not recognize to the test executable, which then rejects it. So `dotnet test -nologo` fails with "Zero tests ran" and exit code 5 rather than with a complaint about the flag. Other options from the VSTest era behave the same way. Plain `dotnet test` is the safe form.
+
 ## Prerequisites
 
 You will need the .NET SDK. The version is pinned in `global.json`, so you need **10.0.302 or newer within the 10.0.x band**. An older SDK will refuse to build rather than silently doing the wrong thing, and a future .NET 11 will not be picked up until that pin is raised deliberately.

@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    xUnit v3 on Microsoft Testing Platform. A test project is a real
+    executable rather than a library loaded by a separate runner, which
+    means it needs neither Microsoft.NET.Test.Sdk nor
+    xunit.runner.visualstudio, and it stays compatible with NativeAOT.
+
+    `dotnet test` is pointed at this platform by dotnet.config in the
+    repository root, not by a property here. The old bridge property,
+    TestingPlatformDotnetTestSupport, made the platform impersonate VSTest,
+    and the .NET 10 SDK removed that path.
+  -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.v3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Rezrov.Core\Rezrov.Core.csproj" />
+    <ProjectReference Include="..\..\src\Rezrov.ZMachine\Rezrov.ZMachine.csproj" />
+  </ItemGroup>
+
+</Project>

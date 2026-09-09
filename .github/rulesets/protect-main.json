@@ -30,7 +30,11 @@
         "strict_required_status_checks_policy": false,
         "do_not_enforce_on_create": false,
         "required_status_checks": [
-          { "context": "pr-title", "integration_id": 15368 }
+          { "context": "pr-title", "integration_id": 15368 },
+          { "context": "build", "integration_id": 15368 },
+          { "context": "test (ubuntu-latest)", "integration_id": 15368 },
+          { "context": "test (windows-latest)", "integration_id": 15368 },
+          { "context": "test (macos-latest)", "integration_id": 15368 }
         ]
       }
     }
