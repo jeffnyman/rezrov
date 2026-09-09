@@ -1,4 +1,5 @@
 using Rezrov.ZMachine;
+using Rezrov.ZMachine.Execution;
 using Rezrov.ZMachine.Instructions;
 using Rezrov.ZMachine.Lexing;
 using Rezrov.ZMachine.Objects;
@@ -143,6 +144,82 @@ public class StoryCorpusTests
         }
 
         Assert.Empty(failures);
+    }
+
+    [Fact]
+    public void SimpleTestFixturesRunToCompletion()
+    {
+        var fixtures = Corpus.SimpleTestFixtures();
+        Assert.SkipUnless(fixtures.Count > 0, SubmoduleAbsent);
+
+        var failures = new List<string>();
+
+        foreach (var file in fixtures)
+        {
+            var memory = new ZMemory(File.ReadAllBytes(file));
+            var writer = new StringWriter();
+            var interpreter = new Interpreter(memory, new TextWriterOutput(writer, new StoryHeader(memory), memory));
+
+            // The whole machine, end to end: decode, call, print, quit.
+            interpreter.Run(1000);
+
+            if (!interpreter.HasQuit || writer.ToString() != "hello from all z machine versions")
+            {
+                failures.Add($"{Path.GetFileName(file)}: quit {interpreter.HasQuit}, printed \"{writer}\"");
+            }
+        }
+
+        Report(failures);
+    }
+
+    [Fact]
+    public void EveryStoryRunsUntilItNeedsSomethingNotBuiltYet()
+    {
+        var files = Corpus.StoryFiles();
+        Assert.SkipUnless(files.Count > 0, SubmoduleAbsent);
+
+        var failures = new List<string>();
+        var reachedInput = 0;
+        var zorkBanner = false;
+
+        foreach (var file in files)
+        {
+            var name = Path.GetFileName(file);
+            var memory = new ZMemory(File.ReadAllBytes(file));
+            var writer = new StringWriter();
+            var interpreter = new Interpreter(memory, new TextWriterOutput(writer, new StoryHeader(memory), memory), new RandomGenerator(1234));
+
+            // Every game either quits, asks for input, or reaches an
+            // opcode that is not implemented yet. Anything else is a bug
+            // in the interpreter, since these are real, working games.
+            try
+            {
+                interpreter.Run(200000);
+            }
+            catch (NotSupportedException e) when (e.Message.Contains("section 10"))
+            {
+                reachedInput++;
+            }
+            catch (NotSupportedException)
+            {
+                // The screen model, sound, or saved games. Expected for
+                // now, and the count of games stopped here will fall as
+                // those arrive.
+            }
+            catch (Exception e) when (e is InvalidOperationException or InvalidDataException or ArgumentOutOfRangeException)
+            {
+                failures.Add($"{name}: {e.Message}");
+            }
+
+            if (name == "zork1-r88-s840726.z3")
+            {
+                zorkBanner = writer.ToString().Contains("ZORK I: The Great Underground Empire");
+            }
+        }
+
+        Report(failures);
+        Assert.True(reachedInput > 0, "No game got as far as asking for input.");
+        Assert.True(zorkBanner, "Zork I did not print its banner.");
     }
 
     [Fact]
