@@ -1,5 +1,6 @@
 using Rezrov.Core;
 using Rezrov.ZMachine;
+using Rezrov.ZMachine.Lexing;
 using Rezrov.ZMachine.Objects;
 using Rezrov.ZMachine.Text;
 
@@ -73,11 +74,17 @@ internal static class Program
             Console.WriteLine("  no length or checksum recorded");
         }
 
-        var objects = new ObjectTable(memory, header, new ZTextDecoder(memory, header));
+        var decoder = new ZTextDecoder(memory, header);
+
+        var objects = new ObjectTable(memory, header, decoder);
         if (objects.Count > 0)
         {
             Console.WriteLine($"  {objects.Count} objects, the first named \"{objects.ShortName(1)}\"");
         }
+
+        var dictionary = DictionaryTable.Standard(memory, header, decoder, ZTextEncoder.ForStory(header, memory));
+        var separators = string.Concat(dictionary.WordSeparators.Select(s => (char)s));
+        Console.WriteLine($"  {dictionary.Count} dictionary words, separators {separators}");
 
         return 0;
     }
