@@ -2,6 +2,7 @@ using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
 using Rezrov.ZMachine.Input;
 using Rezrov.ZMachine.Screen;
+using Rezrov.ZMachine.Streams;
 using Rezrov.ZMachine.Text;
 using static Rezrov.Tests.Assembler;
 
@@ -224,7 +225,12 @@ public partial class InterpreterTests
     /// hangs.
     /// </summary>
     private static Run Execute(
-        Assembler code, Action<Story>? setup = null, ZMachineVersion version = ZMachineVersion.V5, IInput? input = null, IScreen? screen = null)
+        Assembler code,
+        Action<Story>? setup = null,
+        ZMachineVersion version = ZMachineVersion.V5,
+        IInput? input = null,
+        IScreen? screen = null,
+        IFileChooser? files = null)
     {
         var story = new Story(version);
         story.Put(Code, code.ToArray());
@@ -232,7 +238,7 @@ public partial class InterpreterTests
 
         var memory = new ZMemory(story.Bytes);
         var writer = new StringWriter();
-        var interpreter = new Interpreter(memory, screen ?? new TextWriterScreen(writer), input ?? new ScriptedInput());
+        var interpreter = new Interpreter(memory, screen ?? new TextWriterScreen(writer), input ?? new ScriptedInput(), files: files);
 
         interpreter.Run(10000);
         Assert.True(interpreter.HasQuit, "The program did not quit within 10000 instructions.");

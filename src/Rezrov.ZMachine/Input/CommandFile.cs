@@ -105,6 +105,64 @@ public sealed class CommandFile
     /// </summary>
     public void Close() => _reader.Dispose();
 
+    /// <summary>
+    /// [zm 7.1.2.3] Writes a finished command as one line of the format
+    /// this class reads: plain characters as themselves, anything else
+    /// as a bracketed code, and the terminating key last unless it was
+    /// the return key, which is never written.
+    /// </summary>
+    public static string Format(IReadOnlyList<ushort> text, ushort terminator)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+
+        var line = new System.Text.StringBuilder(text.Count + 8);
+        foreach (var code in text)
+        {
+            AppendCode(line, code);
+        }
+
+        if (terminator != Zscii.Newline)
+        {
+            AppendCode(line, terminator);
+        }
+
+        return line.ToString();
+    }
+
+    /// <summary>
+    /// [zm 7.1.2.3] Writes a keypress read by read_char as one line:
+    /// the key, or nothing at all for the return key.
+    /// </summary>
+    public static string FormatKey(ushort key)
+    {
+        if (key == Zscii.Newline)
+        {
+            return "";
+        }
+
+        var line = new System.Text.StringBuilder(8);
+        AppendCode(line, key);
+        return line.ToString();
+    }
+
+    // A printable ASCII character other than the bracket is itself;
+    // everything else, the bracket included, is [code].
+    private static void AppendCode(System.Text.StringBuilder line, ushort code)
+    {
+        if (code is > Zscii.Space and <= Zscii.Tilde && code != '[')
+        {
+            line.Append((char)code);
+        }
+        else if (code == Zscii.Space)
+        {
+            line.Append(' ');
+        }
+        else
+        {
+            line.Append('[').Append(code).Append(']');
+        }
+    }
+
     // One line of the file as ZSCII codes, or null at the end.
     private List<ushort>? ReadCodes()
     {
