@@ -1,10 +1,12 @@
 using System.Globalization;
+using Rezrov.Core.Blorb;
 using Rezrov.ZMachine.Input;
 using Rezrov.ZMachine.Instructions;
 using Rezrov.ZMachine.Lexing;
 using Rezrov.ZMachine.Objects;
 using Rezrov.ZMachine.Saves;
 using Rezrov.ZMachine.Screen;
+using Rezrov.ZMachine.Sound;
 using Rezrov.ZMachine.Streams;
 using Rezrov.ZMachine.Text;
 
@@ -17,9 +19,8 @@ namespace Rezrov.ZMachine.Execution;
 /// <remarks>
 /// Everything before this was a data structure. This is the loop that
 /// uses them, and the opcodes of section 15 are implemented here, each
-/// one cited. Opcodes that need sound or the Version 6 screen are not
-/// implemented yet and say so when reached, rather than doing something
-/// approximate.
+/// one cited. The opcodes of the Version 6 screen are not implemented
+/// yet and say so when reached, rather than doing something approximate.
 ///
 /// The loop sets the program counter to the next instruction before
 /// carrying out the current one. The remarks on section 4 explain why
@@ -28,7 +29,13 @@ namespace Rezrov.ZMachine.Execution;
 /// </remarks>
 public sealed class Interpreter
 {
-    public Interpreter(ZMemory memory, IScreen screen, IInput input, RandomGenerator? random = null, IFileChooser? files = null)
+    public Interpreter(
+        ZMemory memory,
+        IScreen screen,
+        IInput input,
+        RandomGenerator? random = null,
+        IFileChooser? files = null,
+        ISound? sound = null)
     {
         ArgumentNullException.ThrowIfNull(memory);
         ArgumentNullException.ThrowIfNull(screen);
@@ -49,6 +56,7 @@ public sealed class Interpreter
         Random = random ?? new RandomGenerator();
         Streams = new OutputStreams(Screen, State, Header, ExtraCharacters, Files);
         Output = Streams;
+        Sound = new SoundModel(sound ?? NoSound.Instance, Header.Version);
 
         DescribeInterpreterInHeader();
     }
@@ -71,6 +79,39 @@ public sealed class Interpreter
 
     /// <summary>[zm 7.6] The frontend's way of choosing files.</summary>
     public IFileChooser Files { get; }
+
+    /// <summary>
+    /// [zm 9] The sound model, over the frontend's audio.
+    /// </summary>
+    public SoundModel Sound { get; }
+
+    /// <summary>
+    /// [zm 9.1] The resource file the sounds, and one day the pictures,
+    /// come from, or null if there is none.
+    /// </summary>
+    public BlorbFile? Resources { get; private set; }
+
+    /// <summary>
+    /// Takes the sounds and pictures of a Blorb resource file, after
+    /// checking it belongs to this story.
+    /// </summary>
+    /// <exception cref="InvalidDataException">
+    /// [blorb 6] The file names another game.
+    /// </exception>
+    public void UseResources(BlorbFile blorb)
+    {
+        ArgumentNullException.ThrowIfNull(blorb);
+
+        if (blorb.GameIdentifier is { } id
+            && (id.Release != Header.Release || id.Serial != Header.SerialCode || id.Checksum != Header.Checksum))
+        {
+            throw new InvalidDataException(
+                $"The resource file belongs to release {id.Release} serial {id.Serial}, not to release {Header.Release} serial {Header.SerialCode}.");
+        }
+
+        Resources = blorb;
+        Sound.LoadResources(blorb);
+    }
 
     /// <summary>Input stream 0, the keyboard.</summary>
     public IInput Input { get; }
@@ -159,6 +200,16 @@ public sealed class Interpreter
         if (HasQuit)
         {
             throw new InvalidOperationException("The game has quit.");
+        }
+
+        // [zm 9.4.4] A sound that ended by itself has a routine to call,
+        // which happens between instructions, as an interrupt routine.
+        if (Sound.HasPendingEvents)
+        {
+            foreach (var routine in Sound.Update())
+            {
+                CallInterrupt(routine);
+            }
         }
 
         var instruction = Decoder.Decode(State.ProgramCounter);
@@ -642,8 +693,10 @@ public sealed class Interpreter
             case Opcode.Quit:
                 // [zm op:quit] The only legal way to stop, since the
                 // starting routine cannot return. Whatever is still
-                // buffered is shown and written first.
+                // buffered is shown and written first, and the sound
+                // stops with the game.
                 Streams.Flush();
+                Sound.StopAll();
                 HasQuit = true;
                 break;
             case Opcode.Restart:
@@ -655,6 +708,7 @@ public sealed class Interpreter
                 State.Restart();
                 Screen.Reset();
                 Streams.Reset();
+                Sound.StopAll();
                 DescribeInterpreterInHeader();
                 break;
             case Opcode.Nop:
@@ -821,7 +875,8 @@ public sealed class Interpreter
             // not exist in this codebase so far, and saying so beats
             // guessing at it.
             case Opcode.SoundEffect:
-                throw new NotSupportedException($"{instruction.Name} needs the sound effects of section 9, which are not implemented yet.");
+                SoundEffect(instruction, a);
+                break;
             case Opcode.Save:
                 Save(instruction, a);
                 break;
@@ -1157,6 +1212,7 @@ public sealed class Interpreter
         // before input is accepted.
         ShowStatusLine(instruction);
         Screen.PrepareForInput(InputStream == 1);
+        Sound.InputHappened();
 
         var request = new LineInputRequest(
             maxLength,
@@ -1236,6 +1292,7 @@ public sealed class Interpreter
 
         var timer = Timer(a.Length > 1 ? a[1] : (ushort)0, a.Length > 2 ? a[2] : (ushort)0);
         Screen.PrepareForInput(InputStream == 1);
+        Sound.InputHappened();
         Store(instruction, ReadKey(timer));
     }
 
@@ -1294,6 +1351,117 @@ public sealed class Interpreter
         }
 
         return State.Pop() != 0;
+    }
+
+    private void SoundEffect(Instruction instruction, ushort[] a)
+    {
+        // [zm op:sound_effect] number effect volume routine. With no
+        // operands at all the interpreter is asked to bleep as if the
+        // number were 1, and in any case not to halt.
+        var number = a.Length > 0 ? a[0] : 1;
+
+        if (number is 1 or 2)
+        {
+            // [zm 9.2] The bleeps, for which the other operands must be
+            // omitted; when they are not, the bleep happens anyway.
+            if (a.Length > 1)
+            {
+                ReportRuntimeError(instruction, "a bleep takes no operands beyond its number");
+            }
+
+            Sound.Bleep(number);
+            return;
+        }
+
+        var effect = a.Length > 1 ? a[1] : 2;
+        var routine = a.Length > 3 ? a[3] : (ushort)0;
+
+        // [zm op:sound_effect] The low byte of the third operand is the
+        // volume and the high byte the number of plays, 255 meaning
+        // loudest possible and forever. [zm 9.3] Volume runs 1 to 8.
+        var volume = a.Length > 2 ? a[2] & 0xFF : 255;
+        if (volume == 255)
+        {
+            volume = 8;
+        }
+
+        var repeats = a.Length > 2 ? a[2] >> 8 : 1;
+        if (repeats == 255)
+        {
+            repeats = -1;
+        }
+        else if (a.Length > 2 && Header.Version < ZMachineVersion.V5 && repeats != 0)
+        {
+            // [zm op:sound_effect] Before Version 5 the high byte must be
+            // 0; [blorb 11.4] a Version 3 game's looping is the resource
+            // file's business.
+            ReportRuntimeError(instruction, $"repeats are not supported before Version 5, so {repeats} is ignored");
+            repeats = 1;
+        }
+        else if (repeats == 0)
+        {
+            // [zm op:sound_effect] Zero repeats is illegal in Version 5
+            // and taken as once, with a warning, as the standard suggests.
+            if (a.Length > 2 && Header.Version >= ZMachineVersion.V5)
+            {
+                ReportRuntimeError(instruction, "repeats of 0 is illegal and is taken as once");
+            }
+
+            repeats = 1;
+        }
+
+        switch (effect)
+        {
+            case 1:
+                // [zm 9.4.1]
+                if (!Sound.Prepare(number))
+                {
+                    ReportRuntimeError(instruction, $"there is no sound {number}");
+                }
+
+                break;
+            case 2:
+                // [zm 9.4.2]
+                if (!Sound.CanPlaySounds)
+                {
+                    ReportRuntimeError(instruction, "sound effects beyond a bleep cannot be played here");
+                }
+                else if (!Sound.Play(number, volume, repeats, routine))
+                {
+                    ReportRuntimeError(instruction, $"there is no sound {number}");
+                }
+
+                break;
+            case 3:
+                // [zm op:sound_effect] Sound 0 means all of them.
+                if (number == 0)
+                {
+                    Sound.StopAll();
+                }
+                else
+                {
+                    Sound.Stop(number);
+                }
+
+                break;
+            case 4:
+                // [zm 9.4.5]
+                if (number == 0)
+                {
+                    Sound.FinishAll();
+                }
+                else
+                {
+                    Sound.Finish(number);
+                }
+
+                break;
+            default:
+                // The Lurking Horror asks for effect 8 through a bug of
+                // its own, and the standard's remarks say so.
+                ReportRuntimeError(instruction, $"there is no sound effect {effect}");
+                break;
+        }
     }
 
     private void Save(Instruction instruction, ushort[] a)
@@ -1775,6 +1943,13 @@ public sealed class Interpreter
             flags = Set(flags, Flags1FromVersion4.BoldfaceAvailable, can.HasFlag(ScreenCapabilities.Bold));
             flags = Set(flags, Flags1FromVersion4.ItalicAvailable, can.HasFlag(ScreenCapabilities.Italic));
             flags = Set(flags, Flags1FromVersion4.FixedSpaceAvailable, can.HasFlag(ScreenCapabilities.FixedPitch));
+
+            // [zm 9.1.1] In Version 6, bit 5 says whether sound effects
+            // beyond a bleep can be played.
+            if (Header.Version == ZMachineVersion.V6)
+            {
+                flags = Set(flags, Flags1FromVersion4.SoundEffectsAvailable, Sound.CanPlaySounds);
+            }
             flags = Set(flags, Flags1FromVersion4.TimedInputAvailable, Input.SupportsTimedInput);
             Header.Flags1FromVersion4 = flags;
 
@@ -1818,13 +1993,18 @@ public sealed class Interpreter
         // [zm 11.1.2] The interpreter clears the Flags 2 bits for what
         // it cannot give: [zm 8.1.5.1] pictures and the character
         // graphics font in Version 5 (bit 3), [zm 10.3.1.1] the mouse
-        // (bit 5), sound until section 9 exists (bit 7), and
+        // (bit 5), [zm 9.1.2] sound effects beyond a bleep (bit 7), and
         // [zm 10.4.1.1] menus (bit 8). [zm 6.1.4] Undo is provided, so
         // bit 4 stays as the game set it.
-        var flags2 = Header.Flags2 & ~(Flags2.WantsMouse | Flags2.WantsSoundEffects | Flags2.WantsMenus);
+        var flags2 = Header.Flags2 & ~(Flags2.WantsMouse | Flags2.WantsMenus);
         if (!can.HasFlag(ScreenCapabilities.CharacterGraphicsFont))
         {
             flags2 &= ~Flags2.WantsPictures;
+        }
+
+        if (!Sound.CanPlaySounds)
+        {
+            flags2 &= ~Flags2.WantsSoundEffects;
         }
 
         Header.Flags2 = flags2;

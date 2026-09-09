@@ -57,6 +57,35 @@ internal static class Corpus
     }
 
     /// <summary>
+    /// Every Blorb file beside the Z-code stories, sorted, or empty if
+    /// the submodule is not populated.
+    /// </summary>
+    public static List<string> BlorbFiles()
+    {
+        var root = FindRepositoryRoot();
+        if (root is null)
+        {
+            return [];
+        }
+
+        var files = new List<string>();
+
+        foreach (var directory in StoryDirectories)
+        {
+            var path = Path.Combine(root, "entharion", directory);
+            if (!Directory.Exists(path))
+            {
+                continue;
+            }
+
+            files.AddRange(Directory.EnumerateFiles(path).Where(f => Path.GetExtension(f) is ".blb" or ".blorb" or ".zblorb"));
+        }
+
+        files.Sort(StringComparer.Ordinal);
+        return files;
+    }
+
+    /// <summary>
     /// The simple-test fixtures: one tiny Inform program compiled once
     /// for each version, which prints one known sentence and quits.
     /// </summary>

@@ -1009,10 +1009,14 @@ public partial class InterpreterTests
     [Fact]
     public void OpcodesThatAreNotImplementedYetSaySo()
     {
-        // [zm op:sound_effect] Sound is not built yet.
-        var code = new Assembler().Variable(Op.SoundEffect, true, Small(1)).Quit();
+        // [zm op:draw_picture] The Version 6 screen is not built yet, and
+        // [zm 5.4] a Version 6 game starts in its main routine.
+        var main = new Assembler().Ext(5, Small(1)).Quit().ToArray();
 
-        Assert.Throws<NotSupportedException>(() => Execute(code));
+        Assert.Throws<NotSupportedException>(() => Execute(
+            new Assembler(),
+            story => story.Routine(RoutineB, 0, main),
+            ZMachineVersion.V6));
     }
 
     [Fact]
