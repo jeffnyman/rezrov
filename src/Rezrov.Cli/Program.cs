@@ -18,6 +18,7 @@ internal static class Program
         string? commands = null;
         string? transcript = null;
         string? record = null;
+        string? save = null;
         var usage = args.Length < 1;
 
         for (var i = 1; i < args.Length && !usage; i++)
@@ -42,6 +43,10 @@ internal static class Program
                     run = true;
                     record = args[++i];
                     break;
+                case "--save" when i + 1 < args.Length:
+                    run = true;
+                    save = args[++i];
+                    break;
                 default:
                     usage = true;
                     break;
@@ -50,7 +55,7 @@ internal static class Program
 
         if (usage)
         {
-            Console.Error.WriteLine("usage: rezrov <story-file> [--run] [--trace] [--commands <file>] [--transcript <file>] [--record <file>]");
+            Console.Error.WriteLine("usage: rezrov <story-file> [--run] [--trace] [--commands <file>] [--transcript <file>] [--record <file>] [--save <file>]");
             return 2;
         }
 
@@ -81,7 +86,7 @@ internal static class Program
                 return 1;
             }
 
-            return RunZMachine(bytes, trace, commands, transcript, record);
+            return RunZMachine(bytes, trace, commands, transcript, record, save);
         }
 
         Console.WriteLine($"{Path.GetFileName(path)}: {format}");
@@ -102,9 +107,11 @@ internal static class Program
     /// how a game arrived somewhere. With a file of commands, [zm 10.2.2]
     /// the game plays from the file first and the console takes over
     /// when it ends. A transcript or record file named here is used
-    /// when the game turns [zm 7] stream 2 or 4 on, without asking.
+    /// when the game turns [zm 7] stream 2 or 4 on, without asking, and
+    /// a save file named here is where [zm op:save] and [zm op:restore]
+    /// go without asking either.
     /// </summary>
-    private static int RunZMachine(byte[] bytes, bool trace, string? commands, string? transcript, string? record)
+    private static int RunZMachine(byte[] bytes, bool trace, string? commands, string? transcript, string? record, string? save)
     {
         var memory = new ZMemory(bytes);
         var header = new StoryHeader(memory);
@@ -112,7 +119,7 @@ internal static class Program
             memory,
             new TextWriterScreen(Console.Out),
             new ConsoleInput(header, memory),
-            files: new ConsoleFiles(transcript, record));
+            files: new ConsoleFiles(transcript, record, save));
 
         if (commands is not null)
         {

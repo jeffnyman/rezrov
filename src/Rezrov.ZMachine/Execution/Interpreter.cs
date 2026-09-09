@@ -3,6 +3,7 @@ using Rezrov.ZMachine.Input;
 using Rezrov.ZMachine.Instructions;
 using Rezrov.ZMachine.Lexing;
 using Rezrov.ZMachine.Objects;
+using Rezrov.ZMachine.Saves;
 using Rezrov.ZMachine.Screen;
 using Rezrov.ZMachine.Streams;
 using Rezrov.ZMachine.Text;
@@ -16,9 +17,9 @@ namespace Rezrov.ZMachine.Execution;
 /// <remarks>
 /// Everything before this was a data structure. This is the loop that
 /// uses them, and the opcodes of section 15 are implemented here, each
-/// one cited. Opcodes that need sound, saved games, or the Version 6
-/// screen are not implemented yet and say so when reached, rather than
-/// doing something approximate.
+/// one cited. Opcodes that need sound or the Version 6 screen are not
+/// implemented yet and say so when reached, rather than doing something
+/// approximate.
 ///
 /// The loop sets the program counter to the next instruction before
 /// carrying out the current one. The remarks on section 4 explain why
@@ -128,6 +129,13 @@ public sealed class Interpreter
     private readonly List<string> _runtimeErrors = [];
     private readonly HashSet<string> _reportedKinds = [];
     private CommandFile? _commandFile;
+    private int _interruptDepth;
+
+    /// <summary>
+    /// [zm op:save_undo] The states the game has asked to be able to go
+    /// back to.
+    /// </summary>
+    public UndoHistory Undo { get; } = new();
 
     /// <summary>
     /// [zm 10.2.2] Plays commands from a file for as long as it lasts,
@@ -814,24 +822,18 @@ public sealed class Interpreter
             // guessing at it.
             case Opcode.SoundEffect:
                 throw new NotSupportedException($"{instruction.Name} needs the sound effects of section 9, which are not implemented yet.");
+            case Opcode.Save:
+                Save(instruction, a);
+                break;
+            case Opcode.Restore:
+                Restore(instruction, a);
+                break;
             case Opcode.SaveUndo:
-                // [zm op:save_undo] An interpreter unable to provide undo
-                // must return -1, and [zm 6.1.4] has already cleared bit
-                // 4 of Flags 2 to say so. Saved games, undo included, are
-                // on the roadmap; until then this is the answer the
-                // standard prescribes rather than a guess.
-                Store(instruction, unchecked((ushort)-1));
+                SaveUndo(instruction);
                 break;
             case Opcode.RestoreUndo:
-                // [zm op:restore_undo] Unspecified when no save_undo has
-                // happened, which is always the case here, and an
-                // interpreter may simply ignore it: a result of 0 is a
-                // restore that failed.
-                Store(instruction, 0);
+                RestoreUndo(instruction);
                 break;
-            case Opcode.Save:
-            case Opcode.Restore:
-                throw new NotSupportedException($"{instruction.Name} needs saved games, which are not implemented yet.");
             case Opcode.DrawPicture:
             case Opcode.PictureData:
             case Opcode.ErasePicture:
@@ -1271,9 +1273,19 @@ public sealed class Interpreter
         var depth = State.FrameNumber;
         State.CallRoutine(routine, [], storeVariable: 0, returnAddress: State.ProgramCounter);
 
-        while (!HasQuit && State.FrameNumber > depth)
+        // [zm 6.1.1.3] Saving is illegal inside an interrupt routine, so
+        // the save opcodes need to know they are inside one.
+        _interruptDepth++;
+        try
         {
-            Step();
+            while (!HasQuit && State.FrameNumber > depth)
+            {
+                Step();
+            }
+        }
+        finally
+        {
+            _interruptDepth--;
         }
 
         if (HasQuit || State.FrameNumber < depth)
@@ -1282,6 +1294,272 @@ public sealed class Interpreter
         }
 
         return State.Pop() != 0;
+    }
+
+    private void Save(Instruction instruction, ushort[] a)
+    {
+        // [zm op:save] With operands, the Version 5 form saves a region
+        // of memory to an auxiliary file instead of the game.
+        if (a.Length > 0)
+        {
+            SaveAuxiliary(instruction, a);
+            return;
+        }
+
+        var saved = false;
+
+        if (_interruptDepth > 0)
+        {
+            // [zm 6.1.1.3]
+            ReportRuntimeError(instruction, "the game cannot be saved inside an interrupt routine");
+        }
+        else if (Files.OpenSaveFile() is { } file)
+        {
+            try
+            {
+                using (file)
+                {
+                    Quetzal.Write(State.Snapshot() with { ProgramCounter = SavePoint(instruction) }, Header, State.OriginalDynamicMemory, file);
+                }
+
+                saved = true;
+            }
+            catch (IOException e)
+            {
+                // [zm 7.6.4] Reported to the player, as best this can.
+                ReportRuntimeError(instruction, $"the game could not be saved: {e.Message}");
+            }
+        }
+
+        // [zm op:save] Versions 1 to 3 branch on success; from Version 4
+        // the result is stored, 1 for success and 0 for failure.
+        if (Header.Version <= ZMachineVersion.V3)
+        {
+            Branch(instruction, saved);
+        }
+        else
+        {
+            Store(instruction, saved ? (ushort)1 : (ushort)0);
+        }
+    }
+
+    private void Restore(Instruction instruction, ushort[] a)
+    {
+        if (a.Length > 0)
+        {
+            RestoreAuxiliary(instruction, a);
+            return;
+        }
+
+        if (Files.OpenRestoreFile() is { } file)
+        {
+            SavedState? state = null;
+            try
+            {
+                using (file)
+                {
+                    // [zm 6.1.2.1] The file must have been saved from
+                    // this story, which the reader checks.
+                    state = Quetzal.Read(file, Header, State.OriginalDynamicMemory);
+                }
+            }
+            catch (InvalidDataException e)
+            {
+                ReportRuntimeError(instruction, $"the saved game could not be restored: {e.Message}");
+            }
+            catch (IOException e)
+            {
+                ReportRuntimeError(instruction, $"the saved game could not be read: {e.Message}");
+            }
+
+            if (state is not null)
+            {
+                ResumeFrom(state);
+                return;
+            }
+        }
+
+        // [zm op:restore] Failure returns 0 from Version 4, and in
+        // Versions 1 to 3 the branch is never made at all.
+        if (Header.Version >= ZMachineVersion.V4)
+        {
+            Store(instruction, 0);
+        }
+    }
+
+    private void SaveUndo(Instruction instruction)
+    {
+        if (_interruptDepth > 0)
+        {
+            // [zm 6.1.1.3]
+            ReportRuntimeError(instruction, "the game cannot be saved inside an interrupt routine");
+            Store(instruction, 0);
+            return;
+        }
+
+        // [zm op:save_undo] Into the interpreter's own memory, with the
+        // same result as save: 1 now, and 2 when the state comes back.
+        Undo.Push(State.Snapshot() with { ProgramCounter = SavePoint(instruction) });
+        Store(instruction, 1);
+    }
+
+    private void RestoreUndo(Instruction instruction)
+    {
+        // [zm op:restore_undo] Unspecified when nothing was saved, and
+        // an interpreter may simply ignore it, which here is a failed
+        // restore, 0.
+        if (Undo.TryPop(out var state))
+        {
+            ResumeFrom(state);
+        }
+        else
+        {
+            Store(instruction, 0);
+        }
+    }
+
+    /// <summary>
+    /// [quetzal 5.8] Where a saved state resumes: at the store byte of
+    /// the save instruction from Version 4, or its branch data before
+    /// that, so that the save can be completed with a result of 2 when
+    /// the state comes back.
+    /// </summary>
+    private int SavePoint(Instruction instruction) =>
+        Header.Version <= ZMachineVersion.V3 ? instruction.Address + 1 : instruction.NextAddress - 1;
+
+    /// <summary>
+    /// Puts a saved state back and carries on from it as if the save
+    /// that made it had just returned 2.
+    /// </summary>
+    /// <remarks>
+    /// [zm 6.1.2] Everything is written back except Flags 2, which the
+    /// state does itself. [zm 6.1.2.2] The header fields marked Rst are
+    /// set again, since the game may have been saved by another
+    /// interpreter on another screen, and [zm 8.6.1.3] in Version 3 the
+    /// upper window collapses. [zm op:save] The result of 2 means "the
+    /// game is being restored and is resuming execution again from
+    /// here, the point where it was saved", which is done by finishing
+    /// the save instruction's store or branch by hand.
+    /// </remarks>
+    private void ResumeFrom(SavedState state)
+    {
+        State.Restore(state);
+        DescribeInterpreterInHeader();
+
+        if (Header.Version == ZMachineVersion.V3)
+        {
+            Screen.SplitWindow(0);
+        }
+
+        var pc = State.ProgramCounter;
+        if (Header.Version <= ZMachineVersion.V3)
+        {
+            var branch = InstructionDecoder.ReadBranch(Memory, ref pc);
+            State.ProgramCounter = pc;
+            if (branch.OnTrue)
+            {
+                if (branch.ReturnsFalse)
+                {
+                    State.Return(0);
+                }
+                else if (branch.ReturnsTrue)
+                {
+                    State.Return(1);
+                }
+                else
+                {
+                    State.ProgramCounter = branch.Target(pc);
+                }
+            }
+        }
+        else
+        {
+            var variable = Memory.ReadByte(pc);
+            State.ProgramCounter = pc + 1;
+            State.WriteVariable(variable, 2);
+        }
+    }
+
+    private void SaveAuxiliary(Instruction instruction, ushort[] a)
+    {
+        // [zm op:save] table bytes name prompt: a region of memory, its
+        // length, a suggested name, and whether to confirm it.
+        var table = a[0];
+        var length = a.Length > 1 ? a[1] : (ushort)0;
+        var name = AuxiliaryFileName.Sanitize(a.Length > 2 ? ReadStringWithLength(a[2]) : "");
+        var prompt = a.Length <= 3 || a[3] != 0;
+        var saved = false;
+
+        if (table + length > Memory.Length)
+        {
+            ReportRuntimeError(instruction, $"{length} bytes from {table:X4} run past the end of memory");
+        }
+        else if (Files.OpenAuxiliaryFile(name, forWriting: true, prompt) is { } file)
+        {
+            try
+            {
+                using (file)
+                {
+                    file.Write(Memory.Slice(table, length));
+                }
+
+                saved = true;
+            }
+            catch (IOException e)
+            {
+                ReportRuntimeError(instruction, $"the file {name} could not be written: {e.Message}");
+            }
+        }
+
+        Store(instruction, saved ? (ushort)1 : (ushort)0);
+    }
+
+    private void RestoreAuxiliary(Instruction instruction, ushort[] a)
+    {
+        // [zm op:restore] With operands, returns the number of bytes
+        // loaded into the table, or 0 on failure.
+        var table = a[0];
+        var length = a.Length > 1 ? a[1] : (ushort)0;
+        var name = AuxiliaryFileName.Sanitize(a.Length > 2 ? ReadStringWithLength(a[2]) : "");
+        var prompt = a.Length <= 3 || a[3] != 0;
+        var loaded = 0;
+
+        if (Files.OpenAuxiliaryFile(name, forWriting: false, prompt) is { } file)
+        {
+            try
+            {
+                using (file)
+                {
+                    var buffer = new byte[length];
+                    loaded = file.ReadAtLeast(buffer, length, throwOnEndOfStream: false);
+                    for (var i = 0; i < loaded; i++)
+                    {
+                        State.WriteByte(table + i, buffer[i]);
+                    }
+                }
+            }
+            catch (IOException e)
+            {
+                ReportRuntimeError(instruction, $"the file {name} could not be read: {e.Message}");
+                loaded = 0;
+            }
+        }
+
+        Store(instruction, (ushort)loaded);
+    }
+
+    // [zm op:save] A name is an array of ASCII characters preceded by a
+    // byte giving their number.
+    private string ReadStringWithLength(int address)
+    {
+        int length = Memory.ReadByte(address);
+        var characters = new char[length];
+        for (var i = 0; i < length; i++)
+        {
+            characters[i] = (char)Memory.ReadByte(address + 1 + i);
+        }
+
+        return new string(characters);
     }
 
     // [zm 10.2] From the file of commands while there is one, and from
@@ -1539,11 +1817,11 @@ public sealed class Interpreter
 
         // [zm 11.1.2] The interpreter clears the Flags 2 bits for what
         // it cannot give: [zm 8.1.5.1] pictures and the character
-        // graphics font in Version 5 (bit 3), [zm 6.1.4] undo until
-        // saved games exist (bit 4), [zm 10.3.1.1] the mouse (bit 5),
-        // sound until section 9 exists (bit 7), and [zm 10.4.1.1]
-        // menus (bit 8).
-        var flags2 = Header.Flags2 & ~(Flags2.WantsUndo | Flags2.WantsMouse | Flags2.WantsSoundEffects | Flags2.WantsMenus);
+        // graphics font in Version 5 (bit 3), [zm 10.3.1.1] the mouse
+        // (bit 5), sound until section 9 exists (bit 7), and
+        // [zm 10.4.1.1] menus (bit 8). [zm 6.1.4] Undo is provided, so
+        // bit 4 stays as the game set it.
+        var flags2 = Header.Flags2 & ~(Flags2.WantsMouse | Flags2.WantsSoundEffects | Flags2.WantsMenus);
         if (!can.HasFlag(ScreenCapabilities.CharacterGraphicsFont))
         {
             flags2 &= ~Flags2.WantsPictures;

@@ -1,4 +1,5 @@
 using Rezrov.ZMachine.Instructions;
+using Rezrov.ZMachine.Saves;
 
 namespace Rezrov.ZMachine.Execution;
 
@@ -375,6 +376,78 @@ public sealed class GameState
         RequireDynamic(address);
         RequireDynamic(address + 1);
         Memory.WriteWord(address, value);
+    }
+
+    /// <summary>
+    /// [zm 6.1.3] Dynamic memory as the story file had it, which is what
+    /// restart goes back to and what [quetzal 3.2] a saved game is
+    /// compressed against.
+    /// </summary>
+    public ReadOnlySpan<byte> OriginalDynamicMemory => _originalDynamicMemory;
+
+    /// <summary>
+    /// [zm 6.1.1] Captures the entire state of play as a copy.
+    /// </summary>
+    public SavedState Snapshot()
+    {
+        var frames = new SavedFrame[_frames.Count];
+        for (var i = 0; i < frames.Length; i++)
+        {
+            var frame = _frames[i];
+            frames[i] = new SavedFrame(frame.ReturnAddress, frame.StoreVariable, frame.Locals.ToArray(), frame.ArgumentCount, frame.StackBase);
+        }
+
+        return new SavedState(Memory.Slice(0, _originalDynamicMemory.Length).ToArray(), ProgramCounter, frames, _stack.ToArray());
+    }
+
+    /// <summary>
+    /// [zm 6.1.2] Writes a saved state of play back, except for Flags 2,
+    /// which stays as the player has it.
+    /// </summary>
+    /// <exception cref="InvalidDataException">
+    /// The state's dynamic memory is not this story's size, or its call
+    /// chain is empty or inconsistent with its stack.
+    /// </exception>
+    public void Restore(SavedState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+
+        if (state.DynamicMemory.Length != _originalDynamicMemory.Length)
+        {
+            throw new InvalidDataException(
+                $"The saved game has {state.DynamicMemory.Length} bytes of dynamic memory, but this story has {_originalDynamicMemory.Length}.");
+        }
+
+        if (state.Frames.Count == 0)
+        {
+            throw new InvalidDataException("The saved game has no call chain.");
+        }
+
+        foreach (var frame in state.Frames)
+        {
+            if (frame.StackBase > state.Stack.Length || frame.Locals.Length > 15)
+            {
+                throw new InvalidDataException("The saved game's call chain does not fit its stack.");
+            }
+        }
+
+        var flags2 = Memory.ReadWord(0x10);
+        for (var address = 0; address < state.DynamicMemory.Length; address++)
+        {
+            Memory.WriteByte(address, state.DynamicMemory[address]);
+        }
+
+        Memory.WriteWord(0x10, flags2);
+
+        _stack.Clear();
+        _stack.AddRange(state.Stack);
+        _frames.Clear();
+        foreach (var frame in state.Frames)
+        {
+            _frames.Add(new CallFrame(frame.ReturnAddress, frame.StoreVariable, frame.Locals.ToArray(), frame.ArgumentCount, frame.StackBase));
+        }
+
+        ProgramCounter = state.ProgramCounter;
     }
 
     /// <summary>

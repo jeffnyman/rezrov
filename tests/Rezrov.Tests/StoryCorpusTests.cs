@@ -859,6 +859,39 @@ public class StoryCorpusTests
         Assert.True(compared > 10000);
     }
 
+    [Fact]
+    public void ZorkOneSavesAndRestoresThroughQuetzal()
+    {
+        var file = Corpus.StoryFiles("zcode-infocom")
+            .FirstOrDefault(f => Path.GetFileName(f) == "zork1-r88-s840726.z3");
+        Assert.SkipUnless(file is not null, SubmoduleAbsent);
+
+        var memory = new ZMemory(File.ReadAllBytes(file));
+        var header = new StoryHeader(memory);
+        var writer = new StringWriter();
+        var files = new ScriptedFiles { SaveFile = new MemoryStream() };
+        var interpreter = new Interpreter(
+            memory,
+            new TextWriterScreen(writer),
+            new TextReaderInput(TextReader.Null, header, memory),
+            new RandomGenerator(1234),
+            files);
+
+        // Save on the lawn, walk north, restore, and look: the game must
+        // be back on the lawn. [zm op:save] in Version 3 is a branch, and
+        // [zm op:restore] resumes at that branch as if the save had just
+        // succeeded, which is where "Ok." comes from the second time.
+        interpreter.PlayCommands(new StringReader("save\nnorth\nrestore\nlook\nquit\ny\n"));
+        interpreter.Run(500000);
+
+        var output = writer.ToString();
+        Assert.True(interpreter.HasQuit, "Zork I did not quit.");
+        Assert.True(files.SaveFile.ToArray().Length > 36, "Nothing was saved.");
+        Assert.Contains("North of House", output);
+        Assert.Contains("West of House", output[output.IndexOf("North of House", StringComparison.Ordinal)..]);
+        Assert.Equal(1, files.RestoreRequests);
+    }
+
     /// <summary>
     /// Fails with the collected failures listed one per line, since the
     /// assertion library cuts a collection down to five entries, which is

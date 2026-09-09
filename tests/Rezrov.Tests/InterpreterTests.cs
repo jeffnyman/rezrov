@@ -1016,18 +1016,14 @@ public partial class InterpreterTests
     }
 
     [Fact]
-    public void UndoAnswersAsAnInterpreterWithoutItMust()
+    public void RestoreUndoWithNothingSavedFails()
     {
-        // [zm op:save_undo] -1 when undo cannot be provided, and
-        // [zm op:restore_undo] a failed restore, 0, in the same case.
+        // [zm op:restore_undo] Unspecified, and ignored here: 0.
         var run = Execute(new Assembler()
-            .Ext(9).Store(G0)
             .Ext(10).Store(G1)
             .Quit());
 
-        Assert.Equal(0xFFFF, run.Global(G0));
         Assert.Equal(0, run.Global(G1));
-        Assert.False(run.Interpreter.Header.Flags2.HasFlag(Flags2.WantsUndo));
     }
 
     [Fact]

@@ -10,8 +10,7 @@ namespace Rezrov.ZMachine.Streams;
 /// commands, and for a transcript [zm 7.1.1.2] a question asked at most
 /// once per session. A console asks the player, a GUI opens a dialog,
 /// a test hands over a string, and a frontend without files at all
-/// returns null, which [zm 7.6.5] the standard allows. Saved games will
-/// join this interface when they arrive.
+/// returns null, which [zm 7.6.5] the standard allows.
 /// </remarks>
 public interface IFileChooser
 {
@@ -33,6 +32,26 @@ public interface IFileChooser
     /// null if there is none, in which case the keyboard stays current.
     /// </summary>
     TextReader? OpenCommandFile();
+
+    /// <summary>
+    /// [zm op:save] Where a saved game is written, or null if the player
+    /// declined, which makes the save fail.
+    /// </summary>
+    Stream? OpenSaveFile();
+
+    /// <summary>
+    /// [zm op:restore] The saved game to read, or null if the player
+    /// declined or there is none, which makes the restore fail.
+    /// </summary>
+    Stream? OpenRestoreFile();
+
+    /// <summary>
+    /// [zm 7.6] An auxiliary file the game named, already made safe by
+    /// <see cref="Saves.AuxiliaryFileName"/>, opened for writing or for
+    /// reading, or null if it cannot be. [zm op:save] The prompt flag
+    /// says whether the game wants the player asked to confirm the name.
+    /// </summary>
+    Stream? OpenAuxiliaryFile(string name, bool forWriting, bool prompt);
 }
 
 /// <summary>
@@ -52,4 +71,10 @@ public sealed class NoFileChooser : IFileChooser
     public TextWriter? OpenCommandRecord() => null;
 
     public TextReader? OpenCommandFile() => null;
+
+    public Stream? OpenSaveFile() => null;
+
+    public Stream? OpenRestoreFile() => null;
+
+    public Stream? OpenAuxiliaryFile(string name, bool forWriting, bool prompt) => null;
 }

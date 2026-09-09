@@ -135,7 +135,7 @@ public sealed class InstructionDecoder
         byte? store = info.Store ? _memory.ReadByte(at++) : null;
 
         // [zm 4.7]
-        Branch? branch = info.Branch ? ReadBranch(ref at) : null;
+        Branch? branch = info.Branch ? ReadBranch(_memory, ref at) : null;
 
         // [zm 4.8] Execution continues after the last word of the text.
         int? textAddress = null;
@@ -178,9 +178,9 @@ public sealed class InstructionDecoder
     // bytes holding a signed 14-bit offset. The editor's note is right
     // that the sign extension is the part to get wrong: the short form
     // can only go forward, so every loop uses the long one.
-    private Branch ReadBranch(ref int at)
+    internal static Branch ReadBranch(ZMemory memory, ref int at)
     {
-        var first = _memory.ReadByte(at++);
+        var first = memory.ReadByte(at++);
         var onTrue = (first & 0x80) != 0;
 
         if ((first & 0x40) != 0)
@@ -188,7 +188,7 @@ public sealed class InstructionDecoder
             return new Branch(onTrue, (short)(first & 0x3F));
         }
 
-        var offset = ((first & 0x3F) << 8) | _memory.ReadByte(at++);
+        var offset = ((first & 0x3F) << 8) | memory.ReadByte(at++);
         if ((offset & 0x2000) != 0)
         {
             offset -= 0x4000;

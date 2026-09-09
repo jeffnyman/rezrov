@@ -232,6 +232,8 @@ internal static class Op
     public const int Print = 2;
     public const int PrintRet = 3;
     public const int Nop = 4;
+    public const int Save = 5;
+    public const int Restore = 6;
     public const int Restart = 7;
     public const int RetPopped = 8;
     public const int Catch = 9;
