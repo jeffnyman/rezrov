@@ -2032,7 +2032,8 @@ public sealed class Interpreter
     {
         // [zm op:random] Positive: a value from 1 to range. Negative: seed
         // with that value and return 0. Zero: reseed as randomly as
-        // possible, and return 0.
+        // possible, and return 0, which in a seeded session means a
+        // fresh point on the seeded stream; see RandomGenerator.
         var range = Signed(rangeWord);
 
         if (range > 0)

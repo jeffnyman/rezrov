@@ -14,6 +14,19 @@ internal static class Program
 {
     internal static int Main(string[] args)
     {
+        // The acceptance command stands on its own: a script says which
+        // game to play, so there is no story file on the command line.
+        if (args.Length > 0 && args[0] == "--accept")
+        {
+            return args switch
+            {
+                [_, var script] => Acceptance.Run(script, AcceptanceMode.Check),
+                [_, var script, "--update"] => Acceptance.Run(script, AcceptanceMode.Update),
+                [_, var script, "--resume"] => Acceptance.Run(script, AcceptanceMode.Resume),
+                _ => Usage(),
+            };
+        }
+
         var run = false;
         var trace = false;
         string? commands = null;
@@ -66,17 +79,10 @@ internal static class Program
 
         if (usage)
         {
-            Console.Error.WriteLine("usage: rezrov <story-file> [--run] [--trace] [--commands <file>] [--transcript <file>] [--record <file>] [--save <file>] [--blorb <file>] [--seed <number>]");
-            return 2;
+            return Usage();
         }
 
         var path = args[0];
-
-        if (!File.Exists(path))
-        {
-            Console.Error.WriteLine($"rezrov: no such file: {path}");
-            return 1;
-        }
 
         if (commands is not null && !File.Exists(commands))
         {
@@ -84,45 +90,24 @@ internal static class Program
             return 1;
         }
 
-        // [zm 1.1.4] A story file is at most 512K, so reading the whole
-        // thing up front costs nothing worth avoiding.
-        var bytes = File.ReadAllBytes(path);
-        var format = StoryFormatDetector.Detect(bytes);
-
         if (run || trace)
         {
-            BlorbFile? resources;
-
-            if (format == StoryFormat.Blorb)
+            if (StoryLoader.Load(path, blorb, Console.Error) is not { } story)
             {
-                // [blorb 5] A resource file with an executable chunk has
-                // everything needed to run the game.
-                if (ReadBlorb(bytes, path) is not { } packaged)
-                {
-                    return 1;
-                }
-
-                if (packaged.Executable is not { ChunkType: "ZCOD" } executable)
-                {
-                    Console.Error.WriteLine($"rezrov: {Path.GetFileName(path)} has no Z-code game in it");
-                    return 1;
-                }
-
-                bytes = executable.Data.ToArray();
-                resources = packaged;
-            }
-            else if (format != StoryFormat.ZMachine)
-            {
-                Console.Error.WriteLine($"rezrov: only Z-machine story files can be run yet, and this is {format}");
                 return 1;
             }
-            else
-            {
-                resources = FindResources(path, blorb);
-            }
 
-            return RunZMachine(bytes, trace, commands, transcript, record, save, resources, seed);
+            return RunZMachine(story.Bytes, trace, commands, transcript, record, save, story.Resources, seed);
         }
+
+        if (!File.Exists(path))
+        {
+            Console.Error.WriteLine($"rezrov: no such file: {path}");
+            return 1;
+        }
+
+        var bytes = File.ReadAllBytes(path);
+        var format = StoryFormatDetector.Detect(bytes);
 
         Console.WriteLine($"{Path.GetFileName(path)}: {format}");
 
@@ -135,57 +120,16 @@ internal static class Program
         };
     }
 
-    private static BlorbFile? ReadBlorb(byte[] bytes, string path)
+    private static int Usage()
     {
-        try
-        {
-            return BlorbFile.Read(bytes);
-        }
-        catch (InvalidDataException e)
-        {
-            Console.Error.WriteLine($"rezrov: {Path.GetFileName(path)}: {e.Message}");
-            return null;
-        }
-    }
-
-    /// <summary>
-    /// [blorb 5] A resource file without an executable is used in tandem
-    /// with the story: the one named on the command line, or else one
-    /// beside the story with the same name and a Blorb extension, which
-    /// is how the Infocom sound files are distributed.
-    /// </summary>
-    private static BlorbFile? FindResources(string storyPath, string? blorbPath)
-    {
-        if (blorbPath is null)
-        {
-            foreach (var extension in new[] { ".blb", ".blorb", ".zblorb" })
-            {
-                var candidate = Path.ChangeExtension(storyPath, extension);
-                if (File.Exists(candidate))
-                {
-                    blorbPath = candidate;
-                    break;
-                }
-            }
-        }
-
-        if (blorbPath is null)
-        {
-            return null;
-        }
-
-        if (!File.Exists(blorbPath))
-        {
-            Console.Error.WriteLine($"rezrov: no such file: {blorbPath}");
-            return null;
-        }
-
-        return ReadBlorb(File.ReadAllBytes(blorbPath), blorbPath);
+        Console.Error.WriteLine("usage: rezrov <story-file> [--run] [--trace] [--commands <file>] [--transcript <file>] [--record <file>] [--save <file>] [--blorb <file>] [--seed <number>]");
+        Console.Error.WriteLine("       rezrov --accept <script> [--update | --resume]");
+        return 2;
     }
 
     private static int DescribeBlorb(byte[] bytes, string path)
     {
-        if (ReadBlorb(bytes, path) is not { } blorb)
+        if (StoryLoader.ReadBlorb(bytes, path, Console.Error) is not { } blorb)
         {
             return 1;
         }
