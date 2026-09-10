@@ -63,6 +63,12 @@ public sealed class ScreenBuffer
     /// <summary>The lower window's cursor column, from 0.</summary>
     public int CursorColumn { get; private set; }
 
+    /// <summary>
+    /// [zm op:set_cursor] Whether the cursor is shown, which a Version
+    /// 6 game can turn off.
+    /// </summary>
+    public bool CursorVisible { get; private set; } = true;
+
     /// <summary>The cell at a row and column, both from 0.</summary>
     public Cell this[int row, int column] => _rows[row][column];
 
@@ -133,6 +139,7 @@ public sealed class ScreenBuffer
 
         CursorRow = Math.Min(model.CursorRow, Height - 1);
         CursorColumn = Math.Min(model.CursorColumn, Width - 1);
+        CursorVisible = model.CursorVisible;
     }
 
     /// <summary>Prints a run at the cursor, in the lower window.</summary>

@@ -792,6 +792,21 @@ public sealed class WindowedScreenModel : IScreenModel
     }
 
     /// <summary>
+    /// [zm op:output_stream] The width text has to fit in when wrapped
+    /// as a window would wrap it: the window's width less its margins,
+    /// or the screen's width for a number that names no window.
+    /// </summary>
+    public int TextWidth(int window)
+    {
+        if (Resolve(window) is not { } target)
+        {
+            return UnitsWide;
+        }
+
+        return Math.Max(target.Width - target.LeftMargin - target.RightMargin, 0);
+    }
+
+    /// <summary>
     /// [zm op:scroll_window] Scrolls a window's contents up by the
     /// given number of units, or down for a negative number, filling
     /// with the window's background. [zm 8.8.3.6] Any window can be

@@ -2035,11 +2035,19 @@ public sealed class Interpreter
     private void SelectOutputStream(Instruction instruction, ushort[] a)
     {
         // [zm op:output_stream] A stream number, and for stream 3 the
-        // table to write into. The Version 6 width operand is not used.
+        // table to write into. In Version 6 a third operand asks for
+        // the text wrapped as the window of that number would wrap it,
+        // or to a width in units when negative.
         var number = Signed(a[0]);
         var table = a.Length > 1 ? a[1] : (ushort)0;
+        int? lineWidth = null;
+        if (a.Length > 2 && Windows is { } windows)
+        {
+            var width = Signed(a[2]);
+            lineWidth = width < 0 ? -width : windows.TextWidth(width);
+        }
 
-        switch (Streams.Select(number, table))
+        switch (Streams.Select(number, table, lineWidth))
         {
             case StreamSelection.Unknown:
                 ReportRuntimeError(instruction, $"there is no output stream {Math.Abs(number)}");
@@ -2284,6 +2292,16 @@ public sealed class Interpreter
         }
 
         Header.Flags2 = flags2;
+
+        // [zm 11.1.7.3] The header extension: [zm 11.1.7.4] Flags 3 keeps
+        // only the bits for features provided, transparency in Version
+        // 6, and [zm 11.1.7.4.1] every unused bit is cleared; then the
+        // true colors behind the default colors. [zm 11.1.7.2] Writing
+        // past the end of the table, or without one, does nothing.
+        var flags3 = Header.Flags3 & (Header.Version == ZMachineVersion.V6 ? Flags3.WantsTransparency : Flags3.None);
+        Header.WriteExtensionWord(4, (ushort)flags3);
+        Header.WriteExtensionWord(5, ScreenColors.ToTrueColor(screen.DefaultForeground));
+        Header.WriteExtensionWord(6, ScreenColors.ToTrueColor(screen.DefaultBackground));
     }
 
     private static Flags1Versions1To3 Set(Flags1Versions1To3 flags, Flags1Versions1To3 bit, bool on) =>
