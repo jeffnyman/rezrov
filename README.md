@@ -6,7 +6,7 @@ Rezrov is an interpreter for interactive fiction written in C#. The most common 
 
 ## Using
 
-Rezrov is a command line program for now. Give it a story file and it tells you about the file; add `--run` and it plays the game on the console.
+Rezrov comes as two programs over one interpreter. `rezrov` is the command line program: give it a story file and it tells you about the file; add `--run` and it plays the game on the console as a plain stream of text. `rezrov-tui` is the terminal program: give it a story file and it plays the game full screen, with the status line, the upper window, styles, and colors that the console cannot draw.
 
 ```sh
 dotnet run --project src/Rezrov.Cli -- entharion/zcode-infocom/zork1-r88-s840726.z3
@@ -35,6 +35,16 @@ rezrov entharion/zcode-infocom/zork1-r88-s840726.z3 --run < commands.txt
 When a game does something the standard says it must not, such as treating object 0 as an object, Rezrov notes it and carries on, and prints the notes to standard error after the game ends. That is the middle setting of the four levels Appendix A of the standard recommends, and the one Frotz uses too.
 
 Rezrov exits with 0 when the game quits or standard input runs out, 1 when a file cannot be read or is not a story, 2 when the command line is wrong, and 3 when the game reaches something not implemented yet.
+
+### The terminal program
+
+```sh
+dotnet run --project src/Rezrov.Tui -- entharion/zcode-infocom/zork1-r88-s840726.z3
+```
+
+This takes over the whole terminal, as Infocom's own interpreters did. A Version 3 game gets its status line across the top, later games get their upper window, and text is shown in the styles and colors the game asks for, as far as the terminal has them. Input is edited in place at the game's own cursor, timed input works, and the [MORE] pause appears when a screenful of text has gone by. When the game turns on a transcript, saves, or restores, a file dialog asks where. Ctrl+Q leaves at any time, and when the game ends by itself the screen stays until a key is pressed, so the last of the text can be read.
+
+The same `--blorb`, `--commands`, `--transcript`, `--record`, and `--save` options work here as on the command line, and a `.zblorb` can be given directly. What the terminal program does not do yet is play sounds beyond a bleep; a sound frontend needs a decoder for the Blorb formats, which is still to come. Version 6 games are declined up front for the same reason as on the command line.
 
 ## Building and Testing
 

@@ -32,12 +32,26 @@
   </ItemGroup>
 
   <!--
-    Deliberately not declared yet: Avalonia (GUI) and Terminal.Gui (TUI).
+    The terminal frontend.
 
-    Both are pinned only when a project actually references them. Declaring
-    a version months before first use just guarantees it is stale on
-    arrival. For reference, the current releases as of the date above are
-    Avalonia 12.1.2 and Terminal.Gui 2.4.17.
+    Terminal.Gui 2.4.17 is the current stable release as of 2026-09-10 and
+    publishes cleanly under NativeAOT. Onigwrap is not used directly: it
+    is the native regex library behind Terminal.Gui's syntax highlighter,
+    and Rezrov.Tui references it only to exclude its native asset from
+    the published output. Its version is pinned here because central
+    package management requires a version for every reference.
+  -->
+
+  <ItemGroup>
+    <PackageVersion Include="Terminal.Gui" Version="2.4.17" />
+    <PackageVersion Include="Onigwrap" Version="1.0.11" />
+  </ItemGroup>
+
+  <!--
+    Deliberately not declared yet: Avalonia (GUI). It is pinned only when
+    a project actually references it, since declaring a version months
+    before first use just guarantees it is stale on arrival. For reference,
+    the current release as of the date above is Avalonia 12.1.2.
   -->
 
 </Project>
