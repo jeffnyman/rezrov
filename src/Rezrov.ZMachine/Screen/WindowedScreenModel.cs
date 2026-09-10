@@ -133,6 +133,15 @@ public sealed class WindowedScreenModel : IScreenModel
     /// </summary>
     public Action<ushort>? NewlineInterrupt { get; set; }
 
+    /// <summary>
+    /// [zm 8.3] Whether all windows share one pair of colors and a
+    /// change to either recolors everything on the screen, which is
+    /// how the Amiga's two logical text colors behaved and what
+    /// Infocom's Version 6 games expect under the Amiga number. The
+    /// interpreter sets this.
+    /// </summary>
+    public bool SharedColors { get; set; }
+
     /// <summary>Where pictures have been drawn since the screen was last cleared.</summary>
     public IReadOnlyList<PicturePlacement> Pictures => _pictures;
 
@@ -576,6 +585,7 @@ public sealed class WindowedScreenModel : IScreenModel
         target.TrueBackground = target.Background == ScreenColor.Transparent
             ? ScreenColors.TrueTransparent
             : (short)ScreenColors.ToTrueColor(target.Background);
+        ShareColors(target);
         return true;
 
         static ScreenColor Choose(ScreenColor asked, ScreenColor current, ScreenColor fallback, ScreenColor underCursor) => asked switch
@@ -612,6 +622,7 @@ public sealed class WindowedScreenModel : IScreenModel
             ScreenColors.TrueTransparent => ScreenColors.TrueTransparent,
             _ => (short)ScreenColors.ToTrueColor(target.Background),
         };
+        ShareColors(target);
         return true;
 
         static ScreenColor Translate(short trueColor, ScreenColor current, ScreenColor fallback, ScreenColor underCursor) => trueColor switch
@@ -944,6 +955,37 @@ public sealed class WindowedScreenModel : IScreenModel
         FlushWord();
         FlushStream();
         Sync();
+    }
+
+    // [zm 8.3] Under the Amiga rule, one window's new colors become
+    // every window's, and every cell on the screen changes to match.
+    private void ShareColors(ZWindow source)
+    {
+        if (!SharedColors)
+        {
+            return;
+        }
+
+        foreach (var window in _windows)
+        {
+            window.Foreground = source.Foreground;
+            window.Background = source.Background;
+            window.TrueForeground = source.TrueForeground;
+            window.TrueBackground = source.TrueBackground;
+        }
+
+        EnsureSize();
+        var background = source.Background == ScreenColor.Transparent ? _screen.DefaultBackground : source.Background;
+        for (var row = 0; row < Height; row++)
+        {
+            for (var column = 0; column < Width; column++)
+            {
+                var cell = _cells[row][column];
+                _cells[row][column] = cell with { Attributes = cell.Attributes with { Foreground = source.Foreground, Background = background } };
+            }
+        }
+
+        _changed = true;
     }
 
     // The window a number names: 0 to 7, or -3 for the current one.
