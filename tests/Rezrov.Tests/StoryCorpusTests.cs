@@ -222,13 +222,7 @@ public class StoryCorpusTests
             {
                 wantedMore++;
             }
-            catch (NotSupportedException)
-            {
-                // The screen model, sound, or saved games. Expected for
-                // now, and the count of games stopped here will fall as
-                // those arrive.
-            }
-            catch (Exception e) when (e is InvalidOperationException or InvalidDataException or ArgumentOutOfRangeException or IndexOutOfRangeException)
+            catch (Exception e) when (e is InvalidOperationException or InvalidDataException or ArgumentOutOfRangeException or IndexOutOfRangeException or NotSupportedException)
             {
                 failures.Add($"{name}: {e.GetType().Name}: {e.Message}");
             }
@@ -236,12 +230,12 @@ public class StoryCorpusTests
             if (name == "zork1-r88-s840726.z3")
             {
                 zork = writer.ToString();
-                zorkStatus = interpreter.Screen.StatusLineText ?? "";
+                zorkStatus = interpreter.Screen!.StatusLineText ?? "";
             }
 
             if (name == "advent-r9-s260512.z5")
             {
-                adventUpper = interpreter.Screen.UpperWindow.RowText(1);
+                adventUpper = interpreter.Screen!.UpperWindow.RowText(1);
             }
         }
 

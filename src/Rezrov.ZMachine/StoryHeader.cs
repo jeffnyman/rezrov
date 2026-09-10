@@ -524,7 +524,11 @@ public sealed class StoryHeader
     /// Total width in pixels of text sent to output stream 3. Version 6.
     /// Set by the interpreter.
     /// </summary>
-    public ushort OutputStream3Width => _memory.ReadWord(OutputStream3WidthOffset);
+    public ushort OutputStream3Width
+    {
+        get => _memory.ReadWord(OutputStream3WidthOffset);
+        set => _memory.WriteWord(OutputStream3WidthOffset, value);
+    }
 
     /// <summary>
     /// The major part of the standard revision the interpreter follows.

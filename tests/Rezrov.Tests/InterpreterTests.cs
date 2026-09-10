@@ -230,7 +230,8 @@ public partial class InterpreterTests
         ZMachineVersion version = ZMachineVersion.V5,
         IInput? input = null,
         IScreen? screen = null,
-        IFileChooser? files = null)
+        IFileChooser? files = null,
+        Action<Interpreter>? before = null)
     {
         var story = new Story(version);
         story.Put(Code, code.ToArray());
@@ -239,6 +240,7 @@ public partial class InterpreterTests
         var memory = new ZMemory(story.Bytes);
         var writer = new StringWriter();
         var interpreter = new Interpreter(memory, screen ?? new TextWriterScreen(writer), input ?? new ScriptedInput(), files: files);
+        before?.Invoke(interpreter);
 
         interpreter.Run(10000);
         Assert.True(interpreter.HasQuit, "The program did not quit within 10000 instructions.");
@@ -1004,19 +1006,6 @@ public partial class InterpreterTests
             .Quit());
 
         Assert.Equal(1, run.Global(G0));
-    }
-
-    [Fact]
-    public void OpcodesThatAreNotImplementedYetSaySo()
-    {
-        // [zm op:draw_picture] The Version 6 screen is not built yet, and
-        // [zm 5.4] a Version 6 game starts in its main routine.
-        var main = new Assembler().Ext(5, Small(1)).Quit().ToArray();
-
-        Assert.Throws<NotSupportedException>(() => Execute(
-            new Assembler(),
-            story => story.Routine(RoutineB, 0, main),
-            ZMachineVersion.V6));
     }
 
     [Fact]

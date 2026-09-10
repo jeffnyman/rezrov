@@ -24,6 +24,18 @@ public interface IScreen
     /// <summary>[zm 8.4] Height in lines.</summary>
     int Height { get; }
 
+    /// <summary>
+    /// [zm 8.1.1] A character's width in units, for Version 6, where
+    /// [zm 8.8.1] the screen is measured in units rather than
+    /// characters. A frontend made of character cells has nothing
+    /// smaller than a cell, so its font is 1 unit wide and 1 high, and
+    /// its units are its cells.
+    /// </summary>
+    int FontWidth => 1;
+
+    /// <summary>[zm 8.1.1] A character's height in units.</summary>
+    int FontHeight => 1;
+
     ScreenCapabilities Capabilities { get; }
 
     /// <summary>
@@ -79,4 +91,15 @@ public interface IScreen
     /// repaint from <paramref name="model"/> now.
     /// </summary>
     void UpdateUpperWindow(ScreenModel model);
+
+    /// <summary>
+    /// [zm 8.8] The Version 6 screen changed, or the model is about to
+    /// wait for input, so a frontend that paints a grid should repaint
+    /// every cell from <paramref name="model"/> now. A frontend that
+    /// takes text as a stream has already had the text through
+    /// <see cref="Print"/> and can ignore this.
+    /// </summary>
+    void UpdateWindows(WindowedScreenModel model)
+    {
+    }
 }

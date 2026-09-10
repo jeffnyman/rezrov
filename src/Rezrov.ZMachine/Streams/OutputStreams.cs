@@ -26,7 +26,7 @@ public sealed class OutputStreams : IOutput
     /// </summary>
     public const int MaxMemoryDepth = 16;
 
-    private readonly ScreenModel _screen;
+    private readonly IScreenModel _screen;
     private readonly GameState _state;
     private readonly StoryHeader _header;
     private readonly UnicodeTranslationTable _extraCharacters;
@@ -36,7 +36,7 @@ public sealed class OutputStreams : IOutput
     private bool _transcriptDeclined;
     private TextWriter? _record;
 
-    public OutputStreams(ScreenModel screen, GameState state, StoryHeader header, UnicodeTranslationTable extraCharacters, IFileChooser files)
+    public OutputStreams(IScreenModel screen, GameState state, StoryHeader header, UnicodeTranslationTable extraCharacters, IFileChooser files)
     {
         ArgumentNullException.ThrowIfNull(screen);
         ArgumentNullException.ThrowIfNull(state);
@@ -186,7 +186,7 @@ public sealed class OutputStreams : IOutput
             // [zm 7.1.2.2.1] Newlines are written to stream 3 as ZSCII
             // 13, which is what a newline is in ZSCII anyway; the codes
             // arrive here unchanged.
-            _memory.Peek().Write(_state, (byte)zscii);
+            _memory.Peek().Write(_state, (byte)zscii, _screen.FontWidth);
             return;
         }
 
@@ -195,7 +195,7 @@ public sealed class OutputStreams : IOutput
             _screen.Print(zscii);
         }
 
-        if (_transcript is not null && TranscriptSelected && _screen.CurrentWindow == ScreenModel.Lower)
+        if (_transcript is not null && TranscriptSelected && _screen.EchoesToTranscript)
         {
             WriteToTranscript(zscii);
         }
@@ -215,7 +215,7 @@ public sealed class OutputStreams : IOutput
         if (_memory.Count > 0)
         {
             var zscii = Zscii.FromUnicode(character, _extraCharacters);
-            _memory.Peek().Write(_state, (byte)(zscii is { } code && Zscii.IsDefinedForInputAndOutput(code) ? code : '?'));
+            _memory.Peek().Write(_state, (byte)(zscii is { } code && Zscii.IsDefinedForInputAndOutput(code) ? code : '?'), _screen.FontWidth);
             return;
         }
 
@@ -224,7 +224,7 @@ public sealed class OutputStreams : IOutput
             _screen.PrintUnicode(character);
         }
 
-        if (_transcript is not null && TranscriptSelected && _screen.CurrentWindow == ScreenModel.Lower)
+        if (_transcript is not null && TranscriptSelected && _screen.EchoesToTranscript)
         {
             _transcript.Write(_screen.CanPrint(character) ? character : '?');
         }
@@ -342,11 +342,18 @@ public sealed class OutputStreams : IOutput
     }
 
     // [zm 7.1.2.1] When the stream is deselected, the first word of the
-    // table holds the number of characters printed.
+    // table holds the number of characters printed, and in Version 6
+    // the header word at $30 holds the width of the text in units,
+    // which is how a game measures a string before placing it.
     private void CloseMemory()
     {
         var stream = _memory.Pop();
         _state.WriteWord(stream.Table, (ushort)stream.Count);
+
+        if (_header.Version == ZMachineVersion.V6)
+        {
+            _header.OutputStream3Width = (ushort)Math.Min(stream.Width, ushort.MaxValue);
+        }
     }
 
     /// <summary>
@@ -360,10 +367,17 @@ public sealed class OutputStreams : IOutput
 
         public int Count { get; private set; }
 
-        public void Write(GameState state, byte zscii)
+        /// <summary>The width of the text in units, for Version 6.</summary>
+        public int Width { get; private set; }
+
+        public void Write(GameState state, byte zscii, int characterWidth)
         {
             state.WriteByte(Table + 2 + Count, zscii);
             Count++;
+            if (zscii != Zscii.Newline)
+            {
+                Width += characterWidth;
+            }
         }
     }
 }

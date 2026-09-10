@@ -30,7 +30,7 @@ public partial class InterpreterTests
             screen: screen);
 
         // [zm op:split_window], [zm op:set_window], [zm op:set_cursor]
-        var model = run.Interpreter.Screen;
+        var model = run.Interpreter.Screen!;
         Assert.Equal(2, model.UpperWindow.Lines);
         Assert.Equal("  hi", model.UpperWindow.RowText(1)[..4]);
         Assert.Equal("lo", screen.Text);
@@ -71,7 +71,7 @@ public partial class InterpreterTests
 
         // [zm op:erase_window] -1 unsplits; 5 and window 7 are not
         // windows before Version 6.
-        Assert.Equal(0, run.Interpreter.Screen.UpperWindow.Lines);
+        Assert.Equal(0, run.Interpreter.Screen!.UpperWindow.Lines);
         Assert.Equal(2, run.Interpreter.RuntimeErrors.Count);
         Assert.Contains("erase_window", run.Interpreter.RuntimeErrors[0]);
         Assert.Contains("set_window", run.Interpreter.RuntimeErrors[1]);
@@ -125,7 +125,7 @@ public partial class InterpreterTests
 
         // [zm op:buffer_mode] With buffering off every character is
         // sent on its own.
-        Assert.False(run.Interpreter.Screen.IsBuffering);
+        Assert.False(run.Interpreter.Screen!.IsBuffering);
         Assert.Equal(3, screen.Runs.Count);
     }
 
@@ -142,7 +142,7 @@ public partial class InterpreterTests
 
         // [zm op:set_colour] Red on green, then an illegal Version 6
         // color, then [zm op:set_true_colour] white on black.
-        var model = run.Interpreter.Screen;
+        var model = run.Interpreter.Screen!;
         Assert.Equal((ScreenColor.White, ScreenColor.Black), (model.Foreground, model.Background));
         Assert.Contains("set_colour", Assert.Single(run.Interpreter.RuntimeErrors));
     }
@@ -182,7 +182,7 @@ public partial class InterpreterTests
 
         // [zm op:print_table] Width 3, height 2, skipping the X between
         // rows in the upper window; a single row in the lower.
-        var model = run.Interpreter.Screen;
+        var model = run.Interpreter.Screen!;
         Assert.Equal(" abc", model.UpperWindow.RowText(2)[..4]);
         Assert.Equal(" def", model.UpperWindow.RowText(3)[..4]);
         Assert.Equal("abc", screen.Text);
@@ -231,7 +231,7 @@ public partial class InterpreterTests
             new RecordingScreen(30, 10));
 
         // [zm 8.2.4] and [zm 10.5.1] Object 1 is "room"; score 5, turns 7.
-        Assert.Equal(" room".PadRight(26) + "5/7 ", run.Interpreter.Screen.StatusLineText);
+        Assert.Equal(" room".PadRight(26) + "5/7 ", run.Interpreter.Screen!.StatusLineText);
     }
 
     [Fact]
@@ -246,7 +246,7 @@ public partial class InterpreterTests
             screen: new RecordingScreen(30, 10));
 
         // [zm op:show_status] Object 2 is the lamp.
-        Assert.Equal(" lamp".PadRight(26) + "0/0 ", v3.Interpreter.Screen.StatusLineText);
+        Assert.Equal(" lamp".PadRight(26) + "0/0 ", v3.Interpreter.Screen!.StatusLineText);
 
         var v5 = Execute(
             new Assembler()
@@ -255,7 +255,7 @@ public partial class InterpreterTests
                 .Quit(),
             screen: new RecordingScreen(30, 10));
 
-        Assert.Null(v5.Interpreter.Screen.StatusLineText);
+        Assert.Null(v5.Interpreter.Screen!.StatusLineText);
     }
 
     [Fact]
@@ -273,7 +273,7 @@ public partial class InterpreterTests
             screen: new RecordingScreen(30, 10));
 
         // [zm 8.2.1] and [zm 8.2.3.2]
-        Assert.EndsWith("1:05 PM ", run.Interpreter.Screen.StatusLineText);
+        Assert.EndsWith("1:05 PM ", run.Interpreter.Screen!.StatusLineText);
     }
 
     [Fact]
@@ -288,7 +288,7 @@ public partial class InterpreterTests
             screen: new RecordingScreen(30, 10));
 
         // [zm 8.2.2.1] The interpreter protects itself and says so.
-        Assert.Equal("".PadRight(26) + "0/0 ", run.Interpreter.Screen.StatusLineText);
+        Assert.Equal("".PadRight(26) + "0/0 ", run.Interpreter.Screen!.StatusLineText);
         Assert.Contains("show_status", Assert.Single(run.Interpreter.RuntimeErrors));
     }
 
@@ -362,19 +362,24 @@ public partial class InterpreterTests
 
         // [zm 6.1.3] and [zm 8.7.3.3]
         Assert.Equal(0, run.Global(G0));
-        Assert.Equal(0, run.Interpreter.Screen.UpperWindow.Lines);
+        Assert.Equal(0, run.Interpreter.Screen!.UpperWindow.Lines);
     }
 
     [Fact]
-    public void Version6ScreenOpcodesStillSayTheyAreNotBuilt()
+    public void Version6GamesGetTheWindowedModel()
     {
-        // [zm 5.4] A Version 6 game starts in its main routine.
-        var main = new Assembler().Variable(Op.SplitWindow, true, Small(1)).Quit().ToArray();
+        // [zm 5.4] A Version 6 game starts in its main routine, and
+        // [zm 8.8] its screen opcodes go to the eight-window model.
+        var main = new Assembler().Variable(Op.SplitWindow, true, Small(3)).Quit().ToArray();
 
-        Assert.Throws<NotSupportedException>(() => Execute(
+        var run = Execute(
             new Assembler(),
             story => story.Routine(RoutineB, 0, main),
             ZMachineVersion.V6,
-            screen: new RecordingScreen()));
+            screen: new RecordingScreen());
+
+        Assert.Null(run.Interpreter.Screen);
+        Assert.Equal(3, run.Interpreter.Windows!.Windows[1].Height);
+        Assert.Same(run.Interpreter.Windows, run.Interpreter.Display);
     }
 }

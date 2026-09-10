@@ -107,12 +107,6 @@ internal static class Program
             return 1;
         }
 
-        if (header.Version == ZMachineVersion.V6)
-        {
-            Console.Error.WriteLine("rezrov-tui: Version 6 games need the Version 6 screen model, which is not implemented yet");
-            return 3;
-        }
-
         return Play(memory, header, resources, Path.GetFileName(path), new TerminalFiles.Presets(transcript, record, save, commands), seed);
     }
 

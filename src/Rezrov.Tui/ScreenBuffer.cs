@@ -108,6 +108,33 @@ public sealed class ScreenBuffer
         }
     }
 
+    /// <summary>
+    /// [zm 8.8] Takes the whole screen from the Version 6 model, which
+    /// keeps every cell itself, and puts the cursor where its current
+    /// window has it.
+    /// </summary>
+    public void UpdateWindows(WindowedScreenModel model)
+    {
+        ArgumentNullException.ThrowIfNull(model);
+
+        StatusRows = 0;
+        UpperLines = 0;
+
+        for (var row = 0; row < Math.Min(Height, model.Height); row++)
+        {
+            var cells = new Cell[Width];
+            for (var column = 0; column < Width; column++)
+            {
+                cells[column] = column < model.Width ? model[row, column] : Cell.Blank(_blank);
+            }
+
+            CopyRow(row, cells);
+        }
+
+        CursorRow = Math.Min(model.CursorRow, Height - 1);
+        CursorColumn = Math.Min(model.CursorColumn, Width - 1);
+    }
+
     /// <summary>Prints a run at the cursor, in the lower window.</summary>
     public void Print(string text, TextAttributes attributes)
     {

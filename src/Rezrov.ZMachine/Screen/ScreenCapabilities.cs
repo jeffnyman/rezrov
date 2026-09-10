@@ -58,4 +58,12 @@ public enum ScreenCapabilities
     /// [MORE] at the height. A stream leaves both to whatever shows it.
     /// </summary>
     FixedGrid = 1 << 8,
+
+    /// <summary>
+    /// [zm 8.8.6] Pictures can be shown, so a Version 6 game is told
+    /// they are available and asked to lay out around them. Without
+    /// this the game is told there are none, and the Infocom games
+    /// run in their text-only modes, which suits a screen of cells.
+    /// </summary>
+    Pictures = 1 << 9,
 }

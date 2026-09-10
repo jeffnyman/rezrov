@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using Rezrov.ZMachine.Execution;
+using Rezrov.ZMachine.Input;
 using Rezrov.ZMachine.Text;
 
 namespace Rezrov.ZMachine.Screen;
@@ -21,9 +22,10 @@ namespace Rezrov.ZMachine.Screen;
 /// [zm 8.5] Versions 1 and 2 have just the lower window, and [zm 8.6]
 /// Version 3 adds an upper window below the status line. [zm 8.7] From
 /// Version 4 the two windows are as here, with styles. Version 6 is a
-/// different model, [zm 8.8], and is not built yet.
+/// different model, [zm 8.8], which <see cref="WindowedScreenModel"/>
+/// is.
 /// </remarks>
-public sealed class ScreenModel : IOutput
+public sealed class ScreenModel : IScreenModel
 {
     /// <summary>[zm 8.7.2] The lower window's number.</summary>
     public const int Lower = 0;
@@ -64,6 +66,9 @@ public sealed class ScreenModel : IOutput
     /// <summary>[zm 8.4] Height in lines.</summary>
     public int Height => _screen.Height;
 
+    /// <summary>[zm 8.4.2] A unit is a character here.</summary>
+    public int FontWidth => 1;
+
     /// <summary>The upper window's cells and cursor.</summary>
     public UpperWindow UpperWindow { get; }
 
@@ -78,6 +83,17 @@ public sealed class ScreenModel : IOutput
     /// <see cref="Upper"/>.
     /// </summary>
     public int CurrentWindow { get; private set; }
+
+    /// <summary>
+    /// [zm 7.1.1.1] Only the lower window's text goes to the transcript.
+    /// </summary>
+    public bool EchoesToTranscript => CurrentWindow == Lower;
+
+    /// <summary>
+    /// [zm op:print_table] Where a table row begins: the upper window's
+    /// cursor column, which is the only cursor there is here.
+    /// </summary>
+    public int TableColumn => UpperWindow.CursorColumn;
 
     /// <summary>[zm 8.7.1] The styles the game has asked for.</summary>
     public TextStyle Style { get; private set; }
@@ -470,10 +486,10 @@ public sealed class ScreenModel : IOutput
     /// [zm op:buffer_mode] Turns word buffering in the lower window on
     /// or off. Whatever is buffered comes out first.
     /// </summary>
-    public void SetBuffering(bool on)
+    public void SetBuffering(bool enabled)
     {
         FlushWord();
-        IsBuffering = on;
+        IsBuffering = enabled;
     }
 
     /// <summary>
@@ -692,12 +708,14 @@ public sealed class ScreenModel : IOutput
     }
 
     /// <summary>
-    /// Input has been read. If the player's return key ended it, the
-    /// echo moved the lower window's cursor to a fresh line.
+    /// Input has been read from the keyboard. If the player's return
+    /// key ended it, the frontend's echo moved the lower window's
+    /// cursor to a fresh line. Input played from a file was printed by
+    /// the model itself and needs nothing here.
     /// </summary>
-    public void InputEnded(bool newLine)
+    public void InputEnded(LineInput? typed)
     {
-        if (newLine && CurrentWindow == Lower)
+        if (typed is { Terminator: Zscii.Newline } && CurrentWindow == Lower)
         {
             _lowerColumn = 0;
         }

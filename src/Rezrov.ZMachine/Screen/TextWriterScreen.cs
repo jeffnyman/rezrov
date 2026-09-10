@@ -32,6 +32,16 @@ public sealed class TextWriterScreen : IScreen
 
     public int Height { get; }
 
+    /// <summary>
+    /// [zm 8.8.1] For a Version 6 game, a cell is 4 units wide and 1
+    /// high, for the reasons the terminal frontend gives: Infocom's
+    /// games measure sideways in pixels and downward in lines when they
+    /// have no pictures.
+    /// </summary>
+    public int FontWidth => 4;
+
+    public int FontHeight => 1;
+
     public ScreenCapabilities Capabilities => ScreenCapabilities.None;
 
     public ScreenColor DefaultForeground => ScreenColor.White;
