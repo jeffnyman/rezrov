@@ -127,8 +127,12 @@ public sealed class GameView : View
                         run.Clear();
                     }
 
+                    // [zm 16] Font 3 is drawn with the Unicode characters
+                    // nearest its bitmaps.
                     current = cell.Attributes;
-                    run.Append(cell.Character);
+                    run.Append(cell.Attributes.Font == TextAttributes.CharacterGraphicsFont
+                        ? CharacterGraphics.ToUnicode(cell.Character)
+                        : cell.Character);
                 }
 
                 if (current is { } last)

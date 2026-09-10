@@ -11,7 +11,8 @@ namespace Rezrov.ZMachine.Screen;
 /// not ask the model to wrap or page, since whatever shows the stream
 /// does that. The width and height are still reported, because
 /// [zm 8.4] the header must hold some dimensions and games lay text out
-/// by them.
+/// by them. [zm 16] The character graphics font is offered, as the
+/// nearest Unicode characters, since a text stream can carry those.
 /// </remarks>
 public sealed class TextWriterScreen : IScreen
 {
@@ -42,7 +43,7 @@ public sealed class TextWriterScreen : IScreen
 
     public int FontHeight => 1;
 
-    public ScreenCapabilities Capabilities => ScreenCapabilities.None;
+    public ScreenCapabilities Capabilities => ScreenCapabilities.CharacterGraphicsFont;
 
     public ScreenColor DefaultForeground => ScreenColor.White;
 
@@ -54,7 +55,21 @@ public sealed class TextWriterScreen : IScreen
     /// </summary>
     public bool CanPrint(char character) => !char.IsControl(character);
 
-    public void Print(string text, TextAttributes attributes) => _writer.Write(text);
+    public void Print(string text, TextAttributes attributes)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+
+        if (attributes.Font != TextAttributes.CharacterGraphicsFont)
+        {
+            _writer.Write(text);
+            return;
+        }
+
+        foreach (var character in text)
+        {
+            _writer.Write(CharacterGraphics.ToUnicode(character));
+        }
+    }
 
     public void NewLine() => _writer.Write((char)0x0A);
 

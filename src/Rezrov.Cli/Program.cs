@@ -180,6 +180,10 @@ internal static class Program
         var memory = new ZMemory(bytes);
         var header = new StoryHeader(memory);
 
+        // [zm 16] and [zm 3.8.5] The font 3 characters and the accented
+        // ones are Unicode, which the console shows only as UTF-8.
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
+
         // [zm 2.4.2] A seed makes the game's random numbers predictable,
         // so a scripted run plays the same way every time.
         var interpreter = new Interpreter(
