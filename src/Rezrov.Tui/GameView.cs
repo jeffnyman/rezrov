@@ -148,7 +148,7 @@ public sealed class GameView : View
             // that is all reading. The style is set outright, since the
             // toolkit's default depends on the driver.
             var cursor = ViewportToScreen(new Point(Math.Min(buffer.CursorColumn, buffer.Width - 1), buffer.CursorRow));
-            Cursor = new Cursor { Position = cursor, Style = CursorStyle.SteadyBlock };
+            Cursor = new Cursor { Position = cursor, Style = buffer.CursorVisible ? CursorStyle.SteadyBlock : CursorStyle.Hidden };
         }
 
         SetCursorNeedsUpdate();

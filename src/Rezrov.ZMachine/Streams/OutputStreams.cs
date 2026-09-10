@@ -76,9 +76,13 @@ public sealed class OutputStreams : IOutput
 
     /// <summary>
     /// [zm op:output_stream] Selects a stream (positive) or deselects
-    /// it (negative). Stream 3 takes the table to write into.
+    /// it (negative). Stream 3 takes the table to write into, and in
+    /// Version 6 may take a width in units to wrap the text to, in
+    /// which case the table gets formatted text, the kind print_form
+    /// prints: each line a word holding its character count and then
+    /// the characters, ended by a zero word.
     /// </summary>
-    public StreamSelection Select(int stream, ushort table)
+    public StreamSelection Select(int stream, ushort table, int? lineWidth = null)
     {
         // [zm op:output_stream] Whatever is buffered for the screen is
         // shown before the streams change, as Frotz also flushes.
@@ -112,7 +116,7 @@ public sealed class OutputStreams : IOutput
                 // [zm 7.1.2.1] The table's contents, even its size word,
                 // are ignored on selection and unspecified while it is
                 // selected.
-                _memory.Push(new MemoryStream(table));
+                _memory.Push(new MemoryStream(table, lineWidth));
                 return StreamSelection.Selected;
             case -3:
                 if (_memory.Count > 0)
@@ -348,7 +352,7 @@ public sealed class OutputStreams : IOutput
     private void CloseMemory()
     {
         var stream = _memory.Pop();
-        _state.WriteWord(stream.Table, (ushort)stream.Count);
+        stream.Close(_state);
 
         if (_header.Version == ZMachineVersion.V6)
         {
@@ -360,24 +364,121 @@ public sealed class OutputStreams : IOutput
     /// [zm 7.1.2.1] One table stream 3 is writing into: the characters
     /// go from byte 2 onward, and the interpreter does no overflow
     /// checking, since making the table large enough is the game's job.
+    /// With a line width, [zm op:output_stream] the text is wrapped to
+    /// it a word at a time and stored as formatted lines instead.
     /// </summary>
-    private sealed class MemoryStream(int table)
+    private sealed class MemoryStream(int table, int? lineWidth)
     {
+        private readonly List<byte> _line = [];
+        private readonly List<byte> _word = [];
+        private int _lineUnits;
+        private int _wordUnits;
+        private int _at = table;
+
         public int Table { get; } = table;
 
         public int Count { get; private set; }
 
-        /// <summary>The width of the text in units, for Version 6.</summary>
+        /// <summary>
+        /// The width of the text in units, for Version 6: all of it,
+        /// or the last line's when wrapping.
+        /// </summary>
         public int Width { get; private set; }
 
         public void Write(GameState state, byte zscii, int characterWidth)
         {
-            state.WriteByte(Table + 2 + Count, zscii);
-            Count++;
-            if (zscii != Zscii.Newline)
+            if (lineWidth is not { } width)
             {
-                Width += characterWidth;
+                state.WriteByte(Table + 2 + Count, zscii);
+                Count++;
+                if (zscii != Zscii.Newline)
+                {
+                    Width += characterWidth;
+                }
+
+                return;
             }
+
+            if (zscii == Zscii.Newline)
+            {
+                PlaceWord(state, width);
+                EmitLine(state);
+            }
+            else if (zscii == Zscii.Space)
+            {
+                PlaceWord(state, width);
+                if (_lineUnits + characterWidth <= width)
+                {
+                    _line.Add(zscii);
+                    _lineUnits += characterWidth;
+                }
+            }
+            else
+            {
+                _word.Add(zscii);
+                _wordUnits += characterWidth;
+            }
+        }
+
+        /// <summary>
+        /// [zm 7.1.2.1] Deselected: the first word holds the character
+        /// count, or for formatted text the last line goes out and a
+        /// zero word ends the table.
+        /// </summary>
+        public void Close(GameState state)
+        {
+            if (lineWidth is not { } width)
+            {
+                state.WriteWord(Table, (ushort)Count);
+                return;
+            }
+
+            PlaceWord(state, width);
+            if (_line.Count > 0 || _at == Table)
+            {
+                EmitLine(state);
+            }
+
+            state.WriteWord(_at, 0);
+        }
+
+        // A word goes on the current line if it fits, and otherwise
+        // starts the next, as a wrapping window would have it.
+        private void PlaceWord(GameState state, int width)
+        {
+            if (_word.Count == 0)
+            {
+                return;
+            }
+
+            if (_line.Count > 0 && _lineUnits + _wordUnits > width)
+            {
+                while (_line.Count > 0 && _line[^1] == Zscii.Space)
+                {
+                    _line.RemoveAt(_line.Count - 1);
+                }
+
+                EmitLine(state);
+            }
+
+            _line.AddRange(_word);
+            _lineUnits += _wordUnits;
+            _word.Clear();
+            _wordUnits = 0;
+        }
+
+        private void EmitLine(GameState state)
+        {
+            state.WriteWord(_at, (ushort)_line.Count);
+            _at += 2;
+            foreach (var zscii in _line)
+            {
+                state.WriteByte(_at++, zscii);
+            }
+
+            Width = _lineUnits;
+            _line.Clear();
+            _lineUnits = 0;
         }
     }
 }

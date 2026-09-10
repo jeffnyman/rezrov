@@ -165,6 +165,28 @@ public class ScreenBufferTests
         Assert.Equal(Blank with { Style = TextStyle.Roman }, buffer[0, 2].Attributes);
     }
 
+    [Fact]
+    public void TheCursorHidesWhenAVersion6GameHidesIt()
+    {
+        var bytes = new byte[2048];
+        bytes[0] = 6;
+        PutWord(bytes, 0x04, 0x0400);
+        PutWord(bytes, 0x0E, 0x0400);
+        var memory = new ZMemory(bytes);
+        var model = new WindowedScreenModel(new RecordingScreen(10, 4), new StoryHeader(memory), memory);
+        var buffer = new ScreenBuffer(10, 4, Blank, cursorStartsAtBottom: false);
+
+        // [zm op:set_cursor] -1 hides the cursor and -2 shows it, and
+        // the terminal follows on each repaint.
+        model.SetCursor(-1, 0);
+        buffer.UpdateWindows(model);
+        Assert.False(buffer.CursorVisible);
+
+        model.SetCursor(-2, 0);
+        buffer.UpdateWindows(model);
+        Assert.True(buffer.CursorVisible);
+    }
+
     private static (ScreenBuffer Buffer, ScreenModel Model) MakeWithModel(int width, int height, ZMachineVersion version = ZMachineVersion.V5)
     {
         var bytes = new byte[2048];
