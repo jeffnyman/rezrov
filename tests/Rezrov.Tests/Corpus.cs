@@ -108,7 +108,7 @@ internal static class Corpus
     /// the solution file. Tests run from deep inside bin/, and the corpus
     /// is relative to the repository root, not to the binary.
     /// </summary>
-    private static string? FindRepositoryRoot()
+    public static string? FindRepositoryRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
 

@@ -24,7 +24,7 @@ The options, all of which imply `--run`:
 - `--commands <file>` plays commands from the file, one per line, before handing the game to the console. This is the same format the Z-Machine writes to its command recording stream and that Frotz records and replays, so a session recorded by either can be played back by the other. Once the file runs out, the console takes over.
 - `--transcript <file>`, `--record <file>`, and `--save <file>` name the files to use when the game turns on a transcript, starts recording commands, or saves and restores, so that nothing has to be typed at a prompt. Without them Rezrov asks on standard error, which keeps the question out of anything you are capturing from standard output.
 - `--blorb <file>` names the resource file that holds the game's sounds. Without it, a file beside the story with the same name and a `.blb`, `.blorb`, or `.zblorb` extension is used, which is how the Infocom sound files are distributed. A `.zblorb` that packages its own game can be given as the story file directly.
-- `--seed <number>` starts the game's random number generator in the predictable state the standard describes, so the same commands produce the same play every time, which is what a test wants. The number matters in the way the standard's own remarks suggest: a seed below 1000 makes the generator count 1, 2, 3, up to the seed and round again, while 1000 or more gives an ordinary sequence that merely repeats for that seed. A game can still reseed itself, which a few do.
+- `--seed <number>` seeds the game's random number generator, so the same commands produce the same play every time, which is what a test wants. The game still sees ordinary dice, just the same dice every session; this is not the predictable state the standard describes, which is a testing mode a game enters for itself with rolls of 1, 2, 3, and which is still there for games that use it. A game that asks to be reseeded at random partway through gets a fresh point on the seeded stream instead, so a seeded session stays repeatable to the end. The generator is Rezrov's own rather than the runtime's, so a seed produces the same session forever and no recording is invalidated by a .NET upgrade.
 - `--trace` writes every instruction to standard error before it runs, which is the quickest way to find out how a game got somewhere.
 
 Standard input works too. When it is a pipe or a file rather than a terminal, each command is echoed to standard output as it is consumed, so the output still reads as a session:
@@ -36,6 +36,48 @@ rezrov entharion/zcode-infocom/zork1-r88-s840726.z3 --run < commands.txt
 When a game does something the standard says it must not, such as treating object 0 as an object, Rezrov notes it and carries on, and prints the notes to standard error after the game ends. That is the middle setting of the four levels Appendix A of the standard recommends, and the one Frotz uses too.
 
 Rezrov exits with 0 when the game quits or standard input runs out, 1 when a file cannot be read or is not a story, 2 when the command line is wrong, and 3 when the game reaches something not implemented yet.
+
+### Acceptance scripts
+
+A seed and a command file together make a game play the same way every time, and an acceptance script is those two things in one small file, with the play it produced kept beside it so that later runs can be checked against it. The scripts in the `acceptance` directory are the interpreter's own; this is one of them:
+
+```text
+! SEED=20
+! GAME=../entharion/zcode-infocom/zork1-r2-sAS000C.z1
+
+n. n. u
+get egg
+```
+
+A line beginning with `!` is a directive. `GAME` names the story file and `SEED` gives the session seed, as `--seed` does, and both are required. `BLORB` names a resource file when the one beside the story is not the right one. Paths are relative to the script, not to wherever you run it from. A line beginning with `#` is a comment, a blank line is ignored, and every other line is a command in the same format as a command file, so a game that reads single keys can be given them as bracketed codes. A command may be written with the prompt in front, as `> look`, which reads like a transcript and is also how to give a command that itself begins with `#` or `!`.
+
+A stretch of the script can be fenced off so that it is not played. A line of three backticks opens the fence, a bare line of three backticks closes it, and a fence left open runs to the end of the file. A label after the opening backticks is allowed, so a script can keep an alternative path through the game beside the one it plays:
+
+````text
+open trapdoor
+
+```PATH 1
+kill troll
+take axe
+```
+
+save troll
+````
+
+Here "save troll" is played and the two commands under PATH 1 are not. Swapping the fence to the other path later is a matter of moving the backticks.
+
+A long script can change its seed partway. A `SEED` line after some commands takes effect when the play reaches it, before the next command, and the seed before it governs everything above. That means each stretch of a game can have the seed that makes it go the way it should, and once a fight with the troll is settled, hunting for a seed that gets you past the thief never disturbs it. A `SEED` line after the last command applies as the script ends, which matters with `--resume`.
+
+While a script is being written, `--resume` plays it and then leaves the game running at the console, with a note on standard error marking where the script ended, so the next commands can be tried before they go into the file. Nothing is checked or recorded in that mode; the game runs until it quits or the console runs out, and the saved game, if there is one, is still the one held in memory from the script.
+
+```sh
+rezrov --accept acceptance/zork1-r2-sAS000C.accept
+rezrov --accept acceptance/zork1-r2-sAS000C.accept --resume
+```
+
+The play is shown as it happens, so that when you are building a script up you can see where a command went wrong, and the verdict comes at the end. The first run records what came out as `zork1-r2-sAS000C.expected` beside the script. Every run after plays it again and compares, saying which line of the recording differs and which line of the script was being played at that point, and exiting with 1 when something has changed. When the change is one you meant, `--update` after the script records it afresh. The recorded text is everything the game printed, commands included, and after it a line for each thing the interpreter noticed: a runtime error the game made, or the point at which the game reached something not implemented yet. That way a game that starts misbehaving, or stops, changes the text and shows up. Saving and restoring work within a run, with the saved game kept in memory, so a script can test both.
+
+The test suite plays every script in the directory whose game it can find, so the scripts double as regression tests for the interpreter. The games themselves live in the submodule and are not part of the repository, which is why a script whose game is absent is skipped rather than failed.
 
 ### The terminal program
 
