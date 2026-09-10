@@ -21,6 +21,7 @@ internal static class Program
         string? transcript = null;
         string? record = null;
         string? save = null;
+        int? seed = null;
         var usage = args.Length < 1;
 
         for (var i = 1; i < args.Length && !usage; i++)
@@ -42,6 +43,10 @@ internal static class Program
                 case "--save" when i + 1 < args.Length:
                     save = args[++i];
                     break;
+                case "--seed" when i + 1 < args.Length && int.TryParse(args[i + 1], out var parsed) && parsed >= 1:
+                    seed = parsed;
+                    i++;
+                    break;
                 default:
                     usage = true;
                     break;
@@ -50,7 +55,7 @@ internal static class Program
 
         if (usage)
         {
-            Console.Error.WriteLine("usage: rezrov-tui <story-file> [--blorb <file>] [--commands <file>] [--transcript <file>] [--record <file>] [--save <file>]");
+            Console.Error.WriteLine("usage: rezrov-tui <story-file> [--blorb <file>] [--commands <file>] [--transcript <file>] [--record <file>] [--save <file>] [--seed <number>]");
             return 2;
         }
 
@@ -108,10 +113,10 @@ internal static class Program
             return 3;
         }
 
-        return Play(memory, header, resources, Path.GetFileName(path), new TerminalFiles.Presets(transcript, record, save, commands));
+        return Play(memory, header, resources, Path.GetFileName(path), new TerminalFiles.Presets(transcript, record, save, commands), seed);
     }
 
-    private static int Play(ZMemory memory, StoryHeader header, BlorbFile? resources, string title, TerminalFiles.Presets presets)
+    private static int Play(ZMemory memory, StoryHeader header, BlorbFile? resources, string title, TerminalFiles.Presets presets, int? seed)
     {
         using var app = Application.Create().Init();
 
@@ -142,10 +147,13 @@ internal static class Program
             view.Screen = screen;
             view.Input = input;
 
+            // [zm 2.4.2] A seed makes the game's random numbers
+            // predictable, so a session can be played again the same way.
             interpreter = new Interpreter(
                 memory,
                 screen,
                 input,
+                seed is { } s ? new RandomGenerator(s) : null,
                 files: new TerminalFiles(app, presets),
                 sound: new TerminalSound());
 

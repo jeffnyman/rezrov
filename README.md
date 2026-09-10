@@ -24,6 +24,7 @@ The options, all of which imply `--run`:
 - `--commands <file>` plays commands from the file, one per line, before handing the game to the console. This is the same format the Z-Machine writes to its command recording stream and that Frotz records and replays, so a session recorded by either can be played back by the other. Once the file runs out, the console takes over.
 - `--transcript <file>`, `--record <file>`, and `--save <file>` name the files to use when the game turns on a transcript, starts recording commands, or saves and restores, so that nothing has to be typed at a prompt. Without them Rezrov asks on standard error, which keeps the question out of anything you are capturing from standard output.
 - `--blorb <file>` names the resource file that holds the game's sounds. Without it, a file beside the story with the same name and a `.blb`, `.blorb`, or `.zblorb` extension is used, which is how the Infocom sound files are distributed. A `.zblorb` that packages its own game can be given as the story file directly.
+- `--seed <number>` starts the game's random number generator in the predictable state the standard describes, so the same commands produce the same play every time, which is what a test wants. The number matters in the way the standard's own remarks suggest: a seed below 1000 makes the generator count 1, 2, 3, up to the seed and round again, while 1000 or more gives an ordinary sequence that merely repeats for that seed. A game can still reseed itself, which a few do.
 - `--trace` writes every instruction to standard error before it runs, which is the quickest way to find out how a game got somewhere.
 
 Standard input works too. When it is a pipe or a file rather than a terminal, each command is echoed to standard output as it is consumed, so the output still reads as a session:
@@ -44,7 +45,7 @@ dotnet run --project src/Rezrov.Tui -- entharion/zcode-infocom/zork1-r88-s840726
 
 This takes over the whole terminal, as Infocom's own interpreters did. A Version 3 game gets its status line across the top, later games get their upper window, and text is shown in the styles and colors the game asks for, as far as the terminal has them. Input is edited in place at the game's own cursor, timed input works, and the [MORE] pause appears when a screenful of text has gone by. When the game turns on a transcript, saves, or restores, a file dialog asks where. Ctrl+Q leaves at any time, and when the game ends by itself the screen stays until a key is pressed, so the last of the text can be read.
 
-The same `--blorb`, `--commands`, `--transcript`, `--record`, and `--save` options work here as on the command line, and a `.zblorb` can be given directly. What the terminal program does not do yet is play sounds beyond a bleep; a sound frontend needs a decoder for the Blorb formats, which is still to come. Version 6 games are declined up front for the same reason as on the command line.
+The same `--blorb`, `--commands`, `--transcript`, `--record`, `--save`, and `--seed` options work here as on the command line, and a `.zblorb` can be given directly. What the terminal program does not do yet is play sounds beyond a bleep; a sound frontend needs a decoder for the Blorb formats, which is still to come. Version 6 games are declined up front for the same reason as on the command line.
 
 ## Building and Testing
 
