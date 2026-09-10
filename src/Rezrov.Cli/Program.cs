@@ -21,6 +21,7 @@ internal static class Program
         string? record = null;
         string? save = null;
         string? blorb = null;
+        int? seed = null;
         var usage = args.Length < 1;
 
         for (var i = 1; i < args.Length && !usage; i++)
@@ -52,6 +53,11 @@ internal static class Program
                 case "--blorb" when i + 1 < args.Length:
                     blorb = args[++i];
                     break;
+                case "--seed" when i + 1 < args.Length && int.TryParse(args[i + 1], out var parsed) && parsed >= 1:
+                    run = true;
+                    seed = parsed;
+                    i++;
+                    break;
                 default:
                     usage = true;
                     break;
@@ -60,7 +66,7 @@ internal static class Program
 
         if (usage)
         {
-            Console.Error.WriteLine("usage: rezrov <story-file> [--run] [--trace] [--commands <file>] [--transcript <file>] [--record <file>] [--save <file>] [--blorb <file>]");
+            Console.Error.WriteLine("usage: rezrov <story-file> [--run] [--trace] [--commands <file>] [--transcript <file>] [--record <file>] [--save <file>] [--blorb <file>] [--seed <number>]");
             return 2;
         }
 
@@ -115,7 +121,7 @@ internal static class Program
                 resources = FindResources(path, blorb);
             }
 
-            return RunZMachine(bytes, trace, commands, transcript, record, save, resources);
+            return RunZMachine(bytes, trace, commands, transcript, record, save, resources, seed);
         }
 
         Console.WriteLine($"{Path.GetFileName(path)}: {format}");
@@ -225,14 +231,18 @@ internal static class Program
     /// go without asking either. Resources, if there are any, give the
     /// game its sounds, though the console can only ring its bell.
     /// </summary>
-    private static int RunZMachine(byte[] bytes, bool trace, string? commands, string? transcript, string? record, string? save, BlorbFile? resources)
+    private static int RunZMachine(byte[] bytes, bool trace, string? commands, string? transcript, string? record, string? save, BlorbFile? resources, int? seed)
     {
         var memory = new ZMemory(bytes);
         var header = new StoryHeader(memory);
+
+        // [zm 2.4.2] A seed makes the game's random numbers predictable,
+        // so a scripted run plays the same way every time.
         var interpreter = new Interpreter(
             memory,
             new TextWriterScreen(Console.Out),
             new ConsoleInput(header, memory),
+            seed is { } s ? new RandomGenerator(s) : null,
             files: new ConsoleFiles(transcript, record, save),
             sound: new ConsoleSound());
 
