@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The terminal frontend: the same interpreter as the command line, shown
+    on a full screen with the upper window, the status line, styles, and
+    colors that a plain console cannot draw. AssemblyName is lowercase for
+    the same reason as the CLI's.
+  -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>rezrov-tui</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Rezrov.Core\Rezrov.Core.csproj" />
+    <ProjectReference Include="..\Rezrov.ZMachine\Rezrov.ZMachine.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Terminal.Gui" />
+
+    <!--
+      Terminal.Gui depends on TextMateSharp for syntax highlighting, which
+      in turn depends on Onigwrap, a native regex library shipped as a
+      sidecar DLL. Nothing here highlights syntax, so the native asset is
+      excluded and the published output stays a single executable.
+    -->
+    <PackageReference Include="Onigwrap" ExcludeAssets="native" />
+  </ItemGroup>
+
+</Project>
