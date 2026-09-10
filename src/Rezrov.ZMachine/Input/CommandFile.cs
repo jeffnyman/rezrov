@@ -36,6 +36,12 @@ public sealed class CommandFile
     private readonly TextReader _reader;
     private readonly UnicodeTranslationTable _extraCharacters;
 
+    /// <summary>
+    /// [zm 10.3.2] The position of the last click read, from the two
+    /// codes that follow a click character in the file.
+    /// </summary>
+    public MouseClick? LastClick { get; private set; }
+
     public CommandFile(TextReader reader, UnicodeTranslationTable extraCharacters)
     {
         ArgumentNullException.ThrowIfNull(reader);
@@ -111,7 +117,7 @@ public sealed class CommandFile
     /// as a bracketed code, and the terminating key last unless it was
     /// the return key, which is never written.
     /// </summary>
-    public static string Format(IReadOnlyList<ushort> text, ushort terminator)
+    public static string Format(IReadOnlyList<ushort> text, ushort terminator, MouseClick? click = null)
     {
         ArgumentNullException.ThrowIfNull(text);
 
@@ -124,6 +130,7 @@ public sealed class CommandFile
         if (terminator != Zscii.Newline)
         {
             AppendCode(line, terminator);
+            AppendClick(line, terminator, click);
         }
 
         return line.ToString();
@@ -131,9 +138,10 @@ public sealed class CommandFile
 
     /// <summary>
     /// [zm 7.1.2.3] Writes a keypress read by read_char as one line:
-    /// the key, or nothing at all for the return key.
+    /// the key, or nothing at all for the return key, and for a click
+    /// its position after it.
     /// </summary>
-    public static string FormatKey(ushort key)
+    public static string FormatKey(ushort key, MouseClick? click = null)
     {
         if (key == Zscii.Newline)
         {
@@ -142,7 +150,18 @@ public sealed class CommandFile
 
         var line = new System.Text.StringBuilder(8);
         AppendCode(line, key);
+        AppendClick(line, key, click);
         return line.ToString();
+    }
+
+    // [zm 7.1.2.3] A click is written with its x and y after it, as
+    // "[254][10][6]" in the remarks on section 7.
+    private static void AppendClick(System.Text.StringBuilder line, ushort code, MouseClick? click)
+    {
+        if (click is not null && code is Zscii.SingleClick or Zscii.DoubleClick or Zscii.MenuClick)
+        {
+            line.Append('[').Append(click.X).Append("][").Append(click.Y).Append(']');
+        }
     }
 
     // A printable ASCII character other than the bracket is itself;
@@ -187,17 +206,20 @@ public sealed class CommandFile
 
                 codes.Add(code);
 
-                // [zm 10.3.2] A click is followed by its coordinates,
-                // which are consumed here so that they are not taken for
-                // keys. There is no mouse to give them to yet, since the
-                // interpreter offers none, so they are dropped.
+                // [zm 10.3.2] A click is followed by its coordinates, x
+                // then y, which are kept for the interpreter rather than
+                // taken for keys.
                 if (code is Zscii.SingleClick or Zscii.DoubleClick or Zscii.MenuClick)
                 {
+                    var position = new int[2];
                     for (var coordinate = 0; coordinate < 2 && i + 1 < line.Length && line[i + 1] == '['; coordinate++)
                     {
                         i++;
-                        TryReadBracketedCode(line, ref i, out _);
+                        TryReadBracketedCode(line, ref i, out var value);
+                        position[coordinate] = value;
                     }
+
+                    LastClick = new MouseClick(position[0], position[1], 1);
                 }
             }
             else if (Zscii.FromUnicode(line[i], _extraCharacters) is { } zscii)

@@ -49,4 +49,18 @@ public interface IInput
     /// defined for input, or 0 if the timer's interrupt ended the wait.
     /// </summary>
     ushort ReadKey(InputTimer? timer);
+
+    /// <summary>
+    /// [zm 10.3] Whether this source reports mouse clicks, as the click
+    /// characters [zm 3.8.2] defines. The interpreter tells the game the
+    /// answer through bit 5 of Flags 2.
+    /// </summary>
+    bool SupportsMouse => false;
+
+    /// <summary>
+    /// [zm 10.3.2] The click behind the last click character this source
+    /// returned, whether as a key or as a command's terminator, so the
+    /// interpreter can record where it was. Null when there was none.
+    /// </summary>
+    MouseClick? LastClick => null;
 }

@@ -79,6 +79,7 @@ public sealed class Interpreter
         Output = Streams;
         Sound = new SoundModel(sound ?? NoSound.Instance, Header.Version);
 
+        ResetMouse();
         DescribeInterpreterInHeader();
 
         // [zm 8.3] A Version 6 interpreter going under the Amiga number
@@ -229,6 +230,8 @@ public sealed class Interpreter
     private readonly InterpreterNumber? _interpreterNumber;
     private CommandFile? _commandFile;
     private int _interruptDepth;
+    private int _mouseWindow;
+    private MouseClick? _lastClick;
 
     /// <summary>
     /// [zm op:save_undo] The states the game has asked to be able to go
@@ -767,6 +770,7 @@ public sealed class Interpreter
                 Display.Reset();
                 Streams.Reset();
                 Sound.StopAll();
+                ResetMouse();
                 DescribeInterpreterInHeader();
                 break;
             case Opcode.Nop:
@@ -1078,16 +1082,18 @@ public sealed class Interpreter
 
                 break;
             case Opcode.ReadMouse:
-                // [zm op:read_mouse] There is no mouse, [zm 10.3.1.1] and
-                // the header says so, so the four words are all zero.
-                for (var word = 0; word < 4; word++)
-                {
-                    State.WriteWord(a[0] + (2 * word), 0);
-                }
-
+                // [zm op:read_mouse] The last click's y, x, and buttons,
+                // and a menu word that is always 0 since [zm 10.4] there
+                // are no menus.
+                State.WriteWord(a[0], (ushort)(_lastClick?.Y ?? 0));
+                State.WriteWord(a[0] + 2, (ushort)(_lastClick?.X ?? 0));
+                State.WriteWord(a[0] + 4, (ushort)(_lastClick?.Buttons ?? 0));
+                State.WriteWord(a[0] + 6, 0);
                 break;
             case Opcode.MouseWindow:
-                // [zm 10.3.4] Nothing to constrain.
+                // [zm op:mouse_window] Clicks outside this window are not
+                // reported; -1 lifts the restriction.
+                _mouseWindow = Signed(a[0]);
                 break;
             case Opcode.MakeMenu:
                 // [zm 10.4.1.1] Menus are not offered, and the branch
@@ -2009,9 +2015,26 @@ public sealed class Interpreter
             CloseCommandFile();
             line = Input.ReadLine(request);
 
+            // [zm 10.3.4] A click outside the mouse window is not
+            // reported, so a command it ended goes on being typed.
+            while (IsClick(line.Terminator) && !ClickCounts(Input.LastClick))
+            {
+                line = Input.ReadLine(request with { Initial = line.Text });
+            }
+
+            if (IsClick(line.Terminator))
+            {
+                NoteClick(Input.LastClick);
+            }
+
             // [zm 7.1.2.3] Stream 4 records what the player typed, and
             // nothing that was played back to them.
-            Streams.RecordCommand(line.Text, line.Terminator);
+            Streams.RecordCommand(line.Text, line.Terminator, _lastClick);
+        }
+
+        if (fromFile && IsClick(line.Terminator))
+        {
+            NoteClick(_commandFile?.LastClick);
         }
 
         // [zm 7.1.1.1] The transcript gets the command either way.
@@ -2023,13 +2046,67 @@ public sealed class Interpreter
     {
         if (_commandFile is not null && _commandFile.ReadKey() is { } replayed)
         {
+            if (IsClick(replayed))
+            {
+                NoteClick(_commandFile.LastClick);
+            }
+
             return replayed;
         }
 
         CloseCommandFile();
         var key = Input.ReadKey(timer);
-        Streams.RecordKey(key);
+
+        // [zm 10.3.4] A click outside the mouse window is not reported.
+        while (IsClick(key) && !ClickCounts(Input.LastClick))
+        {
+            key = Input.ReadKey(timer);
+        }
+
+        if (IsClick(key))
+        {
+            NoteClick(Input.LastClick);
+        }
+
+        Streams.RecordKey(key, _lastClick);
         return key;
+    }
+
+    private static bool IsClick(ushort code) => code is Zscii.SingleClick or Zscii.DoubleClick or Zscii.MenuClick;
+
+    // [zm 10.3.4] In Version 6 the mouse may be confined to a window,
+    // and a click elsewhere is as if it had not happened.
+    private bool ClickCounts(MouseClick? click)
+    {
+        if (click is null || Windows is not { } windows || _mouseWindow < 0 || _mouseWindow >= WindowedScreenModel.WindowCount)
+        {
+            return true;
+        }
+
+        var window = windows.Windows[_mouseWindow];
+        return click.X >= window.X && click.X < window.Right && click.Y >= window.Y && click.Y < window.Bottom;
+    }
+
+    // [zm 10.3.2] A click's position goes into the header extension,
+    // and stays for read_mouse.
+    private void NoteClick(MouseClick? click)
+    {
+        if (click is null)
+        {
+            return;
+        }
+
+        _lastClick = click;
+        Header.WriteExtensionWord(1, (ushort)click.X);
+        Header.WriteExtensionWord(2, (ushort)click.Y);
+    }
+
+    // [zm op:mouse_window] The mouse starts confined to window 1 in
+    // Version 6, and free elsewhere.
+    private void ResetMouse()
+    {
+        _mouseWindow = Header.Version == ZMachineVersion.V6 ? 1 : -1;
+        _lastClick = null;
     }
 
     private void SelectOutputStream(Instruction instruction, ushort[] a)
@@ -2276,7 +2353,12 @@ public sealed class Interpreter
         // (bit 5), [zm 9.1.2] sound effects beyond a bleep (bit 7), and
         // [zm 10.4.1.1] menus (bit 8). [zm 6.1.4] Undo is provided, so
         // bit 4 stays as the game set it.
-        var flags2 = Header.Flags2 & ~(Flags2.WantsMouse | Flags2.WantsMenus);
+        // [zm 10.3.1.1] The mouse bit stays when the keyboard has one.
+        var flags2 = Header.Flags2 & ~Flags2.WantsMenus;
+        if (!Input.SupportsMouse)
+        {
+            flags2 &= ~Flags2.WantsMouse;
+        }
 
         // Bit 3 means [zm 8.8.6] pictures in Version 6 and [zm 8.1.5.1]
         // the character graphics font in Version 5.

@@ -143,7 +143,12 @@ internal static class Program
                 cursorStartsAtBottom: header.Version <= ZMachineVersion.V4,
                 repaint: () => app.Invoke(() => view.SetNeedsDraw()),
                 waitForKey: () => input!.WaitForAnyKey());
-            input = new TerminalInput(screen);
+            // [zm 10.3.2] Clicks are reported in screen units, which
+            // are cells before Version 6 and the frontend's font size in
+            // Version 6.
+            input = header.Version == ZMachineVersion.V6
+                ? new TerminalInput(screen, screen.FontWidth, screen.FontHeight)
+                : new TerminalInput(screen);
             view.Screen = screen;
             view.Input = input;
 
