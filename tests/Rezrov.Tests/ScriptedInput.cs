@@ -33,6 +33,13 @@ internal sealed class ScriptedInput : IInput
 
     public bool SupportsTimedInput { get; set; }
 
+    public bool SupportsMouse { get; set; }
+
+    /// <summary>The clicks behind click keys, taken in order.</summary>
+    public Queue<MouseClick> Clicks { get; } = new();
+
+    public MouseClick? LastClick { get; private set; }
+
     /// <summary>
     /// How many times to fire a request's timer before answering. If an
     /// interrupt says to stop, the read ends with terminator 0 and
@@ -65,6 +72,11 @@ internal sealed class ScriptedInput : IInput
             throw new EndOfStreamException("The script has run out of lines.");
         }
 
+        if (Terminator is Zscii.SingleClick or Zscii.DoubleClick && Clicks.Count > 0)
+        {
+            LastClick = Clicks.Dequeue();
+        }
+
         return new LineInput(Codes(request.Initial, Lines.Dequeue()), Terminator);
     }
 
@@ -88,7 +100,13 @@ internal sealed class ScriptedInput : IInput
             throw new EndOfStreamException("The script has run out of keys.");
         }
 
-        return Keys.Dequeue();
+        var key = Keys.Dequeue();
+        if (key is Zscii.SingleClick or Zscii.DoubleClick && Clicks.Count > 0)
+        {
+            LastClick = Clicks.Dequeue();
+        }
+
+        return key;
     }
 
     private static List<ushort> Codes(IReadOnlyList<ushort> initial, string typed)

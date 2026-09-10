@@ -47,6 +47,7 @@ public sealed class GameView : View
         Height = Dim.Fill();
 
         KeyDown += OnKeyDown;
+        MouseEvent += OnMouse;
     }
 
     /// <summary>
@@ -62,6 +63,36 @@ public sealed class GameView : View
 
     /// <summary>Where keys go, once the game has started.</summary>
     public TerminalInput? Input { get; set; }
+
+    // [zm 10.3] A click is input like a key, with its position.
+    private void OnMouse(object? sender, Mouse mouse)
+    {
+        if (Input is not { } input || !(mouse.IsSingleClicked || mouse.IsDoubleClicked) || mouse.Position is not { } position)
+        {
+            return;
+        }
+
+        // [zm op:read_mouse] The primary button is bit 0, the secondary
+        // bit 1, and the middle button bit 2, the Windows and X order.
+        var buttons = 0;
+        if (mouse.Flags.HasFlag(MouseFlags.LeftButtonClicked) || mouse.Flags.HasFlag(MouseFlags.LeftButtonDoubleClicked))
+        {
+            buttons |= 1;
+        }
+
+        if (mouse.Flags.HasFlag(MouseFlags.RightButtonClicked) || mouse.Flags.HasFlag(MouseFlags.RightButtonDoubleClicked))
+        {
+            buttons |= 2;
+        }
+
+        if (mouse.Flags.HasFlag(MouseFlags.MiddleButtonClicked) || mouse.Flags.HasFlag(MouseFlags.MiddleButtonDoubleClicked))
+        {
+            buttons |= 4;
+        }
+
+        input.EnqueueClick(position.X, position.Y, mouse.IsDoubleClicked, buttons == 0 ? 1 : buttons);
+        mouse.Handled = true;
+    }
 
     private void OnKeyDown(object? sender, Key key)
     {

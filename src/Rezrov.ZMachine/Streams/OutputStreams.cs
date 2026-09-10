@@ -263,11 +263,11 @@ public sealed class OutputStreams : IOutput
     /// [zm 7.1.2.3] Writes a finished command to stream 4, in the
     /// format <see cref="CommandFile"/> reads back.
     /// </summary>
-    public void RecordCommand(IReadOnlyList<ushort> text, ushort terminator)
+    public void RecordCommand(IReadOnlyList<ushort> text, ushort terminator, MouseClick? click = null)
     {
         if (_record is not null)
         {
-            _record.Write(CommandFile.Format(text, terminator));
+            _record.Write(CommandFile.Format(text, terminator, click));
             _record.Write((char)0x0A);
         }
     }
@@ -275,11 +275,11 @@ public sealed class OutputStreams : IOutput
     /// <summary>
     /// [zm 7.1.2.3] Writes a keypress read by read_char to stream 4.
     /// </summary>
-    public void RecordKey(ushort key)
+    public void RecordKey(ushort key, MouseClick? click = null)
     {
         if (_record is not null)
         {
-            _record.Write(CommandFile.FormatKey(key));
+            _record.Write(CommandFile.FormatKey(key, click));
             _record.Write((char)0x0A);
         }
     }

@@ -5,42 +5,63 @@ using Rezrov.ZMachine.Text;
 namespace Rezrov.Tui;
 
 /// <summary>
-/// The keyboard as the interpreter sees it: keys arrive from the UI
-/// thread and are taken, one command or one key at a time, on the
-/// interpreter's thread.
+/// The keyboard and mouse of the terminal, as the interpreter sees
+/// them: a queue of keys fed from the UI thread and drained on the
+/// interpreter's, with line editing done here and echoed to the
+/// screen.
 /// </summary>
 /// <remarks>
-/// [zm op:read] The line is edited here, at the cursor the game left:
-/// printable characters are echoed, delete takes one back, return ends
-/// the command, and [zm 10.5.2.1] a function key the story names as a
-/// terminator ends it too. [zm 10.5.3] Input is timed with a plain
-/// wait on the key queue, and the interrupt routine runs on this same
-/// thread, which is the interpreter's, so it is as safe as any other
-/// instruction.
+/// [zm 10.5.3] Timed input is offered: a wait for a key gives up at
+/// each interval to run the timer's interrupt, as the read opcodes
+/// describe. [zm 10.3] Mouse clicks arrive on the same queue as the
+/// click characters the standard defines, with their position kept
+/// for the interpreter to pass on.
 /// </remarks>
 public sealed class TerminalInput : IInput
 {
-    private readonly BlockingCollection<ushort> _keys = [];
+    private readonly BlockingCollection<(ushort Zscii, MouseClick? Click)> _keys = [];
     private readonly TerminalScreen _screen;
+    private readonly int _unitsPerColumn;
+    private readonly int _unitsPerRow;
 
-    public TerminalInput(TerminalScreen screen)
+    /// <param name="screen">The screen typing is echoed to.</param>
+    /// <param name="unitsPerColumn">
+    /// [zm 10.3.2] How many screen units a cell is wide, since click
+    /// positions are reported in units: a character before Version 6,
+    /// the frontend's font width in Version 6.
+    /// </param>
+    /// <param name="unitsPerRow">How many units a cell is high.</param>
+    public TerminalInput(TerminalScreen screen, int unitsPerColumn = 1, int unitsPerRow = 1)
     {
         ArgumentNullException.ThrowIfNull(screen);
         _screen = screen;
+        _unitsPerColumn = Math.Max(unitsPerColumn, 1);
+        _unitsPerRow = Math.Max(unitsPerRow, 1);
     }
 
-    /// <summary>
-    /// [zm 10.5.3] A queue with a timeout is a clock enough.
-    /// </summary>
     public bool SupportsTimedInput => true;
 
-    /// <summary>Hands a key from the terminal to the interpreter.</summary>
-    public void Enqueue(ushort zscii) => _keys.Add(zscii);
+    /// <summary>[zm 10.3] The terminal reports clicks.</summary>
+    public bool SupportsMouse => true;
+
+    /// <summary>The click behind the last click character read.</summary>
+    public MouseClick? LastClick { get; private set; }
+
+    /// <summary>Queues a key, from the UI thread.</summary>
+    public void Enqueue(ushort zscii) => _keys.Add((zscii, null));
 
     /// <summary>
-    /// Waits for any key at all, for [MORE] and for the end.
+    /// Queues a click at a cell, from the UI thread, as [zm 3.8.2]
+    /// the single or double click character with its position.
     /// </summary>
-    public ushort WaitForAnyKey() => _keys.Take();
+    public void EnqueueClick(int column, int row, bool doubleClick, int buttons)
+    {
+        var click = new MouseClick((column * _unitsPerColumn) + 1, (row * _unitsPerRow) + 1, buttons);
+        _keys.Add((doubleClick ? Zscii.DoubleClick : Zscii.SingleClick, click));
+    }
+
+    /// <summary>Waits for any key at all, for [MORE] and the ending.</summary>
+    public ushort WaitForAnyKey() => Take().Zscii;
 
     public LineInput ReadLine(LineInputRequest request)
     {
@@ -92,17 +113,25 @@ public sealed class TerminalInput : IInput
 
     public ushort ReadKey(InputTimer? timer) => TryTake(timer, out var key) ? key : (ushort)0;
 
+    private (ushort Zscii, MouseClick? Click) Take()
+    {
+        var item = _keys.Take();
+        LastClick = item.Click;
+        return item;
+    }
+
     // Waits for a key, running the timer's interrupt at each interval
     // until it asks for the wait to end.
     private bool TryTake(InputTimer? timer, out ushort key)
     {
         if (timer is null)
         {
-            key = _keys.Take();
+            key = Take().Zscii;
             return true;
         }
 
-        while (!_keys.TryTake(out key, timer.Interval))
+        (ushort Zscii, MouseClick? Click) item;
+        while (!_keys.TryTake(out item, timer.Interval))
         {
             if (timer.Interrupt())
             {
@@ -111,6 +140,8 @@ public sealed class TerminalInput : IInput
             }
         }
 
+        LastClick = item.Click;
+        key = item.Zscii;
         return true;
     }
 }
