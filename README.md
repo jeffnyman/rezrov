@@ -4,6 +4,38 @@ _An Interactive Fiction Interpreter_
 
 Rezrov is an interpreter for interactive fiction written in C#. The most common and obvious formats there are the Z-Machine and Glulx. The plan is for the interpreter core to be a UI-agnostic library, and the command line, terminal, and graphical frontends are going to be thin shells over that one engine.
 
+## Using
+
+Rezrov is a command line program for now. Give it a story file and it tells you about the file; add `--run` and it plays the game on the console.
+
+```sh
+dotnet run --project src/Rezrov.Cli -- entharion/zcode-infocom/zork1-r88-s840726.z3
+dotnet run --project src/Rezrov.Cli -- entharion/zcode-infocom/zork1-r88-s840726.z3 --run
+```
+
+The `--` separates arguments meant for `dotnet run` from arguments meant for Rezrov. A native binary, described further down, drops all of that and is just `rezrov <story-file>`.
+
+Without `--run`, Rezrov reads the file and describes it: the format, the version, release, and serial number, where dynamic and high memory begin, whether the checksum matches, how many objects and dictionary words there are, and the first instruction the machine would execute. Given a Blorb file it lists the resources inside, which game they belong to, and whether the file packages a game of its own.
+
+With `--run`, the game's text goes to standard output and commands are read from the console. What the console can show is plain text, so the upper window and the status line of a Version 3 game are kept in the model but not drawn, styles and colors are not shown, timed input is not available, and a bleep is the terminal bell. The game is told all of this through the header, so a game that checks before using a feature behaves itself. Everything else the Z-Machine standard describes is there: the parser gets your commands, the transcript and command recording streams work, saved games are written in Quetzal format, undo works, and sound effects are found in a Blorb file and handed to the frontend, which on the console can only ring the bell for them. Version 6 games stop at their first Version 6 screen instruction with a message saying so, since that screen model is not built yet, and Glulx files are recognized but not run.
+
+The options, all of which imply `--run`:
+
+- `--commands <file>` plays commands from the file, one per line, before handing the game to the console. This is the same format the Z-Machine writes to its command recording stream and that Frotz records and replays, so a session recorded by either can be played back by the other. Once the file runs out, the console takes over.
+- `--transcript <file>`, `--record <file>`, and `--save <file>` name the files to use when the game turns on a transcript, starts recording commands, or saves and restores, so that nothing has to be typed at a prompt. Without them Rezrov asks on standard error, which keeps the question out of anything you are capturing from standard output.
+- `--blorb <file>` names the resource file that holds the game's sounds. Without it, a file beside the story with the same name and a `.blb`, `.blorb`, or `.zblorb` extension is used, which is how the Infocom sound files are distributed. A `.zblorb` that packages its own game can be given as the story file directly.
+- `--trace` writes every instruction to standard error before it runs, which is the quickest way to find out how a game got somewhere.
+
+Standard input works too. When it is a pipe or a file rather than a terminal, each command is echoed to standard output as it is consumed, so the output still reads as a session:
+
+```sh
+rezrov entharion/zcode-infocom/zork1-r88-s840726.z3 --run < commands.txt
+```
+
+When a game does something the standard says it must not, such as treating object 0 as an object, Rezrov notes it and carries on, and prints the notes to standard error after the game ends. That is the middle setting of the four levels Appendix A of the standard recommends, and the one Frotz uses too.
+
+Rezrov exits with 0 when the game quits or standard input runs out, 1 when a file cannot be read or is not a story, 2 when the command line is wrong, and 3 when the game reaches something not implemented yet.
+
 ## Building and Testing
 
 From the repository root:
@@ -14,14 +46,6 @@ dotnet test
 ```
 
 Neither needs the `entharion` submodule described further down, so a plain clone builds and tests without pulling several hundred megabytes of reference material.
-
-To run the interpreter against a story file:
-
-```sh
-dotnet run --project src/Rezrov.Cli -- entharion/zcode-infocom/ballyhoo-r97-s851218.z3
-```
-
-The `--` separates arguments meant for `dotnet run` from arguments meant for Rezrov.
 
 Tests are xUnit v3 on Microsoft Testing Platform, which means a test project is a real executable rather than a library loaded by a separate runner. You can run one directly, and it reports more detail than `dotnet test` does:
 
