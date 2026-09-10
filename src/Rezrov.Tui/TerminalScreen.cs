@@ -59,13 +59,15 @@ public sealed class TerminalScreen : IScreen
 
     /// <summary>
     /// Everything a terminal can do: the status line and upper window
-    /// are drawn, styles and colors shown, and [zm 7.2] wrapping and
-    /// [zm 8.4.1] paging are the model's to do on this fixed grid.
+    /// are drawn, styles and colors shown, [zm 16] the character
+    /// graphics font shown as the nearest Unicode characters, and
+    /// [zm 7.2] wrapping and [zm 8.4.1] paging are the model's to do on
+    /// this fixed grid.
     /// </summary>
     public ScreenCapabilities Capabilities =>
         ScreenCapabilities.StatusLine | ScreenCapabilities.UpperWindow | ScreenCapabilities.Colors
         | ScreenCapabilities.Bold | ScreenCapabilities.Italic | ScreenCapabilities.FixedPitch
-        | ScreenCapabilities.FixedGrid;
+        | ScreenCapabilities.FixedGrid | ScreenCapabilities.CharacterGraphicsFont;
 
     public ScreenColor DefaultForeground => ScreenColor.White;
 
