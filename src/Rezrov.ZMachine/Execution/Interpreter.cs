@@ -80,7 +80,27 @@ public sealed class Interpreter
         Sound = new SoundModel(sound ?? NoSound.Instance, Header.Version);
 
         DescribeInterpreterInHeader();
+
+        // [zm 8.3] A Version 6 interpreter going under the Amiga number
+        // must give all windows one pair of colors when running
+        // Infocom's games, and change every window's text when either
+        // color changes, as the Amiga's palette did. Infocom's Version
+        // 6 games are the ones with serial numbers from the 1980s.
+        if (Windows is not null && InterpreterNumber == InterpreterNumber.Amiga && Header.SerialCode.StartsWith('8'))
+        {
+            Windows.SharedColors = true;
+        }
     }
+
+    /// <summary>
+    /// [zm 11.1.3] The machine the game is told it is running on: the
+    /// one asked for, or else the IBM PC, or the DEC-20 for a Version
+    /// 6 game on a screen without pictures.
+    /// </summary>
+    public InterpreterNumber InterpreterNumber =>
+        _interpreterNumber ?? (Windows is not null && !Display.Screen.Capabilities.HasFlag(ScreenCapabilities.Pictures)
+            ? InterpreterNumber.DecSystem20
+            : InterpreterNumber.IbmPc);
 
     public ZMemory Memory { get; }
 
@@ -2196,9 +2216,7 @@ public sealed class Interpreter
             // which without the picture leaves a countdown that never
             // reaches zero. The DEC-20 number names a machine Infocom
             // never gave pictures to, so the games expect none of it.
-            Header.InterpreterNumber = _interpreterNumber ?? (Windows is not null && !can.HasFlag(ScreenCapabilities.Pictures)
-                ? InterpreterNumber.DecSystem20
-                : InterpreterNumber.IbmPc);
+            Header.InterpreterNumber = InterpreterNumber;
             Header.InterpreterVersion = (byte)'R';
 
             // [zm 8.4] The screen's height and width.

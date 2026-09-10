@@ -35,6 +35,7 @@ internal static class Program
         string? save = null;
         string? blorb = null;
         int? seed = null;
+        InterpreterNumber? machine = null;
         var usage = args.Length < 1;
 
         for (var i = 1; i < args.Length && !usage; i++)
@@ -71,6 +72,11 @@ internal static class Program
                     seed = parsed;
                     i++;
                     break;
+                case "--interpreter" when i + 1 < args.Length && InterpreterNumbers.TryParse(args[i + 1], out var number):
+                    run = true;
+                    machine = number;
+                    i++;
+                    break;
                 default:
                     usage = true;
                     break;
@@ -97,7 +103,7 @@ internal static class Program
                 return 1;
             }
 
-            return RunZMachine(story.Bytes, trace, commands, transcript, record, save, story.Resources, seed);
+            return RunZMachine(story.Bytes, trace, commands, transcript, record, save, story.Resources, seed, machine);
         }
 
         if (!File.Exists(path))
@@ -122,7 +128,8 @@ internal static class Program
 
     private static int Usage()
     {
-        Console.Error.WriteLine("usage: rezrov <story-file> [--run] [--trace] [--commands <file>] [--transcript <file>] [--record <file>] [--save <file>] [--blorb <file>] [--seed <number>]");
+        Console.Error.WriteLine("usage: rezrov <story-file> [--run] [--trace] [--commands <file>] [--transcript <file>] [--record <file>] [--save <file>] [--blorb <file>] [--seed <number>] [--interpreter <machine>]");
+        Console.Error.WriteLine($"       machines: {string.Join(", ", InterpreterNumbers.AllNames)}, or a number from 1 to 11");
         Console.Error.WriteLine("       rezrov --accept <script> [--update | --resume]");
         return 2;
     }
@@ -175,7 +182,7 @@ internal static class Program
     /// go without asking either. Resources, if there are any, give the
     /// game its sounds, though the console can only ring its bell.
     /// </summary>
-    private static int RunZMachine(byte[] bytes, bool trace, string? commands, string? transcript, string? record, string? save, BlorbFile? resources, int? seed)
+    private static int RunZMachine(byte[] bytes, bool trace, string? commands, string? transcript, string? record, string? save, BlorbFile? resources, int? seed, InterpreterNumber? machine)
     {
         var memory = new ZMemory(bytes);
         var header = new StoryHeader(memory);
@@ -192,7 +199,8 @@ internal static class Program
             new ConsoleInput(header, memory),
             seed is { } s ? new RandomGenerator(s) : null,
             files: new ConsoleFiles(transcript, record, save),
-            sound: new ConsoleSound());
+            sound: new ConsoleSound(),
+            interpreterNumber: machine);
 
         if (resources is not null)
         {

@@ -25,7 +25,7 @@ public partial class InterpreterTests
         | ScreenCapabilities.FixedGrid | ScreenCapabilities.Pictures;
 
     // [zm 5.4] A Version 6 game starts in its main routine.
-    private static Run RunVersion6(Assembler main, IScreen? screen = null, Action<Story>? setup = null, Action<Interpreter>? before = null, IInput? input = null) =>
+    private static Run RunVersion6(Assembler main, IScreen? screen = null, Action<Story>? setup = null, Action<Interpreter>? before = null, IInput? input = null, InterpreterNumber? interpreterNumber = null) =>
         Execute(
             new Assembler(),
             story =>
@@ -36,7 +36,8 @@ public partial class InterpreterTests
             ZMachineVersion.V6,
             input: input,
             screen: screen ?? new RecordingScreen(),
-            before: before);
+            before: before,
+            interpreterNumber: interpreterNumber);
 
     // Follows a branching instruction with a store that only happens
     // when the branch is not taken, so the global says which.

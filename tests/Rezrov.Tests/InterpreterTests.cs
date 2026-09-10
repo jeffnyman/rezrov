@@ -231,7 +231,8 @@ public partial class InterpreterTests
         IInput? input = null,
         IScreen? screen = null,
         IFileChooser? files = null,
-        Action<Interpreter>? before = null)
+        Action<Interpreter>? before = null,
+        InterpreterNumber? interpreterNumber = null)
     {
         var story = new Story(version);
         story.Put(Code, code.ToArray());
@@ -239,7 +240,7 @@ public partial class InterpreterTests
 
         var memory = new ZMemory(story.Bytes);
         var writer = new StringWriter();
-        var interpreter = new Interpreter(memory, screen ?? new TextWriterScreen(writer), input ?? new ScriptedInput(), files: files);
+        var interpreter = new Interpreter(memory, screen ?? new TextWriterScreen(writer), input ?? new ScriptedInput(), files: files, interpreterNumber: interpreterNumber);
         before?.Invoke(interpreter);
 
         interpreter.Run(10000);

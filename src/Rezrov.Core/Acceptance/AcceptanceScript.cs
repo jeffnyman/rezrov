@@ -6,9 +6,11 @@ namespace Rezrov.Core.Acceptance;
 /// </summary>
 /// <remarks>
 /// The file is plain text. A line beginning with <c>!</c> is a
-/// directive, written <c>! NAME=value</c>, and three are known: GAME
+/// directive, written <c>! NAME=value</c>, and four are known: GAME
 /// names the story file, SEED gives the session seed that makes the
-/// game's dice repeat, and BLORB names a resource file. Paths are relative to the script, not to
+/// game's dice repeat, BLORB names a resource file, and INTERPRETER
+/// names the machine the game should take itself to be on, since some
+/// games behave differently by it. Paths are relative to the script, not to
 /// wherever the interpreter happens to be run from, so a script can sit
 /// beside the games it plays and still work from anywhere. A SEED line
 /// after some commands is a change of seed that takes effect when the
@@ -33,11 +35,12 @@ namespace Rezrov.Core.Acceptance;
 /// </remarks>
 public sealed class AcceptanceScript
 {
-    private AcceptanceScript(string scriptPath, string gamePath, string? blorbPath, int seed, IReadOnlyList<string> commands, IReadOnlyList<int> commandLines, IReadOnlyDictionary<int, int> seedChanges)
+    private AcceptanceScript(string scriptPath, string gamePath, string? blorbPath, string? interpreter, int seed, IReadOnlyList<string> commands, IReadOnlyList<int> commandLines, IReadOnlyDictionary<int, int> seedChanges)
     {
         ScriptPath = scriptPath;
         GamePath = gamePath;
         BlorbPath = blorbPath;
+        Interpreter = interpreter;
         Seed = seed;
         Commands = commands;
         CommandLines = commandLines;
@@ -52,6 +55,13 @@ public sealed class AcceptanceScript
 
     /// <summary>The resource file to use, as a full path, if any.</summary>
     public string? BlorbPath { get; }
+
+    /// <summary>
+    /// The machine the game should take itself to be on, as written,
+    /// or null for the interpreter's own choice. The runner reads it,
+    /// since which names exist is the story format's business.
+    /// </summary>
+    public string? Interpreter { get; }
 
     /// <summary>The seed for the game's random numbers at the start.</summary>
     public int Seed { get; }
@@ -107,6 +117,7 @@ public sealed class AcceptanceScript
 
         string? game = null;
         string? blorb = null;
+        string? interpreter = null;
         int? seed = null;
         var commands = new List<string>();
         var commandLines = new List<int>();
@@ -176,6 +187,9 @@ public sealed class AcceptanceScript
                 case "BLORB":
                     blorb = Path.GetFullPath(Path.Combine(directory, value));
                     break;
+                case "INTERPRETER":
+                    interpreter = value;
+                    break;
                 case "SEED":
                     if (!int.TryParse(value, out var parsed) || parsed < 1)
                     {
@@ -197,7 +211,7 @@ public sealed class AcceptanceScript
 
                     break;
                 default:
-                    throw new InvalidDataException($"{name}, line {i + 1}: there is no {key} directive; the directives are GAME, SEED, and BLORB");
+                    throw new InvalidDataException($"{name}, line {i + 1}: there is no {key} directive; the directives are GAME, SEED, BLORB, and INTERPRETER");
             }
         }
 
@@ -211,6 +225,6 @@ public sealed class AcceptanceScript
             throw new InvalidDataException($"{name}: no SEED directive gives the random number seed");
         }
 
-        return new AcceptanceScript(fullPath, game, blorb, seed.Value, commands, commandLines, seedChanges);
+        return new AcceptanceScript(fullPath, game, blorb, interpreter, seed.Value, commands, commandLines, seedChanges);
     }
 }

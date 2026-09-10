@@ -120,6 +120,18 @@ public static class AcceptanceRun
             return null;
         }
 
+        InterpreterNumber? machine = null;
+        if (script.Interpreter is { } wanted)
+        {
+            if (!InterpreterNumbers.TryParse(wanted, out var number))
+            {
+                errors.WriteLine($"rezrov: {Path.GetFileName(script.ScriptPath)}: there is no interpreter called {wanted}; the machines are {string.Join(", ", InterpreterNumbers.AllNames)}");
+                return null;
+            }
+
+            machine = number;
+        }
+
         var memory = new ZMemory(story.Bytes);
         var header = new StoryHeader(memory);
         var output = new StringWriter();
@@ -138,7 +150,8 @@ public static class AcceptanceRun
                 : new AnnouncedInput(keyboard, errors),
             random,
             files,
-            new SilentSound());
+            new SilentSound(),
+            machine);
 
         if (story.Resources is not null)
         {
