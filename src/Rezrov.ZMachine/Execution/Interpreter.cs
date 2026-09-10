@@ -35,8 +35,10 @@ public sealed class Interpreter
         IInput input,
         RandomGenerator? random = null,
         IFileChooser? files = null,
-        ISound? sound = null)
+        ISound? sound = null,
+        InterpreterNumber? interpreterNumber = null)
     {
+        _interpreterNumber = interpreterNumber;
         ArgumentNullException.ThrowIfNull(memory);
         ArgumentNullException.ThrowIfNull(screen);
         ArgumentNullException.ThrowIfNull(input);
@@ -45,7 +47,26 @@ public sealed class Interpreter
         Input = input;
         Files = files ?? NoFileChooser.Instance;
         Header = new StoryHeader(memory);
-        Screen = new ScreenModel(screen, Header, memory);
+
+        // [zm 8.8] Version 6 has a screen model of its own; every other
+        // version shares one.
+        if (Header.Version == ZMachineVersion.V6)
+        {
+            Windows = new WindowedScreenModel(screen, Header, memory)
+            {
+                // [zm 8.8.3.2.2.1] The interpreter number is 6, so the
+                // Zork Zero rule applies to that one story.
+                ZorkZeroInterruptOrder = Header.Release == 393 && Header.SerialCode == "890714",
+            };
+            Windows.NewlineInterrupt = routine => CallInterrupt(routine);
+            Display = Windows;
+        }
+        else
+        {
+            Screen = new ScreenModel(screen, Header, memory);
+            Display = Screen;
+        }
+
         Text = new ZTextDecoder(memory, Header);
         Encoder = ZTextEncoder.ForStory(Header, memory);
         ExtraCharacters = UnicodeTranslationTable.ForStory(Header, memory);
@@ -54,7 +75,7 @@ public sealed class Interpreter
         Decoder = new InstructionDecoder(memory, Header, Text);
         State = new GameState(memory, Header);
         Random = random ?? new RandomGenerator();
-        Streams = new OutputStreams(Screen, State, Header, ExtraCharacters, Files);
+        Streams = new OutputStreams(Display, State, Header, ExtraCharacters, Files);
         Output = Streams;
         Sound = new SoundModel(sound ?? NoSound.Instance, Header.Version);
 
@@ -73,9 +94,22 @@ public sealed class Interpreter
     public OutputStreams Streams { get; }
 
     /// <summary>
-    /// [zm 8] The screen model, over the frontend's screen.
+    /// [zm 8] The screen model in force, over the frontend's screen:
+    /// one of <see cref="Screen"/> and <see cref="Windows"/>.
     /// </summary>
-    public ScreenModel Screen { get; }
+    public IScreenModel Display { get; }
+
+    /// <summary>
+    /// [zm 8.7] The two-window screen model, in every version but 6,
+    /// where it is null.
+    /// </summary>
+    public ScreenModel? Screen { get; }
+
+    /// <summary>
+    /// [zm 8.8] The eight-window screen model, in Version 6 only, and
+    /// null elsewhere.
+    /// </summary>
+    public WindowedScreenModel? Windows { get; }
 
     /// <summary>[zm 7.6] The frontend's way of choosing files.</summary>
     public IFileChooser Files { get; }
@@ -111,6 +145,9 @@ public sealed class Interpreter
 
         Resources = blorb;
         Sound.LoadResources(blorb);
+
+        // [zm 8.8.6] The pictures are the Version 6 screen's business.
+        Windows?.UsePictures(BlorbPictures.From(blorb));
     }
 
     /// <summary>Input stream 0, the keyboard.</summary>
@@ -169,6 +206,7 @@ public sealed class Interpreter
 
     private readonly List<string> _runtimeErrors = [];
     private readonly HashSet<string> _reportedKinds = [];
+    private readonly InterpreterNumber? _interpreterNumber;
     private CommandFile? _commandFile;
     private int _interruptDepth;
 
@@ -706,7 +744,7 @@ public sealed class Interpreter
                 // own header fields are set again and the screen is as
                 // at the start of a game.
                 State.Restart();
-                Screen.Reset();
+                Display.Reset();
                 Streams.Reset();
                 Sound.StopAll();
                 DescribeInterpreterInHeader();
@@ -725,24 +763,75 @@ public sealed class Interpreter
 
                 break;
 
-            // The screen. Version 6 has a model of its own, [zm 8.8],
-            // which is not built, so its games stop here rather than
-            // run under the wrong one.
-            case Opcode.SplitWindow when Header.Version == ZMachineVersion.V6:
-            case Opcode.SetWindow when Header.Version == ZMachineVersion.V6:
-            case Opcode.EraseWindow when Header.Version == ZMachineVersion.V6:
-            case Opcode.EraseLine when Header.Version == ZMachineVersion.V6:
-            case Opcode.SetCursor when Header.Version == ZMachineVersion.V6:
-            case Opcode.GetCursor when Header.Version == ZMachineVersion.V6:
-            case Opcode.SetTextStyle when Header.Version == ZMachineVersion.V6:
-            case Opcode.BufferMode when Header.Version == ZMachineVersion.V6:
-            case Opcode.SetColour when Header.Version == ZMachineVersion.V6:
-            case Opcode.SetTrueColour when Header.Version == ZMachineVersion.V6:
-            case Opcode.SetFont when Header.Version == ZMachineVersion.V6:
-            case Opcode.PrintTable when Header.Version == ZMachineVersion.V6:
-                throw new NotSupportedException($"{instruction.Name} needs the Version 6 screen model, which is not implemented yet.");
+            // The screen. [zm 8.8] Version 6 has a model of its own, so
+            // its opcodes come first, matched on that model being there;
+            // the same opcodes under [zm 8.7] follow.
+            case Opcode.SplitWindow when Windows is { } windows:
+                windows.SplitWindow(Signed(a[0]));
+                break;
+            case Opcode.SetWindow when Windows is { } windows:
+                if (!windows.SetWindow(Signed(a[0])))
+                {
+                    ReportRuntimeError(instruction, $"there is no window {Signed(a[0])}");
+                }
+
+                break;
+            case Opcode.EraseWindow when Windows is { } windows:
+                if (!windows.EraseWindow(Signed(a[0])))
+                {
+                    ReportRuntimeError(instruction, $"there is no window {Signed(a[0])}");
+                }
+
+                break;
+            case Opcode.EraseLine when Windows is { } windows:
+                windows.EraseLine(Signed(a[0]));
+                break;
+            case Opcode.SetCursor when Windows is { } windows:
+                if (!windows.SetCursor(Signed(a[0]), Arg(a, 1), WindowArg(a, 2)))
+                {
+                    ReportRuntimeError(instruction, $"there is no window {Arg(a, 2)}");
+                }
+
+                break;
+            case Opcode.GetCursor when Windows is { } windows:
+            {
+                // [zm op:get_cursor] y into word 0, x into word 1.
+                var (y, x) = windows.GetCursor();
+                State.WriteWord(a[0], (ushort)y);
+                State.WriteWord(a[0] + 2, (ushort)x);
+                break;
+            }
+
+            case Opcode.SetTextStyle when Windows is { } windows:
+                if ((a[0] & ~0x0F) != 0)
+                {
+                    ReportRuntimeError(instruction, $"{a[0]} is not a text style");
+                }
+
+                windows.SetTextStyle(a[0]);
+                break;
+            case Opcode.BufferMode when Windows is { } windows:
+                windows.SetBuffering(a[0] != 0);
+                break;
+            case Opcode.SetColour when Windows is { } windows:
+                if (!windows.SetColors((ScreenColor)Signed(a[0]), (ScreenColor)Signed(a[1]), WindowArg(a, 2)))
+                {
+                    ReportRuntimeError(instruction, $"colors {Signed(a[0])} and {Signed(a[1])} cannot be set for window {WindowArg(a, 2)}");
+                }
+
+                break;
+            case Opcode.SetTrueColour when Windows is { } windows:
+                if (!windows.SetTrueColors(Signed(a[0]), Signed(a[1]), WindowArg(a, 2)))
+                {
+                    ReportRuntimeError(instruction, $"true colors {Signed(a[0])} and {Signed(a[1])} cannot be set for window {WindowArg(a, 2)}");
+                }
+
+                break;
+            case Opcode.SetFont when Windows is { } windows:
+                Store(instruction, (ushort)windows.SetFont(Signed(a[0]), WindowArg(a, 1)));
+                break;
             case Opcode.SplitWindow:
-                Screen.SplitWindow(a[0]);
+                Screen!.SplitWindow(a[0]);
                 break;
             case Opcode.SetWindow:
                 // [zm op:set_window] Only 0 and 1 exist before Version 6.
@@ -752,12 +841,12 @@ public sealed class Interpreter
                 }
                 else
                 {
-                    Screen.SetWindow(a[0]);
+                    Screen!.SetWindow(a[0]);
                 }
 
                 break;
             case Opcode.EraseWindow:
-                if (!Screen.EraseWindow(Signed(a[0])))
+                if (!Screen!.EraseWindow(Signed(a[0])))
                 {
                     ReportRuntimeError(instruction, $"there is no window {Signed(a[0])}");
                 }
@@ -768,12 +857,12 @@ public sealed class Interpreter
                 // does anything.
                 if (a[0] == 1)
                 {
-                    Screen.EraseLine();
+                    Screen!.EraseLine();
                 }
 
                 break;
             case Opcode.SetCursor:
-                if (!Screen.SetCursor(Signed(a[0]), Signed(a[1])))
+                if (!Screen!.SetCursor(Signed(a[0]), Signed(a[1])))
                 {
                     ReportRuntimeError(instruction, $"row {Signed(a[0])}, column {Signed(a[1])} is outside the upper window");
                 }
@@ -782,7 +871,7 @@ public sealed class Interpreter
             case Opcode.GetCursor:
             {
                 // [zm op:get_cursor] Row into word 0, column into word 1.
-                var (row, column) = Screen.GetCursor();
+                var (row, column) = Screen!.GetCursor();
                 State.WriteWord(a[0], (ushort)row);
                 State.WriteWord(a[0] + 2, (ushort)column);
                 break;
@@ -794,29 +883,29 @@ public sealed class Interpreter
                     ReportRuntimeError(instruction, $"{a[0]} is not a text style");
                 }
 
-                Screen.SetTextStyle(a[0]);
+                Screen!.SetTextStyle(a[0]);
                 break;
             case Opcode.BufferMode:
                 // [zm op:buffer_mode] 1 is on, 0 is off, and anything
                 // else is taken as on, as Frotz takes it.
-                Screen.SetBuffering(a[0] != 0);
+                Screen!.SetBuffering(a[0] != 0);
                 break;
             case Opcode.SetColour:
-                if (!Screen.SetColors((ScreenColor)Signed(a[0]), (ScreenColor)Signed(a[1])))
+                if (!Screen!.SetColors((ScreenColor)Signed(a[0]), (ScreenColor)Signed(a[1])))
                 {
                     ReportRuntimeError(instruction, $"colors {Signed(a[0])} and {Signed(a[1])} are not both available in this version");
                 }
 
                 break;
             case Opcode.SetTrueColour:
-                if (!Screen.SetTrueColors(Signed(a[0]), Signed(a[1])))
+                if (!Screen!.SetTrueColors(Signed(a[0]), Signed(a[1])))
                 {
                     ReportRuntimeError(instruction, $"true colors {Signed(a[0])} and {Signed(a[1])} are not both available in this version");
                 }
 
                 break;
             case Opcode.SetFont:
-                Store(instruction, (ushort)Screen.SetFont(a[0]));
+                Store(instruction, (ushort)Screen!.SetFont(a[0]));
                 break;
             case Opcode.PrintTable:
                 PrintTable(a);
@@ -889,23 +978,111 @@ public sealed class Interpreter
             case Opcode.RestoreUndo:
                 RestoreUndo(instruction);
                 break;
+
+            // [zm 8.8] The rest of the Version 6 screen. These opcodes
+            // exist only in Version 6, so the windowed model is there.
             case Opcode.DrawPicture:
-            case Opcode.PictureData:
+                if (!Windows!.DrawPicture(a[0], Arg(a, 1), Arg(a, 2)))
+                {
+                    ReportRuntimeError(instruction, $"there is no picture {a[0]} to draw");
+                }
+
+                break;
             case Opcode.ErasePicture:
-            case Opcode.SetMargins:
-            case Opcode.MoveWindow:
-            case Opcode.WindowSize:
-            case Opcode.WindowStyle:
-            case Opcode.GetWindProp:
-            case Opcode.ScrollWindow:
-            case Opcode.ReadMouse:
-            case Opcode.MouseWindow:
-            case Opcode.PutWindProp:
-            case Opcode.PrintForm:
-            case Opcode.MakeMenu:
+                if (!Windows!.ErasePicture(a[0], Arg(a, 1), Arg(a, 2)))
+                {
+                    ReportRuntimeError(instruction, $"there is no picture {a[0]} to erase");
+                }
+
+                break;
+            case Opcode.PictureData:
+                PictureData(instruction, a);
+                break;
             case Opcode.PictureTable:
+                // [zm op:picture_table] Advance warning of pictures to
+                // come, which an interpreter may use to cache them and
+                // this one has no need to.
+                break;
+            case Opcode.SetMargins:
+                if (!Windows!.SetMargins(Signed(a[0]), Arg(a, 1), WindowArg(a, 2)))
+                {
+                    ReportRuntimeError(instruction, $"there is no window {WindowArg(a, 2)}");
+                }
+
+                break;
+            case Opcode.MoveWindow:
+                if (!Windows!.MoveWindow(Signed(a[0]), Arg(a, 1), Arg(a, 2)))
+                {
+                    ReportRuntimeError(instruction, $"there is no window {Signed(a[0])}");
+                }
+
+                break;
+            case Opcode.WindowSize:
+                if (!Windows!.WindowSize(Signed(a[0]), Arg(a, 1), Arg(a, 2)))
+                {
+                    ReportRuntimeError(instruction, $"there is no window {Signed(a[0])}");
+                }
+
+                break;
+            case Opcode.WindowStyle:
+                if (!Windows!.WindowStyle(Signed(a[0]), Arg(a, 1), Arg(a, 2)))
+                {
+                    ReportRuntimeError(instruction, $"there is no window {Signed(a[0])}");
+                }
+
+                break;
+            case Opcode.GetWindProp:
+                if (Windows!.GetProperty(Signed(a[0]), Signed(a[1])) is { } property)
+                {
+                    Store(instruction, (ushort)property);
+                }
+                else
+                {
+                    ReportRuntimeError(instruction, $"window {Signed(a[0])} has no property {Signed(a[1])}");
+                    Store(instruction, 0);
+                }
+
+                break;
+            case Opcode.PutWindProp:
+                if (!Windows!.PutProperty(Signed(a[0]), Signed(a[1]), Arg(a, 2)))
+                {
+                    ReportRuntimeError(instruction, $"property {Signed(a[1])} of window {Signed(a[0])} cannot be written");
+                }
+
+                break;
+            case Opcode.ScrollWindow:
+                if (!Windows!.ScrollWindow(Signed(a[0]), Arg(a, 1)))
+                {
+                    ReportRuntimeError(instruction, $"there is no window {Signed(a[0])}");
+                }
+
+                break;
+            case Opcode.ReadMouse:
+                // [zm op:read_mouse] There is no mouse, [zm 10.3.1.1] and
+                // the header says so, so the four words are all zero.
+                for (var word = 0; word < 4; word++)
+                {
+                    State.WriteWord(a[0] + (2 * word), 0);
+                }
+
+                break;
+            case Opcode.MouseWindow:
+                // [zm 10.3.4] Nothing to constrain.
+                break;
+            case Opcode.MakeMenu:
+                // [zm 10.4.1.1] Menus are not offered, and the branch
+                // says the menu was not made.
+                Branch(instruction, false);
+                break;
+            case Opcode.PrintForm:
+                PrintForm(a[0]);
+                break;
             case Opcode.BufferScreen:
-                throw new NotSupportedException($"{instruction.Name} needs the Version 6 screen model, which is not implemented yet.");
+                // [zm 8.8.7] An interpreter is free to ignore this and
+                // act as if buffering is always 0, which is the old state
+                // returned.
+                Store(instruction, 0);
+                break;
 
             default:
                 throw Fail(instruction, "This opcode is not handled by the interpreter, which is a bug in Rezrov.");
@@ -1116,7 +1293,7 @@ public sealed class Interpreter
         var timeGame = Header.Version == ZMachineVersion.V3
             && Header.Flags1Versions1To3.HasFlag(Flags1Versions1To3.TimeStatusLine);
 
-        Screen.ShowStatusLine(name, timeGame, Signed(State.ReadGlobal(0x11)), Signed(State.ReadGlobal(0x12)));
+        Screen?.ShowStatusLine(name, timeGame, Signed(State.ReadGlobal(0x11)), Signed(State.ReadGlobal(0x12)));
     }
 
     private void PrintTable(ushort[] a)
@@ -1128,13 +1305,13 @@ public sealed class Interpreter
         var width = a[1];
         var height = a.Length > 2 ? a[2] : 1;
         var skip = a.Length > 3 ? a[3] : 0;
-        var startColumn = Screen.UpperWindow.CursorColumn;
+        var startColumn = Display.TableColumn;
 
         for (var row = 0; row < height; row++)
         {
             if (row > 0)
             {
-                Screen.NextTableRow(startColumn);
+                Display.NextTableRow(startColumn);
             }
 
             for (var column = 0; column < width; column++)
@@ -1146,6 +1323,57 @@ public sealed class Interpreter
         }
     }
 
+    private void PictureData(Instruction instruction, ushort[] a)
+    {
+        // [zm op:picture_data] For a picture: its height into word 0 and
+        // width into word 1, and a branch. For picture 0: how many
+        // pictures there are and the picture file's release number, and
+        // a branch if there are any.
+        var windows = Windows!;
+        var array = a.Length > 1 ? a[1] : (ushort)0;
+
+        if (a[0] == 0)
+        {
+            var (count, release) = windows.PictureSummary;
+            State.WriteWord(array, (ushort)count);
+            State.WriteWord(array + 2, (ushort)release);
+            Branch(instruction, count > 0);
+        }
+        else if (windows.PictureSize(a[0]) is { } size)
+        {
+            State.WriteWord(array, (ushort)size.Height);
+            State.WriteWord(array + 2, (ushort)size.Width);
+            Branch(instruction, true);
+        }
+        else
+        {
+            Branch(instruction, false);
+        }
+    }
+
+    private void PrintForm(ushort table)
+    {
+        // [zm op:print_form] Lines, each a word holding a character count
+        // followed by that many bytes of text, ended by a zero word.
+        var at = (int)table;
+        while (true)
+        {
+            var length = Memory.ReadWord(at);
+            if (length == 0)
+            {
+                break;
+            }
+
+            at += 2;
+            for (var i = 0; i < length; i++)
+            {
+                Output.Print(Memory.ReadByte(at++));
+            }
+
+            Output.Print(Zscii.Newline);
+        }
+    }
+
     private void CheckUnicode(Instruction instruction, ushort character)
     {
         // [zm op:check_unicode] Bit 0 if the screen can print it, bit 1
@@ -1153,7 +1381,7 @@ public sealed class Interpreter
         // ever produces ZSCII, so a character can come in if the story's
         // translation table has a code for it.
         var result = 0;
-        if (Screen.CanPrint((char)character))
+        if (Display.CanPrint((char)character))
         {
             result |= 1;
         }
@@ -1211,7 +1439,7 @@ public sealed class Interpreter
         // [zm 10.5.1] In Versions 1 to 3 the status line is redisplayed
         // before input is accepted.
         ShowStatusLine(instruction);
-        Screen.PrepareForInput(InputStream == 1);
+        Display.PrepareForInput(InputStream == 1);
         Sound.InputHappened();
 
         var request = new LineInputRequest(
@@ -1219,8 +1447,8 @@ public sealed class Interpreter
             initial,
             TerminatingCharacters.Read(Memory, Header),
             Timer(a.Length > 2 ? a[2] : (ushort)0, a.Length > 3 ? a[3] : (ushort)0));
-        var line = ReadLine(request);
-        Screen.InputEnded(line.Terminator == Zscii.Newline);
+        var (line, replayed) = ReadLine(request);
+        Display.InputEnded(replayed ? null : line);
 
         // [zm op:read] The text is reduced to lower case, and [zm 10.7.2]
         // only characters defined for both input and output can be
@@ -1291,7 +1519,7 @@ public sealed class Interpreter
         }
 
         var timer = Timer(a.Length > 1 ? a[1] : (ushort)0, a.Length > 2 ? a[2] : (ushort)0);
-        Screen.PrepareForInput(InputStream == 1);
+        Display.PrepareForInput(InputStream == 1);
         Sound.InputHappened();
         Store(instruction, ReadKey(timer));
     }
@@ -1616,7 +1844,7 @@ public sealed class Interpreter
 
         if (Header.Version == ZMachineVersion.V3)
         {
-            Screen.SplitWindow(0);
+            Screen!.SplitWindow(0);
         }
 
         var pc = State.ProgramCounter;
@@ -1733,9 +1961,10 @@ public sealed class Interpreter
     // [zm 10.2] From the file of commands while there is one, and from
     // the keyboard when it runs out, so that a script can hand the game
     // back to the player.
-    private LineInput ReadLine(LineInputRequest request)
+    private (LineInput Line, bool Replayed) ReadLine(LineInputRequest request)
     {
         LineInput line;
+        var fromFile = false;
 
         if (_commandFile is not null && _commandFile.ReadLine(request) is { } replayed)
         {
@@ -1744,15 +1973,16 @@ public sealed class Interpreter
             // the interpreter shows what the file said.
             foreach (var code in replayed.Text)
             {
-                Screen.Print(code);
+                Display.Print(code);
             }
 
             if (replayed.Terminator == Zscii.Newline)
             {
-                Screen.Print(Zscii.Newline);
+                Display.Print(Zscii.Newline);
             }
 
             line = replayed;
+            fromFile = true;
         }
         else
         {
@@ -1766,7 +1996,7 @@ public sealed class Interpreter
 
         // [zm 7.1.1.1] The transcript gets the command either way.
         Streams.EchoInput(line.Text, line.Terminator);
-        return line;
+        return (line, fromFile);
     }
 
     private ushort ReadKey(InputTimer? timer)
@@ -1918,7 +2148,7 @@ public sealed class Interpreter
     /// </summary>
     private void DescribeInterpreterInHeader()
     {
-        var screen = Screen.Screen;
+        var screen = Display.Screen;
         var can = screen.Capabilities;
 
         if (Header.Version <= ZMachineVersion.V3)
@@ -1945,19 +2175,30 @@ public sealed class Interpreter
             flags = Set(flags, Flags1FromVersion4.FixedSpaceAvailable, can.HasFlag(ScreenCapabilities.FixedPitch));
 
             // [zm 9.1.1] In Version 6, bit 5 says whether sound effects
-            // beyond a bleep can be played.
+            // beyond a bleep can be played, and [zm 8.8.6] bit 1 whether
+            // pictures can be shown.
             if (Header.Version == ZMachineVersion.V6)
             {
                 flags = Set(flags, Flags1FromVersion4.SoundEffectsAvailable, Sound.CanPlaySounds);
+                flags = Set(flags, Flags1FromVersion4.PicturesAvailable, can.HasFlag(ScreenCapabilities.Pictures));
             }
             flags = Set(flags, Flags1FromVersion4.TimedInputAvailable, Input.SupportsTimedInput);
             Header.Flags1FromVersion4 = flags;
 
             // [zm 11.1.3] The interpreter number most suitable for the
-            // machine, which for anything modern is the IBM PC, as
-            // Frotz also says; and [zm 11.1.3.1] a letter for the
-            // interpreter version.
-            Header.InterpreterNumber = InterpreterNumber.IbmPc;
+            // machine, which for anything modern is the IBM PC; and
+            // [zm 11.1.3.1] a letter for the interpreter version. The
+            // exception is a Version 6 game on a screen without
+            // pictures: Infocom's games take an IBM PC to have them,
+            // and Zork Zero in particular works its newline interrupt
+            // countdown out from a picture's height and then, for that
+            // one interpreter number, [zm 8.8.3.2.2.1] takes one off,
+            // which without the picture leaves a countdown that never
+            // reaches zero. The DEC-20 number names a machine Infocom
+            // never gave pictures to, so the games expect none of it.
+            Header.InterpreterNumber = _interpreterNumber ?? (Windows is not null && !can.HasFlag(ScreenCapabilities.Pictures)
+                ? InterpreterNumber.DecSystem20
+                : InterpreterNumber.IbmPc);
             Header.InterpreterVersion = (byte)'R';
 
             // [zm 8.4] The screen's height and width.
@@ -1965,7 +2206,20 @@ public sealed class Interpreter
             Header.ScreenWidthCharacters = (byte)Math.Min(screen.Width, 255);
         }
 
-        if (Header.Version >= ZMachineVersion.V5)
+        if (Windows is { } windows)
+        {
+            // [zm 8.8.1] In Version 6 the screen is measured in units,
+            // which are whatever the frontend's font makes them, so
+            // [zm 8.4.3] the size in units is the size in characters
+            // times the font size, and [zm 8.1.1] the font size is
+            // written as the frontend reports it.
+            Header.ScreenWidthUnits = (ushort)Math.Min(windows.UnitsWide, ushort.MaxValue);
+            Header.ScreenHeightUnits = (ushort)Math.Min(windows.UnitsHigh, ushort.MaxValue);
+            Header.FontWidthUnits = (byte)Math.Min(windows.FontWidth, 255);
+            Header.FontHeightUnits = (byte)Math.Min(windows.FontHeight, 255);
+        }
+
+        if (Header.Version >= ZMachineVersion.V5 && Windows is null)
         {
             // [zm 8.4.2] Units are characters here, as the remarks on
             // section 8 recommend, so [zm 8.4.3] the size in units is
@@ -1997,7 +2251,11 @@ public sealed class Interpreter
         // [zm 10.4.1.1] menus (bit 8). [zm 6.1.4] Undo is provided, so
         // bit 4 stays as the game set it.
         var flags2 = Header.Flags2 & ~(Flags2.WantsMouse | Flags2.WantsMenus);
-        if (!can.HasFlag(ScreenCapabilities.CharacterGraphicsFont))
+
+        // Bit 3 means [zm 8.8.6] pictures in Version 6 and [zm 8.1.5.1]
+        // the character graphics font in Version 5.
+        var bit3 = Header.Version == ZMachineVersion.V6 ? ScreenCapabilities.Pictures : ScreenCapabilities.CharacterGraphicsFont;
+        if (!can.HasFlag(bit3))
         {
             flags2 &= ~Flags2.WantsPictures;
         }
@@ -2137,6 +2395,13 @@ public sealed class Interpreter
 
     // [zm 2.2] The top bit is the sign bit.
     private static short Signed(ushort value) => (short)value;
+
+    // An optional operand, signed, or 0 when it was not given.
+    private static int Arg(ushort[] a, int index) => a.Length > index ? Signed(a[index]) : 0;
+
+    // [zm 8.8.3] An optional window operand, or the current window.
+    private static int WindowArg(ushort[] a, int index) =>
+        a.Length > index ? Signed(a[index]) : WindowedScreenModel.CurrentWindowCode;
 
     // [zm 2.3.2] Out-of-range results reduced modulo $10000.
     private static ushort Unsigned(int value) => (ushort)value;

@@ -43,6 +43,21 @@ public sealed class TerminalScreen : IScreen
     public int Height => Buffer.Height;
 
     /// <summary>
+    /// [zm 8.8.1] A Version 6 screen is measured in units, and the unit
+    /// is the interpreter's to choose. A cell here is 4 units wide and
+    /// 1 unit high, which is not a shape any pixel screen has but is
+    /// the shape Infocom's games assume when they have no pictures:
+    /// they measure text sideways in pixels, through output stream 3,
+    /// with constants that want a screen at least 320 wide, and they
+    /// count downward in lines. An 80 by 24 terminal is then 320 by
+    /// 24, and Zork Zero, Journey, and Shogun lay themselves out as
+    /// they were meant to.
+    /// </summary>
+    public int FontWidth => 4;
+
+    public int FontHeight => 1;
+
+    /// <summary>
     /// Everything a terminal can do: the status line and upper window
     /// are drawn, styles and colors shown, and [zm 7.2] wrapping and
     /// [zm 8.4.1] paging are the model's to do on this fixed grid.
@@ -139,6 +154,16 @@ public sealed class TerminalScreen : IScreen
         lock (Sync)
         {
             Buffer.UpdateUpper(model);
+        }
+
+        _repaint();
+    }
+
+    public void UpdateWindows(WindowedScreenModel model)
+    {
+        lock (Sync)
+        {
+            Buffer.UpdateWindows(model);
         }
 
         _repaint();

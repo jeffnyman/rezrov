@@ -247,7 +247,7 @@ public partial class InterpreterTests
 
         Assert.Equal(1, run.Global(G1));
         Assert.True(run.Interpreter.Streams.TranscriptSelected);
-        Assert.Equal(0, run.Interpreter.Screen.UpperWindow.Lines);
+        Assert.Equal(0, run.Interpreter.Screen!.UpperWindow.Lines);
     }
 
     [Fact]

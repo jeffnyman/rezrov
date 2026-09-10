@@ -24,6 +24,10 @@ internal sealed class RecordingScreen : IScreen
 
     public int Height { get; }
 
+    public int FontWidth { get; init; } = 1;
+
+    public int FontHeight { get; init; } = 1;
+
     public ScreenCapabilities Capabilities { get; }
 
     public ScreenColor DefaultForeground { get; init; } = ScreenColor.White;
@@ -57,6 +61,11 @@ internal sealed class RecordingScreen : IScreen
     /// </summary>
     public ScreenModel? LastModel { get; private set; }
 
+    public int WindowUpdates { get; private set; }
+
+    /// <summary>The Version 6 model as it was at the last repaint.</summary>
+    public WindowedScreenModel? LastWindows { get; private set; }
+
     public bool CanPrint(char character) => !Unprintable.Contains(character);
 
     public void Print(string text, TextAttributes attributes)
@@ -81,5 +90,11 @@ internal sealed class RecordingScreen : IScreen
     {
         UpperWindowUpdates++;
         LastModel = model;
+    }
+
+    public void UpdateWindows(WindowedScreenModel model)
+    {
+        WindowUpdates++;
+        LastWindows = model;
     }
 }
