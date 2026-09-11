@@ -1,5 +1,6 @@
 using Rezrov.Core;
 using Rezrov.Glulx;
+using Rezrov.Glulx.Execution;
 using Rezrov.Glulx.Instructions;
 
 namespace Rezrov.Tests;
@@ -120,6 +121,48 @@ public class GlulxCorpusTests
             catch (GlulxException e)
             {
                 failures.Add($"{Path.GetFileName(file)}: {e.Message}");
+            }
+        }
+
+        Assert.Empty(failures);
+    }
+
+    [Fact]
+    public void EveryGlulxFileRunsUntilItNeedsSomethingNotBuilt()
+    {
+        var files = Corpus.GlulxFiles();
+        Assert.SkipUnless(files.Count > 0, SubmoduleAbsent);
+
+        var failures = new List<string>();
+
+        foreach (var file in files)
+        {
+            // Every game starts by setting up its I/O, which is not built
+            // yet, so the run is expected to stop at the first I/O
+            // opcode, or to quit on finding through gestalt that Glk is
+            // absent, as glulxercise does. A fatal machine error before
+            // that point would mean a call frame or an operand went
+            // wrong on real code.
+            var machine = new GlulxMachine(new GlulxMemory(Corpus.GlulxImage(file)));
+            try
+            {
+                while (!machine.HasQuit && machine.InstructionsExecuted < 1_000_000)
+                {
+                    machine.Step();
+                }
+
+                if (!machine.HasQuit)
+                {
+                    failures.Add($"{Path.GetFileName(file)}: ran {machine.InstructionsExecuted} instructions without stopping");
+                }
+            }
+            catch (NotSupportedException)
+            {
+                // The expected stopping point.
+            }
+            catch (GlulxException e)
+            {
+                failures.Add($"{Path.GetFileName(file)}: {e.Message} after {machine.InstructionsExecuted} instructions");
             }
         }
 

@@ -4,10 +4,10 @@ using Rezrov.Core.Blorb;
 namespace Rezrov.Cli;
 
 /// <summary>
-/// A story ready to run: the Z-code, and the resources that go with it
-/// if there are any.
+/// A story ready to run: the Z-code or Glulx image, which machine it is
+/// for, and the resources that go with it if there are any.
 /// </summary>
-internal sealed record LoadedStory(byte[] Bytes, BlorbFile? Resources);
+internal sealed record LoadedStory(byte[] Bytes, BlorbFile? Resources, StoryFormat Format);
 
 /// <summary>
 /// Turns a path on the command line into a story to run, whichever way
@@ -42,22 +42,30 @@ internal static class StoryLoader
                 return null;
             }
 
-            if (packaged.Executable is not { ChunkType: "ZCOD" } executable)
+            // [blorb 5] ZCOD is a Z-code game and GLUL a Glulx one.
+            var machine = packaged.Executable?.ChunkType switch
             {
-                errors.WriteLine($"rezrov: {Path.GetFileName(path)} has no Z-code game in it");
+                "ZCOD" => StoryFormat.ZMachine,
+                "GLUL" => StoryFormat.Glulx,
+                _ => StoryFormat.Unknown,
+            };
+
+            if (machine == StoryFormat.Unknown)
+            {
+                errors.WriteLine($"rezrov: {Path.GetFileName(path)} has no game in it");
                 return null;
             }
 
-            return new LoadedStory(executable.Data.ToArray(), packaged);
+            return new LoadedStory(packaged.Executable!.Data.ToArray(), packaged, machine);
         }
 
-        if (format != StoryFormat.ZMachine)
+        if (format == StoryFormat.Unknown)
         {
-            errors.WriteLine($"rezrov: only Z-machine story files can be run yet, and this is {format}");
+            errors.WriteLine($"rezrov: {Path.GetFileName(path)} is not a story file Rezrov recognizes");
             return null;
         }
 
-        return new LoadedStory(bytes, FindResources(path, blorbPath, errors));
+        return new LoadedStory(bytes, FindResources(path, blorbPath, errors), format);
     }
 
     /// <summary>

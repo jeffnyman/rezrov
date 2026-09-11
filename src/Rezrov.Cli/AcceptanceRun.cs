@@ -1,3 +1,4 @@
+using Rezrov.Core;
 using Rezrov.Core.Acceptance;
 using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
@@ -117,6 +118,12 @@ public static class AcceptanceRun
 
         if (StoryLoader.Load(script.GamePath, script.BlorbPath, errors) is not { } story)
         {
+            return null;
+        }
+
+        if (story.Format != StoryFormat.ZMachine)
+        {
+            errors.WriteLine($"rezrov: {Path.GetFileName(script.ScriptPath)}: acceptance scripts can only play Z-machine games yet, and this game is {story.Format}");
             return null;
         }
 
