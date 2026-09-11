@@ -69,6 +69,14 @@ public abstract class GlkStream : GlkObject
     {
     }
 
+    /// <summary>
+    /// [glk #stream_close] Lets go of whatever the stream holds, once
+    /// the library has forgotten it; a file is flushed and closed.
+    /// </summary>
+    internal virtual void Close()
+    {
+    }
+
     protected abstract void Write(uint character);
 
     protected virtual int Read() => -1;

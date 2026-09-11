@@ -38,6 +38,19 @@ public enum WindowMethod : uint
     NoBorder = 0x100,
 }
 
+/// <summary>
+/// [glk #fileref] The kind of file a file reference is for, which is
+/// the low bits of its usage; the usage's other bit says whether it is
+/// text, and lives in <see cref="GlkFileReference.TextModeUsage"/>.
+/// </summary>
+public enum FileUsage : uint
+{
+    Data = 0,
+    SavedGame = 1,
+    Transcript = 2,
+    InputRecord = 3,
+}
+
 /// <summary>[glk #stream] The mode a stream is opened in.</summary>
 public enum FileMode : uint
 {

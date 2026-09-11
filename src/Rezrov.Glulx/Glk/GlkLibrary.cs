@@ -12,13 +12,15 @@ namespace Rezrov.Glulx.Glk;
 /// [glk #intro] Glk is the portable interface the game talks to for
 /// everything to do with the player: windows, text, and input. This is
 /// the library half of that; the frontend half is whatever
-/// <see cref="IGlkDisplay"/> it was given. What is built so far is the
-/// dispatch layer with every function's prototype, the window tree and
-/// its layout, window and memory streams, text output in Latin-1 and
-/// Unicode, styles and style hints, the gestalt answers, and the case
-/// functions. Events and input, files, graphics, and sound throw
-/// <see cref="NotSupportedException"/> naming the function, so a game
-/// stops at the first one it needs.
+/// <see cref="IGlkDisplay"/> it was given, and the files are whatever
+/// <see cref="IGlkFileSystem"/> it was given. What is built so far is
+/// the dispatch layer with every function's prototype, the window tree
+/// and its layout, window, memory, and file streams, file references,
+/// text output in Latin-1 and Unicode, styles and style hints, the
+/// gestalt answers, the case functions, and line, character, and timer
+/// events. Resource streams, date and time, graphics, sound, and
+/// hyperlinks throw <see cref="NotSupportedException"/> naming the
+/// function, so a game stops at the first one it needs.
 ///
 /// Glk's rule for a program that breaks the rules, such as printing to
 /// a closed stream, is that the library's behavior is undefined; the
@@ -42,11 +44,20 @@ public sealed class GlkLibrary
     private uint _timerInterval;
     private long _timerStarted;
 
-    public GlkLibrary(IGlkDisplay display)
+    /// <param name="display">The frontend's display.</param>
+    /// <param name="files">
+    /// The frontend's files, or none for files kept in memory for the
+    /// session.
+    /// </param>
+    public GlkLibrary(IGlkDisplay display, IGlkFileSystem? files = null)
     {
         ArgumentNullException.ThrowIfNull(display);
         _display = display;
+        Files = files ?? new MemoryGlkFileSystem();
     }
+
+    /// <summary>[glk #fileref] Where the files are.</summary>
+    public IGlkFileSystem Files { get; }
 
     /// <summary>
     /// [glk #window] Every window, pair windows included.
@@ -280,9 +291,29 @@ public sealed class GlkLibrary
                 call.Result = CurrentStream?.Id ?? 0;
                 break;
 
-            // [glk #opaque_iteration] The classes with no members yet
-            // can still be walked, which a Glulx game does at startup
-            // to find objects left from an earlier incarnation.
+            case 0x0042: // stream_open_file
+            case 0x0138: // stream_open_file_uni
+                call.Result = OpenFileStream(FileReference(call, 0), call.Function.Selector == 0x0138, (FileMode)call.Arg(1), call.Arg(2))?.Id ?? 0;
+                break;
+
+            case 0x0060: // fileref_create_temp
+                call.Result = CreateTemporaryFileReference(call.Arg(0), call.Arg(1)).Id;
+                break;
+            case 0x0061: // fileref_create_by_name
+                call.Result = CreateFileReference(call.Arg(0), call.Text(1), call.Arg(2)).Id;
+                break;
+            case 0x0062: // fileref_create_by_prompt
+                call.Result = PromptForFileReference(call.Arg(0), (FileMode)call.Arg(1), call.Arg(2))?.Id ?? 0;
+                break;
+            case 0x0068: // fileref_create_from_fileref
+                call.Result = CopyFileReference(call.Arg(0), FileReference(call, 1), call.Arg(2))?.Id ?? 0;
+                break;
+            case 0x0066: // fileref_delete_file
+                DeleteFile(FileReference(call, 0));
+                break;
+            case 0x0067: // fileref_does_file_exist
+                call.Result = FileExists(FileReference(call, 0)) ? 1u : 0u;
+                break;
             case 0x0063: // fileref_destroy
                 if (FileReferences.Find(call.ObjectId(0)) is { } destroyed)
                 {
@@ -1120,7 +1151,159 @@ public sealed class GlkLibrary
         }
 
         Streams.Remove(stream);
+        stream.Close();
         return counts;
+    }
+
+    /// <summary>
+    /// Closes every file stream still open, so that what was written
+    /// reaches the file, for a frontend that is shutting down.
+    /// </summary>
+    /// <remarks>
+    /// [glk op:exit] A program may exit with streams open, and what it
+    /// wrote should not be lost for that; the streams are closed as
+    /// [glk #stream_close] a close would, echoes and all.
+    /// </remarks>
+    public void CloseFiles()
+    {
+        foreach (var stream in Streams.All.OfType<GlkFileStream>().ToList())
+        {
+            CloseStream(stream);
+        }
+    }
+
+    // ----- Files -----
+
+    /// <summary>
+    /// [glk op:stream_open_file] Opens a stream on a file reference's
+    /// file, of bytes or of Unicode characters, in a mode, or returns
+    /// null for no reference, a bad mode, or a file that cannot be
+    /// opened so.
+    /// </summary>
+    public GlkFileStream? OpenFileStream(GlkFileReference? fileref, bool unicode, FileMode mode, uint rock)
+    {
+        if (fileref is null)
+        {
+            return null;
+        }
+
+        if (mode is not (FileMode.Read or FileMode.Write or FileMode.ReadWrite or FileMode.WriteAppend))
+        {
+            Warn($"stream_open_file: bad file mode {(uint)mode}.");
+            return null;
+        }
+
+        var file = Files.Open(fileref.Name, mode);
+        if (file is null)
+        {
+            // [glk #file_streams] A file that must exist and does not is
+            // simply null; anything else that fails is worth a word.
+            if (mode != FileMode.Read)
+            {
+                Warn($"stream_open_file: unable to open {fileref.Name}.");
+            }
+
+            return null;
+        }
+
+        var stream = new GlkFileStream(file, fileref.Name, unicode, fileref.IsText, mode, rock);
+        Streams.Add(stream);
+        return stream;
+    }
+
+    /// <summary>
+    /// [glk op:fileref_create_by_name] A reference to a file of the
+    /// name the game gave, made safe and suffixed as the specification
+    /// recommends.
+    /// </summary>
+    public GlkFileReference CreateFileReference(uint usage, string name, uint rock)
+    {
+        var fileref = new GlkFileReference(rock, usage, GlkFileReference.SafeName(name, usage));
+        FileReferences.Add(fileref);
+        return fileref;
+    }
+
+    /// <summary>
+    /// [glk op:fileref_create_temp] A reference to a new temporary file.
+    /// </summary>
+    public GlkFileReference CreateTemporaryFileReference(uint usage, uint rock)
+    {
+        var fileref = new GlkFileReference(rock, usage, Files.TemporaryName());
+        FileReferences.Add(fileref);
+        return fileref;
+    }
+
+    /// <summary>
+    /// [glk op:fileref_create_by_prompt] A reference to a file the
+    /// player chose for a usage and mode, or null if the player
+    /// declined or, for reading, chose a file that does not exist.
+    /// </summary>
+    public GlkFileReference? PromptForFileReference(uint usage, FileMode mode, uint rock)
+    {
+        if (mode is not (FileMode.Read or FileMode.Write or FileMode.ReadWrite or FileMode.WriteAppend))
+        {
+            Warn($"fileref_create_by_prompt: bad file mode {(uint)mode}.");
+            return null;
+        }
+
+        var chosen = Files.AskForFile((FileUsage)(usage & GlkFileReference.TypeMask), mode);
+        if (chosen is null)
+        {
+            return null;
+        }
+
+        // [glk op:fileref_create_by_prompt] The recommended suffix, for
+        // a name without one; and for reading, the player is choosing
+        // among existing files, so a name that is not one is a
+        // cancellation, as the reference library has it.
+        var name = GlkFileReference.WithSuffix(chosen, usage);
+        if (mode == FileMode.Read && !Files.Exists(name))
+        {
+            return null;
+        }
+
+        var fileref = new GlkFileReference(rock, usage, name);
+        FileReferences.Add(fileref);
+        return fileref;
+    }
+
+    /// <summary>
+    /// [glk op:fileref_create_from_fileref] A reference to the same
+    /// file with another usage, or null for no reference to copy.
+    /// </summary>
+    /// <remarks>
+    /// [glk op:fileref_create_from_fileref] Whether a changed type
+    /// still points to the same file is the library's choice; here the
+    /// name is kept, suffix and all, as the reference library keeps it.
+    /// </remarks>
+    public GlkFileReference? CopyFileReference(uint usage, GlkFileReference? source, uint rock)
+    {
+        if (source is null)
+        {
+            return null;
+        }
+
+        var fileref = new GlkFileReference(rock, usage, source.Name);
+        FileReferences.Add(fileref);
+        return fileref;
+    }
+
+    /// <summary>
+    /// [glk op:fileref_does_file_exist] Whether the reference's file
+    /// exists; false for no reference.
+    /// </summary>
+    public bool FileExists(GlkFileReference? fileref) => fileref is not null && Files.Exists(fileref.Name);
+
+    /// <summary>
+    /// [glk op:fileref_delete_file] Deletes the reference's file, and
+    /// not the reference.
+    /// </summary>
+    public void DeleteFile(GlkFileReference? fileref)
+    {
+        if (fileref is not null)
+        {
+            Files.Delete(fileref.Name);
+        }
     }
 
     /// <summary>
@@ -1378,6 +1561,18 @@ public sealed class GlkLibrary
         }
 
         return window;
+    }
+
+    private GlkFileReference? FileReference(GlkCall call, int index)
+    {
+        var id = call.ObjectId(index);
+        var fileref = FileReferences.Find(id);
+        if (fileref is null)
+        {
+            Warn($"{call.Function.Name}: invalid fileref id {id}.");
+        }
+
+        return fileref;
     }
 
     private GlkStream? Stream(GlkCall call, int index)
