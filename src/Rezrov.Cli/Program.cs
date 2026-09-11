@@ -6,6 +6,8 @@ using Rezrov.Glulx;
 using FunctionHeader = Rezrov.Glulx.Instructions.FunctionHeader;
 using FunctionType = Rezrov.Glulx.Instructions.FunctionType;
 using GlulxDecoder = Rezrov.Glulx.Instructions.InstructionDecoder;
+using GlulxMachine = Rezrov.Glulx.Execution.GlulxMachine;
+using GlulxRandom = Rezrov.Glulx.Execution.GlulxRandom;
 using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
 using Rezrov.ZMachine.Instructions;
@@ -113,6 +115,16 @@ internal static class Program
             if (StoryLoader.Load(path, blorb, Console.Error) is not { } story)
             {
                 return 1;
+            }
+
+            if (story.Format == StoryFormat.Glulx)
+            {
+                if (commands is not null || transcript is not null || record is not null || save is not null || machine is not null)
+                {
+                    Console.Error.WriteLine("rezrov: the command, transcript, record, save, and interpreter options do not apply to Glulx yet");
+                }
+
+                return RunGlulx(story.Bytes, trace, seed);
             }
 
             return RunZMachine(story.Bytes, trace, commands, transcript, record, save, story.Resources, seed, machine);
@@ -345,6 +357,58 @@ internal static class Program
             {
                 Console.Error.WriteLine($"rezrov: {error}");
             }
+        }
+
+        return 0;
+    }
+
+    /// <summary>
+    /// Runs a Glulx game as far as the machine goes so far, which is up
+    /// to the first opcode that is not built yet, printing what stopped
+    /// it. A seed makes its random numbers predictable.
+    /// </summary>
+    private static int RunGlulx(byte[] bytes, bool trace, int? seed)
+    {
+        GlulxMachine machine;
+        try
+        {
+            machine = new GlulxMachine(new GlulxMemory(bytes), seed is { } s ? new GlulxRandom((uint)s) : null);
+        }
+        catch (InvalidDataException e)
+        {
+            Console.Error.WriteLine($"rezrov: {e.Message}");
+            return 1;
+        }
+
+        try
+        {
+            if (trace)
+            {
+                while (!machine.HasQuit)
+                {
+                    var next = machine.Decoder.Decode(machine.ProgramCounter);
+                    Console.Error.WriteLine($"{next.Address:X8}  {next}");
+                    machine.Step();
+                }
+            }
+            else
+            {
+                machine.Run();
+            }
+        }
+        catch (NotSupportedException e)
+        {
+            Console.Out.Flush();
+            Console.Error.WriteLine();
+            Console.Error.WriteLine($"rezrov: stopped after {machine.InstructionsExecuted} instructions: {e.Message}");
+            return 3;
+        }
+        catch (GlulxException e)
+        {
+            Console.Out.Flush();
+            Console.Error.WriteLine();
+            Console.Error.WriteLine($"rezrov: fatal error after {machine.InstructionsExecuted} instructions: {e.Message}");
+            return 1;
         }
 
         return 0;

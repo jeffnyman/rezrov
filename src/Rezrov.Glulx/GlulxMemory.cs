@@ -28,7 +28,9 @@ public sealed class GlulxMemory
     // restored from, and what the checksum is a checksum of.
     private readonly byte[] _file;
 
-    private readonly byte[] _bytes;
+    // [glulx #opcodes_memory] The size of memory can change during play,
+    // so the array is replaced rather than the field being final.
+    private byte[] _bytes;
 
     /// <summary>
     /// Lays out memory for <paramref name="file"/>, the whole game file
@@ -55,7 +57,9 @@ public sealed class GlulxMemory
     public GlulxHeader Header { get; }
 
     /// <summary>
-    /// [glulx #the-memory-map] ENDMEM, the size of memory in bytes.
+    /// The current size of memory in bytes: [glulx #the-memory-map]
+    /// ENDMEM to begin with, [glulx op:setmemsize] and whatever the game
+    /// has set it to since.
     /// </summary>
     public uint Length => (uint)_bytes.Length;
 
@@ -118,19 +122,104 @@ public sealed class GlulxMemory
     }
 
     /// <summary>
+    /// Writes <paramref name="length"/> zero bytes at
+    /// <paramref name="address"/>.
+    /// </summary>
+    /// <remarks>
+    /// [glulx op:mzero] A length of zero does nothing, and the operands
+    /// are unsigned, so a negative length is a very large one and fails
+    /// the bounds check as such.
+    /// </remarks>
+    public void Zero(uint address, uint length)
+    {
+        if (length == 0)
+        {
+            return;
+        }
+
+        CheckWrite(address, length);
+        _bytes.AsSpan((int)address, (int)length).Clear();
+    }
+
+    /// <summary>
+    /// Copies <paramref name="length"/> bytes from
+    /// <paramref name="source"/> to <paramref name="destination"/>,
+    /// safely when the two overlap.
+    /// </summary>
+    /// <remarks>
+    /// [glulx op:mcopy] The specification spells out the overlap rule as
+    /// copying upward when the destination is below the source and
+    /// downward otherwise, which is what a memory move does.
+    /// </remarks>
+    public void Copy(uint source, uint destination, uint length)
+    {
+        if (length == 0)
+        {
+            return;
+        }
+
+        CheckRead(source, length);
+        CheckWrite(destination, length);
+        _bytes.AsSpan((int)source, (int)length).CopyTo(_bytes.AsSpan((int)destination, (int)length));
+    }
+
+    /// <summary>
+    /// Changes the size of memory, keeping what fits and zeroing what is
+    /// new.
+    /// </summary>
+    /// <remarks>
+    /// [glulx op:setmemsize] The new size must be a multiple of 256 and
+    /// at least ENDMEM, though it need not be larger than the current
+    /// size: memory may grow and shrink over time. New space is zeroes
+    /// and the contents of removed space are lost.
+    /// </remarks>
+    /// <exception cref="GlulxException">
+    /// The size is not a multiple of 256 or is below ENDMEM.
+    /// </exception>
+    public void Resize(uint size)
+    {
+        if (size % GlulxHeader.Alignment != 0)
+        {
+            throw new GlulxException($"A memory size of {size:X8} is not a multiple of {GlulxHeader.Alignment:X}.");
+        }
+
+        if (size < Header.EndMem)
+        {
+            throw new GlulxException($"A memory size of {size:X8} is below ENDMEM at {Header.EndMem:X8}.");
+        }
+
+        if (size == Length)
+        {
+            return;
+        }
+
+        var resized = new byte[size];
+        _bytes.AsSpan(0, (int)Math.Min(size, Length)).CopyTo(resized);
+        _bytes = resized;
+    }
+
+    /// <summary>
     /// Puts memory back as it was when the file was loaded: RAM from the
-    /// file again, and the extension all zeroes.
+    /// file again, the extension all zeroes, and the size ENDMEM.
     /// </summary>
     /// <remarks>
     /// [glulx op:restart] A restart restores the initial state of memory
     /// from the game file, and this is the memory half of that. The
     /// header is in ROM and cannot have changed, so ROM is left alone.
+    /// [glulx op:setmemsize] The size is part of the state and is reset
+    /// with the contents.
     /// </remarks>
     public void Reset()
     {
-        var ramStart = (int)Header.RamStart;
+        if (Length != Header.EndMem)
+        {
+            _bytes = new byte[Header.EndMem];
+        }
+
+        // ROM is copied along with RAM: it cannot have changed, but a
+        // fresh array after a resize needs it too.
         var extStart = (int)Header.ExtStart;
-        _file.AsSpan(ramStart, extStart - ramStart).CopyTo(_bytes.AsSpan(ramStart));
+        _file.AsSpan(0, extStart).CopyTo(_bytes);
         _bytes.AsSpan(extStart).Clear();
     }
 
