@@ -28,7 +28,7 @@ public class GlkDispatchTests
     private const uint PutStringUni = 0x0129;
     private const uint Gestalt = 0x0004;
     private const uint Exit = 0x0001;
-    private const uint Select = 0x00C0;
+    private const uint ImageDraw = 0x00E1;
     private const uint FilerefIterate = 0x0064;
 
     /// <summary>
@@ -221,10 +221,10 @@ public class GlkDispatchTests
         var e = Assert.Throws<GlulxException>(() => Run(unknown.Return(C(0))));
         Assert.Contains("Unknown Glk function 0006", e.Message, StringComparison.Ordinal);
 
-        var select = WithWindow();
-        Glk(select, Select, Discard, C(-1));
-        var notYet = Assert.Throws<NotSupportedException>(() => Run(select.Return(C(0))));
-        Assert.Contains("glk_select", notYet.Message, StringComparison.Ordinal);
+        var image = WithWindow();
+        Glk(image, ImageDraw, Discard, Ram(0), C(1), C(0), C(0));
+        var notYet = Assert.Throws<NotSupportedException>(() => Run(image.Return(C(0))));
+        Assert.Contains("glk_image_draw", notYet.Message, StringComparison.Ordinal);
 
         var wrongCount = new GlulxAssembler().Function("main");
         Glk(wrongCount, Gestalt, Discard, C(0));
