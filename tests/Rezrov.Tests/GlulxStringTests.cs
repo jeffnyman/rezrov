@@ -168,9 +168,9 @@ public class GlulxStringTests
             .Op(Opcode.SetIOSys, C(20), C(7))
             .Op(Opcode.GetIOSys, Ram(12), Ram(16))));
 
-        // [glulx op:setiosys] Glk is not built yet and FyreVM never will
-        // be, so both default to null, rock and all.
-        Assert.Equal((0u, 99u), (machine.Ram(4), machine.Ram(8)));
+        // [glulx op:setiosys] Glk is supported; FyreVM is not and
+        // defaults to null, rock and all.
+        Assert.Equal((2u, 99u), (machine.Ram(4), machine.Ram(8)));
         Assert.Equal((0u, 7u), (machine.Ram(12), machine.Ram(16)));
     }
 
@@ -319,8 +319,7 @@ public class GlulxStringTests
             .Op(Opcode.Gestalt, C(4), C(1), Ram(8))
             .Op(Opcode.Gestalt, C(4), C(2), Ram(12))));
 
-        // [glulx #opcodes_misc] Unicode and the filter system are there;
-        // Glk is not yet.
-        Assert.Equal((1u, 1u, 0u), (machine.Ram(4), machine.Ram(8), machine.Ram(12)));
+        // [glulx #opcodes_misc] Unicode, the filter system, and Glk.
+        Assert.Equal((1u, 1u, 1u), (machine.Ram(4), machine.Ram(8), machine.Ram(12)));
     }
 }

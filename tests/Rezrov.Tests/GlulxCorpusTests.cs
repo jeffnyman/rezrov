@@ -137,16 +137,18 @@ public class GlulxCorpusTests
 
         foreach (var file in files)
         {
-            // Every game starts by setting up its I/O, which is not built
-            // yet, so the run is expected to stop at the first I/O
-            // opcode, or to quit on finding through gestalt that Glk is
-            // absent, as glulxercise does. A fatal machine error before
-            // that point would mean a call frame or an operand went
-            // wrong on real code.
-            var machine = new GlulxMachine(new GlulxMemory(Corpus.GlulxImage(file)));
+            // Every game opens its windows and prints its opening text,
+            // then asks for input, which is not built yet, or, for a
+            // checker that needs none, prints its results and quits. So
+            // the run is expected to print something and then stop at a
+            // Glk input function or quit. A fatal machine error would
+            // mean a call frame, an operand, or a Glk call went wrong on
+            // real code.
+            var display = new RecordingGlkDisplay(80, 24);
+            var machine = new GlulxMachine(new GlulxMemory(Corpus.GlulxImage(file)), glk: new Rezrov.Glulx.Glk.GlkLibrary(display));
             try
             {
-                while (!machine.HasQuit && machine.InstructionsExecuted < 1_000_000)
+                while (!machine.HasQuit && machine.InstructionsExecuted < 20_000_000)
                 {
                     machine.Step();
                 }
@@ -155,10 +157,17 @@ public class GlulxCorpusTests
                 {
                     failures.Add($"{Path.GetFileName(file)}: ran {machine.InstructionsExecuted} instructions without stopping");
                 }
+                else if (display.Output.Length == 0)
+                {
+                    failures.Add($"{Path.GetFileName(file)}: quit after {machine.InstructionsExecuted} instructions without printing");
+                }
             }
-            catch (NotSupportedException)
+            catch (NotSupportedException e)
             {
-                // The expected stopping point.
+                if (display.Output.Length == 0)
+                {
+                    failures.Add($"{Path.GetFileName(file)}: printed nothing before stopping: {e.Message}");
+                }
             }
             catch (GlulxException e)
             {

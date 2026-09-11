@@ -8,6 +8,7 @@ using FunctionType = Rezrov.Glulx.Instructions.FunctionType;
 using GlulxDecoder = Rezrov.Glulx.Instructions.InstructionDecoder;
 using GlulxMachine = Rezrov.Glulx.Execution.GlulxMachine;
 using GlulxRandom = Rezrov.Glulx.Execution.GlulxRandom;
+using Rezrov.Glulx.Glk;
 using Rezrov.Glulx.Text;
 using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
@@ -381,15 +382,22 @@ internal static class Program
 
     /// <summary>
     /// Runs a Glulx game as far as the machine goes so far, which is up
-    /// to the first opcode that is not built yet, printing what stopped
-    /// it. A seed makes its random numbers predictable.
+    /// to the first opcode or Glk function that is not built yet,
+    /// printing what stopped it. Glk's text buffer windows go to the
+    /// console as one stream of text. A seed makes the game's random
+    /// numbers predictable.
     /// </summary>
     private static int RunGlulx(byte[] bytes, bool trace, int? seed)
     {
+        // [glk #encoding] Glk text is Latin-1 and Unicode, which the
+        // console shows only as UTF-8.
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+        var glk = new GlkLibrary(new TextWriterGlkDisplay(Console.Out));
         GlulxMachine machine;
         try
         {
-            machine = new GlulxMachine(new GlulxMemory(bytes), seed is { } s ? new GlulxRandom((uint)s) : null);
+            machine = new GlulxMachine(new GlulxMemory(bytes), seed is { } s ? new GlulxRandom((uint)s) : null, glk);
         }
         catch (InvalidDataException e)
         {
@@ -426,6 +434,16 @@ internal static class Program
             Console.Error.WriteLine();
             Console.Error.WriteLine($"rezrov: fatal error after {machine.InstructionsExecuted} instructions: {e.Message}");
             return 1;
+        }
+        finally
+        {
+            Console.Out.Flush();
+
+            // Whatever the game asked Glk for that Glk calls illegal.
+            foreach (var warning in glk.Warnings)
+            {
+                Console.Error.WriteLine($"rezrov: glk: {warning}");
+            }
         }
 
         return 0;
