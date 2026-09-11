@@ -138,10 +138,11 @@ public class GlulxCorpusTests
         foreach (var file in files)
         {
             // Every game opens its windows and prints its opening text,
-            // then asks for input, which is not built yet, or, for a
-            // checker that needs none, prints its results and quits. So
-            // the run is expected to print something and then stop at a
-            // Glk input function or quit. A fatal machine error would
+            // then asks for input, which a display with none to give ends
+            // the run at, or, for a checker that needs none, prints its
+            // results and quits, or reaches for a Glk feature not built
+            // yet. So the run is expected to print something and then
+            // stop one of those three ways. A fatal machine error would
             // mean a call frame, an operand, or a Glk call went wrong on
             // real code.
             var display = new RecordingGlkDisplay(80, 24);
@@ -162,7 +163,7 @@ public class GlulxCorpusTests
                     failures.Add($"{Path.GetFileName(file)}: quit after {machine.InstructionsExecuted} instructions without printing");
                 }
             }
-            catch (NotSupportedException e)
+            catch (Exception e) when (e is NotSupportedException or EndOfStreamException)
             {
                 if (display.Output.Length == 0)
                 {

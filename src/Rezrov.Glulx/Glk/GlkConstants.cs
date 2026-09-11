@@ -128,6 +128,32 @@ public enum CharOutput : uint
     ExactPrint = 2,
 }
 
+/// <summary>
+/// [glk #encoding_inchar] The special keys character input can report,
+/// counting down from FFFFFFFF.
+/// </summary>
+public static class GlkKeyCode
+{
+    public const uint Unknown = 0xFFFFFFFF;
+    public const uint Left = 0xFFFFFFFE;
+    public const uint Right = 0xFFFFFFFD;
+    public const uint Up = 0xFFFFFFFC;
+    public const uint Down = 0xFFFFFFFB;
+    public const uint Return = 0xFFFFFFFA;
+    public const uint Delete = 0xFFFFFFF9;
+    public const uint Escape = 0xFFFFFFF8;
+    public const uint Tab = 0xFFFFFFF7;
+    public const uint PageUp = 0xFFFFFFF6;
+    public const uint PageDown = 0xFFFFFFF5;
+    public const uint Home = 0xFFFFFFF4;
+    public const uint End = 0xFFFFFFF3;
+    public const uint Func1 = 0xFFFFFFEF;
+    public const uint Func12 = 0xFFFFFFE4;
+
+    /// <summary>Whether a value is one of the special keycodes.</summary>
+    public static bool IsSpecial(uint key) => key >= Func12;
+}
+
 /// <summary>[glk #event] The kinds of event.</summary>
 public enum EventType : uint
 {

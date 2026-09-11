@@ -54,6 +54,28 @@ public abstract class GlkWindow : GlkObject
     public bool HasSize => Type is WindowType.TextBuffer or WindowType.TextGrid;
 
     /// <summary>
+    /// [glk #line_events] The pending line input request, or null.
+    /// </summary>
+    public LineRequest? LineRequest { get; internal set; }
+
+    /// <summary>
+    /// [glk #char_events] The pending character input request, if any.
+    /// </summary>
+    public CharRequest CharRequest { get; internal set; }
+
+    /// <summary>
+    /// [glk op:set_echo_line_event] Whether a completed line is shown in
+    /// the window, which it is unless the game says otherwise.
+    /// </summary>
+    public bool EchoLineInput { get; set; } = true;
+
+    /// <summary>
+    /// [glk op:set_terminators_line_event] The special keys that end
+    /// line input besides enter.
+    /// </summary>
+    public IReadOnlyList<uint> LineTerminators { get; internal set; } = [];
+
+    /// <summary>
     /// [glk #window_textbuf] Prints one character to the window, in a
     /// style, as the window's stream does.
     /// </summary>

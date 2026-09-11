@@ -121,12 +121,12 @@ internal static class Program
 
             if (story.Format == StoryFormat.Glulx)
             {
-                if (commands is not null || transcript is not null || record is not null || save is not null || machine is not null)
+                if (transcript is not null || record is not null || save is not null || machine is not null)
                 {
-                    Console.Error.WriteLine("rezrov: the command, transcript, record, save, and interpreter options do not apply to Glulx yet");
+                    Console.Error.WriteLine("rezrov: the transcript, record, save, and interpreter options do not apply to Glulx yet");
                 }
 
-                return RunGlulx(story.Bytes, trace, seed);
+                return RunGlulx(story.Bytes, trace, commands, seed);
             }
 
             return RunZMachine(story.Bytes, trace, commands, transcript, record, save, story.Resources, seed, machine);
@@ -381,19 +381,22 @@ internal static class Program
     }
 
     /// <summary>
-    /// Runs a Glulx game as far as the machine goes so far, which is up
-    /// to the first opcode or Glk function that is not built yet,
-    /// printing what stopped it. Glk's text buffer windows go to the
-    /// console as one stream of text. A seed makes the game's random
-    /// numbers predictable.
+    /// Runs a Glulx game, taking the player's commands from the console
+    /// after any in a command file, until it ends or reaches something
+    /// not built yet, printing what stopped it. Glk's text buffer
+    /// windows go to the console as one stream of text. A seed makes
+    /// the game's random numbers predictable.
     /// </summary>
-    private static int RunGlulx(byte[] bytes, bool trace, int? seed)
+    private static int RunGlulx(byte[] bytes, bool trace, string? commands, int? seed)
     {
         // [glk #encoding] Glk text is Latin-1 and Unicode, which the
         // console shows only as UTF-8.
         Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-        var glk = new GlkLibrary(new TextWriterGlkDisplay(Console.Out));
+        using var reader = commands is null
+            ? Console.In
+            : new CommandReplayReader(new StreamReader(commands), Console.In, Console.Out);
+        var glk = new GlkLibrary(new TextWriterGlkDisplay(Console.Out, reader));
         GlulxMachine machine;
         try
         {
@@ -434,6 +437,16 @@ internal static class Program
             Console.Error.WriteLine();
             Console.Error.WriteLine($"rezrov: fatal error after {machine.InstructionsExecuted} instructions: {e.Message}");
             return 1;
+        }
+        catch (EndOfStreamException)
+        {
+            // The console was a pipe or a file and it ran dry while the
+            // game still wanted a command, which is a normal way for a
+            // scripted run to end.
+            Console.Out.Flush();
+            Console.Error.WriteLine();
+            Console.Error.WriteLine($"rezrov: input ended after {machine.InstructionsExecuted} instructions");
+            return 0;
         }
         finally
         {

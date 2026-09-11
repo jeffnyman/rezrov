@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text;
 using Rezrov.Glulx.Execution;
 
@@ -36,6 +37,11 @@ public sealed class GlkLibrary
     private readonly Dictionary<uint, GlkPrototype> _prototypes = [];
     private readonly Dictionary<(WindowType Type, GlkStyle Style, StyleHint Hint), int> _styleHints = [];
 
+    // [glk #timer_events] The interval, zero for no timer, and when the
+    // last timer event was given out.
+    private uint _timerInterval;
+    private long _timerStarted;
+
     public GlkLibrary(IGlkDisplay display)
     {
         ArgumentNullException.ThrowIfNull(display);
@@ -65,6 +71,12 @@ public sealed class GlkLibrary
 
     /// <summary>[glk op:exit] Whether the game asked to end.</summary>
     public bool ExitRequested { get; private set; }
+
+    /// <summary>
+    /// [glk op:request_timer_events] The timer interval in milliseconds,
+    /// zero for none.
+    /// </summary>
+    public uint TimerInterval => _timerInterval;
 
     /// <summary>
     /// What the game did that the specification calls illegal.
@@ -354,6 +366,76 @@ public sealed class GlkLibrary
                 call.Result = 0;
                 break;
 
+            // [glk #event] Waiting for the player, and the requests that
+            // say what to wait for.
+            case 0x00C0: // select
+                Report(call, 0, Select());
+                break;
+            case 0x00C1: // select_poll
+                Report(call, 0, SelectPoll());
+                break;
+            case 0x00D0: // request_line_event
+            case 0x0141: // request_line_event_uni
+                if (Window(call, 0) is { } lineWindow)
+                {
+                    RequestLineEvent(lineWindow, call.Memory, call.ArrayAddress(1), call.ArrayLength(1), call.Arg(2), call.Function.Selector == 0x0141);
+                }
+
+                break;
+            case 0x00D1: // cancel_line_event
+                if (Window(call, 0) is { } cancelled)
+                {
+                    Report(call, 1, CancelLineEvent(cancelled));
+                }
+
+                break;
+            case 0x00D2: // request_char_event
+            case 0x0140: // request_char_event_uni
+                if (Window(call, 0) is { } charWindow)
+                {
+                    RequestCharEvent(charWindow, call.Function.Selector == 0x0140);
+                }
+
+                break;
+            case 0x00D3: // cancel_char_event
+                if (Window(call, 0) is { } uncharred)
+                {
+                    uncharred.CharRequest = CharRequest.None;
+                }
+
+                break;
+            case 0x00D4: // request_mouse_event
+            case 0x00D5: // cancel_mouse_event
+            case 0x0102: // request_hyperlink_event
+            case 0x0103: // cancel_hyperlink_event
+                // [glk #mouse_events] and [glk #link_events] Legal to ask
+                // for, as gestalt has said, but nothing ever comes of it.
+                Window(call, 0);
+                break;
+            case 0x00D6: // request_timer_events
+                RequestTimerEvents(call.Arg(0));
+                break;
+            case 0x0150: // set_echo_line_event
+                if (Window(call, 0) is { } echoed)
+                {
+                    echoed.EchoLineInput = call.Arg(1) != 0;
+                }
+
+                break;
+            case 0x0151: // set_terminators_line_event
+                if (Window(call, 0) is { } terminated)
+                {
+                    var keys = new uint[call.ArrayAddress(1) == 0 ? 0 : call.ArrayLength(1)];
+                    for (var i = 0; i < keys.Length; i++)
+                    {
+                        keys[i] = call.Memory.ReadWord(call.ArrayAddress(1) + (uint)(4 * i));
+                    }
+
+                    SetLineTerminators(terminated, keys);
+                }
+
+                break;
+
             case 0x00E8: // window_flow_break
             case 0x0100: // set_hyperlink
             case 0x0101: // set_hyperlink_stream
@@ -434,8 +516,22 @@ public sealed class GlkLibrary
                 // typed; nonprintable Latin-1 never can.
                 return value is >= 32 and <= 126 || value >= 160 ? 1u : 0u;
 
+            case GestaltSelector.CharInput:
+                // [glk #encoding_inchar] Printable characters and the
+                // enter key; a display of lines of text has no arrows or
+                // function keys to offer, so it does not promise them.
+                return value is >= 32 and <= 126 || value >= 160 && !GlkKeyCode.IsSpecial(value) || value == GlkKeyCode.Return ? 1u : 0u;
+
             case GestaltSelector.Unicode:
+            case GestaltSelector.Timer:
+            case GestaltSelector.LineInputEcho:
+            case GestaltSelector.LineTerminators:
                 return 1;
+
+            case GestaltSelector.LineTerminatorKey:
+                // [glk #line_events] Terminators are recorded, but no key
+                // the display has can be one, so none is promised.
+                return 0;
 
             default:
                 // [glk #gestalt] An unknown selector, and every feature
@@ -747,6 +843,230 @@ public sealed class GlkLibrary
             Layout(pair.Second, width - first, height);
         }
     }
+
+    // ----- Events -----
+
+    /// <summary>
+    /// [glk op:request_line_event] Asks for a line in a window, into a
+    /// buffer of bytes or of words, with any initial text already there.
+    /// </summary>
+    public void RequestLineEvent(GlkWindow window, GlulxMemory memory, uint address, uint maxLength, uint initialLength, bool unicode)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+        ArgumentNullException.ThrowIfNull(memory);
+
+        // [glk #line_events] Only text windows take lines, and a window
+        // can have one input request at a time.
+        if (window.Type is not (WindowType.TextBuffer or WindowType.TextGrid))
+        {
+            Warn("request_line_event: the window does not take line input.");
+            return;
+        }
+
+        if (window.LineRequest is not null || window.CharRequest != CharRequest.None)
+        {
+            Warn("request_line_event: the window already has an input request.");
+            return;
+        }
+
+        var initial = new StringBuilder();
+        for (uint i = 0; i < Math.Min(initialLength, maxLength); i++)
+        {
+            initial.Append(GlkText.ToString(unicode ? memory.ReadWord(address + (4 * i)) : memory.ReadByte(address + i)));
+        }
+
+        window.LineRequest = new LineRequest(memory, address, maxLength, unicode, initial.ToString());
+    }
+
+    /// <summary>
+    /// [glk op:cancel_line_event] Withdraws a line request, giving the
+    /// event the player would have produced, with nothing typed, or no
+    /// event if there was no request.
+    /// </summary>
+    public static GlkEvent CancelLineEvent(GlkWindow window)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+
+        // The display has whatever the player typed so far and no way to
+        // hand it over, so the line composed so far is taken as empty.
+        return window.LineRequest is null ? GlkEvent.None : CompleteLine(window, "", 0);
+    }
+
+    /// <summary>
+    /// [glk op:request_char_event] Asks for a key in a window.
+    /// </summary>
+    public void RequestCharEvent(GlkWindow window, bool unicode)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+
+        if (window.Type is not (WindowType.TextBuffer or WindowType.TextGrid))
+        {
+            Warn("request_char_event: the window does not take character input.");
+            return;
+        }
+
+        if (window.LineRequest is not null || window.CharRequest != CharRequest.None)
+        {
+            Warn("request_char_event: the window already has an input request.");
+            return;
+        }
+
+        window.CharRequest = unicode ? CharRequest.Unicode : CharRequest.Latin1;
+    }
+
+    /// <summary>
+    /// [glk op:set_terminators_line_event] Records the special keys that
+    /// end later line input in a window, keeping only special keycodes.
+    /// </summary>
+    public static void SetLineTerminators(GlkWindow window, IReadOnlyList<uint> keycodes)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+        ArgumentNullException.ThrowIfNull(keycodes);
+        window.LineTerminators = keycodes.Where(GlkKeyCode.IsSpecial).ToArray();
+    }
+
+    /// <summary>
+    /// [glk op:request_timer_events] Starts timer events every so many
+    /// milliseconds, or stops them for zero.
+    /// </summary>
+    public void RequestTimerEvents(uint milliseconds)
+    {
+        _timerInterval = milliseconds;
+        _timerStarted = Stopwatch.GetTimestamp();
+    }
+
+    /// <summary>
+    /// [glk op:select] Waits for the next event the game asked for: the
+    /// timer if its interval has passed, else the player's line or key.
+    /// </summary>
+    /// <exception cref="EndOfStreamException">
+    /// The display has no more input to give.
+    /// </exception>
+    public GlkEvent Select()
+    {
+        while (true)
+        {
+            // [glk #timer_events] A timer that is due goes first, but
+            // never stacks up: the next is an interval from now.
+            if (TimerDue())
+            {
+                _timerStarted = Stopwatch.GetTimestamp();
+                return new GlkEvent(EventType.Timer, null, 0, 0);
+            }
+
+            var lines = Windows.All.Where(w => w.LineRequest is not null).ToList();
+            var chars = Windows.All.Where(w => w.CharRequest != CharRequest.None).ToList();
+            var timeout = _timerInterval == 0
+                ? (TimeSpan?)null
+                : TimeSpan.FromMilliseconds(_timerInterval) - Stopwatch.GetElapsedTime(_timerStarted);
+
+            var input = _display.WaitForInput(lines, chars, timeout is { } t && t < TimeSpan.Zero ? TimeSpan.Zero : timeout);
+
+            switch (input.Kind)
+            {
+                case GlkInputKind.Line when input.Window is { LineRequest: not null } window:
+                    return CompleteLine(window, input.Text ?? "", input.Terminator);
+
+                case GlkInputKind.Key when input.Window is { CharRequest: not CharRequest.None } window:
+                {
+                    // [glk #char_events] Through the Latin-1 request a
+                    // character is 0 to 255 or a special key; anything
+                    // else is a question mark.
+                    var key = input.Key;
+                    if (window.CharRequest == CharRequest.Latin1 && key > 0xFF && !GlkKeyCode.IsSpecial(key))
+                    {
+                        key = '?';
+                    }
+
+                    window.CharRequest = CharRequest.None;
+                    return new GlkEvent(EventType.CharInput, window, key, 0);
+                }
+
+                case GlkInputKind.Ended:
+                    throw new EndOfStreamException("The input ended while the game was waiting for the player.");
+
+                default:
+                    // A timer tick, or input for a window that no longer
+                    // asks: back to the top, where the timer is checked.
+                    break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// [glk op:select_poll] The timer event if it is due, else no event.
+    /// Player input is never polled for.
+    /// </summary>
+    public GlkEvent SelectPoll()
+    {
+        if (TimerDue())
+        {
+            _timerStarted = Stopwatch.GetTimestamp();
+            return new GlkEvent(EventType.Timer, null, 0, 0);
+        }
+
+        return GlkEvent.None;
+    }
+
+    private bool TimerDue() =>
+        _timerInterval != 0 && Stopwatch.GetElapsedTime(_timerStarted) >= TimeSpan.FromMilliseconds(_timerInterval);
+
+    // [glk #line_events] The line goes into the buffer, as many
+    // characters as fit, and the event carries the count and the
+    // terminator. A text grid keeps the line where it was typed and
+    // moves its cursor to the next row; a text buffer's echo stream
+    // gets the line if echoing is on, the display having shown it.
+    private static GlkEvent CompleteLine(GlkWindow window, string text, uint terminator)
+    {
+        var request = window.LineRequest!;
+        window.LineRequest = null;
+
+        uint count = 0;
+        foreach (var rune in text.EnumerateRunes())
+        {
+            if (count >= request.MaxLength)
+            {
+                break;
+            }
+
+            var character = (uint)rune.Value;
+            if (request.Unicode)
+            {
+                request.Memory.WriteWord(request.Address + (4 * count), character);
+            }
+            else
+            {
+                request.Memory.WriteByte(request.Address + count, character > 0xFF ? (byte)'?' : (byte)character);
+            }
+
+            count++;
+        }
+
+        if (window is TextGridWindow grid)
+        {
+            foreach (var rune in text.EnumerateRunes())
+            {
+                grid.Stream.PutChar((uint)rune.Value);
+            }
+
+            grid.Stream.PutChar('\n');
+        }
+        else if (window.EchoLineInput && window.EchoStream is { } echo)
+        {
+            foreach (var rune in text.EnumerateRunes())
+            {
+                echo.PutChar((uint)rune.Value);
+            }
+
+            echo.PutChar('\n');
+        }
+
+        return new GlkEvent(EventType.LineInput, window, count, terminator);
+    }
+
+    // [glk #event] Writes an event into the structure argument.
+    private static void Report(GlkCall call, int index, GlkEvent glkEvent) =>
+        call.Out(index, (uint)glkEvent.Type, glkEvent.Window?.Id ?? 0, glkEvent.Value1, glkEvent.Value2);
 
     // ----- Streams -----
 
