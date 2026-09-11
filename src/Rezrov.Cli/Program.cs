@@ -1,6 +1,11 @@
 using Rezrov.Core;
 using Rezrov.Core.Blorb;
 using Rezrov.Glulx;
+// The two machines have an InstructionDecoder each, so the Glulx
+// types are named individually rather than imported as a namespace.
+using FunctionHeader = Rezrov.Glulx.Instructions.FunctionHeader;
+using FunctionType = Rezrov.Glulx.Instructions.FunctionType;
+using GlulxDecoder = Rezrov.Glulx.Instructions.InstructionDecoder;
 using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
 using Rezrov.ZMachine.Instructions;
@@ -219,6 +224,22 @@ internal static class Program
 
         var verdict = memory.VerifyChecksum() ? "matches" : "does not match";
         Console.WriteLine($"  checksum {header.Checksum:X8} {verdict}");
+
+        // [glulx #function] The start function's header and the first
+        // instruction the machine would execute.
+        try
+        {
+            var start = FunctionHeader.Read(memory, header.StartFunction);
+            var first = new GlulxDecoder(memory).Decode(start.CodeAddress);
+            var arguments = start.Type == FunctionType.StackArguments ? "on the stack" : "in its locals";
+            Console.WriteLine($"  the start function takes arguments {arguments} and has {start.LocalCount} locals");
+            Console.WriteLine($"  first instruction at {start.CodeAddress:X8}: {first}");
+        }
+        catch (GlulxException e)
+        {
+            Console.Error.WriteLine($"rezrov: {e.Message}");
+            return 1;
+        }
 
         return 0;
     }

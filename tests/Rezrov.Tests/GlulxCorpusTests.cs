@@ -1,5 +1,6 @@
 using Rezrov.Core;
 using Rezrov.Glulx;
+using Rezrov.Glulx.Instructions;
 
 namespace Rezrov.Tests;
 
@@ -69,6 +70,54 @@ public class GlulxCorpusTests
                 }
             }
             catch (InvalidDataException e)
+            {
+                failures.Add($"{Path.GetFileName(file)}: {e.Message}");
+            }
+        }
+
+        Assert.Empty(failures);
+    }
+
+    [Fact]
+    public void EveryStartFunctionBeginsByCallingAFunction()
+    {
+        var files = Corpus.GlulxFiles();
+        Assert.SkipUnless(files.Count > 0, SubmoduleAbsent);
+
+        var failures = new List<string>();
+
+        foreach (var file in files)
+        {
+            try
+            {
+                var memory = new GlulxMemory(Corpus.GlulxImage(file));
+                var start = FunctionHeader.Read(memory, memory.Header.StartFunction);
+                var first = new InstructionDecoder(memory).Decode(start.CodeAddress);
+
+                // Every compiler in the corpus makes the start function a
+                // stub that calls the real main function, by constant
+                // address, so the first instruction is some kind of call
+                // and its first operand names a function.
+                if (first.Opcode is not (Opcode.Call or Opcode.CallF or Opcode.CallFI or Opcode.CallFII or Opcode.CallFIII))
+                {
+                    failures.Add($"{Path.GetFileName(file)}: starts with {first}");
+                    continue;
+                }
+
+                var target = first.Operands[0];
+                if (target.Kind != OperandKind.Constant)
+                {
+                    failures.Add($"{Path.GetFileName(file)}: calls {target}");
+                    continue;
+                }
+
+                var main = FunctionHeader.Read(memory, target.Value);
+                if (main.CodeAddress <= target.Value)
+                {
+                    failures.Add($"{Path.GetFileName(file)}: the function at {target.Value:X8} has no code");
+                }
+            }
+            catch (GlulxException e)
             {
                 failures.Add($"{Path.GetFileName(file)}: {e.Message}");
             }
