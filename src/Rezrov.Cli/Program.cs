@@ -121,12 +121,13 @@ internal static class Program
 
             if (story.Format == StoryFormat.Glulx)
             {
-                if (transcript is not null || record is not null || save is not null || machine is not null)
+                if (machine is not null)
                 {
-                    Console.Error.WriteLine("rezrov: the transcript, record, save, and interpreter options do not apply to Glulx yet");
+                    Console.Error.WriteLine("rezrov: the interpreter option does not apply to Glulx");
                 }
 
-                return RunGlulx(story.Bytes, trace, commands, seed);
+                var directory = Path.GetDirectoryName(Path.GetFullPath(path)) ?? Directory.GetCurrentDirectory();
+                return RunGlulx(story.Bytes, directory, trace, commands, transcript, record, save, seed);
             }
 
             return RunZMachine(story.Bytes, trace, commands, transcript, record, save, story.Resources, seed, machine);
@@ -384,10 +385,12 @@ internal static class Program
     /// Runs a Glulx game, taking the player's commands from the console
     /// after any in a command file, until it ends or reaches something
     /// not built yet, printing what stopped it. Glk's text buffer
-    /// windows go to the console as one stream of text. A seed makes
-    /// the game's random numbers predictable.
+    /// windows go to the console as one stream of text, and its files
+    /// live beside the game unless the player types a path, or a
+    /// transcript, record, or save file was named on the command line.
+    /// A seed makes the game's random numbers predictable.
     /// </summary>
-    private static int RunGlulx(byte[] bytes, bool trace, string? commands, int? seed)
+    private static int RunGlulx(byte[] bytes, string directory, bool trace, string? commands, string? transcript, string? record, string? save, int? seed)
     {
         // [glk #encoding] Glk text is Latin-1 and Unicode, which the
         // console shows only as UTF-8.
@@ -396,7 +399,28 @@ internal static class Program
         using var reader = commands is null
             ? Console.In
             : new CommandReplayReader(new StreamReader(commands), Console.In, Console.Out);
-        var glk = new GlkLibrary(new TextWriterGlkDisplay(Console.Out, reader));
+
+        // [glk op:fileref_create_by_prompt] A file the game asks the
+        // player for is asked on standard error, so the question stays
+        // out of a transcript of standard output, and answered on the
+        // same reader as commands, so a command file can answer it.
+        var files = new DiskGlkFileSystem(directory, reader, Console.Error);
+        if (transcript is not null)
+        {
+            files.NamedFiles[FileUsage.Transcript] = Path.GetFullPath(transcript);
+        }
+
+        if (record is not null)
+        {
+            files.NamedFiles[FileUsage.InputRecord] = Path.GetFullPath(record);
+        }
+
+        if (save is not null)
+        {
+            files.NamedFiles[FileUsage.SavedGame] = Path.GetFullPath(save);
+        }
+
+        var glk = new GlkLibrary(new TextWriterGlkDisplay(Console.Out, reader), files);
         GlulxMachine machine;
         try
         {
@@ -450,6 +474,7 @@ internal static class Program
         }
         finally
         {
+            glk.CloseFiles();
             Console.Out.Flush();
 
             // Whatever the game asked Glk for that Glk calls illegal.

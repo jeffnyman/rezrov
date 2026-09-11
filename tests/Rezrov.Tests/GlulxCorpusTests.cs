@@ -149,7 +149,9 @@ public class GlulxCorpusTests
             var machine = new GlulxMachine(new GlulxMemory(Corpus.GlulxImage(file)), glk: new Rezrov.Glulx.Glk.GlkLibrary(display));
             try
             {
-                while (!machine.HasQuit && machine.InstructionsExecuted < 20_000_000)
+                // Counterfeit Monkey takes some 24 million instructions
+                // to reach its first prompt, the most of any game here.
+                while (!machine.HasQuit && machine.InstructionsExecuted < 40_000_000)
                 {
                     machine.Step();
                 }
