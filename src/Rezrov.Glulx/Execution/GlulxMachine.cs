@@ -1,5 +1,6 @@
 using System.Globalization;
 using Rezrov.Core;
+using Rezrov.Glulx.Glk;
 using Rezrov.Glulx.Instructions;
 using Rezrov.Glulx.Text;
 
@@ -44,7 +45,15 @@ public sealed class GlulxMachine
     private DecodingTable? _table;
     private uint _tableVersion;
 
-    public GlulxMachine(GlulxMemory memory, GlulxRandom? random = null)
+    /// <param name="memory">The game, laid out.</param>
+    /// <param name="random">
+    /// A seeded generator for reproducible play, or none for the clock.
+    /// </param>
+    /// <param name="glk">
+    /// The Glk library with the frontend's display in it, or none for a
+    /// library whose output goes nowhere.
+    /// </param>
+    public GlulxMachine(GlulxMemory memory, GlulxRandom? random = null, GlkLibrary? glk = null)
     {
         ArgumentNullException.ThrowIfNull(memory);
 
@@ -52,6 +61,7 @@ public sealed class GlulxMachine
         Stack = new GlulxStackSpace(memory.Header.StackSize);
         Decoder = new InstructionDecoder(memory);
         Random = random ?? new GlulxRandom();
+        Glk = glk ?? new GlkLibrary(new TextWriterGlkDisplay(TextWriter.Null));
         Start();
     }
 
@@ -62,6 +72,11 @@ public sealed class GlulxMachine
     public InstructionDecoder Decoder { get; }
 
     public GlulxRandom Random { get; }
+
+    /// <summary>
+    /// [glulx #input-and-output] The Glk library the game talks to.
+    /// </summary>
+    public GlkLibrary Glk { get; }
 
     /// <summary>
     /// [glulx #the-machine] The address of the next instruction.
@@ -467,6 +482,17 @@ public sealed class GlulxMachine
             case Opcode.Gestalt:
                 Store(ops[2], Gestalt(a[0], a[1]));
                 break;
+
+            // [glulx op:glk] The arguments are on the stack as for call,
+            // the function runs, and its result is stored.
+            case Opcode.Glk:
+                Store(ops[2], Glk.Call(a[0], PopArguments(a[1]), Memory, Stack));
+                if (Glk.ExitRequested)
+                {
+                    HasQuit = true;
+                }
+
+                break;
             case Opcode.DebugTrap:
                 // [glulx op:debugtrap] With nothing else in mind, halt
                 // with a visible message.
@@ -759,11 +785,10 @@ public sealed class GlulxMachine
     private void SetIOSystem(uint mode, uint rock)
     {
         // [glulx op:setiosys] A system the interpreter does not support
-        // falls back to the null system. Glk is not built yet, so that
-        // is what happens to it for now, and gestalt says as much. The
-        // rock is kept whatever the mode, as the reference interpreter
-        // keeps it.
-        IOSystem = mode is (uint)IOSystem.Null or (uint)IOSystem.Filter ? (IOSystem)mode : IOSystem.Null;
+        // falls back to the null system; FyreVM is the one that does.
+        // The rock is kept whatever the mode, as the reference
+        // interpreter keeps it.
+        IOSystem = mode is (uint)IOSystem.Null or (uint)IOSystem.Filter or (uint)IOSystem.Glk ? (IOSystem)mode : IOSystem.Null;
         IORock = rock;
     }
 
@@ -777,6 +802,11 @@ public sealed class GlulxMachine
             Stack.PushCallStub(DestinationType.None, 0, next);
             Enter(IORock, [character]);
         }
+        else if (IOSystem == IOSystem.Glk)
+        {
+            // [glulx op:streamchar] To the current Glk stream.
+            Glk.PutChar(character);
+        }
     }
 
     // [glulx #callfilter] Prints a signed decimal number under the
@@ -787,6 +817,16 @@ public sealed class GlulxMachine
     private void StreamNumber(int value, bool inMiddle, int position)
     {
         var digits = value.ToString(CultureInfo.InvariantCulture);
+
+        if (IOSystem == IOSystem.Glk && !inMiddle)
+        {
+            foreach (var digit in digits)
+            {
+                Glk.PutChar(digit);
+            }
+
+            return;
+        }
 
         if (IOSystem == IOSystem.Filter)
         {
@@ -868,7 +908,11 @@ public sealed class GlulxMachine
                 // [glulx #string_plain] Bytes to a zero byte. The null
                 // system need not even look at them.
                 case 0xE0:
-                    if (IOSystem == IOSystem.Filter)
+                    if (IOSystem == IOSystem.Glk)
+                    {
+                        PrintRun(address, false);
+                    }
+                    else if (IOSystem == IOSystem.Filter)
                     {
                         PushStringStart(ref substring);
                         var character = Memory.ReadByte(address++);
@@ -885,7 +929,11 @@ public sealed class GlulxMachine
                 // [glulx #string_unicode] Four-byte code points to a zero
                 // word.
                 case 0xE2:
-                    if (IOSystem == IOSystem.Filter)
+                    if (IOSystem == IOSystem.Glk)
+                    {
+                        PrintRun(address, true);
+                    }
+                    else if (IOSystem == IOSystem.Filter)
                     {
                         PushStringStart(ref substring);
                         var character = Memory.ReadWord(address);
@@ -980,6 +1028,11 @@ public sealed class GlulxMachine
                         return StringStep.Suspend;
                     }
 
+                    if (IOSystem == IOSystem.Glk)
+                    {
+                        Glk.PutChar(node.Value);
+                    }
+
                     break;
 
                 // [glulx #string_table] A run of characters inside the
@@ -992,6 +1045,11 @@ public sealed class GlulxMachine
                         PushStringStart(ref substring);
                         Stack.PushCallStub(DestinationType.ResumeCompressedString, (uint)bit, address);
                         return StringStep.Restart(node.Value, node.Type == DecodingNodeType.CString ? (byte)0xE0 : (byte)0xE2);
+                    }
+
+                    if (IOSystem == IOSystem.Glk)
+                    {
+                        PrintRun(node.Value, node.Type == DecodingNodeType.UnicodeString);
                     }
 
                     break;
@@ -1041,6 +1099,27 @@ public sealed class GlulxMachine
             }
 
             node = table.Root;
+        }
+    }
+
+    // [glulx op:streamstr] Under Glk a run of characters, bytes to a
+    // zero byte or words to a zero word, goes straight to the current
+    // stream with no stack to keep.
+    private void PrintRun(uint address, bool unicode)
+    {
+        if (unicode)
+        {
+            for (var character = Memory.ReadWord(address); character != 0; address += 4, character = Memory.ReadWord(address))
+            {
+                Glk.PutChar(character);
+            }
+        }
+        else
+        {
+            for (var character = Memory.ReadByte(address); character != 0; address++, character = Memory.ReadByte(address))
+            {
+                Glk.PutChar(character);
+            }
         }
     }
 
@@ -1094,7 +1173,7 @@ public sealed class GlulxMachine
         1 => InterpreterVersion,
         2 => 1,
         3 => 0,
-        4 => argument is 0 or 1 ? 1u : 0u,
+        4 => argument is 0 or 1 or 2 ? 1u : 0u,
         5 => 1,
         6 => 1,
         7 => 0,

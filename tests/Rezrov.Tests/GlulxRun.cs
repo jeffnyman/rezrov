@@ -1,5 +1,6 @@
 using Rezrov.Glulx;
 using Rezrov.Glulx.Execution;
+using Rezrov.Glulx.Glk;
 
 namespace Rezrov.Tests;
 
@@ -34,15 +35,15 @@ internal static class GlulxRun
     /// <summary>
     /// A machine over the code, ready at its first instruction.
     /// </summary>
-    public static GlulxMachine Machine(GlulxAssembler code, uint? seed = null, uint stackSize = 0x400) =>
-        new(new GlulxMemory(File(code, stackSize)), seed is { } s ? new GlulxRandom(s) : null);
+    public static GlulxMachine Machine(GlulxAssembler code, uint? seed = null, uint stackSize = 0x400, GlkLibrary? glk = null) =>
+        new(new GlulxMemory(File(code, stackSize)), seed is { } s ? new GlulxRandom(s) : null, glk);
 
     /// <summary>
     /// Runs the code to its end and returns the machine.
     /// </summary>
-    public static GlulxMachine Run(GlulxAssembler code, uint? seed = null, uint stackSize = 0x400)
+    public static GlulxMachine Run(GlulxAssembler code, uint? seed = null, uint stackSize = 0x400, GlkLibrary? glk = null)
     {
-        var machine = Machine(code, seed, stackSize);
+        var machine = Machine(code, seed, stackSize, glk);
         machine.Run();
         return machine;
     }
