@@ -14,6 +14,12 @@ internal static class Program
 {
     internal static int Main(string[] args)
     {
+        if (args is ["--version"])
+        {
+            Console.WriteLine($"rezrov {ProgramVersion.Current}");
+            return 0;
+        }
+
         // The acceptance command stands on its own: a script says which
         // game to play, so there is no story file on the command line.
         if (args.Length > 0 && args[0] == "--accept")
@@ -131,6 +137,7 @@ internal static class Program
         Console.Error.WriteLine("usage: rezrov <story-file> [--run] [--trace] [--commands <file>] [--transcript <file>] [--record <file>] [--save <file>] [--blorb <file>] [--seed <number>] [--interpreter <machine>]");
         Console.Error.WriteLine($"       machines: {string.Join(", ", InterpreterNumbers.AllNames)}, or a number from 1 to 11");
         Console.Error.WriteLine("       rezrov --accept <script> [--update | --resume]");
+        Console.Error.WriteLine("       rezrov --version");
         return 2;
     }
 

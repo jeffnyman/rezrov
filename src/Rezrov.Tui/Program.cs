@@ -16,6 +16,12 @@ internal static class Program
 {
     internal static int Main(string[] args)
     {
+        if (args is ["--version"])
+        {
+            Console.WriteLine($"rezrov-tui {ProgramVersion.Current}");
+            return 0;
+        }
+
         string? blorb = null;
         string? commands = null;
         string? transcript = null;

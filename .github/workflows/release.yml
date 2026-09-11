@@ -1,0 +1,143 @@
+# Build the native binaries and publish a GitHub Release when a version tag
+# is pushed.
+#
+# NativeAOT does not cross-compile between operating systems, so each one
+# builds on its own runner, in a matrix. The Linux runners come in x64 and
+# arm64. macOS is the exception that helps: the same toolchain builds both
+# Mac architectures, so the Apple silicon runner publishes an x64 and an
+# arm64 executable and lipo joins them into one universal binary that runs
+# natively on either kind of Mac. Each job packages both programs for its
+# platform, and one final job gathers the packages, checks that the tag
+# agrees with the version the projects were built with, and creates the
+# release with the packages and their checksums attached.
+#
+# To cut a release: set Version in Directory.Build.props, merge that, then
+# tag main as v<version> and push the tag. The README's Releasing section
+# spells the steps out.
+
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            rid: win-x64
+          - os: ubuntu-latest
+            rid: linux-x64
+          - os: ubuntu-24.04-arm
+            rid: linux-arm64
+          - os: macos-latest
+            rid: osx-universal
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      # The Linux runners have clang but not always the zlib headers the
+      # native linker wants.
+      - name: Install the Linux linker prerequisites
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang zlib1g-dev
+
+      - name: Publish the two programs
+        if: runner.os != 'macOS'
+        shell: bash
+        run: |
+          dotnet publish src/Rezrov.Cli -c Release -r ${{ matrix.rid }} -p:ContinuousIntegrationBuild=true -o "out/${{ matrix.rid }}"
+          dotnet publish src/Rezrov.Tui -c Release -r ${{ matrix.rid }} -p:ContinuousIntegrationBuild=true -o "out/${{ matrix.rid }}"
+
+      - name: Publish the two programs for both Mac architectures and join them
+        if: runner.os == 'macOS'
+        run: |
+          for rid in osx-arm64 osx-x64; do
+            dotnet publish src/Rezrov.Cli -c Release -r "$rid" -p:ContinuousIntegrationBuild=true -o "out/$rid"
+            dotnet publish src/Rezrov.Tui -c Release -r "$rid" -p:ContinuousIntegrationBuild=true -o "out/$rid"
+          done
+          mkdir -p out/osx-universal
+          for program in rezrov rezrov-tui; do
+            lipo -create -output "out/osx-universal/$program" "out/osx-arm64/$program" "out/osx-x64/$program"
+            lipo -info "out/osx-universal/$program"
+          done
+
+      # Only the executables ship: no symbol files, no build leftovers.
+      # The version comes from the tag, so the package names match the
+      # release they land in.
+      - name: Package
+        shell: bash
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          package="rezrov-${version}-${{ matrix.rid }}"
+          mkdir -p "dist/${package}"
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            cp out/${{ matrix.rid }}/rezrov.exe out/${{ matrix.rid }}/rezrov-tui.exe "dist/${package}/"
+          else
+            cp out/${{ matrix.rid }}/rezrov out/${{ matrix.rid }}/rezrov-tui "dist/${package}/"
+          fi
+          cp README.md LICENSE "dist/${package}/"
+          cd dist
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            7z a -tzip "${package}.zip" "${package}" > /dev/null
+          else
+            tar -czf "${package}.tar.gz" "${package}"
+          fi
+          rm -r "${package}"
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: ${{ matrix.rid }}
+          path: dist/*
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v7
+
+      # A tag that disagrees with the version in Directory.Build.props
+      # would ship binaries that report the wrong version, so the release
+      # refuses to happen until the two agree.
+      - name: Check the tag against the project version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          version="$(sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p' Directory.Build.props)"
+          if [ "$tag" != "$version" ]; then
+            echo "The tag says $tag but Directory.Build.props says $version." >&2
+            exit 1
+          fi
+
+      - uses: actions/download-artifact@v7
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Write the checksums
+        run: |
+          cd dist
+          sha256sum * > SHA256SUMS
+
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* --title "Rezrov ${GITHUB_REF_NAME#v}" --generate-notes
