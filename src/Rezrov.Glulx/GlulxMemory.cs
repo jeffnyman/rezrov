@@ -238,6 +238,48 @@ public sealed class GlulxMemory
     }
 
     /// <summary>
+    /// RAM as it was in the game file: <paramref name="length"/> bytes
+    /// from RAMSTART, zeroes above the file's end.
+    /// </summary>
+    /// <remarks>
+    /// [glulx #saveformat] A saved game's compressed memory is taken
+    /// against the game file extended with as many zeroes as necessary,
+    /// which is what this gives for any length memory may have reached.
+    /// </remarks>
+    public byte[] InitialRam(uint length)
+    {
+        var initial = new byte[length];
+        var fromFile = Math.Min(length, (uint)_file.Length - RamStart);
+        _file.AsSpan((int)RamStart, (int)fromFile).CopyTo(initial);
+        return initial;
+    }
+
+    /// <summary>
+    /// Puts RAM back as a saved game or an undo state had it: memory at
+    /// <paramref name="size"/> with <paramref name="ram"/> from RAMSTART
+    /// up.
+    /// </summary>
+    /// <remarks>
+    /// [glulx #saveformat] During a restore the size of memory is
+    /// changed to the saved one, and RAM runs from RAMSTART to that
+    /// size, so the two must agree.
+    /// </remarks>
+    /// <exception cref="GlulxException">
+    /// The size is not one memory can have, or the RAM does not fill it.
+    /// </exception>
+    public void Restore(uint size, ReadOnlySpan<byte> ram)
+    {
+        if (size < RamStart || (uint)ram.Length != size - RamStart)
+        {
+            throw new GlulxException($"RAM of {ram.Length} bytes does not fill memory of {size:X8} bytes above RAMSTART.");
+        }
+
+        Resize(size);
+        ram.CopyTo(_bytes.AsSpan((int)RamStart));
+        Version++;
+    }
+
+    /// <summary>
     /// [glulx #the-header] The checksum of the game file as loaded. Play
     /// changes RAM, but the checksum is of the initial contents, so it
     /// is computed from the file and not from live memory.

@@ -377,6 +377,34 @@ public sealed class GlulxStackSpace
         }
     }
 
+    /// <summary>
+    /// Replaces the stack with a saved one, leaving the frame registers
+    /// to be rebuilt from the call stub on top of it.
+    /// </summary>
+    /// <remarks>
+    /// [glulx #saveformat] A saved stack is the whole thing, big-endian,
+    /// with a call stub pushed last, and when it is loaded back the stub
+    /// is popped to find the frame pointer and continue. Until then the
+    /// frame registers say nothing, as the reference interpreter has it.
+    /// </remarks>
+    /// <exception cref="GlulxException">
+    /// The saved stack is larger than this one, is not whole 32-bit
+    /// values, or has no room for a stub.
+    /// </exception>
+    public void Load(ReadOnlySpan<byte> contents)
+    {
+        if (contents.Length > Size || contents.Length % 4 != 0 || contents.Length < 16)
+        {
+            throw new GlulxException($"A saved stack of {contents.Length} bytes does not fit a stack of {Size:X} bytes.");
+        }
+
+        contents.CopyTo(_bytes);
+        StackPointer = (uint)contents.Length;
+        FramePointer = 0;
+        FrameLength = 0;
+        LocalsPosition = 0;
+    }
+
     /// <summary>Empties the stack, for a restart.</summary>
     public void Clear()
     {

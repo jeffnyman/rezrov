@@ -1198,6 +1198,12 @@ public sealed class GlkLibrary
         }
     }
 
+    /// <summary>
+    /// [glk op:get_char_stream_uni] Reads one character from a stream,
+    /// or -1 at its end, with a warning if it is not one to read from.
+    /// </summary>
+    public int GetChar(GlkStream? stream) => GetChar(stream, true);
+
     private int GetChar(GlkStream? stream, bool unicode)
     {
         if (stream is null)
