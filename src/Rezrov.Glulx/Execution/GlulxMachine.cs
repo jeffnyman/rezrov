@@ -512,6 +512,17 @@ public sealed class GlulxMachine
                 Store(ops[0], Memory.VerifyChecksum() ? 0u : 1u);
                 break;
 
+            // [glulx #searching] The options are the last load operand.
+            case Opcode.LinearSearch:
+                Store(ops[7], MemorySearch.Linear(Memory, a[0], a[1], a[2], a[3], a[4], a[5], (SearchOptions)a[6]));
+                break;
+            case Opcode.BinarySearch:
+                Store(ops[7], MemorySearch.Binary(Memory, a[0], a[1], a[2], a[3], a[4], a[5], (SearchOptions)a[6]));
+                break;
+            case Opcode.LinkedSearch:
+                Store(ops[6], MemorySearch.Linked(Memory, a[0], a[1], a[2], a[3], a[4], (SearchOptions)a[5]));
+                break;
+
             // [glulx #opcodes_copy]
             case Opcode.MZero:
                 Memory.Zero(a[1], a[0]);
