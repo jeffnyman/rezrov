@@ -86,6 +86,64 @@ internal static class Corpus
     }
 
     /// <summary>
+    /// The directories that hold Glulx files, relative to the submodule
+    /// root: the games, and the conformance tests.
+    /// </summary>
+    public static readonly string[] GlulxDirectories =
+    [
+        "glulx-code",
+        "glulx-checkers",
+    ];
+
+    /// <summary>
+    /// Every Glulx file across the corpus, bare .ulx and packaged
+    /// .gblorb alike, sorted, or empty if the submodule is not
+    /// populated.
+    /// </summary>
+    public static List<string> GlulxFiles()
+    {
+        var root = FindRepositoryRoot();
+        if (root is null)
+        {
+            return [];
+        }
+
+        var files = new List<string>();
+
+        foreach (var directory in GlulxDirectories)
+        {
+            var path = Path.Combine(root, "entharion", directory);
+            if (!Directory.Exists(path))
+            {
+                continue;
+            }
+
+            files.AddRange(Directory.EnumerateFiles(path).Where(f => Path.GetExtension(f) is ".ulx" or ".gblorb"));
+        }
+
+        files.Sort(StringComparer.Ordinal);
+        return files;
+    }
+
+    /// <summary>
+    /// The Glulx game in a corpus file: the file itself for a .ulx, and
+    /// [blorb 5] the GLUL executable chunk of a .gblorb.
+    /// </summary>
+    public static byte[] GlulxImage(string file)
+    {
+        var bytes = File.ReadAllBytes(file);
+        if (Path.GetExtension(file) != ".gblorb")
+        {
+            return bytes;
+        }
+
+        var executable = Rezrov.Core.Blorb.BlorbFile.Read(bytes).Executable;
+        Assert.NotNull(executable);
+        Assert.Equal("GLUL", executable.ChunkType);
+        return executable.Data.ToArray();
+    }
+
+    /// <summary>
     /// The simple-test fixtures: one tiny Inform program compiled once
     /// for each version, which prints one known sentence and quits.
     /// </summary>
