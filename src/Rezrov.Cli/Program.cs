@@ -1,5 +1,6 @@
 using Rezrov.Core;
 using Rezrov.Core.Blorb;
+using Rezrov.Glulx;
 using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
 using Rezrov.ZMachine.Instructions;
@@ -126,9 +127,9 @@ internal static class Program
         return format switch
         {
             StoryFormat.ZMachine => DescribeZMachine(bytes),
+            StoryFormat.Glulx => DescribeGlulx(bytes),
             StoryFormat.Blorb => DescribeBlorb(bytes, path),
-            StoryFormat.Unknown => 1,
-            _ => 0,
+            _ => 1,
         };
     }
 
@@ -158,11 +159,6 @@ internal static class Program
             Console.WriteLine($"  for release {id.Release}, serial {id.Serial}, checksum {id.Checksum:X4}");
         }
 
-        if (blorb.Executable is { } executable)
-        {
-            Console.WriteLine($"  runs its own {executable.ChunkType.Trim()} game of {executable.Data.Length} bytes");
-        }
-
         if (blorb.LoopingSounds.Count > 0)
         {
             Console.WriteLine($"  {blorb.LoopingSounds.Count(l => l.Value)} sounds loop until stopped");
@@ -172,6 +168,57 @@ internal static class Program
         {
             Console.WriteLine($"  by {blorb.Author}");
         }
+
+        // [blorb 5] The packaged game, described as its own file would
+        // be, whichever machine it is for.
+        if (blorb.Executable is { } executable)
+        {
+            Console.WriteLine($"  runs its own {executable.ChunkType.Trim()} game of {executable.Data.Length} bytes");
+
+            return executable.ChunkType switch
+            {
+                "ZCOD" => DescribeZMachine(executable.Data.ToArray()),
+                "GLUL" => DescribeGlulx(executable.Data.ToArray()),
+                _ => 0,
+            };
+        }
+
+        return 0;
+    }
+
+    /// <summary>
+    /// Says what the header of a Glulx file declares: the specification
+    /// version, what Inform recorded if Inform made it, the memory map,
+    /// and whether the checksum holds. Running it is for later.
+    /// </summary>
+    private static int DescribeGlulx(byte[] bytes)
+    {
+        GlulxMemory memory;
+        try
+        {
+            memory = new GlulxMemory(bytes);
+        }
+        catch (InvalidDataException e)
+        {
+            Console.Error.WriteLine($"rezrov: {e.Message}");
+            return 1;
+        }
+
+        var header = memory.Header;
+
+        var inform = header.InformVersion is { } version
+            ? $", compiled by Inform {version}, release {header.InformRelease}, serial {header.InformSerial}"
+            : "";
+        Console.WriteLine($"  Glulx {header.VersionText}{inform}");
+
+        Console.WriteLine(
+            $"  ROM to {header.RamStart:X8}, RAM to {header.ExtStart:X8}, memory to {header.EndMem:X8}, stack of {header.StackSize} bytes, {bytes.Length} bytes on disk");
+
+        var table = header.DecodingTable == 0 ? "no string decoding table" : $"string decoding table at {header.DecodingTable:X8}";
+        Console.WriteLine($"  starts at {header.StartFunction:X8}, {table}");
+
+        var verdict = memory.VerifyChecksum() ? "matches" : "does not match";
+        Console.WriteLine($"  checksum {header.Checksum:X8} {verdict}");
 
         return 0;
     }

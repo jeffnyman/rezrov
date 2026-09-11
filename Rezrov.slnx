@@ -2,6 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/Rezrov.Cli/Rezrov.Cli.csproj" />
     <Project Path="src/Rezrov.Core/Rezrov.Core.csproj" />
+    <Project Path="src/Rezrov.Glulx/Rezrov.Glulx.csproj" />
     <Project Path="src/Rezrov.Tui/Rezrov.Tui.csproj" />
     <Project Path="src/Rezrov.ZMachine/Rezrov.ZMachine.csproj" />
   </Folder>
