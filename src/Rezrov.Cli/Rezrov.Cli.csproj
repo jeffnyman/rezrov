@@ -8,6 +8,13 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <AssemblyName>rezrov</AssemblyName>
+
+    <!--
+      A publish is a NativeAOT publish: one native executable with no
+      runtime beside it. Building and testing are unaffected; only
+      `dotnet publish -r <rid>` takes the long road.
+    -->
+    <PublishAot>true</PublishAot>
   </PropertyGroup>
 
   <ItemGroup>

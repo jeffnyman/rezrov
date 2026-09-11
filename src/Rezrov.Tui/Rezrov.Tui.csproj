@@ -10,6 +10,9 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <AssemblyName>rezrov-tui</AssemblyName>
+
+    <!-- A NativeAOT publish, as for the command line program. -->
+    <PublishAot>true</PublishAot>
   </PropertyGroup>
 
   <ItemGroup>

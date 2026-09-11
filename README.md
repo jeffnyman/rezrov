@@ -4,6 +4,12 @@ _An Interactive Fiction Interpreter_
 
 Rezrov is an interpreter for interactive fiction written in C#. The most common and obvious formats there are the Z-Machine and Glulx. The plan is for the interpreter core to be a UI-agnostic library, and the command line, terminal, and graphical frontends are going to be thin shells over that one engine.
 
+## Installing
+
+Each release on the [releases page](https://github.com/jeffnyman/rezrov/releases) carries one archive per platform, named for the version and the platform: `rezrov-0.1.0-win-x64.zip`, `rezrov-0.1.0-linux-x64.tar.gz`, `rezrov-0.1.0-linux-arm64.tar.gz`, and `rezrov-0.1.0-osx-universal.tar.gz`, the last a universal binary that runs natively on both Intel and Apple silicon Macs. Inside are the two programs, `rezrov` and `rezrov-tui`, as native executables that need nothing installed beside them, not even .NET. Unpack the archive somewhere on your path and they are ready; `rezrov --version` says which release you have. A `SHA256SUMS` file beside the archives lets you check a download.
+
+Two platform notes. On macOS the executables are not signed, so the first run is refused with a message about an unidentified developer; allow it in System Settings under Privacy and Security, or clear the quarantine mark with `xattr -d com.apple.quarantine rezrov rezrov-tui`. On Linux, `tar` keeps the executable permission, but if a download loses it, `chmod +x rezrov rezrov-tui` restores it.
+
 ## Using
 
 Rezrov comes as two programs over one interpreter. `rezrov` is the command line program: give it a story file and it tells you about the file; add `--run` and it plays the game on the console as a plain stream of text. `rezrov-tui` is the terminal program: give it a story file and it plays the game full screen, with the status line, the upper window, styles, and colors that the console cannot draw.
@@ -183,7 +189,18 @@ sudo apt update
 sudo apt install -y clang zlib1g-dev
 ```
 
-Note that NativeAOT does not cross-compile. Each target runtime identifier has to be published on its own platform: `win-x64` on Windows, `linux-x64` on Linux, `osx-arm64` on macOS.
+Note that NativeAOT does not cross-compile between operating systems. Each target runtime identifier has to be published on its own platform: `win-x64` on Windows, `linux-x64` on Linux, `osx-arm64` or `osx-x64` on macOS, where either kind of Mac can build both and `lipo` can join them.
+
+Both program projects have `PublishAot` set, so the command is only `dotnet publish src/Rezrov.Cli -c Release -r win-x64`, with the runtime identifier of the machine you are on, and likewise for `src/Rezrov.Tui`. The executable lands under the project's `bin/Release` directory.
+
+## Releasing
+
+A release is a version tag. The release workflow builds both programs with NativeAOT on Windows, Linux for x64 and arm64, and macOS for both Intel and Apple silicon joined into a universal binary with `lipo`, packages each platform's pair with the README and license, and publishes a GitHub Release with the archives and their checksums attached. The steps:
+
+1. Set `Version` in `Directory.Build.props` to the new number and merge that change through a pull request as usual. The programs report this version through `--version`.
+2. Tag the merge on `main` and push the tag, for example `git tag v0.1.0 && git push origin v0.1.0`.
+
+The workflow refuses a tag that disagrees with the version in `Directory.Build.props`, so the two cannot drift apart. The release notes are generated from the pull requests merged since the previous tag, which is one more reason the pull request titles are kept to Conventional Commits.
 
 ## Commit Messages
 
