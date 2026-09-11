@@ -23,10 +23,10 @@ public class GlkInputTests
     private const uint WindowOpen = 0x0023;
     private const uint SetWindow = 0x002F;
 
-    private static (GlkLibrary Glk, RecordingGlkDisplay Display, GlulxMemory Memory, GlkWindow Window) Library(WindowType type = WindowType.TextBuffer)
+    private static (GlkLibrary Glk, RecordingGlkDisplay Display, GlulxMemory Memory, GlkWindow Window) Library(WindowType type = WindowType.TextBuffer, ManualClock? clock = null)
     {
         var display = new RecordingGlkDisplay(20, 5);
-        var glk = new GlkLibrary(display);
+        var glk = new GlkLibrary(display, clock: clock);
         var memory = new GlulxMemory(TestGlulx.File(ramStart: 0x400, extStart: 0x800, endMem: 0xA00));
         var window = glk.OpenWindow(null, 0, 0, type, 1)!;
         return (glk, display, memory, window);
@@ -222,19 +222,22 @@ public class GlkInputTests
     [Fact]
     public void TimerEventsComeWhenTheIntervalHasPassed()
     {
-        var (glk, display, _, _) = Library();
+        var clock = new ManualClock();
+        var (glk, display, _, _) = Library(clock: clock);
 
         // [glk #timer_events] Nothing until an interval passes; then one
         // event, not a backlog; and the display is asked to wait no
         // longer than the time left.
         glk.RequestTimerEvents(20);
         Assert.Equal(EventType.None, glk.SelectPoll().Type);
+        clock.Advance(19);
+        Assert.Equal(EventType.None, glk.SelectPoll().Type);
 
-        Thread.Sleep(60);
+        clock.Advance(41);
         Assert.Equal(EventType.Timer, glk.SelectPoll().Type);
         Assert.Equal(EventType.None, glk.SelectPoll().Type);
 
-        Thread.Sleep(60);
+        clock.Advance(60);
         var waited = glk.Select();
         Assert.Equal(new GlkEvent(EventType.Timer, null, 0, 0), waited);
         Assert.Empty(display.Timeouts);
@@ -250,19 +253,20 @@ public class GlkInputTests
     [Fact]
     public void TheDisplayIsToldHowLongToWaitForTheTimer()
     {
-        var (glk, display, _, _) = Library();
+        var clock = new ManualClock();
+        var (glk, display, _, _) = Library(clock: clock);
         display.Inputs.Enqueue(GlkInput.Timer);
 
         glk.RequestTimerEvents(500);
-        Thread.Sleep(5);
+        clock.Advance(5);
 
         // [glk #timer_events] The display reported the timer early, the
         // library found it not yet due and asked again, and by then the
-        // queue was empty; the timeout it was given was under the full
-        // interval, since some of it had passed.
+        // queue was empty; the timeout it was given was the time left
+        // of the interval.
         Assert.Throws<EndOfStreamException>(() => glk.Select());
         Assert.Equal(2, display.Timeouts.Count);
-        Assert.True(display.Timeouts[0] < TimeSpan.FromMilliseconds(500));
+        Assert.Equal(TimeSpan.FromMilliseconds(495), display.Timeouts[0]);
     }
 
     [Fact]

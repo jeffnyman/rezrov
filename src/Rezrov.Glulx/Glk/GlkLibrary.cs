@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Text;
 using Rezrov.Glulx.Execution;
 
@@ -40,7 +39,8 @@ public sealed class GlkLibrary
     private readonly Dictionary<(WindowType Type, GlkStyle Style, StyleHint Hint), int> _styleHints = [];
 
     // [glk #timer_events] The interval, zero for no timer, and when the
-    // last timer event was given out.
+    // last timer event was given out, on the clock's timestamps.
+    private readonly TimeProvider _clock;
     private uint _timerInterval;
     private long _timerStarted;
 
@@ -49,10 +49,15 @@ public sealed class GlkLibrary
     /// The frontend's files, or none for files kept in memory for the
     /// session.
     /// </param>
-    public GlkLibrary(IGlkDisplay display, IGlkFileSystem? files = null)
+    /// <param name="clock">
+    /// The clock the timer runs on, or none for the system's; a test
+    /// gives one it can move by hand.
+    /// </param>
+    public GlkLibrary(IGlkDisplay display, IGlkFileSystem? files = null, TimeProvider? clock = null)
     {
         ArgumentNullException.ThrowIfNull(display);
         _display = display;
+        _clock = clock ?? TimeProvider.System;
         Files = files ?? new MemoryGlkFileSystem();
     }
 
@@ -963,7 +968,7 @@ public sealed class GlkLibrary
     public void RequestTimerEvents(uint milliseconds)
     {
         _timerInterval = milliseconds;
-        _timerStarted = Stopwatch.GetTimestamp();
+        _timerStarted = _clock.GetTimestamp();
     }
 
     /// <summary>
@@ -981,7 +986,7 @@ public sealed class GlkLibrary
             // never stacks up: the next is an interval from now.
             if (TimerDue())
             {
-                _timerStarted = Stopwatch.GetTimestamp();
+                _timerStarted = _clock.GetTimestamp();
                 return new GlkEvent(EventType.Timer, null, 0, 0);
             }
 
@@ -989,7 +994,7 @@ public sealed class GlkLibrary
             var chars = Windows.All.Where(w => w.CharRequest != CharRequest.None).ToList();
             var timeout = _timerInterval == 0
                 ? (TimeSpan?)null
-                : TimeSpan.FromMilliseconds(_timerInterval) - Stopwatch.GetElapsedTime(_timerStarted);
+                : TimeSpan.FromMilliseconds(_timerInterval) - _clock.GetElapsedTime(_timerStarted);
 
             var input = _display.WaitForInput(lines, chars, timeout is { } t && t < TimeSpan.Zero ? TimeSpan.Zero : timeout);
 
@@ -1032,7 +1037,7 @@ public sealed class GlkLibrary
     {
         if (TimerDue())
         {
-            _timerStarted = Stopwatch.GetTimestamp();
+            _timerStarted = _clock.GetTimestamp();
             return new GlkEvent(EventType.Timer, null, 0, 0);
         }
 
@@ -1040,7 +1045,7 @@ public sealed class GlkLibrary
     }
 
     private bool TimerDue() =>
-        _timerInterval != 0 && Stopwatch.GetElapsedTime(_timerStarted) >= TimeSpan.FromMilliseconds(_timerInterval);
+        _timerInterval != 0 && _clock.GetElapsedTime(_timerStarted) >= TimeSpan.FromMilliseconds(_timerInterval);
 
     // [glk #line_events] The line goes into the buffer, as many
     // characters as fit, and the event carries the count and the
