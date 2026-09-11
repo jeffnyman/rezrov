@@ -411,7 +411,7 @@ public class GlulxMachineTests
     [Theory]
     [InlineData(0u, 0u, 0x00030103u)]
     [InlineData(2u, 0u, 1u)]
-    [InlineData(3u, 0u, 0u)]
+    [InlineData(3u, 0u, 1u)]
     [InlineData(4u, 0u, 1u)]
     [InlineData(4u, 1u, 1u)]
     [InlineData(4u, 2u, 1u)]
@@ -419,6 +419,7 @@ public class GlulxMachineTests
     [InlineData(6u, 0u, 1u)]
     [InlineData(7u, 0u, 0u)]
     [InlineData(11u, 0u, 0u)]
+    [InlineData(12u, 0u, 1u)]
     [InlineData(0x1000u, 0u, 0u)]
     public void GestaltAnswersForWhatIsBuilt(uint selector, uint argument, uint expected)
     {

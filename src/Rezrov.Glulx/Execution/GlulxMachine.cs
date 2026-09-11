@@ -2,6 +2,7 @@ using System.Globalization;
 using Rezrov.Core;
 using Rezrov.Glulx.Glk;
 using Rezrov.Glulx.Instructions;
+using Rezrov.Glulx.Saves;
 using Rezrov.Glulx.Text;
 
 namespace Rezrov.Glulx.Execution;
@@ -23,10 +24,11 @@ namespace Rezrov.Glulx.Execution;
 /// the specification fixes wherever an operand uses the stack: loads
 /// pop before the work is done and stores push after it.
 ///
-/// Opcodes belonging to parts of the machine not built yet, output and
-/// Glk among them, throw <see cref="NotSupportedException"/> naming the
-/// opcode, so a game stops at the first thing it needs that is missing
-/// rather than running on wrongly.
+/// Opcodes belonging to parts of the machine not built yet, floating
+/// point, the heap, and accelerated functions, throw
+/// <see cref="NotSupportedException"/> naming the opcode, so a game
+/// stops at the first thing it needs that is missing rather than
+/// running on wrongly.
 /// </remarks>
 public sealed class GlulxMachine
 {
@@ -77,6 +79,18 @@ public sealed class GlulxMachine
     /// [glulx #input-and-output] The Glk library the game talks to.
     /// </summary>
     public GlkLibrary Glk { get; }
+
+    /// <summary>
+    /// [glulx op:saveundo] The states kept in temporary storage.
+    /// </summary>
+    public GlulxUndoHistory Undo { get; } = new();
+
+    /// <summary>
+    /// [glulx op:restore] Why the last restore failed, or null if it
+    /// succeeded: a frontend may show it, since the game only learns
+    /// that it failed.
+    /// </summary>
+    public string? LastRestoreError { get; private set; }
 
     /// <summary>
     /// [glulx #the-machine] The address of the next instruction.
@@ -164,6 +178,39 @@ public sealed class GlulxMachine
         Memory.Reset();
         RestoreProtectedBytes(kept);
         Start();
+    }
+
+    /// <summary>
+    /// [glulx #saveformat] The state of play, taken after the saving
+    /// opcode has pushed its call stub, so the stack ends with the stub
+    /// that says where to continue.
+    /// </summary>
+    public GlulxSavedState Capture() =>
+        new(Memory.Length, Memory.Slice(Memory.RamStart, Memory.Length - Memory.RamStart).ToArray(), Stack.Contents.ToArray());
+
+    /// <summary>
+    /// [glulx #saveformat] Puts a state back and continues from the
+    /// stub on top of its stack, storing <paramref name="result"/>
+    /// where that stub says, which is -1 after a restore.
+    /// </summary>
+    /// <remarks>
+    /// [glulx op:protect] The protected range is silently unaffected,
+    /// as at a restart, and everything the specification leaves out of
+    /// the state, the Glk objects, the I/O system, the decoding table
+    /// address, and the random number generator, stays as it is.
+    /// </remarks>
+    /// <exception cref="GlulxException">
+    /// The state does not fit this machine's memory or stack.
+    /// </exception>
+    public void Apply(GlulxSavedState state, uint result)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+
+        var kept = ProtectedBytes();
+        Memory.Restore(state.MemorySize, state.Ram);
+        RestoreProtectedBytes(kept);
+        Stack.Load(state.Stack);
+        Resume(Stack.PopCallStub(), result);
     }
 
     private static uint PackVersion(string version)
@@ -536,6 +583,48 @@ public sealed class GlulxMachine
                 break;
             case Opcode.Verify:
                 Store(ops[0], Memory.VerifyChecksum() ? 0u : 1u);
+                break;
+
+            // [glulx #saveformat] Saving pushes a stub first, so the
+            // state ends with where to continue and where the result
+            // goes, then pops it to store 0 and carry on; restoring pops
+            // the saved stub to store -1 and carry on from there.
+            case Opcode.Save:
+                SaveGame(a[0], ops[1], next);
+                break;
+            case Opcode.Restore:
+                RestoreGame(a[0], ops[1]);
+                break;
+            case Opcode.SaveUndo:
+            {
+                var (type, address) = Destination(ops[0]);
+                Stack.PushCallStub(type, address, next);
+                Undo.Push(Capture());
+                Resume(Stack.PopCallStub(), 0);
+                break;
+            }
+
+            case Opcode.RestoreUndo:
+            {
+                // [glulx op:restoreundo] 1 if there is nothing to go
+                // back to, and otherwise this instruction never stores.
+                if (Undo.TryPop(out var state))
+                {
+                    Apply(state, 0xFFFFFFFF);
+                }
+                else
+                {
+                    Store(ops[0], 1);
+                }
+
+                break;
+            }
+
+            case Opcode.HasUndo:
+                Store(ops[0], Undo.Count > 0 ? 0u : 1u);
+                break;
+            case Opcode.DiscardUndo:
+                Undo.Discard();
                 break;
 
             // [glulx #searching] The options are the last load operand.
@@ -1168,11 +1257,12 @@ public sealed class GlulxMachine
         // interpreter can honestly give so far. A feature answers 1
         // only once the opcodes behind it exist: Unicode does, since
         // the E2 strings, the Unicode nodes, streamunichar, and the
-        // type 14 stub are all there.
+        // type 14 stub are all there, and Undo and ExtUndo do, since
+        // saveundo, restoreundo, hasundo, and discardundo are.
         0 => GlulxHeader.SpecificationVersion,
         1 => InterpreterVersion,
         2 => 1,
-        3 => 0,
+        3 => 1,
         4 => argument is 0 or 1 or 2 ? 1u : 0u,
         5 => 1,
         6 => 1,
@@ -1181,10 +1271,90 @@ public sealed class GlulxMachine
         9 => 0,
         10 => 0,
         11 => 0,
-        12 => 0,
+        12 => 1,
         13 => 0,
         _ => 0,
     };
+
+    // [glulx op:save] Writes the state to a Glk stream as a saved game
+    // and stores 0, or 1 if there is no such stream to write to.
+    private void SaveGame(uint streamId, Operand result, uint next)
+    {
+        var stream = SaveStream(streamId, "save");
+        var (type, address) = Destination(result);
+        Stack.PushCallStub(type, address, next);
+
+        uint outcome = 1;
+        if (stream is { Writable: true })
+        {
+            var file = new MemoryStream();
+            GlulxQuetzal.Write(Capture(), Memory, file);
+            foreach (var b in file.ToArray())
+            {
+                stream.PutChar(b);
+            }
+
+            outcome = 0;
+        }
+
+        Resume(Stack.PopCallStub(), outcome);
+    }
+
+    // [glulx op:restore] Reads a saved game from a Glk stream and
+    // continues from it, or stores 1 if the stream has no saved game of
+    // this game's in it, with the reason kept for the frontend.
+    private void RestoreGame(uint streamId, Operand result)
+    {
+        var stream = SaveStream(streamId, "restore");
+        LastRestoreError = null;
+
+        if (stream is not { Readable: true })
+        {
+            LastRestoreError = "There is no stream to restore from.";
+            Store(result, 1);
+            return;
+        }
+
+        var bytes = new List<byte>();
+        for (var b = Glk.GetChar(stream); b >= 0; b = Glk.GetChar(stream))
+        {
+            bytes.Add((byte)b);
+        }
+
+        GlulxSavedState state;
+        try
+        {
+            state = GlulxQuetzal.Read(new MemoryStream(bytes.ToArray()), Memory);
+        }
+        catch (InvalidDataException e)
+        {
+            LastRestoreError = e.Message;
+            Store(result, 1);
+            return;
+        }
+
+        if (state.Stack.Length > Stack.Size)
+        {
+            LastRestoreError = $"The saved game's stack of {state.Stack.Length} bytes is larger than this game's.";
+            Store(result, 1);
+            return;
+        }
+
+        Apply(state, 0xFFFFFFFF);
+    }
+
+    // [glulx op:save] Under the Glk I/O system the operand is a stream
+    // id, zero for none; under the other systems the opcode is illegal,
+    // since there is nowhere to put the state.
+    private GlkStream? SaveStream(uint id, string opcode)
+    {
+        if (IOSystem != IOSystem.Glk)
+        {
+            throw new GlulxException($"The {opcode} opcode is illegal under the {IOSystem} I/O system.");
+        }
+
+        return id == 0 ? null : Glk.Streams.Find(id);
+    }
 
     private byte[]? ProtectedBytes()
     {
