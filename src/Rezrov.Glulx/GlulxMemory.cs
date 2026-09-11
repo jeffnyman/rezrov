@@ -57,6 +57,13 @@ public sealed class GlulxMemory
     public GlulxHeader Header { get; }
 
     /// <summary>
+    /// A count that changes with every write, so that something built
+    /// from the contents of memory, such as a cached string decoding
+    /// table, can tell whether memory has changed under it.
+    /// </summary>
+    public uint Version { get; private set; }
+
+    /// <summary>
     /// The current size of memory in bytes: [glulx #the-memory-map]
     /// ENDMEM to begin with, [glulx op:setmemsize] and whatever the game
     /// has set it to since.
@@ -97,18 +104,21 @@ public sealed class GlulxMemory
     {
         CheckWrite(address, 1);
         _bytes[address] = value;
+        Version++;
     }
 
     public void WriteShort(uint address, ushort value)
     {
         CheckWrite(address, 2);
         BinaryPrimitives.WriteUInt16BigEndian(_bytes.AsSpan((int)address, 2), value);
+        Version++;
     }
 
     public void WriteWord(uint address, uint value)
     {
         CheckWrite(address, 4);
         BinaryPrimitives.WriteUInt32BigEndian(_bytes.AsSpan((int)address, 4), value);
+        Version++;
     }
 
     /// <summary>
@@ -139,6 +149,7 @@ public sealed class GlulxMemory
 
         CheckWrite(address, length);
         _bytes.AsSpan((int)address, (int)length).Clear();
+        Version++;
     }
 
     /// <summary>
@@ -161,6 +172,7 @@ public sealed class GlulxMemory
         CheckRead(source, length);
         CheckWrite(destination, length);
         _bytes.AsSpan((int)source, (int)length).CopyTo(_bytes.AsSpan((int)destination, (int)length));
+        Version++;
     }
 
     /// <summary>
@@ -196,6 +208,7 @@ public sealed class GlulxMemory
         var resized = new byte[size];
         _bytes.AsSpan(0, (int)Math.Min(size, Length)).CopyTo(resized);
         _bytes = resized;
+        Version++;
     }
 
     /// <summary>
@@ -221,6 +234,7 @@ public sealed class GlulxMemory
         var extStart = (int)Header.ExtStart;
         _file.AsSpan(0, extStart).CopyTo(_bytes);
         _bytes.AsSpan(extStart).Clear();
+        Version++;
     }
 
     /// <summary>

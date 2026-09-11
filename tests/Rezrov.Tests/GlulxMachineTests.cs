@@ -415,7 +415,7 @@ public class GlulxMachineTests
     [InlineData(4u, 0u, 1u)]
     [InlineData(4u, 1u, 1u)]
     [InlineData(4u, 2u, 0u)]
-    [InlineData(5u, 0u, 0u)]
+    [InlineData(5u, 0u, 1u)]
     [InlineData(6u, 0u, 1u)]
     [InlineData(7u, 0u, 0u)]
     [InlineData(11u, 0u, 0u)]
@@ -425,8 +425,8 @@ public class GlulxMachineTests
         var machine = GlulxRun.Run(Program().Op(Opcode.Gestalt, C(selector), C(argument), Ram(0)).Return(C(0)));
 
         // [glulx #opcodes_misc] Version, memory resizing, the null and
-        // filter I/O systems, and mzero and mcopy are there; undo, Glk,
-        // Unicode, the heap, and floats are not yet; unknown is zero.
+        // filter I/O systems, Unicode, and mzero and mcopy are there;
+        // undo, Glk, the heap, and floats are not yet; unknown is zero.
         Assert.Equal(expected, machine.Ram(0));
     }
 
@@ -467,8 +467,8 @@ public class GlulxMachineTests
     [Fact]
     public void AnOpcodeNotBuiltYetSaysSo()
     {
-        var e = Assert.Throws<NotSupportedException>(() => GlulxRun.Run(Program().Op(Opcode.StreamChar, C(65))));
-        Assert.Contains("streamchar", e.Message, StringComparison.Ordinal);
+        var e = Assert.Throws<NotSupportedException>(() => GlulxRun.Run(Program().Op(Opcode.Glk, C(0x40), C(0), Discard)));
+        Assert.Contains("glk", e.Message, StringComparison.Ordinal);
     }
 
     [Fact]

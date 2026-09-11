@@ -1,5 +1,7 @@
+using System.Globalization;
 using Rezrov.Core;
 using Rezrov.Glulx.Instructions;
+using Rezrov.Glulx.Text;
 
 namespace Rezrov.Glulx.Execution;
 
@@ -35,6 +37,12 @@ public sealed class GlulxMachine
     // The values of an instruction's load operands, in operand order,
     // reused from step to step.
     private readonly uint[] _values = new uint[8];
+
+    // The decoding table in use, as a tree, and the memory version it
+    // was built at, so that a table in RAM is read again if memory has
+    // changed under it.
+    private DecodingTable? _table;
+    private uint _tableVersion;
 
     public GlulxMachine(GlulxMemory memory, GlulxRandom? random = null)
     {
@@ -77,6 +85,23 @@ public sealed class GlulxMachine
     /// [glulx op:protect] The length of that range, zero for none.
     /// </summary>
     public uint ProtectedLength { get; private set; }
+
+    /// <summary>
+    /// [glulx op:setiosys] The I/O system output goes through.
+    /// </summary>
+    public IOSystem IOSystem { get; private set; }
+
+    /// <summary>
+    /// [glulx op:setiosys] The system's rock: for the filter system, the
+    /// address of the function called with each character.
+    /// </summary>
+    public uint IORock { get; private set; }
+
+    /// <summary>
+    /// [glulx op:setstringtbl] The address of the string decoding table
+    /// in use, or zero for none.
+    /// </summary>
+    public uint StringTable { get; private set; }
 
     /// <summary>
     /// [glulx #opcodes_misc] The TerpVersion gestalt: this program's
@@ -151,6 +176,13 @@ public sealed class GlulxMachine
     {
         HasQuit = false;
         Stack.Clear();
+
+        // [glulx op:setiosys] The null system to begin with, and
+        // [glulx op:setstringtbl] the header's table, at the start and
+        // at a restart alike, as the reference interpreter has it.
+        IOSystem = IOSystem.Null;
+        IORock = 0;
+        StringTable = Memory.Header.DecodingTable;
 
         // [glulx #the-header] Execution commences by calling the start
         // function. No call stub goes under it: when its frame is gone
@@ -401,6 +433,35 @@ public sealed class GlulxMachine
                 break;
             case Opcode.StkCopy:
                 Stack.Copy(a[0]);
+                break;
+
+            // [glulx #opcodes_output] Output goes through the current I/O
+            // system: nowhere for null, and to the game's own function
+            // one character at a time for filter.
+            case Opcode.GetIOSys:
+                Store(ops[0], (uint)IOSystem);
+                Store(ops[1], IORock);
+                break;
+            case Opcode.SetIOSys:
+                SetIOSystem(a[0], a[1]);
+                break;
+            case Opcode.StreamChar:
+                StreamCharacter(a[0] & 0xFF, next);
+                break;
+            case Opcode.StreamUniChar:
+                StreamCharacter(a[0], next);
+                break;
+            case Opcode.StreamNum:
+                StreamNumber((int)a[0], false, 0);
+                break;
+            case Opcode.StreamStr:
+                StreamString(a[0], 0, 0);
+                break;
+            case Opcode.GetStringTbl:
+                Store(ops[0], StringTable);
+                break;
+            case Opcode.SetStringTbl:
+                StringTable = a[0];
                 break;
 
             case Opcode.Gestalt:
@@ -661,22 +722,369 @@ public sealed class GlulxMachine
             case DestinationType.Stack:
                 Stack.Push(value);
                 break;
+
+            // [glulx #callstring] A function called from inside a string
+            // returns into the string, which picks up where it left off,
+            // and the return value is discarded.
+            case DestinationType.ResumeCompressedString:
+                StreamString(stub.ProgramCounter, 0xE1, (int)stub.DestinationAddress);
+                break;
+            case DestinationType.ResumeInteger:
+                StreamNumber((int)stub.ProgramCounter, true, (int)stub.DestinationAddress);
+                break;
+            case DestinationType.ResumeCString:
+                StreamString(stub.ProgramCounter, 0xE0, 0);
+                break;
+            case DestinationType.ResumeUnicodeString:
+                StreamString(stub.ProgramCounter, 0xE2, 0);
+                break;
+            case DestinationType.ResumeFunction:
+                throw new GlulxException("A string-terminator call stub at the end of a function call.");
             default:
-                throw new NotSupportedException("Returning into a string is not built yet.");
+                throw new GlulxException($"Unknown call stub type {(uint)stub.DestinationType}.");
         }
+    }
+
+    private void SetIOSystem(uint mode, uint rock)
+    {
+        // [glulx op:setiosys] A system the interpreter does not support
+        // falls back to the null system. Glk is not built yet, so that
+        // is what happens to it for now, and gestalt says as much. The
+        // rock is kept whatever the mode, as the reference interpreter
+        // keeps it.
+        IOSystem = mode is (uint)IOSystem.Null or (uint)IOSystem.Filter ? (IOSystem)mode : IOSystem.Null;
+        IORock = rock;
+    }
+
+    private void StreamCharacter(uint character, uint next)
+    {
+        // [glulx #callfilter] Under the filter system a streamchar is a
+        // plain call of the output function with its result discarded,
+        // and execution resumes after the opcode when it returns.
+        if (IOSystem == IOSystem.Filter)
+        {
+            Stack.PushCallStub(DestinationType.None, 0, next);
+            Enter(IORock, [character]);
+        }
+    }
+
+    // [glulx #callfilter] Prints a signed decimal number under the
+    // filter system one character at a time, keeping its place in a
+    // type 12 stub between characters: the number itself where the
+    // program counter goes, and the index of the next character to
+    // print, 0 for the first, where the destination goes.
+    private void StreamNumber(int value, bool inMiddle, int position)
+    {
+        var digits = value.ToString(CultureInfo.InvariantCulture);
+
+        if (IOSystem == IOSystem.Filter)
+        {
+            if (!inMiddle)
+            {
+                Stack.PushCallStub(DestinationType.ResumeFunction, 0, ProgramCounter);
+                inMiddle = true;
+            }
+
+            if (position < digits.Length)
+            {
+                Stack.PushCallStub(DestinationType.ResumeInteger, (uint)(position + 1), (uint)value);
+                Enter(IORock, [digits[position]]);
+                return;
+            }
+        }
+
+        if (inMiddle)
+        {
+            // The only stub left must be the one that says where the
+            // function's code continues.
+            var stub = Stack.PopCallStub();
+            if (stub.DestinationType != DestinationType.ResumeFunction)
+            {
+                throw new GlulxException("A string-on-string call stub while printing a number.");
+            }
+
+            ProgramCounter = stub.ProgramCounter;
+        }
+    }
+
+    // [glulx #callstring] Prints a string object, following indirect
+    // references and calling functions along the way. A call suspends
+    // the printing with its place kept in stubs on the stack, and the
+    // function's return comes back here with inMiddle naming the kind
+    // of string that was being printed, E0, E1, or E2, and bit the
+    // position within the current byte of a compressed one.
+    private void StreamString(uint address, byte inMiddle, int bit)
+    {
+        var substring = inMiddle != 0;
+
+        while (true)
+        {
+            byte type;
+            if (inMiddle == 0)
+            {
+                // [glulx #string] A new string: its type byte, then its
+                // data, [glulx #string_unicode] after three padding bytes
+                // for a Unicode string.
+                type = Memory.ReadByte(address);
+                address += type == 0xE2 ? 4u : 1u;
+                bit = 0;
+            }
+            else
+            {
+                type = inMiddle;
+            }
+
+            switch (type)
+            {
+                case 0xE1:
+                {
+                    var step = StreamCompressed(ref address, ref bit, ref substring);
+                    if (step.Suspended)
+                    {
+                        return;
+                    }
+
+                    if (step.Restarts)
+                    {
+                        address = step.Address;
+                        inMiddle = step.Type;
+                        continue;
+                    }
+
+                    break;
+                }
+
+                // [glulx #string_plain] Bytes to a zero byte. The null
+                // system need not even look at them.
+                case 0xE0:
+                    if (IOSystem == IOSystem.Filter)
+                    {
+                        PushStringStart(ref substring);
+                        var character = Memory.ReadByte(address++);
+                        if (character != 0)
+                        {
+                            Stack.PushCallStub(DestinationType.ResumeCString, 0, address);
+                            Enter(IORock, [character]);
+                            return;
+                        }
+                    }
+
+                    break;
+
+                // [glulx #string_unicode] Four-byte code points to a zero
+                // word.
+                case 0xE2:
+                    if (IOSystem == IOSystem.Filter)
+                    {
+                        PushStringStart(ref substring);
+                        var character = Memory.ReadWord(address);
+                        address += 4;
+                        if (character != 0)
+                        {
+                            Stack.PushCallStub(DestinationType.ResumeUnicodeString, 0, address);
+                            Enter(IORock, [character]);
+                            return;
+                        }
+                    }
+
+                    break;
+
+                // [glulx #string] E3 to FF are reserved for future kinds
+                // of string.
+                case >= 0xE3:
+                    throw new GlulxException($"Attempt to print an unknown type of string, type {type:X2}.");
+                default:
+                    throw new GlulxException($"Attempt to print a non-string, type byte {type:X2}.");
+            }
+
+            // The string is done. If it never needed the stack, that is
+            // all; otherwise the stub on top says whether a string above
+            // it is waiting, or the function is.
+            if (!substring)
+            {
+                return;
+            }
+
+            var stub = Stack.PopCallStub();
+            ProgramCounter = stub.ProgramCounter;
+            switch (stub.DestinationType)
+            {
+                case DestinationType.ResumeFunction:
+                    return;
+                case DestinationType.ResumeCompressedString:
+                    address = stub.ProgramCounter;
+                    bit = (int)stub.DestinationAddress;
+                    inMiddle = 0xE1;
+                    break;
+                default:
+                    throw new GlulxException("A function-terminator call stub at the end of a string.");
+            }
+        }
+    }
+
+    // [glulx #string_enc] Decodes a compressed string from the current
+    // bit, printing each leaf until the terminator. The result says
+    // whether the string finished, suspended for a function call, or
+    // must restart on another string an indirect reference named.
+    private StringStep StreamCompressed(ref uint address, ref int bit, ref bool substring)
+    {
+        // [glulx op:streamstr] Illegal without a table.
+        if (StringTable == 0)
+        {
+            throw new GlulxException("Attempt to print a compressed string with no decoding table set.");
+        }
+
+        var table = CurrentTable();
+        var node = table.Root;
+
+        while (true)
+        {
+            switch (node.Type)
+            {
+                case DecodingNodeType.Branch:
+                {
+                    // [glulx #string_enc] Bits are read from the low bit
+                    // of each byte upward, choosing the child each time.
+                    var chosen = (Memory.ReadByte(address) >> bit) & 1;
+                    node = chosen == 0 ? node.Zero! : node.One!;
+                    if (++bit == 8)
+                    {
+                        bit = 0;
+                        address++;
+                    }
+
+                    continue;
+                }
+
+                case DecodingNodeType.Terminator:
+                    return StringStep.Done;
+
+                case DecodingNodeType.Character:
+                case DecodingNodeType.UnicodeCharacter:
+                    if (IOSystem == IOSystem.Filter)
+                    {
+                        PushStringStart(ref substring);
+                        Stack.PushCallStub(DestinationType.ResumeCompressedString, (uint)bit, address);
+                        Enter(IORock, [node.Value]);
+                        return StringStep.Suspend;
+                    }
+
+                    break;
+
+                // [glulx #string_table] A run of characters inside the
+                // table is printed as a string in its own right, with
+                // the decoding resumed after it.
+                case DecodingNodeType.CString:
+                case DecodingNodeType.UnicodeString:
+                    if (IOSystem == IOSystem.Filter)
+                    {
+                        PushStringStart(ref substring);
+                        Stack.PushCallStub(DestinationType.ResumeCompressedString, (uint)bit, address);
+                        return StringStep.Restart(node.Value, node.Type == DecodingNodeType.CString ? (byte)0xE0 : (byte)0xE2);
+                    }
+
+                    break;
+
+                case DecodingNodeType.Indirect:
+                case DecodingNodeType.DoubleIndirect:
+                case DecodingNodeType.IndirectWithArguments:
+                case DecodingNodeType.DoubleIndirectWithArguments:
+                {
+                    // [glulx #string_table] The address of a string or
+                    // function, or of a word holding one. A string is
+                    // printed and a function called, whatever the I/O
+                    // system, since a function may do anything at all.
+                    var target = node.Value;
+                    if (node.Type is DecodingNodeType.DoubleIndirect or DecodingNodeType.DoubleIndirectWithArguments)
+                    {
+                        target = Memory.ReadWord(target);
+                    }
+
+                    var targetType = Memory.ReadByte(target);
+                    PushStringStart(ref substring);
+
+                    if (targetType >= 0xE0)
+                    {
+                        Stack.PushCallStub(DestinationType.ResumeCompressedString, (uint)bit, address);
+                        return StringStep.Restart(target, 0);
+                    }
+
+                    if (targetType is >= 0xC0 and <= 0xDF)
+                    {
+                        var arguments = new uint[node.ArgumentCount];
+                        for (var i = 0; i < arguments.Length; i++)
+                        {
+                            arguments[i] = Memory.ReadWord(node.ArgumentsAddress + (uint)(4 * i));
+                        }
+
+                        Stack.PushCallStub(DestinationType.ResumeCompressedString, (uint)bit, address);
+                        Enter(target, arguments);
+                        return StringStep.Suspend;
+                    }
+
+                    throw new GlulxException($"Unknown object of type {targetType:X2} at {target:X8} in a string's indirect reference.");
+                }
+
+                default:
+                    throw new GlulxException($"Unknown entity of type {(int)node.Type:X2} in string decoding.");
+            }
+
+            node = table.Root;
+        }
+    }
+
+    // [glulx #callstring] The first time a string needs the stack, a
+    // type 11 stub records where the function's code continues.
+    private void PushStringStart(ref bool substring)
+    {
+        if (!substring)
+        {
+            Stack.PushCallStub(DestinationType.ResumeFunction, 0, ProgramCounter);
+            substring = true;
+        }
+    }
+
+    private DecodingTable CurrentTable()
+    {
+        // [glulx #string_table] A table in ROM is read once; one in RAM
+        // is read again whenever memory has been written since, which
+        // is the specification's warning about tables that change.
+        if (_table is { } table
+            && table.Address == StringTable
+            && (table.Address + table.Length <= Memory.RamStart || _tableVersion == Memory.Version))
+        {
+            return table;
+        }
+
+        _table = DecodingTable.Read(Memory, StringTable);
+        _tableVersion = Memory.Version;
+        return _table;
+    }
+
+    // How a stretch of compressed decoding ended: at the terminator,
+    // suspended for a function call, or handing over to another string.
+    private readonly record struct StringStep(bool Suspended, bool Restarts, uint Address, byte Type)
+    {
+        public static StringStep Done => default;
+
+        public static StringStep Suspend => new(true, false, 0, 0);
+
+        public static StringStep Restart(uint address, byte type) => new(false, true, address, type);
     }
 
     private static uint Gestalt(uint selector, uint argument) => selector switch
     {
         // [glulx #opcodes_misc] The selectors, with the answers this
         // interpreter can honestly give so far. A feature answers 1
-        // only once the opcodes behind it exist.
+        // only once the opcodes behind it exist: Unicode does, since
+        // the E2 strings, the Unicode nodes, streamunichar, and the
+        // type 14 stub are all there.
         0 => GlulxHeader.SpecificationVersion,
         1 => InterpreterVersion,
         2 => 1,
         3 => 0,
         4 => argument is 0 or 1 ? 1u : 0u,
-        5 => 0,
+        5 => 1,
         6 => 1,
         7 => 0,
         8 => 0,

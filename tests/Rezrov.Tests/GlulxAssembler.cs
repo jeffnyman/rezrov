@@ -146,6 +146,67 @@ internal sealed class GlulxAssembler
         return this;
     }
 
+    /// <summary>Raw bytes, for strings and tables.</summary>
+    public GlulxAssembler Bytes(params byte[] bytes)
+    {
+        _bytes.AddRange(bytes);
+        return this;
+    }
+
+    /// <summary>A big-endian word of data.</summary>
+    public GlulxAssembler Word(uint value) =>
+        Bytes((byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)value);
+
+    /// <summary>
+    /// A word of data holding the absolute address of a label.
+    /// </summary>
+    public GlulxAssembler Ref(string label)
+    {
+        _fixups.Add((_bytes.Count, label, false, _bytes.Count + 4));
+        return Word(0);
+    }
+
+    /// <summary>
+    /// [glulx #string_plain] An unencoded string: E0, the characters
+    /// as Latin-1, and a zero byte.
+    /// </summary>
+    public GlulxAssembler CString(string label, string text)
+    {
+        Label(label);
+        Bytes(0xE0);
+        Bytes(text.Select(c => (byte)c).ToArray());
+        return Bytes(0);
+    }
+
+    /// <summary>
+    /// [glulx #string_enc] A compressed string: E1 and then the bits,
+    /// packed low bit first.
+    /// </summary>
+    public GlulxAssembler CompressedString(string label, params int[] bits)
+    {
+        Label(label);
+        Bytes(0xE1);
+        return Bytes(PackBits(bits));
+    }
+
+    /// <summary>
+    /// [glulx #string_enc] Bits packed low bit first into bytes, with
+    /// the last byte padded with zeroes.
+    /// </summary>
+    public static byte[] PackBits(params int[] bits)
+    {
+        var bytes = new byte[(bits.Length + 7) / 8];
+        for (var i = 0; i < bits.Length; i++)
+        {
+            if (bits[i] != 0)
+            {
+                bytes[i / 8] |= (byte)(1 << (i % 8));
+            }
+        }
+
+        return bytes;
+    }
+
     public GlulxAssembler Quit() => Op(Opcode.Quit);
 
     public GlulxAssembler Return(Arg value) => Op(Opcode.Return, value);

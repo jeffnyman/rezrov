@@ -8,6 +8,7 @@ using FunctionType = Rezrov.Glulx.Instructions.FunctionType;
 using GlulxDecoder = Rezrov.Glulx.Instructions.InstructionDecoder;
 using GlulxMachine = Rezrov.Glulx.Execution.GlulxMachine;
 using GlulxRandom = Rezrov.Glulx.Execution.GlulxRandom;
+using Rezrov.Glulx.Text;
 using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
 using Rezrov.ZMachine.Instructions;
@@ -233,6 +234,22 @@ internal static class Program
 
         var table = header.DecodingTable == 0 ? "no string decoding table" : $"string decoding table at {header.DecodingTable:X8}";
         Console.WriteLine($"  starts at {header.StartFunction:X8}, {table}");
+
+        if (header.DecodingTable != 0)
+        {
+            // [glulx #string_table] The tree as it reads, beside the count
+            // the table declares, which older Inform files overstate.
+            try
+            {
+                var tree = DecodingTable.Read(memory, header.DecodingTable);
+                Console.WriteLine($"  the table is {tree.Length} bytes with {tree.NodesRead} nodes, {tree.Leaves} of them leaves; it declares {tree.DeclaredNodeCount}");
+            }
+            catch (GlulxException e)
+            {
+                Console.Error.WriteLine($"rezrov: {e.Message}");
+                return 1;
+            }
+        }
 
         var verdict = memory.VerifyChecksum() ? "matches" : "does not match";
         Console.WriteLine($"  checksum {header.Checksum:X8} {verdict}");
