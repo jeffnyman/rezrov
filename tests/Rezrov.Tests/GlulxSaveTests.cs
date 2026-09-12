@@ -354,5 +354,30 @@ public class GlulxSaveTests
         Assert.Throws<GlulxException>(() => machine.Stack.Load(new byte[18]));
     }
 
+    [Fact]
+    public void AProtectedRangeAboveTheOldEndOfMemoryKeepsZeroes()
+    {
+        var machine = GlulxRun.Run(Program()
+            .Op(Opcode.SetMemSize, C(0xB00), Discard)
+            .Op(Opcode.Copy, C(0x01020304), Mem(0xA80))
+            .Op(Opcode.SaveUndo, Ram(0))
+            .Op(Opcode.Jne, Ram(0), C(0), To("back"))
+            .Op(Opcode.SetMemSize, C(0xA00), Discard)
+            .Op(Opcode.Protect, C(0xA81), C(2))
+            .Op(Opcode.RestoreUndo, Discard)
+            .Return(C(0))
+            .Label("back")
+            .Op(Opcode.Copy, Mem(0xA80), Ram(4))
+            .Op(Opcode.GetMemSize, Ram(8))
+            .Return(C(0)));
+
+        // [glulx op:protect] The range is unaffected by the restore, and
+        // what it holds is what memory held once it was the saved size
+        // again: zeroes, since it had been shrunk below the range, as
+        // glulxercise's undomemsize test expects.
+        Assert.Equal(0x01000004u, machine.Ram(4));
+        Assert.Equal(0xB00u, machine.Ram(8));
+    }
+
     private static uint ReadWord(byte[] bytes, int at) => System.Buffers.Binary.BinaryPrimitives.ReadUInt32BigEndian(bytes.AsSpan(at));
 }

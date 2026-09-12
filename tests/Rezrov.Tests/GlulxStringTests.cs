@@ -1,6 +1,7 @@
 using System.Text;
 using Rezrov.Glulx;
 using Rezrov.Glulx.Execution;
+using Rezrov.Glulx.Glk;
 using Rezrov.Glulx.Instructions;
 using static Rezrov.Tests.GlulxAssembler;
 
@@ -36,6 +37,43 @@ public class GlulxStringTests
 
         data?.Invoke(code);
         return code;
+    }
+
+    [Fact]
+    public void AFilterThatSwitchesToGlkMidwayHandsTheRestToGlk()
+    {
+        // A filter function that keeps the first character it is given
+        // and then switches the I/O system to Glk, in the middle of a
+        // number and in the middle of a string.
+        var display = new RecordingGlkDisplay();
+        var code = new GlulxAssembler().Function("main").Op(Opcode.SetIOSys, C(2), C(0));
+        foreach (var arg in new[] { C(0), C(3), C(0), C(0), C(0) })
+        {
+            code.Op(Opcode.Copy, arg, Sp);
+        }
+
+        code.Op(Opcode.Glk, C(0x0023), C(5), Sp)
+            .Op(Opcode.Glk, C(0x002F), C(1), Discard)
+            .Op(Opcode.SetIOSys, C(1), At("once"))
+            .Op(Opcode.StreamNum, C(123))
+            .Op(Opcode.SetIOSys, C(1), At("once"))
+            .Op(Opcode.StreamStr, At("str"))
+            .Return(C(0))
+            .Function("once", FunctionType.LocalArguments, (4, 1))
+            .Op(Opcode.AStore, C(Buffer), Ram(0), Loc(0))
+            .Op(Opcode.Add, Ram(0), C(1), Ram(0))
+            .Op(Opcode.SetIOSys, C(2), C(0))
+            .Return(C(0))
+            .CString("str", "abc");
+
+        var machine = GlulxRun.Run(code, glk: new GlkLibrary(display));
+
+        // [glulx op:streamnum] The filter saw the first digit and the
+        // first letter; the rest of each went to the Glk stream, from
+        // where the filter left off.
+        Assert.Equal("1a", Text(machine));
+        Assert.Equal("23bc", display.Output);
+        Assert.Equal(0u, machine.Stack.StackPointer);
     }
 
     /// <summary>What the filter function was given, as text.</summary>
