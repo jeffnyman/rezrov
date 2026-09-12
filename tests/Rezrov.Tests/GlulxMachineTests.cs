@@ -468,13 +468,6 @@ public class GlulxMachineTests
     }
 
     [Fact]
-    public void AnOpcodeNotBuiltYetSaysSo()
-    {
-        var e = Assert.Throws<NotSupportedException>(() => GlulxRun.Run(Program().Op(Opcode.AccelFunc, C(1), C(0))));
-        Assert.Contains("accelfunc", e.Message, StringComparison.Ordinal);
-    }
-
-    [Fact]
     public void SeededRandomNumbersRepeat()
     {
         var code = Program()
