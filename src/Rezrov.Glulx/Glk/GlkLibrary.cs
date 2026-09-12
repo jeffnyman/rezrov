@@ -1,4 +1,5 @@
 using System.Text;
+using Rezrov.Core.Blorb;
 using Rezrov.Glulx.Execution;
 
 namespace Rezrov.Glulx.Glk;
@@ -17,9 +18,10 @@ namespace Rezrov.Glulx.Glk;
 /// and its layout, window, memory, and file streams, file references,
 /// text output in Latin-1 and Unicode, styles and style hints, the
 /// gestalt answers, the case functions, and line, character, and timer
-/// events. Resource streams, date and time, graphics, sound, and
-/// hyperlinks throw <see cref="NotSupportedException"/> naming the
-/// function, so a game stops at the first one it needs.
+/// events, and resource streams over the <see cref="Resources"/> it
+/// was given. Date and time, graphics, sound, and hyperlinks throw
+/// <see cref="NotSupportedException"/> naming the function, so a game
+/// stops at the first one it needs.
 ///
 /// Glk's rule for a program that breaks the rules, such as printing to
 /// a closed stream, is that the library's behavior is undefined; the
@@ -63,6 +65,12 @@ public sealed class GlkLibrary
 
     /// <summary>[glk #fileref] Where the files are.</summary>
     public IGlkFileSystem Files { get; }
+
+    /// <summary>
+    /// [glk #resource_streams] The resource file the game came with,
+    /// whose data chunks resource streams read, or null for none.
+    /// </summary>
+    public BlorbFile? Resources { get; set; }
 
     /// <summary>
     /// [glk #window] Every window, pair windows included.
@@ -299,6 +307,11 @@ public sealed class GlkLibrary
             case 0x0042: // stream_open_file
             case 0x0138: // stream_open_file_uni
                 call.Result = OpenFileStream(FileReference(call, 0), call.Function.Selector == 0x0138, (FileMode)call.Arg(1), call.Arg(2))?.Id ?? 0;
+                break;
+
+            case 0x0049: // stream_open_resource
+            case 0x013A: // stream_open_resource_uni
+                call.Result = OpenResourceStream(call.Arg(0), call.Function.Selector == 0x013A, call.Arg(1))?.Id ?? 0;
                 break;
 
             case 0x0060: // fileref_create_temp
@@ -562,6 +575,7 @@ public sealed class GlkLibrary
             case GestaltSelector.Timer:
             case GestaltSelector.LineInputEcho:
             case GestaltSelector.LineTerminators:
+            case GestaltSelector.ResourceStream:
                 return 1;
 
             case GestaltSelector.LineTerminatorKey:
@@ -1212,6 +1226,45 @@ public sealed class GlkLibrary
         }
 
         var stream = new GlkFileStream(file, fileref.Name, unicode, fileref.IsText, mode, rock);
+        Streams.Add(stream);
+        return stream;
+    }
+
+    /// <summary>
+    /// [glk op:stream_open_resource] Opens a stream that reads a data
+    /// resource, or returns null for no resource file, no resource of
+    /// the number, or a chunk of a kind that is not data.
+    /// </summary>
+    public GlkResourceStream? OpenResourceStream(uint number, bool unicode, uint rock)
+    {
+        if (Resources?.Find(ResourceUsage.Data, (int)number) is not { } resource)
+        {
+            return null;
+        }
+
+        // [glk #resource_streams] TEXT is text, BINA is binary, and a
+        // FORM, which the resource file reader keeps whole with its
+        // header, is binary too; anything else is not a data chunk.
+        bool binary;
+        switch (resource.ChunkType)
+        {
+            case "TEXT":
+                binary = false;
+                break;
+            case "BINA":
+                binary = true;
+                break;
+            default:
+                if (resource.Data.Length < 4 || !resource.Data.Span[..4].SequenceEqual("FORM"u8))
+                {
+                    return null;
+                }
+
+                binary = true;
+                break;
+        }
+
+        var stream = new GlkResourceStream(resource.Data, number, unicode, !binary, rock);
         Streams.Add(stream);
         return stream;
     }
