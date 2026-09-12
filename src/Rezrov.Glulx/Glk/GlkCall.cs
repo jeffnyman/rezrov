@@ -74,7 +74,13 @@ public sealed class GlkCall
     /// <summary>
     /// The value passed in through a reference, 0 for a null one.
     /// </summary>
-    public uint In(int index) => _slots[index].Input.Length > 0 ? _slots[index].Input[0] : 0;
+    public uint In(int index) => In(index, 0);
+
+    /// <summary>
+    /// One field of a structure passed in through a reference, 0 for a
+    /// null one.
+    /// </summary>
+    public uint In(int index, int field) => _slots[index].Input.Length > field ? _slots[index].Input[field] : 0;
 
     /// <summary>Sets the value to pass out through a reference.</summary>
     public void Out(int index, uint value) => _slots[index].Output = [value];
