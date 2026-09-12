@@ -1,0 +1,759 @@
+# Anchorhead, the Illustrated Edition, played through all five days to the
+# end. The route is the classic one: the keys from the real estate office,
+# the house from attic to crypt, the courthouse records and the library,
+# the old man on the vacant lot, the safe, the telescope, the well behind
+# the slaughterhouse, the church and the sewers, the temple under the
+# house, the mill, the asylum, the train, and the lighthouse.
+#
+# Where the game pauses for a key press, a line of "z" stands for the key,
+# since any line is taken as one. Where the play turns on chance, a SEED
+# directive pins it: the way out of the labyrinth of streets, where the
+# buoy lies in the fog, and how fast the madman closes in.
+! SEED=1
+! GAME=../entharion/glulx-code/anchorhead-r1-s171017.gblorb
+
+# Day one: the keys from the real estate office, by the fire escape.
+se
+climb garbage can
+pull rung with umbrella
+climb ladder
+enter window
+d
+x answering machine
+press play
+u
+search cabinets
+d
+w
+se
+x fence
+e
+w
+nw
+w
+w
+nw
+w
+hello
+yes
+show keys to michael
+n
+x book
+s
+e
+se
+s
+s
+x obelisk
+e
+s
+w
+se
+take notice
+unlock door
+s
+close door
+lock door
+u
+s
+enter bed
+sleep
+
+# Day two: the faculty card, the house top to bottom, the family plot.
+x pants
+look in pocket
+take wallet
+open wallet
+take card
+put wallet in pants
+wear clothes
+wear trenchcoat
+take keyring
+take umbrella
+take notice
+wait
+wait
+wait
+e
+take towel
+w
+n
+w
+s
+w
+read manuell
+n
+n
+take jewelry box
+open box
+take locket
+open locket
+x picture
+look under bed
+pull bed
+x hole
+take pages
+read pages
+s
+e
+d
+e
+x chandelier
+x pendant
+stand on table
+take pendant
+x pendant
+get off table
+w
+w
+x portrait
+take scrapbook
+x scrapbook
+open scrapbook
+x woodcut
+x photostatic copy
+x 1919 article
+x 1935 article
+x 1952 article
+x 1956 article
+x bulletin
+x obituary
+x 1960 article
+x 1973 article
+x 1988 article
+x flyer
+x wedding announcement
+s
+x paintings
+x wilhelm
+x heinrich
+x elijah
+x mordecai
+e
+e
+take flashlight
+open cabinets
+take matches
+e
+take broom
+d
+turn on flashlight
+n
+x crates
+search crates
+take fuse
+wipe web with broom
+take iron key
+s
+w
+drop broom
+x racks
+pull rack
+x markings
+x mural
+e
+u
+w
+s
+se
+x tombstones
+enter mausoleum
+x coffin
+open coffin
+x bones
+take bones
+take skull
+n
+nw
+n
+turn off flashlight
+lock back door
+w
+n
+n
+close door
+nw
+e
+n
+w
+take newspaper
+read newspaper
+s
+s
+x records
+look up croseus
+look up wilhelm
+look up heinrich
+look up elijah
+look up mordecai
+look up edward
+look up william
+n
+n
+n
+n
+e
+n
+take lantern
+take flask
+s
+w
+nw
+w
+n
+read sign
+read register
+look up michael
+ring bell
+show card to librarian
+ask librarian for superstitions
+take superstitions
+read superstitions
+take slip
+read slip
+read superstitions
+read introduction
+read legend
+read rituals
+read dark man
+read mist
+read ghost train
+ring bell
+give superstitions to librarian
+ring bell
+ask librarian for monmouth
+take stranger stars
+read stranger stars
+drop stranger stars
+s
+e
+se
+e
+s
+read graffiti
+ne
+s
+x proprietor
+x display case
+x amulet
+ask proprietor about amulet
+n
+# Leaving the labyrinth lands somewhere in town by chance; the seed
+# settles where.
+! SEED=3
+sw
+n
+e
+e
+e
+x man
+give flask to man
+ask man about himself
+ask man about edward
+show locket to man
+ask man about william
+ask man about anna
+ask man about crypt
+show skull to man
+give amulet to man
+w
+nw
+open manhole
+d
+n
+x object
+take key
+s
+u
+se
+s
+w
+se
+s
+close door
+
+# The second evening: the study, the observatory, and the safe.
+u
+w
+s
+w
+x laptop
+remove ring
+read ring
+wear ring
+type 0628 on laptop
+x laptop
+close laptop
+read haermoniacon
+x fireplace
+x spheres
+turn sphere
+ne
+e
+u
+x charts
+x telescope
+x slot
+d
+w
+sw
+e
+x books
+x tales
+take tales
+set dial to 36
+set dial to 30
+set dial to 17
+take flute
+take puzzle box
+n
+e
+d
+n
+nw
+e
+n
+w
+n
+n
+e
+s
+ne
+s
+show puzzle box to proprietor
+x puzzle box
+take disk
+n
+! SEED=4
+sw
+n
+w
+w
+s
+s
+e
+s
+w
+se
+s
+close door
+u
+w
+pull cord
+u
+e
+x marks
+x window
+x round marks
+x straw
+look under straw
+take gold locket
+open gold locket
+x picture of woman
+w
+d
+e
+s
+drop all
+remove trenchcoat
+drop trenchcoat
+e
+bathe
+wear clothes
+w
+enter bed
+sleep
+# The dream pauses for a key three times; any line is a key press.
+z
+z
+z
+
+# Day three: the telescope, the slaughterhouse, and the well.
+get up
+wear clothes
+wear trenchcoat
+take all
+x michael
+ask michael about mud
+talk to michael
+n
+d
+n
+x sky
+s
+u
+w
+s
+w
+ne
+e
+u
+put disk in slot
+look in telescope
+# The vision pauses for a key.
+z
+d
+w
+sw
+e
+n
+e
+d
+n
+close door
+nw
+e
+s
+s
+w
+take wallet
+sw
+w
+x tracks
+take sheet
+x sheet
+take hook
+s
+x well
+pull plywood
+d
+x bones
+u
+n
+e
+s
+d
+hide under bones
+wait
+wait
+wait
+wait
+wait
+wait
+stand
+take bear
+x bear
+u
+n
+e
+ne
+e
+n
+e
+se
+open trap door
+hit padlock with hook
+open trap door
+enter trap door
+x shape
+search body
+take steel key
+x furnace
+open hatch
+n
+turn on flashlight
+turn off lantern
+put all in trenchcoat
+jump
+get off stairs
+take cloth
+x robe
+s
+x cross
+x pulpit
+x tome
+read tome
+no
+s
+climb rope
+take rope
+n
+push cross north
+tie rope to cross
+put robe in shaft
+d
+let go of rope
+take robe
+nw
+u
+se
+s
+w
+se
+s
+
+# The zodiac in the wine cellar, then the temple under the house.
+s
+e
+e
+d
+w
+take broom
+x mural
+touch gate
+touch gate
+touch toad
+touch black herald
+touch mask
+n
+n
+n
+x door
+say ialdabaoloth
+n
+x monolith
+x carvings
+x north carvings
+x east carvings
+x south carvings
+x west carvings
+x pillars
+play flute
+s
+ne
+n
+n
+enter pipe
+w
+nw
+e
+x desk
+unlock drawer
+w
+drop steel key
+e
+open drawer
+take hastily written letter
+read hastily written letter
+take bronze key
+w
+w
+w
+n
+w
+n
+read newspaper
+knock on shack 38
+x woman
+give bear to woman
+tell woman about jeffrey
+ask woman about mill
+ask woman about oar
+ask woman about max
+take oar
+s
+s
+e
+s
+e
+e
+se
+e
+enter pipe
+s
+s
+drop oar
+light match
+light lantern with match
+put matches in trenchcoat
+take oar
+u
+se
+e
+e
+x post
+put lantern on hook
+enter dinghy
+x dinghy
+put oar in oarlock
+# Where the buoy lies is chance too.
+! SEED=5
+untie dinghy
+listen to buoy
+ne
+listen to buoy
+e
+listen to buoy
+tie dinghy to buoy
+x skeleton
+x coveralls
+search skeleton
+take steel key
+x buoy
+untie dinghy
+w
+w
+w
+tie dinghy to pier
+get out
+take lantern
+w
+w
+nw
+d
+n
+n
+enter pipe
+w
+nw
+w
+w
+n
+w
+sw
+search thickets
+unlock hatch
+open hatch
+n
+put towel on wheel
+turn wheel
+remove trenchcoat
+drop trenchcoat
+drop all
+take broom
+take fuse
+take flashlight
+n
+x panels
+enter elevator
+close gates
+push red button with broom
+get out
+x blueprint
+take blueprint
+take pouch
+enter elevator
+x control box
+unscrew panel
+put fuse in socket
+close gates
+push white button
+get out
+s
+wear trenchcoat
+take all
+s
+
+# The last night: out of the asylum. The banner pauses for a key twice.
+z
+z
+kick door
+kick door
+e
+take shard
+x window
+put shard in cracks
+cut straitjacket with shard
+x cell door
+unlock door
+open door
+s
+x tear
+take canvas
+take needle
+read canvas
+n
+n
+# Opening the closet lets the madman out three turns later, and how fast
+# he closes in is up to chance; this seed keeps him a step behind.
+! SEED=8
+open closet door
+take all
+wear trenchcoat
+w
+w
+d
+pull orderly's key with umbrella
+take orderly's key
+unlock gate with orderly's key
+open gate
+e
+e
+turn on flashlight
+e
+ne
+sw
+remove trenchcoat
+drop trenchcoat
+wear robe
+ne
+x old man
+take amulet
+wear amulet
+x obelisk
+sw
+take trenchcoat
+ne
+n
+give gold locket to monster
+hit monster with hook
+put all in trenchcoat
+drop trenchcoat
+take bronze key
+take screwdriver
+take needle
+take crystal
+i
+n
+n
+w
+sw
+w
+put crystal on tracks
+wait
+wait
+wait
+wait
+wait
+wait
+l
+take flawed crystal
+e
+ne
+e
+e
+ne
+unlock door
+ne
+u
+x device
+x compartment
+unscrew compartment
+drop screwdriver
+take flawless crystal
+x michael
+give flawed crystal to michael
+wait
+wait
+x boy
+x sky
+wait
+wait
+wait
+wait
+wait
+unlock handcuffs with needle
+untie boy
+w
+sw
+sw
+w
+w
+n
+s
+e
+s
+s
+wear trenchcoat
+s
+x obelisk
+touch obelisk
+show ring to michael
+put amulet on michael
+play flute
+# The epilogue pauses for a key.
+z
+n
+x test
+x window
+quit
