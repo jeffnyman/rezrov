@@ -18,8 +18,8 @@ namespace Rezrov.Glulx.Glk;
 /// and its layout, window, memory, and file streams, file references,
 /// text output in Latin-1 and Unicode, styles and style hints, the
 /// gestalt answers, the case functions, and line, character, and timer
-/// events, and resource streams over the <see cref="Resources"/> it
-/// was given. Date and time, graphics, sound, and hyperlinks throw
+/// events, resource streams over the <see cref="Resources"/> it was
+/// given, and the system clock. Graphics, sound, and hyperlinks throw
 /// <see cref="NotSupportedException"/> naming the function, so a game
 /// stops at the first one it needs.
 ///
@@ -28,7 +28,7 @@ namespace Rezrov.Glulx.Glk;
 /// reference libraries print a warning and carry on, and so does this
 /// one, into <see cref="Warnings"/>.
 /// </remarks>
-public sealed class GlkLibrary
+public sealed partial class GlkLibrary
 {
     /// <summary>
     /// [glk #version] The version of the Glk specification this library
@@ -52,8 +52,9 @@ public sealed class GlkLibrary
     /// session.
     /// </param>
     /// <param name="clock">
-    /// The clock the timer runs on, or none for the system's; a test
-    /// gives one it can move by hand.
+    /// The clock the timer runs on and the system clock functions
+    /// read, with its time zone, or none for the system's; a test gives
+    /// one it can set by hand.
     /// </param>
     public GlkLibrary(IGlkDisplay display, IGlkFileSystem? files = null, TimeProvider? clock = null)
     {
@@ -307,6 +308,37 @@ public sealed class GlkLibrary
             case 0x0042: // stream_open_file
             case 0x0138: // stream_open_file_uni
                 call.Result = OpenFileStream(FileReference(call, 0), call.Function.Selector == 0x0138, (FileMode)call.Arg(1), call.Arg(2))?.Id ?? 0;
+                break;
+
+            case 0x0160: // current_time
+            {
+                var (seconds, microseconds) = CurrentTime();
+                call.Out(0, (uint)(seconds >> 32), (uint)seconds, (uint)microseconds);
+                break;
+            }
+
+            case 0x0161: // current_simple_time
+                call.Result = (uint)CurrentSimpleTime(call.Arg(0));
+                break;
+            case 0x0168: // time_to_date_utc
+            case 0x0169: // time_to_date_local
+                call.Out(1, TimeToDate(((long)call.In(0, 0) << 32) | call.In(0, 1), (int)call.In(0, 2), call.Function.Selector == 0x0169).ToFields());
+                break;
+            case 0x016A: // simple_time_to_date_utc
+            case 0x016B: // simple_time_to_date_local
+                call.Out(2, SimpleTimeToDate((int)call.Arg(0), call.Arg(1), call.Function.Selector == 0x016B).ToFields());
+                break;
+            case 0x016C: // date_to_time_utc
+            case 0x016D: // date_to_time_local
+            {
+                var (seconds, microseconds) = DateToTime(GlkDate.FromFields(call, 0), call.Function.Selector == 0x016D);
+                call.Out(1, (uint)(seconds >> 32), (uint)seconds, (uint)microseconds);
+                break;
+            }
+
+            case 0x016E: // date_to_simple_time_utc
+            case 0x016F: // date_to_simple_time_local
+                call.Result = (uint)DateToSimpleTime(GlkDate.FromFields(call, 0), call.Arg(1), call.Function.Selector == 0x016F);
                 break;
 
             case 0x0049: // stream_open_resource
@@ -576,6 +608,7 @@ public sealed class GlkLibrary
             case GestaltSelector.LineInputEcho:
             case GestaltSelector.LineTerminators:
             case GestaltSelector.ResourceStream:
+            case GestaltSelector.DateTime:
                 return 1;
 
             case GestaltSelector.LineTerminatorKey:
