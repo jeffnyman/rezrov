@@ -527,7 +527,9 @@ public sealed partial class GlkLibrary
             case 0x0120: // buffer_to_lower_case_uni
             case 0x0121: // buffer_to_upper_case_uni
             case 0x0122: // buffer_to_title_case_uni
-                call.Result = ChangeCase(call);
+            case 0x0123: // buffer_canon_decompose_uni
+            case 0x0124: // buffer_canon_normalize_uni
+                call.Result = TransformBuffer(call);
                 break;
 
             case 0x0128: // put_char_uni
@@ -609,6 +611,7 @@ public sealed partial class GlkLibrary
             case GestaltSelector.LineTerminators:
             case GestaltSelector.ResourceStream:
             case GestaltSelector.DateTime:
+            case GestaltSelector.UnicodeNorm:
                 return 1;
 
             case GestaltSelector.LineTerminatorKey:
@@ -1606,38 +1609,41 @@ public sealed partial class GlkLibrary
             ? (byte)(character - 0x20)
             : character;
 
-    private static uint ChangeCase(GlkCall call)
+    /// <summary>
+    /// [glk #encoding_hilo] and [glk #encoding_uninorm] The buffer
+    /// functions share a shape: the buffer holds numchars characters in
+    /// len words, the transformed characters go back in place, cut off
+    /// at len when there are more, and the count there would have been
+    /// is returned, so the game can tell when it needs a bigger buffer.
+    /// </summary>
+    private static uint TransformBuffer(GlkCall call)
     {
-        // [glk #encoding_hilo] The buffer holds numchars characters in
-        // len words; the converted characters go back in place, and the
-        // count after conversion is returned. Case changes here never
-        // change the count, since one code point maps to one.
         var address = call.ArrayAddress(0);
         var length = call.ArrayLength(0);
         var count = Math.Min(call.Arg(1), length);
-        var lowerRest = call.Function.Selector == 0x0122 && call.Arg(2) != 0;
 
+        var text = new uint[count];
         for (uint i = 0; i < count; i++)
         {
-            var at = address + (4 * i);
-            var character = call.Memory.ReadWord(at);
-            if (!Rune.IsValid(character))
-            {
-                continue;
-            }
-
-            var rune = new Rune(character);
-            var changed = call.Function.Selector switch
-            {
-                0x0120 => Rune.ToLowerInvariant(rune),
-                0x0121 => Rune.ToUpperInvariant(rune),
-                _ => i == 0 ? Rune.ToUpperInvariant(rune) : lowerRest ? Rune.ToLowerInvariant(rune) : rune,
-            };
-
-            call.Memory.WriteWord(at, (uint)changed.Value);
+            text[i] = call.Memory.ReadWord(address + (4 * i));
         }
 
-        return call.Arg(1);
+        var changed = call.Function.Selector switch
+        {
+            0x0120 => GlkUnicode.ToLowerCase(text),
+            0x0121 => GlkUnicode.ToUpperCase(text),
+            0x0122 => GlkUnicode.ToTitleCase(text, call.Arg(2) != 0),
+            0x0123 => GlkUnicode.Decompose(text),
+            _ => GlkUnicode.Normalize(text),
+        };
+
+        var kept = Math.Min((uint)changed.Length, length);
+        for (uint i = 0; i < kept; i++)
+        {
+            call.Memory.WriteWord(address + (4 * i), changed[i]);
+        }
+
+        return (uint)changed.Length;
     }
 
     // ----- Helpers -----

@@ -81,6 +81,25 @@ public class GlkDispatchTests
     }
 
     [Fact]
+    public void ABufferFunctionCutsOffAtLenButReturnsTheWholeCount()
+    {
+        const uint BufferToUpperCaseUni = 0x0121;
+        var code = new GlulxAssembler().Function("main");
+        code.Op(Opcode.Copy, C(0xFB03), Ram(4));
+        code.Op(Opcode.Copy, C('x'), Ram(8));
+        Glk(code, BufferToUpperCaseUni, Ram(0), Ref(4), C(2), C(2));
+        var (machine, _) = Run(code.Return(C(0)));
+
+        // [glk #encoding_hilo] The "ffi" ligature upper-cases to three
+        // letters, so the two characters become four, which a buffer of
+        // len 2 cannot hold: the two that fit are written and the true
+        // count is returned.
+        Assert.Equal(4u, machine.Ram(0));
+        Assert.Equal((uint)'F', machine.Ram(4));
+        Assert.Equal((uint)'F', machine.Ram(8));
+    }
+
+    [Fact]
     public void AWindowPrintsThroughItsStream()
     {
         var code = WithWindow();
