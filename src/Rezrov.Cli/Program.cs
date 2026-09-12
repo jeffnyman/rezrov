@@ -127,7 +127,7 @@ internal static class Program
                 }
 
                 var directory = Path.GetDirectoryName(Path.GetFullPath(path)) ?? Directory.GetCurrentDirectory();
-                return RunGlulx(story.Bytes, directory, trace, commands, transcript, record, save, seed);
+                return RunGlulx(story.Bytes, story.Resources, directory, trace, commands, transcript, record, save, seed);
             }
 
             return RunZMachine(story.Bytes, trace, commands, transcript, record, save, story.Resources, seed, machine);
@@ -388,9 +388,10 @@ internal static class Program
     /// windows go to the console as one stream of text, and its files
     /// live beside the game unless the player types a path, or a
     /// transcript, record, or save file was named on the command line.
-    /// A seed makes the game's random numbers predictable.
+    /// The resource file, if there is one, is what the game's resource
+    /// streams read. A seed makes the game's random numbers predictable.
     /// </summary>
-    private static int RunGlulx(byte[] bytes, string directory, bool trace, string? commands, string? transcript, string? record, string? save, int? seed)
+    private static int RunGlulx(byte[] bytes, BlorbFile? resources, string directory, bool trace, string? commands, string? transcript, string? record, string? save, int? seed)
     {
         // [glk #encoding] Glk text is Latin-1 and Unicode, which the
         // console shows only as UTF-8.
@@ -420,7 +421,7 @@ internal static class Program
             files.NamedFiles[FileUsage.SavedGame] = Path.GetFullPath(save);
         }
 
-        var glk = new GlkLibrary(new TextWriterGlkDisplay(Console.Out, reader), files);
+        var glk = new GlkLibrary(new TextWriterGlkDisplay(Console.Out, reader), files) { Resources = resources };
         GlulxMachine machine;
         try
         {

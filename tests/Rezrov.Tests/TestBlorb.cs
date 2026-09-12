@@ -9,11 +9,13 @@ namespace Rezrov.Tests;
 internal static class TestBlorb
 {
     /// <summary>
-    /// A Blorb with the given pictures, and optionally a resolution
-    /// chunk and a release number.
+    /// A Blorb with the given pictures, and optionally data resources,
+    /// a resolution chunk, and a release number. A data resource of
+    /// type FORM is written as a form whose contents the bytes are.
     /// </summary>
-    public static byte[] Build(IReadOnlyList<(int Number, string Type, byte[] Data)> pictures, byte[]? resolution = null, int release = 0)
+    public static byte[] Build(IReadOnlyList<(int Number, string Type, byte[] Data)> pictures, byte[]? resolution = null, int release = 0, IReadOnlyList<(int Number, string Type, byte[] Data)>? data = null)
     {
+        data ??= [];
         var others = new List<(string Id, byte[] Data)>();
         if (release != 0)
         {
@@ -28,18 +30,25 @@ internal static class TestBlorb
         // [blorb 1] The form header, then the resource index, then the
         // other chunks, then the pictures, each entry in the index
         // pointing at its chunk's header.
-        var indexLength = 4 + (12 * pictures.Count);
+        var indexLength = 4 + (12 * (pictures.Count + data.Count));
         var cursor = 12 + 8 + indexLength;
-        foreach (var (_, data) in others)
+        foreach (var (_, bytes) in others)
         {
-            cursor += 8 + data.Length + (data.Length & 1);
+            cursor += 8 + bytes.Length + (bytes.Length & 1);
         }
 
-        var starts = new Dictionary<int, int>();
-        foreach (var (number, _, data) in pictures)
+        var pictureStarts = new Dictionary<int, int>();
+        foreach (var (number, _, bytes) in pictures)
         {
-            starts[number] = cursor;
-            cursor += 8 + data.Length + (data.Length & 1);
+            pictureStarts[number] = cursor;
+            cursor += 8 + bytes.Length + (bytes.Length & 1);
+        }
+
+        var dataStarts = new Dictionary<int, int>();
+        foreach (var (number, _, bytes) in data)
+        {
+            dataStarts[number] = cursor;
+            cursor += 8 + bytes.Length + (bytes.Length & 1);
         }
 
         var output = new List<byte>();
@@ -48,23 +57,35 @@ internal static class TestBlorb
         output.AddRange("IFRS"u8.ToArray());
 
         var index = new List<byte>();
-        Word(index, pictures.Count);
+        Word(index, pictures.Count + data.Count);
         foreach (var (number, _, _) in pictures)
         {
             index.AddRange("Pict"u8.ToArray());
             Word(index, number);
-            Word(index, starts[number]);
+            Word(index, pictureStarts[number]);
+        }
+
+        foreach (var (number, _, _) in data)
+        {
+            index.AddRange("Data"u8.ToArray());
+            Word(index, number);
+            Word(index, dataStarts[number]);
         }
 
         Chunk(output, "RIdx", index.ToArray());
-        foreach (var (id, data) in others)
+        foreach (var (id, bytes) in others)
         {
-            Chunk(output, id, data);
+            Chunk(output, id, bytes);
         }
 
-        foreach (var (_, type, data) in pictures)
+        foreach (var (_, type, bytes) in pictures)
         {
-            Chunk(output, type, data);
+            Chunk(output, type, bytes);
+        }
+
+        foreach (var (_, type, bytes) in data)
+        {
+            Chunk(output, type, bytes);
         }
 
         return output.ToArray();
