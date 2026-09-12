@@ -417,7 +417,8 @@ public class GlulxMachineTests
     [InlineData(4u, 2u, 1u)]
     [InlineData(5u, 0u, 1u)]
     [InlineData(6u, 0u, 1u)]
-    [InlineData(7u, 0u, 0u)]
+    [InlineData(7u, 0u, 1u)]
+    [InlineData(8u, 0u, 0u)]
     [InlineData(11u, 0u, 1u)]
     [InlineData(12u, 0u, 1u)]
     [InlineData(13u, 0u, 1u)]
@@ -469,8 +470,8 @@ public class GlulxMachineTests
     [Fact]
     public void AnOpcodeNotBuiltYetSaysSo()
     {
-        var e = Assert.Throws<NotSupportedException>(() => GlulxRun.Run(Program().Op(Opcode.MAlloc, C(16), Discard)));
-        Assert.Contains("malloc", e.Message, StringComparison.Ordinal);
+        var e = Assert.Throws<NotSupportedException>(() => GlulxRun.Run(Program().Op(Opcode.AccelFunc, C(1), C(0))));
+        Assert.Contains("accelfunc", e.Message, StringComparison.Ordinal);
     }
 
     [Fact]

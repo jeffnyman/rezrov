@@ -255,7 +255,26 @@ public class GlulxQuetzalTests
     }
 
     [Fact]
-    public void AHeapWithBlocksCannotBeRestoredYet()
+    public void TheHeapIsWrittenAndReadInItsOwnChunk()
+    {
+        var memory = Memory();
+        var state = State(memory, 0x400) with { Heap = new GlulxHeapSummary(0x300, [(0x300, 16), (0x320, 32)]) };
+        var file = new MemoryStream();
+
+        GlulxQuetzal.Write(state, memory, file);
+        file.Position = 0;
+        var read = GlulxQuetzal.Read(file, memory);
+
+        // [glulx #saveformat] MAll: the start, the count, and the
+        // pairs, and back again.
+        var chunk = Chunk("MAll", [.. Word(0x300), .. Word(2), .. Word(0x300), .. Word(16), .. Word(0x320), .. Word(32)]);
+        Assert.True(file.ToArray().AsSpan().IndexOf(chunk) >= 0);
+        Assert.Equal(0x300u, read.Heap!.Start);
+        Assert.Equal(state.Heap.Blocks, read.Heap.Blocks);
+    }
+
+    [Fact]
+    public void AHeapChunkIsSortedAndCheckedForShape()
     {
         var memory = Memory();
         var state = State(memory);
@@ -263,10 +282,18 @@ public class GlulxQuetzalTests
         var umem = Chunk("UMem", [.. Word(EndMem), .. state.Ram]);
         var stacks = Chunk("Stks", state.Stack);
 
-        // [glulx #saveformat] MAll with one block needs the heap, which
-        // is not built, and a heap chunk too short to say is mangled.
-        Assert.Throws<NotSupportedException>(() => Read(Form(header, Chunk("MAll", [.. Word(0x300), .. Word(1), .. Word(0x300), .. Word(0x10)]), umem, stacks), memory));
+        // [glulx #saveformat] The blocks need not be in order; a chunk
+        // of zeros or none is no heap; a count that does not match the
+        // pairs, or a chunk that is not whole pairs, is mangled.
+        var unordered = Read(Form(header, Chunk("MAll", [.. Word(0x300), .. Word(2), .. Word(0x320), .. Word(32), .. Word(0x300), .. Word(16)]), umem, stacks), memory);
+        Assert.Equal([(0x300u, 16u), (0x320u, 32u)], unordered.Heap!.Blocks);
+        Assert.Equal(0x300u, unordered.Heap.Start);
+        Assert.Null(Read(Form(header, Chunk("MAll", [.. Word(0), .. Word(0)]), umem, stacks), memory).Heap);
+        Assert.Null(Read(Form(header, Chunk("MAll"), umem, stacks), memory).Heap);
+        Assert.Null(Read(Form(header, umem, stacks), memory).Heap);
+        Assert.Throws<InvalidDataException>(() => Read(Form(header, Chunk("MAll", [.. Word(0x300), .. Word(2), .. Word(0x300), .. Word(16)]), umem, stacks), memory));
         Assert.Throws<InvalidDataException>(() => Read(Form(header, Chunk("MAll", [1, 2, 3, 4]), umem, stacks), memory));
+        Assert.Throws<InvalidDataException>(() => Read(Form(header, Chunk("MAll", [.. Word(0x300), .. Word(1), .. Word(0x300), .. Word(16), 0, 0, 0, 0]), umem, stacks), memory));
     }
 
     [Fact]

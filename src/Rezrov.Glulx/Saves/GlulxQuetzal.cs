@@ -60,8 +60,22 @@ public static class GlulxQuetzal
         compressed.Write(Compress(state.Ram, memory.InitialRam((uint)state.Ram.Length)));
         WriteChunk(body, CMem, compressed.ToArray());
 
-        // [glulx #saveformat] The heap is not built, so it is never
-        // active and its chunk is omitted, which is allowed.
+        // [glulx #saveformat] MAll while the heap is active: its start,
+        // the number of blocks, and each block's address and length.
+        // An inactive heap's chunk may be omitted, and is.
+        if (state.Heap is { } heap)
+        {
+            var words = new MemoryStream();
+            WriteWord(words, heap.Start);
+            WriteWord(words, (uint)heap.Blocks.Count);
+            foreach (var (address, length) in heap.Blocks)
+            {
+                WriteWord(words, address);
+                WriteWord(words, length);
+            }
+
+            WriteChunk(body, MAll, words.ToArray());
+        }
 
         // [glulx #saveformat] Stks: the whole stack as it is.
         WriteChunk(body, Stks, state.Stack);
@@ -106,6 +120,8 @@ public static class GlulxQuetzal
         uint? memorySize = null;
         byte[]? ram = null;
         byte[]? stack = null;
+        GlulxHeapSummary? heap = null;
+        var heapRead = false;
 
         // [quetzal 8.6] A concatenation of chunks after the sub-ID.
         // [quetzal 8.8] A second chunk of a kind expected once is
@@ -148,8 +164,9 @@ public static class GlulxQuetzal
                 case Stks when stack is null:
                     stack = ReadStackChunk(data);
                     break;
-                case MAll:
-                    CheckHeapChunk(data);
+                case MAll when !heapRead:
+                    heap = ReadHeapChunk(data);
+                    heapRead = true;
                     break;
                 default:
                     break;
@@ -166,7 +183,7 @@ public static class GlulxQuetzal
             throw new InvalidDataException("The saved game is missing one of its required chunks.");
         }
 
-        return new GlulxSavedState(memorySize!.Value, ram, stack);
+        return new GlulxSavedState(memorySize!.Value, ram, stack, heap);
     }
 
     /// <summary>
@@ -299,25 +316,43 @@ public static class GlulxQuetzal
         return data.ToArray();
     }
 
-    private static void CheckHeapChunk(ReadOnlySpan<byte> data)
+    private static GlulxHeapSummary? ReadHeapChunk(ReadOnlySpan<byte> data)
     {
         // [glulx #saveformat] Two words, the heap start and the number
-        // of blocks, then a pair per block. Without a heap there is
-        // nothing to put the blocks in.
+        // of blocks, then a pair per block; an empty chunk, or one with
+        // no blocks, is no heap. The blocks need not be in any order,
+        // so they are sorted, as the reference interpreter sorts them.
         if (data.Length == 0)
         {
-            return;
+            return null;
         }
 
-        if (data.Length < 8)
+        if (data.Length < 8 || data.Length % 8 != 0)
         {
-            throw new InvalidDataException("The saved game's heap chunk is too short.");
+            throw new InvalidDataException("The saved game's heap chunk is not whole words in pairs.");
         }
 
-        if (BinaryPrimitives.ReadUInt32BigEndian(data[4..]) != 0)
+        var start = BinaryPrimitives.ReadUInt32BigEndian(data);
+        var count = BinaryPrimitives.ReadUInt32BigEndian(data[4..]);
+        if (count != (uint)((data.Length - 8) / 8))
         {
-            throw new NotSupportedException("The saved game has heap blocks, and the memory heap is not built yet.");
+            throw new InvalidDataException($"The saved game's heap chunk claims {count} blocks but holds {(data.Length - 8) / 8}.");
         }
+
+        if (count == 0)
+        {
+            return null;
+        }
+
+        var blocks = new (uint Address, uint Length)[count];
+        for (var i = 0; i < blocks.Length; i++)
+        {
+            var at = 8 + (8 * i);
+            blocks[i] = (BinaryPrimitives.ReadUInt32BigEndian(data[at..]), BinaryPrimitives.ReadUInt32BigEndian(data[(at + 4)..]));
+        }
+
+        Array.Sort(blocks, (a, b) => a.Address.CompareTo(b.Address));
+        return new GlulxHeapSummary(start, blocks);
     }
 
     private static void WriteChunk(Stream output, uint id, ReadOnlySpan<byte> data)
