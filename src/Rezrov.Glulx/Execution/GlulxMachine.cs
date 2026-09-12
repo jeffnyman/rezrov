@@ -183,8 +183,10 @@ public sealed class GlulxMachine
     public void Restart()
     {
         // [glulx #opcodes_malloc] The heap goes first, since memory
-        // goes back to its initial size.
+        // goes back to its initial size, and [glulx op:protect] the
+        // protected range keeps what memory holds at that size.
         Heap.Clear();
+        Memory.Resize(Memory.Header.EndMem);
         var kept = ProtectedBytes();
         Memory.Reset();
         RestoreProtectedBytes(kept);
@@ -219,8 +221,12 @@ public sealed class GlulxMachine
 
         // [glulx #saveformat] The heap is part of the state, so the
         // one there is goes and the saved one is put back over the
-        // restored memory.
+        // restored memory. [glulx op:protect] What the protected range
+        // keeps is what memory holds once it is the saved size again,
+        // which above the old end is zeroes, as the reference
+        // interpreter has it.
         Heap.Clear();
+        Memory.Resize(state.MemorySize);
         var kept = ProtectedBytes();
         Memory.Restore(state.MemorySize, state.Ram);
         RestoreProtectedBytes(kept);
@@ -1165,17 +1171,19 @@ public sealed class GlulxMachine
     {
         var digits = value.ToString(CultureInfo.InvariantCulture);
 
-        if (IOSystem == IOSystem.Glk && !inMiddle)
+        if (IOSystem == IOSystem.Glk)
         {
-            foreach (var digit in digits)
+            // [glulx op:streamnum] Under Glk the digits go straight to
+            // the stream, from the first or, when the I/O system was
+            // changed by the filter function part way through, from
+            // the one that was next, as the reference interpreter has
+            // it.
+            for (var i = position; i < digits.Length; i++)
             {
-                Glk.PutChar(digit);
+                Glk.PutChar(digits[i]);
             }
-
-            return;
         }
-
-        if (IOSystem == IOSystem.Filter)
+        else if (IOSystem == IOSystem.Filter)
         {
             if (!inMiddle)
             {
@@ -1298,9 +1306,9 @@ public sealed class GlulxMachine
                 // [glulx #string] E3 to FF are reserved for future kinds
                 // of string.
                 case >= 0xE3:
-                    throw new GlulxException($"Attempt to print an unknown type of string, type {type:X2}.");
+                    throw new GlulxException($"Attempt to print an unknown type of string, type {type:X2}, at {address - 1:X8}.");
                 default:
-                    throw new GlulxException($"Attempt to print a non-string, type byte {type:X2}.");
+                    throw new GlulxException($"Attempt to print a non-string, type byte {type:X2}, at {address - 1:X8}.");
             }
 
             // The string is done. If it never needed the stack, that is
