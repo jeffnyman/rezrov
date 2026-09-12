@@ -24,10 +24,9 @@ namespace Rezrov.Glulx.Execution;
 /// the specification fixes wherever an operand uses the stack: loads
 /// pop before the work is done and stores push after it.
 ///
-/// Opcodes belonging to parts of the machine not built yet, the heap
-/// and accelerated functions, throw <see cref="NotSupportedException"/>
-/// naming the opcode, so a game stops at the first thing it needs that
-/// is missing rather than running on wrongly.
+/// The accelerated function opcodes are the one part of the machine
+/// not built yet, and throw <see cref="NotSupportedException"/> naming
+/// the opcode, so a game stops there rather than running on wrongly.
 /// </remarks>
 public sealed class GlulxMachine
 {
@@ -59,6 +58,7 @@ public sealed class GlulxMachine
         ArgumentNullException.ThrowIfNull(memory);
 
         Memory = memory;
+        Heap = new GlulxHeap(memory);
         Stack = new GlulxStackSpace(memory.Header.StackSize);
         Decoder = new InstructionDecoder(memory);
         Random = random ?? new GlulxRandom();
@@ -67,6 +67,9 @@ public sealed class GlulxMachine
     }
 
     public GlulxMemory Memory { get; }
+
+    /// <summary>[glulx #opcodes_malloc] The allocation heap.</summary>
+    public GlulxHeap Heap { get; }
 
     public GlulxStackSpace Stack { get; }
 
@@ -173,6 +176,9 @@ public sealed class GlulxMachine
     /// </remarks>
     public void Restart()
     {
+        // [glulx #opcodes_malloc] The heap goes first, since memory
+        // goes back to its initial size.
+        Heap.Clear();
         var kept = ProtectedBytes();
         Memory.Reset();
         RestoreProtectedBytes(kept);
@@ -185,7 +191,7 @@ public sealed class GlulxMachine
     /// that says where to continue.
     /// </summary>
     public GlulxSavedState Capture() =>
-        new(Memory.Length, Memory.Slice(Memory.RamStart, Memory.Length - Memory.RamStart).ToArray(), Stack.Contents.ToArray());
+        new(Memory.Length, Memory.Slice(Memory.RamStart, Memory.Length - Memory.RamStart).ToArray(), Stack.Contents.ToArray(), Heap.Summary());
 
     /// <summary>
     /// [glulx #saveformat] Puts a state back and continues from the
@@ -205,9 +211,14 @@ public sealed class GlulxMachine
     {
         ArgumentNullException.ThrowIfNull(state);
 
+        // [glulx #saveformat] The heap is part of the state, so the
+        // one there is goes and the saved one is put back over the
+        // restored memory.
+        Heap.Clear();
         var kept = ProtectedBytes();
         Memory.Restore(state.MemorySize, state.Ram);
         RestoreProtectedBytes(kept);
+        Heap.Restore(state.Heap);
         Stack.Load(state.Stack);
         Resume(Stack.PopCallStub(), result);
     }
@@ -550,8 +561,23 @@ public sealed class GlulxMachine
                 Store(ops[0], Memory.Length);
                 break;
             case Opcode.SetMemSize:
+                // [glulx op:setmemsize] Not while the heap is active,
+                // which the reference interpreter treats as fatal.
+                if (Heap.IsActive)
+                {
+                    throw new GlulxException("Cannot resize memory while the heap is active.");
+                }
+
                 Memory.Resize(a[0]);
                 Store(ops[1], 0);
+                break;
+
+            // [glulx #opcodes_malloc]
+            case Opcode.MAlloc:
+                Store(ops[1], Heap.Allocate(a[0]));
+                break;
+            case Opcode.MFree:
+                Heap.Free(a[0]);
                 break;
 
             case Opcode.Random:
@@ -1460,15 +1486,16 @@ public sealed class GlulxMachine
         public static StringStep Restart(uint address, byte type) => new(false, true, address, type);
     }
 
-    private static uint Gestalt(uint selector, uint argument) => selector switch
+    private uint Gestalt(uint selector, uint argument) => selector switch
     {
         // [glulx #opcodes_misc] The selectors, with the answers this
         // interpreter can honestly give so far. A feature answers 1
         // only once the opcodes behind it exist: Unicode does, since
         // the E2 strings, the Unicode nodes, streamunichar, and the
         // type 14 stub are all there, Undo and ExtUndo do, since
-        // saveundo, restoreundo, hasundo, and discardundo are, and Float
-        // and Double do, since every float and double opcode is.
+        // saveundo, restoreundo, hasundo, and discardundo are, Float
+        // and Double do, since every float and double opcode is, and
+        // MAlloc does, with MAllocHeap the heap's start or zero.
         0 => GlulxHeader.SpecificationVersion,
         1 => InterpreterVersion,
         2 => 1,
@@ -1476,8 +1503,8 @@ public sealed class GlulxMachine
         4 => argument is 0 or 1 or 2 ? 1u : 0u,
         5 => 1,
         6 => 1,
-        7 => 0,
-        8 => 0,
+        7 => 1,
+        8 => Heap.Start,
         9 => 0,
         10 => 0,
         11 => 1,
