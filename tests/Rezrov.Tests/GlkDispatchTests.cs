@@ -81,6 +81,42 @@ public class GlkDispatchTests
     }
 
     [Fact]
+    public void GraphicsCallsDrawNothingAndSaySo()
+    {
+        const uint WindowFillRect = 0x00EA;
+        var code = WithWindow();
+        Glk(code, ImageDraw, Ram(4), Ram(0), C(1), C(0), C(0));
+        Glk(code, WindowFillRect, Discard, Ram(0), C(0xFF0000), C(0), C(0), C(10), C(10));
+        var (machine, display) = Run(code.Return(C(0)));
+
+        // [glk #graphics_testing] A game that draws without asking
+        // gestalt first gets a false result and a warning, and the
+        // play goes on.
+        Assert.Equal(0u, machine.Ram(4));
+        Assert.Equal("", display.Output);
+        Assert.Contains("image_draw: graphics are not supported.", machine.Glk.Warnings);
+        Assert.Contains("window_fill_rect: graphics are not supported.", machine.Glk.Warnings);
+    }
+
+    [Fact]
+    public void SoundChannelsCannotBeMade()
+    {
+        const uint SchannelCreate = 0x00F2;
+        const uint SchannelPlay = 0x00F8;
+        var code = new GlulxAssembler().Function("main");
+        Glk(code, SchannelCreate, Ram(0), C(7));
+        Glk(code, SchannelPlay, Ram(4), Ram(0), C(3));
+        var (machine, _) = Run(code.Return(C(0)));
+
+        // [glk #sound_channels] Creating a channel fails quietly, as
+        // the spec allows, and playing on the null it returned is an
+        // invalid id.
+        Assert.Equal(0u, machine.Ram(0));
+        Assert.Equal(0u, machine.Ram(4));
+        Assert.Equal("schannel_play: invalid sound channel id 0.", Assert.Single(machine.Glk.Warnings));
+    }
+
+    [Fact]
     public void ABufferFunctionCutsOffAtLenButReturnsTheWholeCount()
     {
         const uint BufferToUpperCaseUni = 0x0121;
@@ -233,17 +269,12 @@ public class GlkDispatchTests
     }
 
     [Fact]
-    public void UnknownAndUnbuiltFunctionsAreTold()
+    public void UnknownFunctionsAndWrongCountsAreTold()
     {
         var unknown = new GlulxAssembler().Function("main");
         Glk(unknown, 0x0006, Discard);
         var e = Assert.Throws<GlulxException>(() => Run(unknown.Return(C(0))));
         Assert.Contains("Unknown Glk function 0006", e.Message, StringComparison.Ordinal);
-
-        var image = WithWindow();
-        Glk(image, ImageDraw, Discard, Ram(0), C(1), C(0), C(0));
-        var notYet = Assert.Throws<NotSupportedException>(() => Run(image.Return(C(0))));
-        Assert.Contains("glk_image_draw", notYet.Message, StringComparison.Ordinal);
 
         var wrongCount = new GlulxAssembler().Function("main");
         Glk(wrongCount, Gestalt, Discard, C(0));
