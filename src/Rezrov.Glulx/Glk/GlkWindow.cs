@@ -48,6 +48,17 @@ public abstract class GlkWindow : GlkObject
     public int Height { get; private set; }
 
     /// <summary>
+    /// [glk #window_arrangement] The column of the display the layout
+    /// put the window's left edge at, from 0. A pair window's is its
+    /// first child's, since a pair is only the space its children
+    /// share.
+    /// </summary>
+    public int Left { get; private set; }
+
+    /// <summary>The row the layout put the window's top edge at.</summary>
+    public int Top { get; private set; }
+
+    /// <summary>
     /// Whether this window can show a size: blank and pair windows have
     /// none.
     /// </summary>
@@ -83,6 +94,13 @@ public abstract class GlkWindow : GlkObject
 
     /// <summary>[glk op:window_clear] Erases the window.</summary>
     public abstract void Clear();
+
+    /// <summary>The layout's new place for the window.</summary>
+    internal void Place(int left, int top)
+    {
+        Left = left;
+        Top = top;
+    }
 
     /// <summary>The layout's new size for the window.</summary>
     internal void Resize(int width, int height)
