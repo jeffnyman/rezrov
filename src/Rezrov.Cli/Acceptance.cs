@@ -1,5 +1,4 @@
 using Rezrov.Core.Acceptance;
-using Rezrov.ZMachine;
 
 namespace Rezrov.Cli;
 
@@ -64,10 +63,7 @@ internal static class Acceptance
             return 1;
         }
 
-        var memory = new ZMemory(File.ReadAllBytes(script.GamePath));
-        var keyboard = mode == AcceptanceMode.Resume ? new ConsoleInput(new StoryHeader(memory), memory) : null;
-
-        if (AcceptanceRun.Play(script, Console.Error, Console.Out, keyboard) is not { } result)
+        if (AcceptanceRun.Play(script, Console.Error, Console.Out, mode == AcceptanceMode.Resume) is not { } result)
         {
             return 1;
         }

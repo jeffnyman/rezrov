@@ -1,0 +1,337 @@
+# Adventure, the 350-point Colossal Cave as Graham Nelson's Inform port
+# has it, played through to the best ending.
+! SEED=1
+! GAME=../entharion/glulx-code/advent-r5-s961209.ulx
+
+# The building's supplies, then down through the grate.
+e
+get lamp
+get keys
+w
+s
+s
+s
+unlock grate with keys
+open grate
+d
+w
+get cage
+turn on lamp
+w
+get rod
+w
+w
+drop rod
+get bird
+get rod
+w
+d
+
+# The fissure, the nugget, and the snake.
+w
+wave rod
+w
+get diamonds
+e
+e
+n
+drop bird
+drop cage
+drop rod
+e
+s
+get gold
+n
+n
+s
+get jewelry
+n
+w
+get coins
+e
+n
+get silver
+n
+plugh
+
+# The first deposit.
+turn off lamp
+drop diamonds
+drop gold
+drop jewelry
+drop coins
+drop silver
+drop keys
+turn on lamp
+plugh
+
+# The dragon and the rug.
+s
+s
+sw
+w
+kill dragon
+yes
+get rug
+e
+e
+n
+n
+plugh
+turn off lamp
+drop rug
+get bottle
+fill bottle
+turn on lamp
+plugh
+
+# The plant, watered twice.
+s
+d
+w
+d
+w
+w
+w
+w
+d
+water plant
+u
+e
+e
+ne
+e
+u
+e
+e
+d
+fill bottle
+u
+w
+w
+d
+w
+w
+w
+w
+d
+water plant
+u
+
+# Oil for the door, then the eggs and the trident.
+e
+d
+fill bottle
+u
+w
+d
+climb plant
+w
+get eggs
+n
+oil door
+drop bottle
+n
+get trident
+s
+s
+s
+d
+u
+
+# The pillow, the vase, and the emerald.
+e
+e
+e
+get pillow
+w
+nw
+n
+w
+drop all
+e
+get emerald
+w
+get all
+nw
+s
+get vase
+se
+
+# The pearl on the way to the second deposit.
+ne
+e
+n
+unlock clam with trident
+d
+d
+get pearl
+u
+u
+s
+u
+e
+u
+n
+plugh
+turn off lamp
+drop pillow
+drop vase
+drop trident
+drop emerald
+drop pearl
+turn on lamp
+
+# The pyramid, through the plover room.
+plugh
+plover
+ne
+get pyramid
+s
+plover
+plugh
+drop pyramid
+get food
+get keys
+plugh
+
+# The troll's toll, the spices, and the bear's chain.
+s
+d
+w
+d
+w
+w
+nw
+w
+sw
+u
+ne
+give eggs to troll
+ne
+ne
+e
+ne
+e
+get spices
+w
+s
+se
+s
+e
+give food to bear
+unlock chain with keys
+get chain
+get bear
+w
+u
+u
+w
+w
+sw
+drop bear
+sw
+sw
+d
+se
+se
+
+# The eggs come back, and the third deposit.
+fee
+fie
+foe
+foo
+w
+w
+d
+climb plant
+w
+get eggs
+s
+d
+u
+e
+e
+ne
+e
+
+# The magazine goes to Witt's End; only west leads back out.
+e
+get magazines
+e
+drop magazines
+w
+u
+u
+e
+u
+n
+plugh
+turn off lamp
+drop spices
+drop chain
+drop eggs
+turn on lamp
+plugh
+
+# The pirate's chest, out through the maze and the bird chamber.
+# A dwarf's knife found its mark on the way to the maze under the
+# first seed, so this stretch rolls its dice from another.
+! SEED=7
+e
+u
+w
+w
+w
+s
+e
+s
+n
+get chest
+se
+n
+d
+e
+e
+xyzzy
+turn off lamp
+drop chest
+score
+
+# Waiting for the cave to close.
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+
+# The repository: the rod to the far end, then the blast, for the
+# best of the endings and the last of the 350 points.
+sw
+get rod
+ne
+drop rod
+sw
+blast
+quit
