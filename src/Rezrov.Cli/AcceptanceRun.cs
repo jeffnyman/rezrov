@@ -1,6 +1,10 @@
 using Rezrov.Core;
 using Rezrov.Core.Acceptance;
+using Rezrov.Glulx;
+using Rezrov.Glulx.Glk;
 using Rezrov.ZMachine;
+using GlulxMachine = Rezrov.Glulx.Execution.GlulxMachine;
+using GlulxRandom = Rezrov.Glulx.Execution.GlulxRandom;
 using Rezrov.ZMachine.Execution;
 using Rezrov.ZMachine.Input;
 using Rezrov.ZMachine.Screen;
@@ -34,7 +38,10 @@ public enum AcceptanceEnding
 /// <param name="Output">Everything the game printed, the commands included.</param>
 /// <param name="Ending">How the run stopped.</param>
 /// <param name="Message">Why, when the ending was not a normal one.</param>
-/// <param name="RuntimeErrors">[zm A] What the game did that it should not have.</param>
+/// <param name="RuntimeErrors">
+/// What the game did that it should not have: [zm A] the Z-Machine's
+/// runtime errors, or the Glk library's warnings.
+/// </param>
 /// <param name="CommandOffsets">
 /// How long <paramref name="Output"/> was when each command was read,
 /// which is how a line of the play is traced to a line of the script.
@@ -97,7 +104,10 @@ public sealed record AcceptanceDifference(int Line, string Description);
 /// [zm 10.2] the file of commands and nothing behind it, so that a
 /// script that runs out ends the game rather than waiting. The random
 /// numbers come from the script's seed, [zm 2.4.2] so the play is the
-/// same every time, which is the whole point.
+/// same every time, which is the whole point. A Glulx game plays the
+/// same way through Glk: the commands are the lines its display reads,
+/// its files live in memory for the run, and the seed goes to the
+/// machine's random number generator.
 /// </remarks>
 public static class AcceptanceRun
 {
@@ -106,12 +116,12 @@ public static class AcceptanceRun
     /// on <paramref name="errors"/> why the game could not be loaded.
     /// With a <paramref name="display"/>, the play is shown there as it
     /// happens, which is how someone building a script up sees where a
-    /// command went wrong. With a <paramref name="keyboard"/>, the game
-    /// goes on from where the script ends, taking commands from there,
+    /// command went wrong. With <paramref name="resume"/>, the game goes
+    /// on from where the script ends, taking commands from the console,
     /// which is how someone finds out what the next line of the script
     /// should be.
     /// </summary>
-    public static AcceptanceResult? Play(AcceptanceScript script, TextWriter errors, TextWriter? display = null, IInput? keyboard = null)
+    public static AcceptanceResult? Play(AcceptanceScript script, TextWriter errors, TextWriter? display = null, bool resume = false)
     {
         ArgumentNullException.ThrowIfNull(script);
         ArgumentNullException.ThrowIfNull(errors);
@@ -121,9 +131,14 @@ public static class AcceptanceRun
             return null;
         }
 
+        if (story.Format == StoryFormat.Glulx)
+        {
+            return PlayGlulx(script, story, errors, display, resume);
+        }
+
         if (story.Format != StoryFormat.ZMachine)
         {
-            errors.WriteLine($"rezrov: {Path.GetFileName(script.ScriptPath)}: acceptance scripts can only play Z-machine games yet, and this game is {story.Format}");
+            errors.WriteLine($"rezrov: {Path.GetFileName(script.ScriptPath)}: acceptance scripts play Z-machine and Glulx games, and this game is {story.Format}");
             return null;
         }
 
@@ -147,14 +162,14 @@ public static class AcceptanceRun
         var random = new RandomGenerator(script.Seed);
 
         // [zm 10.2] With nothing behind the file of commands, the run
-        // ends when the script does; with a keyboard behind it, the
+        // ends when the script does; with the console behind it, the
         // player carries on from there and is told so.
         var interpreter = new Interpreter(
             memory,
             new TextWriterScreen((TextWriter?)screenWriter ?? output),
-            keyboard is null
-                ? new TextReaderInput(TextReader.Null, header, memory)
-                : new AnnouncedInput(keyboard, errors),
+            resume
+                ? new AnnouncedInput(new ConsoleInput(header, memory), errors)
+                : new TextReaderInput(TextReader.Null, header, memory),
             random,
             files,
             new SilentSound(),
@@ -204,6 +219,61 @@ public static class AcceptanceRun
         }
 
         return new AcceptanceResult(output.ToString(), ending, message, interpreter.RuntimeErrors, commands.Offsets);
+    }
+
+    // A Glulx game: the display prints to the run's output and reads
+    // the script's commands, each echoed after its prompt as a console
+    // would show it typed; the files stay in memory; and the run ends
+    // when the script does, unless the console takes over.
+    private static AcceptanceResult? PlayGlulx(AcceptanceScript script, LoadedStory story, TextWriter errors, TextWriter? display, bool resume)
+    {
+        var output = new StringWriter();
+        using var screenWriter = display is null ? null : new TeeWriter(output, display);
+        var sink = (TextWriter?)screenWriter ?? output;
+        var random = new GlulxRandom((uint)script.Seed);
+        var commands = new GlulxCommands(script, output, sink, random, resume ? Console.In : null, errors);
+        var glk = new GlkLibrary(new TextWriterGlkDisplay(sink, commands), new MemoryGlkFileSystem()) { Resources = story.Resources };
+
+        GlulxMachine machine;
+        try
+        {
+            machine = new GlulxMachine(new GlulxMemory(story.Bytes), random, glk);
+        }
+        catch (InvalidDataException e)
+        {
+            errors.WriteLine($"rezrov: {Path.GetFileName(script.ScriptPath)}: {e.Message}");
+            return null;
+        }
+
+        var ending = AcceptanceEnding.Quit;
+        string? message = null;
+
+        try
+        {
+            machine.Run();
+        }
+        catch (NotSupportedException e)
+        {
+            ending = AcceptanceEnding.NotSupported;
+            message = e.Message;
+        }
+        catch (EndOfStreamException)
+        {
+            ending = AcceptanceEnding.ScriptEnded;
+        }
+        catch (GlulxException e)
+        {
+            ending = AcceptanceEnding.Failed;
+            message = e.Message;
+        }
+        finally
+        {
+            glk.CloseFiles();
+            sink.Flush();
+        }
+
+        var warnings = glk.Warnings.Select(w => "glk: " + w).ToList();
+        return new AcceptanceResult(output.ToString(), ending, message, warnings, commands.Offsets);
     }
 
     /// <summary>
@@ -329,6 +399,55 @@ public static class AcceptanceRun
 
             Offsets.Add(output.GetStringBuilder().Length);
             return script.Commands[_next++];
+        }
+    }
+
+    /// <summary>
+    /// The script's commands as the lines a Glk display reads, echoed
+    /// to the play as a console shows what is typed, with the offsets
+    /// and seed changes kept as for the Z-Machine, and the console
+    /// behind them when the game is to go on from where the script
+    /// ends.
+    /// </summary>
+    private sealed class GlulxCommands(AcceptanceScript script, StringWriter output, TextWriter echo, GlulxRandom random, TextReader? console, TextWriter errors) : TextReader
+    {
+        private int _next;
+        private bool _announced;
+
+        public List<int> Offsets { get; } = [];
+
+        public override string? ReadLine()
+        {
+            if (_next <= script.Commands.Count && script.SeedChanges.TryGetValue(_next, out var seed))
+            {
+                random.Seed((uint)seed);
+            }
+
+            if (_next >= script.Commands.Count)
+            {
+                _next = script.Commands.Count + 1;
+                if (console is null)
+                {
+                    return null;
+                }
+
+                if (!_announced)
+                {
+                    _announced = true;
+                    errors.WriteLine();
+                    errors.WriteLine("rezrov: the script has ended; the game is yours from here");
+                }
+
+                return console.ReadLine();
+            }
+
+            // The newline is the game's kind, not the platform's, so
+            // the play reads the same on every system.
+            Offsets.Add(output.GetStringBuilder().Length);
+            var command = script.Commands[_next++];
+            echo.Write(command);
+            echo.Write('\n');
+            return command;
         }
     }
 

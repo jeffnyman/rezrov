@@ -1,5 +1,8 @@
 using Rezrov.Cli;
 using Rezrov.Core.Acceptance;
+using Rezrov.Glulx.Glk;
+using Rezrov.Glulx.Instructions;
+using static Rezrov.Tests.GlulxAssembler;
 
 namespace Rezrov.Tests;
 
@@ -139,6 +142,75 @@ public class AcceptanceTests
     /// not fetch, so a script whose game is absent is skipped, and the
     /// test skips as a whole when none can run.
     /// </summary>
+    [Fact]
+    public void AGlulxScriptPlaysThroughGlkWithItsSeed()
+    {
+        // A game that prompts, reads a line, prints it back with a roll
+        // of the dice, and goes round again until the script runs out.
+        const uint Text = GlulxRun.RamStart + 0x100;
+        var code = new GlulxAssembler().Function("main").Op(Opcode.SetIOSys, C(2), C(0));
+        Glk(code, 0x0023, Ram(0), C(0), C(0), C(0), C((uint)WindowType.TextBuffer), C(0));
+        Glk(code, 0x002F, Discard, Ram(0));
+        code.Label("turn").Op(Opcode.StreamStr, At("prompt"));
+        Glk(code, 0x00D0, Discard, Ram(0), C(Text), C(20), C(0));
+        Glk(code, 0x00C0, Discard, C(GlulxRun.RamStart + 4));
+        code.Op(Opcode.StreamStr, At("typed"));
+        Glk(code, 0x0084, Discard, C(Text), Ram(12));
+        code.Op(Opcode.StreamStr, At("roll"))
+            .Op(Opcode.Random, C(1000), Sp)
+            .Op(Opcode.StreamNum, Sp)
+            .Op(Opcode.StreamChar, C('\n'))
+            .Op(Opcode.Jump, To("turn"))
+            .CString("prompt", "> ")
+            .CString("typed", "You typed ")
+            .CString("roll", ", roll ");
+
+        var directory = Path.Combine(Path.GetTempPath(), "rezrov-accept-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        try
+        {
+            File.WriteAllBytes(Path.Combine(directory, "game.ulx"), GlulxRun.File(code));
+            var errors = new StringWriter();
+            AcceptanceResult Play(int seed) =>
+                AcceptanceRun.Play(AcceptanceScript.Parse($"! SEED={seed}\n! GAME=game.ulx\nlook\ntake lamp\n", Path.Combine(directory, "test.accept")), errors)!;
+
+            var result = Play(5);
+
+            // The commands are echoed after the prompt as typed, the run
+            // ends when the script does, and each command's place in
+            // the play is known.
+            Assert.Equal(AcceptanceEnding.ScriptEnded, result.Ending);
+            Assert.StartsWith("> look\nYou typed look, roll ", result.Output, StringComparison.Ordinal);
+            Assert.Contains("\n> take lamp\nYou typed take lamp, roll ", result.Output, StringComparison.Ordinal);
+            Assert.EndsWith("\n> ", result.Output, StringComparison.Ordinal);
+            Assert.Equal([2, result.Output.IndexOf("take lamp", StringComparison.Ordinal)], result.CommandOffsets);
+            Assert.Empty(result.RuntimeErrors);
+            Assert.Equal("", errors.ToString());
+
+            // The same seed rolls the same dice; another rolls others.
+            Assert.Equal(result.Output, Play(5).Output);
+            Assert.NotEqual(result.Output, Play(6).Output);
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    /// <summary>
+    /// [glulx op:glk] Pushes the arguments last first and calls the
+    /// function, storing its result.
+    /// </summary>
+    private static void Glk(GlulxAssembler code, uint selector, Arg result, params Arg[] args)
+    {
+        for (var i = args.Length - 1; i >= 0; i--)
+        {
+            code.Op(Opcode.Copy, args[i], Sp);
+        }
+
+        code.Op(Opcode.Glk, C(selector), C(args.Length), result);
+    }
+
     [Fact]
     public void EveryAcceptanceScriptPlaysAsRecorded()
     {
