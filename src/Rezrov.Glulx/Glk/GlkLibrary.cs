@@ -874,7 +874,7 @@ public sealed partial class GlkLibrary
     {
         if (Root is not null)
         {
-            Layout(Root, _display.Width, _display.Height);
+            Layout(Root, 0, 0, _display.Width, _display.Height);
         }
 
         _display.Arranged(Root);
@@ -941,8 +941,9 @@ public sealed partial class GlkLibrary
         Windows.Remove(window);
     }
 
-    private static void Layout(GlkWindow window, int width, int height)
+    private static void Layout(GlkWindow window, int left, int top, int width, int height)
     {
+        window.Place(left, top);
         if (window is not PairWindow pair)
         {
             window.Resize(width, height);
@@ -968,15 +969,18 @@ public sealed partial class GlkLibrary
         sized = Math.Clamp(sized, 0, extent);
         var first = ReferenceEquals(pair.SizedChild, pair.First) ? sized : extent - sized;
 
+        // [glk #window_arrangement] The first child is above or to the
+        // left, so it starts where the pair does and the second child
+        // starts where the first ends.
         if (pair.IsVertical)
         {
-            Layout(pair.First, width, first);
-            Layout(pair.Second, width, height - first);
+            Layout(pair.First, left, top, width, first);
+            Layout(pair.Second, left, top + first, width, height - first);
         }
         else
         {
-            Layout(pair.First, first, height);
-            Layout(pair.Second, width - first, height);
+            Layout(pair.First, left, top, first, height);
+            Layout(pair.Second, left + first, top, width - first, height);
         }
     }
 

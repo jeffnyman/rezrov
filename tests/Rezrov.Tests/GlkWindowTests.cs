@@ -72,6 +72,29 @@ public class GlkWindowTests
     }
 
     [Fact]
+    public void TheLayoutPlacesWindowsAsWellAsSizingThem()
+    {
+        var (glk, _) = Library();
+        var story = glk.OpenWindow(null, 0, 0, WindowType.TextBuffer, 1)!;
+        var status = glk.OpenWindow(story, WindowMethod.Above | WindowMethod.Fixed, 2, WindowType.TextGrid, 2)!;
+        var side = glk.OpenWindow(story, WindowMethod.Right | WindowMethod.Proportional, 25, WindowType.TextBuffer, 3)!;
+
+        // [glk #window_arrangement] The status line sits at the top, the
+        // story below it, and the side window takes the right quarter of
+        // the story's space: the first child of a pair starts where the
+        // pair does, and the second where the first ends.
+        Assert.Equal((0, 0, 40, 2), (status.Left, status.Top, status.Width, status.Height));
+        Assert.Equal((0, 2, 30, 8), (story.Left, story.Top, story.Width, story.Height));
+        Assert.Equal((30, 2, 10, 8), (side.Left, side.Top, side.Width, side.Height));
+        Assert.Equal((0, 2), (story.Parent!.Left, story.Parent.Top));
+
+        // Closing the status line moves the rest up to the top.
+        glk.CloseWindow(status);
+        Assert.Equal((0, 0, 30, 10), (story.Left, story.Top, story.Width, story.Height));
+        Assert.Equal((30, 0, 10, 10), (side.Left, side.Top, side.Width, side.Height));
+    }
+
+    [Fact]
     public void ClosingAChildGivesItsSpaceToTheSibling()
     {
         var (glk, _) = Library();

@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Rezrov.Core\Rezrov.Core.csproj" />
+    <ProjectReference Include="..\Rezrov.Glulx\Rezrov.Glulx.csproj" />
     <ProjectReference Include="..\Rezrov.ZMachine\Rezrov.ZMachine.csproj" />
   </ItemGroup>
 
