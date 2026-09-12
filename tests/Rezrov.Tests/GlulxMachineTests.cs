@@ -418,8 +418,9 @@ public class GlulxMachineTests
     [InlineData(5u, 0u, 1u)]
     [InlineData(6u, 0u, 1u)]
     [InlineData(7u, 0u, 0u)]
-    [InlineData(11u, 0u, 0u)]
+    [InlineData(11u, 0u, 1u)]
     [InlineData(12u, 0u, 1u)]
+    [InlineData(13u, 0u, 1u)]
     [InlineData(0x1000u, 0u, 0u)]
     public void GestaltAnswersForWhatIsBuilt(uint selector, uint argument, uint expected)
     {
