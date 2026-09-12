@@ -24,9 +24,8 @@ namespace Rezrov.Glulx.Execution;
 /// the specification fixes wherever an operand uses the stack: loads
 /// pop before the work is done and stores push after it.
 ///
-/// The accelerated function opcodes are the one part of the machine
-/// not built yet, and throw <see cref="NotSupportedException"/> naming
-/// the opcode, so a game stops there rather than running on wrongly.
+/// Every opcode in the specification is built, so an unknown one can
+/// only be a decoding error.
 /// </remarks>
 public sealed class GlulxMachine
 {
@@ -59,6 +58,7 @@ public sealed class GlulxMachine
 
         Memory = memory;
         Heap = new GlulxHeap(memory);
+        Accelerator = new GlulxAccelerator(memory, ReportAccelerationError);
         Stack = new GlulxStackSpace(memory.Header.StackSize);
         Decoder = new InstructionDecoder(memory);
         Random = random ?? new GlulxRandom();
@@ -70,6 +70,12 @@ public sealed class GlulxMachine
 
     /// <summary>[glulx #opcodes_malloc] The allocation heap.</summary>
     public GlulxHeap Heap { get; }
+
+    /// <summary>
+    /// [glulx #opcodes_accel] The accelerated functions and where the
+    /// game has asked for them.
+    /// </summary>
+    public GlulxAccelerator Accelerator { get; }
 
     public GlulxStackSpace Stack { get; }
 
@@ -572,6 +578,14 @@ public sealed class GlulxMachine
                 Store(ops[1], 0);
                 break;
 
+            // [glulx #opcodes_accel]
+            case Opcode.AccelFunc:
+                Accelerator.SetFunction(a[0], a[1]);
+                break;
+            case Opcode.AccelParam:
+                Accelerator.SetParameter(a[0], a[1]);
+                break;
+
             // [glulx #opcodes_malloc]
             case Opcode.MAlloc:
                 Store(ops[1], Heap.Allocate(a[0]));
@@ -871,7 +885,7 @@ public sealed class GlulxMachine
                 break;
 
             default:
-                throw new NotSupportedException($"The {info.Name} opcode is not built yet.");
+                throw new GlulxException($"The {info.Name} opcode has no implementation.");
         }
     }
 
@@ -1043,6 +1057,15 @@ public sealed class GlulxMachine
 
     private void Enter(uint address, IReadOnlyList<uint> arguments)
     {
+        // [glulx #opcodes_accel] A call of an accelerated address runs
+        // the built-in function instead, and returns through the stub
+        // as the game's own function would have.
+        if (Accelerator.TryInvoke(address, arguments, out var accelerated))
+        {
+            Resume(Stack.PopCallStub(), accelerated);
+            return;
+        }
+
         var function = FunctionHeader.Read(Memory, address);
         Stack.PushFrame(function, arguments);
         ProgramCounter = function.CodeAddress;
@@ -1494,8 +1517,9 @@ public sealed class GlulxMachine
         // the E2 strings, the Unicode nodes, streamunichar, and the
         // type 14 stub are all there, Undo and ExtUndo do, since
         // saveundo, restoreundo, hasundo, and discardundo are, Float
-        // and Double do, since every float and double opcode is, and
-        // MAlloc does, with MAllocHeap the heap's start or zero.
+        // and Double do, since every float and double opcode is, MAlloc
+        // does, with MAllocHeap the heap's start or zero, and
+        // Acceleration does, with AccelFunc saying which functions.
         0 => GlulxHeader.SpecificationVersion,
         1 => InterpreterVersion,
         2 => 1,
@@ -1505,8 +1529,8 @@ public sealed class GlulxMachine
         6 => 1,
         7 => 1,
         8 => Heap.Start,
-        9 => 0,
-        10 => 0,
+        9 => 1,
+        10 => GlulxAccelerator.Supports(argument) ? 1u : 0u,
         11 => 1,
         12 => 1,
         13 => 1,
@@ -1591,6 +1615,27 @@ public sealed class GlulxMachine
         }
 
         return id == 0 ? null : Glk.Streams.Find(id);
+    }
+
+    // [glulx #opcodes_accel] An error in an accelerated function goes
+    // to the current Glk stream when that is where output goes, and is
+    // dropped under the other I/O systems, since the filter system
+    // would mean calling a game function from inside the accelerated
+    // one, as the reference interpreter has it.
+    private void ReportAccelerationError(string message)
+    {
+        if (IOSystem != IOSystem.Glk)
+        {
+            return;
+        }
+
+        Glk.PutChar('\n');
+        foreach (var character in message)
+        {
+            Glk.PutChar(character);
+        }
+
+        Glk.PutChar('\n');
     }
 
     private byte[]? ProtectedBytes()
