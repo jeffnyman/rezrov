@@ -24,11 +24,10 @@ namespace Rezrov.Glulx.Execution;
 /// the specification fixes wherever an operand uses the stack: loads
 /// pop before the work is done and stores push after it.
 ///
-/// Opcodes belonging to parts of the machine not built yet, floating
-/// point, the heap, and accelerated functions, throw
-/// <see cref="NotSupportedException"/> naming the opcode, so a game
-/// stops at the first thing it needs that is missing rather than
-/// running on wrongly.
+/// Opcodes belonging to parts of the machine not built yet, the heap
+/// and accelerated functions, throw <see cref="NotSupportedException"/>
+/// naming the opcode, so a game stops at the first thing it needs that
+/// is missing rather than running on wrongly.
 /// </remarks>
 public sealed class GlulxMachine
 {
@@ -646,6 +645,205 @@ public sealed class GlulxMachine
                 Memory.Copy(a[1], a[2], a[0]);
                 break;
 
+            // [glulx #opcodes_float] A float is decoded from its word,
+            // worked on in single precision, and encoded again.
+            case Opcode.NumToF:
+                Store(ops[1], GlulxFloat.Encode((int)a[0]));
+                break;
+            case Opcode.FToNumZ:
+                Store(ops[1], GlulxFloat.ToInteger(GlulxFloat.Decode(a[0]), false));
+                break;
+            case Opcode.FToNumN:
+                Store(ops[1], GlulxFloat.ToInteger(GlulxFloat.Decode(a[0]), true));
+                break;
+            case Opcode.Ceil:
+                StoreFloat(ops[1], GlulxFloat.Ceiling(GlulxFloat.Decode(a[0])));
+                break;
+            case Opcode.Floor:
+                StoreFloat(ops[1], MathF.Floor(GlulxFloat.Decode(a[0])));
+                break;
+            case Opcode.FAdd:
+                StoreFloat(ops[2], GlulxFloat.Decode(a[0]) + GlulxFloat.Decode(a[1]));
+                break;
+            case Opcode.FSub:
+                StoreFloat(ops[2], GlulxFloat.Decode(a[0]) - GlulxFloat.Decode(a[1]));
+                break;
+            case Opcode.FMul:
+                StoreFloat(ops[2], GlulxFloat.Decode(a[0]) * GlulxFloat.Decode(a[1]));
+                break;
+            case Opcode.FDiv:
+                StoreFloat(ops[2], GlulxFloat.Decode(a[0]) / GlulxFloat.Decode(a[1]));
+                break;
+            case Opcode.FMod:
+            {
+                var (remainder, quotient) = GlulxFloat.Modulo(GlulxFloat.Decode(a[0]), GlulxFloat.Decode(a[1]));
+                StoreFloat(ops[2], remainder);
+                StoreFloat(ops[3], quotient);
+                break;
+            }
+
+            case Opcode.Sqrt:
+                StoreFloat(ops[1], MathF.Sqrt(GlulxFloat.Decode(a[0])));
+                break;
+            case Opcode.Exp:
+                StoreFloat(ops[1], MathF.Exp(GlulxFloat.Decode(a[0])));
+                break;
+            case Opcode.Log:
+                StoreFloat(ops[1], MathF.Log(GlulxFloat.Decode(a[0])));
+                break;
+            case Opcode.Pow:
+                StoreFloat(ops[2], GlulxFloat.Pow(GlulxFloat.Decode(a[0]), GlulxFloat.Decode(a[1])));
+                break;
+            case Opcode.Sin:
+                StoreFloat(ops[1], MathF.Sin(GlulxFloat.Decode(a[0])));
+                break;
+            case Opcode.Cos:
+                StoreFloat(ops[1], MathF.Cos(GlulxFloat.Decode(a[0])));
+                break;
+            case Opcode.Tan:
+                StoreFloat(ops[1], MathF.Tan(GlulxFloat.Decode(a[0])));
+                break;
+            case Opcode.ASin:
+                StoreFloat(ops[1], MathF.Asin(GlulxFloat.Decode(a[0])));
+                break;
+            case Opcode.ACos:
+                StoreFloat(ops[1], MathF.Acos(GlulxFloat.Decode(a[0])));
+                break;
+            case Opcode.ATan:
+                StoreFloat(ops[1], MathF.Atan(GlulxFloat.Decode(a[0])));
+                break;
+            case Opcode.ATan2:
+                StoreFloat(ops[2], MathF.Atan2(GlulxFloat.Decode(a[0]), GlulxFloat.Decode(a[1])));
+                break;
+
+            // [glulx #opcodes_floatbranch] NaN compares false to
+            // everything, and +0 equals -0, as the platform has it.
+            case Opcode.JIsNaN:
+                BranchIf(GlulxFloat.IsNaN(a[0]), a[1], next);
+                break;
+            case Opcode.JIsInf:
+                BranchIf(GlulxFloat.IsInfinity(a[0]), a[1], next);
+                break;
+            case Opcode.JFeq:
+                BranchIf(GlulxFloat.NearlyEqual(GlulxFloat.Decode(a[0]), GlulxFloat.Decode(a[1]), GlulxFloat.Decode(a[2])), a[3], next);
+                break;
+            case Opcode.JFne:
+                BranchIf(!GlulxFloat.NearlyEqual(GlulxFloat.Decode(a[0]), GlulxFloat.Decode(a[1]), GlulxFloat.Decode(a[2])), a[3], next);
+                break;
+            case Opcode.JFlt:
+                BranchIf(GlulxFloat.Decode(a[0]) < GlulxFloat.Decode(a[1]), a[2], next);
+                break;
+            case Opcode.JFle:
+                BranchIf(GlulxFloat.Decode(a[0]) <= GlulxFloat.Decode(a[1]), a[2], next);
+                break;
+            case Opcode.JFgt:
+                BranchIf(GlulxFloat.Decode(a[0]) > GlulxFloat.Decode(a[1]), a[2], next);
+                break;
+            case Opcode.JFge:
+                BranchIf(GlulxFloat.Decode(a[0]) >= GlulxFloat.Decode(a[1]), a[2], next);
+                break;
+
+            // [glulx #opcodes_double] Two operands per double: the high
+            // word read first and the low word written first.
+            case Opcode.NumToD:
+                StoreDouble(ops[1], ops[2], (int)a[0]);
+                break;
+            case Opcode.DToNumZ:
+                Store(ops[2], GlulxFloat.ToInteger(GlulxFloat.DecodeDouble(a[0], a[1]), false));
+                break;
+            case Opcode.DToNumN:
+                Store(ops[2], GlulxFloat.ToInteger(GlulxFloat.DecodeDouble(a[0], a[1]), true));
+                break;
+            case Opcode.FToD:
+                StoreDouble(ops[1], ops[2], GlulxFloat.Decode(a[0]));
+                break;
+            case Opcode.DToF:
+                StoreFloat(ops[2], (float)GlulxFloat.DecodeDouble(a[0], a[1]));
+                break;
+            case Opcode.DCeil:
+                StoreDouble(ops[2], ops[3], GlulxFloat.Ceiling(GlulxFloat.DecodeDouble(a[0], a[1])));
+                break;
+            case Opcode.DFloor:
+                StoreDouble(ops[2], ops[3], Math.Floor(GlulxFloat.DecodeDouble(a[0], a[1])));
+                break;
+            case Opcode.DAdd:
+                StoreDouble(ops[4], ops[5], GlulxFloat.DecodeDouble(a[0], a[1]) + GlulxFloat.DecodeDouble(a[2], a[3]));
+                break;
+            case Opcode.DSub:
+                StoreDouble(ops[4], ops[5], GlulxFloat.DecodeDouble(a[0], a[1]) - GlulxFloat.DecodeDouble(a[2], a[3]));
+                break;
+            case Opcode.DMul:
+                StoreDouble(ops[4], ops[5], GlulxFloat.DecodeDouble(a[0], a[1]) * GlulxFloat.DecodeDouble(a[2], a[3]));
+                break;
+            case Opcode.DDiv:
+                StoreDouble(ops[4], ops[5], GlulxFloat.DecodeDouble(a[0], a[1]) / GlulxFloat.DecodeDouble(a[2], a[3]));
+                break;
+            case Opcode.DModR:
+                StoreDouble(ops[4], ops[5], GlulxFloat.Modulo(GlulxFloat.DecodeDouble(a[0], a[1]), GlulxFloat.DecodeDouble(a[2], a[3])).Remainder);
+                break;
+            case Opcode.DModQ:
+                StoreDouble(ops[4], ops[5], GlulxFloat.Modulo(GlulxFloat.DecodeDouble(a[0], a[1]), GlulxFloat.DecodeDouble(a[2], a[3])).Quotient);
+                break;
+            case Opcode.DSqrt:
+                StoreDouble(ops[2], ops[3], Math.Sqrt(GlulxFloat.DecodeDouble(a[0], a[1])));
+                break;
+            case Opcode.DExp:
+                StoreDouble(ops[2], ops[3], Math.Exp(GlulxFloat.DecodeDouble(a[0], a[1])));
+                break;
+            case Opcode.DLog:
+                StoreDouble(ops[2], ops[3], Math.Log(GlulxFloat.DecodeDouble(a[0], a[1])));
+                break;
+            case Opcode.DPow:
+                StoreDouble(ops[4], ops[5], GlulxFloat.Pow(GlulxFloat.DecodeDouble(a[0], a[1]), GlulxFloat.DecodeDouble(a[2], a[3])));
+                break;
+            case Opcode.DSin:
+                StoreDouble(ops[2], ops[3], Math.Sin(GlulxFloat.DecodeDouble(a[0], a[1])));
+                break;
+            case Opcode.DCos:
+                StoreDouble(ops[2], ops[3], Math.Cos(GlulxFloat.DecodeDouble(a[0], a[1])));
+                break;
+            case Opcode.DTan:
+                StoreDouble(ops[2], ops[3], Math.Tan(GlulxFloat.DecodeDouble(a[0], a[1])));
+                break;
+            case Opcode.DASin:
+                StoreDouble(ops[2], ops[3], Math.Asin(GlulxFloat.DecodeDouble(a[0], a[1])));
+                break;
+            case Opcode.DACos:
+                StoreDouble(ops[2], ops[3], Math.Acos(GlulxFloat.DecodeDouble(a[0], a[1])));
+                break;
+            case Opcode.DATan:
+                StoreDouble(ops[2], ops[3], Math.Atan(GlulxFloat.DecodeDouble(a[0], a[1])));
+                break;
+            case Opcode.DATan2:
+                StoreDouble(ops[4], ops[5], Math.Atan2(GlulxFloat.DecodeDouble(a[0], a[1]), GlulxFloat.DecodeDouble(a[2], a[3])));
+                break;
+
+            // [glulx #opcodes_doublebranch]
+            case Opcode.JDIsNaN:
+                BranchIf(double.IsNaN(GlulxFloat.DecodeDouble(a[0], a[1])), a[2], next);
+                break;
+            case Opcode.JDIsInf:
+                BranchIf(double.IsInfinity(GlulxFloat.DecodeDouble(a[0], a[1])), a[2], next);
+                break;
+            case Opcode.JDeq:
+                BranchIf(GlulxFloat.NearlyEqual(GlulxFloat.DecodeDouble(a[0], a[1]), GlulxFloat.DecodeDouble(a[2], a[3]), GlulxFloat.DecodeDouble(a[4], a[5])), a[6], next);
+                break;
+            case Opcode.JDne:
+                BranchIf(!GlulxFloat.NearlyEqual(GlulxFloat.DecodeDouble(a[0], a[1]), GlulxFloat.DecodeDouble(a[2], a[3]), GlulxFloat.DecodeDouble(a[4], a[5])), a[6], next);
+                break;
+            case Opcode.JDlt:
+                BranchIf(GlulxFloat.DecodeDouble(a[0], a[1]) < GlulxFloat.DecodeDouble(a[2], a[3]), a[4], next);
+                break;
+            case Opcode.JDle:
+                BranchIf(GlulxFloat.DecodeDouble(a[0], a[1]) <= GlulxFloat.DecodeDouble(a[2], a[3]), a[4], next);
+                break;
+            case Opcode.JDgt:
+                BranchIf(GlulxFloat.DecodeDouble(a[0], a[1]) > GlulxFloat.DecodeDouble(a[2], a[3]), a[4], next);
+                break;
+            case Opcode.JDge:
+                BranchIf(GlulxFloat.DecodeDouble(a[0], a[1]) >= GlulxFloat.DecodeDouble(a[2], a[3]), a[4], next);
+                break;
+
             default:
                 throw new NotSupportedException($"The {info.Name} opcode is not built yet.");
         }
@@ -691,6 +889,17 @@ public sealed class GlulxMachine
             default:
                 throw new GlulxException($"Cannot store to a {operand.Kind} operand.");
         }
+    }
+
+    private void StoreFloat(Operand operand, float value) => Store(operand, GlulxFloat.Encode(value));
+
+    // [glulx #opcodes_double] The low word is written first, so that a
+    // pair pushed on the stack has its high word on top.
+    private void StoreDouble(Operand low, Operand high, double value)
+    {
+        var (highWord, lowWord) = GlulxFloat.EncodeDouble(value);
+        Store(low, lowWord);
+        Store(high, highWord);
     }
 
     private uint ReadMemory(uint address, int size) => size switch
@@ -1257,8 +1466,9 @@ public sealed class GlulxMachine
         // interpreter can honestly give so far. A feature answers 1
         // only once the opcodes behind it exist: Unicode does, since
         // the E2 strings, the Unicode nodes, streamunichar, and the
-        // type 14 stub are all there, and Undo and ExtUndo do, since
-        // saveundo, restoreundo, hasundo, and discardundo are.
+        // type 14 stub are all there, Undo and ExtUndo do, since
+        // saveundo, restoreundo, hasundo, and discardundo are, and Float
+        // and Double do, since every float and double opcode is.
         0 => GlulxHeader.SpecificationVersion,
         1 => InterpreterVersion,
         2 => 1,
@@ -1270,9 +1480,9 @@ public sealed class GlulxMachine
         8 => 0,
         9 => 0,
         10 => 0,
-        11 => 0,
+        11 => 1,
         12 => 1,
-        13 => 0,
+        13 => 1,
         _ => 0,
     };
 
