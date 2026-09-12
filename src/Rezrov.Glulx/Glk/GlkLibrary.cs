@@ -391,6 +391,36 @@ public sealed partial class GlkLibrary
                 call.Out(1, 0);
                 call.Result = 0;
                 break;
+            case 0x00F2: // schannel_create
+            case 0x00F4: // schannel_create_ext
+                // [glk #sound_channels] Creating a channel can fail and
+                // return null, which it always does here, as
+                // gestalt_Sound warns beforehand.
+                call.Result = 0;
+                break;
+            case 0x00F3: // schannel_destroy
+            case 0x00FC: // sound_load_hint
+                // [glk #sound_channels] and [glk #sound_playing] There
+                // is nothing to destroy, and a loading hint is only a
+                // hint.
+                break;
+            case 0x00F7: // schannel_play_multi
+                // [glk #sound_playing] Nothing started.
+                call.Result = 0;
+                break;
+            case 0x00F1: // schannel_get_rock
+            case 0x00F8: // schannel_play
+            case 0x00F9: // schannel_play_ext
+            case 0x00FA: // schannel_stop
+            case 0x00FB: // schannel_set_volume
+            case 0x00FD: // schannel_set_volume_ext
+            case 0x00FE: // schannel_pause
+            case 0x00FF: // schannel_unpause
+                // [glk #sound_playing] No channel was ever created, so
+                // whatever the game passes is not one.
+                Warn($"{call.Function.Name}: invalid sound channel id {call.ObjectId(0)}.");
+                call.Result = 0;
+                break;
 
             case 0x0080: // put_char
                 PutChar(call.Arg(0) & 0xFF);
@@ -522,6 +552,26 @@ public sealed partial class GlkLibrary
             case 0x0101: // set_hyperlink_stream
                 // [glk #graphics_textbuf] and [glk #link_creating] Both
                 // are hints a plain text display can do nothing with.
+                break;
+
+            case 0x00E0: // image_get_info
+            case 0x00E1: // image_draw
+            case 0x00E2: // image_draw_scaled
+            case 0x00EC: // image_draw_scaled_ext
+                // [glk #graphics_testing] gestalt_Graphics answers zero,
+                // which tells a game not to call these. Several call
+                // them at startup anyway, so they are answered the way
+                // a text-only library answers: nothing drawn, a false
+                // result, and a note of it, rather than a stop.
+                Warn($"{call.Function.Name}: graphics are not supported.");
+                call.Result = 0;
+                break;
+            case 0x00E9: // window_erase_rect
+            case 0x00EA: // window_fill_rect
+            case 0x00EB: // window_set_background_color
+                // [glk #graphics_graphics] The same for painting a
+                // graphics window, of which there are none to paint.
+                Warn($"{call.Function.Name}: graphics are not supported.");
                 break;
 
             case 0x0120: // buffer_to_lower_case_uni
@@ -1413,7 +1463,8 @@ public sealed partial class GlkLibrary
     {
         if (stream is null)
         {
-            Warn("put_char: no current output stream.");
+            // [glk op:stream_set_current] The current stream can be set
+            // to nothing, and then what is printed goes nowhere.
             return;
         }
 
@@ -1427,11 +1478,10 @@ public sealed partial class GlkLibrary
     }
 
     /// <summary>[glk op:set_style] Changes a stream's style.</summary>
-    public void SetStyle(GlkStream? stream, GlkStyle style)
+    public static void SetStyle(GlkStream? stream, GlkStyle style)
     {
         if (stream is null)
         {
-            Warn("set_style: no current output stream.");
             return;
         }
 

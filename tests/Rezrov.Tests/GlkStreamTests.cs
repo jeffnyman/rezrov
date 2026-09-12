@@ -99,12 +99,15 @@ public class GlkStreamTests
     }
 
     [Fact]
-    public void PrintingNeedsACurrentOutputStream()
+    public void PrintingWithNoCurrentStreamGoesNowhere()
     {
         var (glk, memory) = Library();
 
+        // [glk op:stream_set_current] No current stream is a state the
+        // spec allows, so printing then is not a mistake to warn about.
         glk.PutChar('x');
-        Assert.Contains(glk.Warnings, w => w.Contains("no current output stream", StringComparison.Ordinal));
+        GlkLibrary.SetStyle(null, GlkStyle.Emphasized);
+        Assert.Empty(glk.Warnings);
 
         var input = glk.OpenMemoryStream(memory, Buffer, 4, false, FileMode.Read, 0)!;
         glk.PutChar(input, 'x');

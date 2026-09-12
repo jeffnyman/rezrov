@@ -265,9 +265,9 @@ public class GlkWindowTests
 
         glk.SetCurrentStream(story.Stream);
         glk.PutChar('H');
-        glk.SetStyle(story.Stream, GlkStyle.Header);
+        GlkLibrary.SetStyle(story.Stream, GlkStyle.Header);
         glk.PutChar(0x3B1);
-        glk.SetStyle(story.Stream, (GlkStyle)99);
+        GlkLibrary.SetStyle(story.Stream, (GlkStyle)99);
         glk.PutChar('!');
         story.Clear();
 
@@ -286,7 +286,7 @@ public class GlkWindowTests
         var other = glk.OpenWindow(story, WindowMethod.Below | WindowMethod.Proportional, 50, WindowType.TextBuffer, 2)!;
 
         glk.SetEchoStream(story, other.Stream);
-        glk.SetStyle(story.Stream, GlkStyle.Alert);
+        GlkLibrary.SetStyle(story.Stream, GlkStyle.Alert);
         glk.PutChar(story.Stream, 'x');
 
         // [glk #echo_streams] The echo is one way, and includes styles.
