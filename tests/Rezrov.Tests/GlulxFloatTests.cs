@@ -34,6 +34,32 @@ public class GlulxFloatTests
 
     private static uint F(float value) => GlulxFloat.Encode(value);
 
+    /// <summary>
+    /// [glulx #opcodes_float] An inexact result may differ in its last
+    /// bit from one platform's math library to another's, as pi does
+    /// between 40490FDA and 40490FDB, so a transcendental result is
+    /// checked to within one unit in the last place. A zero is checked
+    /// exactly, sign and all.
+    /// </summary>
+    private static void AssertNear(float expected, uint actual)
+    {
+        if (expected == 0)
+        {
+            Assert.Equal(F(expected), actual);
+            return;
+        }
+
+        var decoded = GlulxFloat.Decode(actual);
+        Assert.True(
+            decoded == expected || decoded == MathF.BitIncrement(expected) || decoded == MathF.BitDecrement(expected),
+            $"Expected {F(expected):X8} or a neighbor, got {actual:X8}.");
+    }
+
+    private static void AssertNear(double expected, double actual) =>
+        Assert.True(
+            actual == expected || actual == Math.BitIncrement(expected) || actual == Math.BitDecrement(expected),
+            $"Expected {expected:R} or a neighbor, got {actual:R}.");
+
     private static (uint High, uint Low) D(double value) => GlulxFloat.EncodeDouble(value);
 
     /// <summary>
@@ -239,10 +265,10 @@ public class GlulxFloatTests
         Assert.True(GlulxFloat.IsNaN(Unary(Opcode.Tan, Inf)));
         Assert.True(GlulxFloat.IsNaN(Unary(Opcode.ASin, Two)));
         Assert.True(GlulxFloat.IsNaN(Unary(Opcode.ACos, MinusTwo)));
-        Assert.Equal(F(MathF.PI / 2), Unary(Opcode.ATan, Inf));
-        Assert.Equal(F(-MathF.PI / 2), Unary(Opcode.ATan, MinusInf));
+        AssertNear(MathF.PI / 2, Unary(Opcode.ATan, Inf));
+        AssertNear(-MathF.PI / 2, Unary(Opcode.ATan, MinusInf));
         Assert.Equal(0u, Unary(Opcode.ASin, 0));
-        Assert.Equal(F(MathF.PI / 2), Unary(Opcode.ACos, 0));
+        AssertNear(MathF.PI / 2, Unary(Opcode.ACos, 0));
     }
 
     [Theory]
@@ -256,18 +282,18 @@ public class GlulxFloatTests
     public void ATan2HonorsItsSpecialCases(float y, float x, float expected)
     {
         // [glulx op:atan2] Y first, X second, and the list.
-        Assert.Equal(F(expected), Binary(Opcode.ATan2, F(y), F(x)));
+        AssertNear(expected, Binary(Opcode.ATan2, F(y), F(x)));
     }
 
     [Fact]
     public void ATan2DistinguishesTheSignsOfZero()
     {
         // [glulx op:atan2] The cases where the sign of a zero matters.
-        Assert.Equal(F(MathF.PI), Binary(Opcode.ATan2, 0, MinusZero));
-        Assert.Equal(F(-MathF.PI), Binary(Opcode.ATan2, MinusZero, MinusZero));
+        AssertNear(MathF.PI, Binary(Opcode.ATan2, 0, MinusZero));
+        AssertNear(-MathF.PI, Binary(Opcode.ATan2, MinusZero, MinusZero));
         Assert.Equal(0u, Binary(Opcode.ATan2, 0, 0));
         Assert.Equal(MinusZero, Binary(Opcode.ATan2, MinusZero, 0));
-        Assert.Equal(F(-MathF.PI / 2), Binary(Opcode.ATan2, 0xBF800000, MinusZero));
+        AssertNear(-MathF.PI / 2, Binary(Opcode.ATan2, 0xBF800000, MinusZero));
         Assert.Equal(MinusZero, Binary(Opcode.ATan2, 0xBF800000, Inf));
     }
 
@@ -407,9 +433,9 @@ public class GlulxFloatTests
         Assert.Equal(1.0, DUnary(Opcode.DCos, 0));
         Assert.Equal(0.0, DUnary(Opcode.DTan, 0));
         Assert.Equal(0.0, DUnary(Opcode.DASin, 0));
-        Assert.Equal(Math.PI / 2, DUnary(Opcode.DACos, 0));
-        Assert.Equal(Math.PI / 2, DUnary(Opcode.DATan, double.PositiveInfinity));
-        Assert.Equal(Math.PI / 4, DBinary(Opcode.DATan2, double.PositiveInfinity, double.PositiveInfinity));
+        AssertNear(Math.PI / 2, DUnary(Opcode.DACos, 0));
+        AssertNear(Math.PI / 2, DUnary(Opcode.DATan, double.PositiveInfinity));
+        AssertNear(Math.PI / 4, DBinary(Opcode.DATan2, double.PositiveInfinity, double.PositiveInfinity));
         Assert.Equal(1.0, DUnary(Opcode.DCeil, 0.5));
         Assert.True(double.IsNegative(DUnary(Opcode.DCeil, -0.5)));
         Assert.Equal(-1.0, DUnary(Opcode.DFloor, -0.5));
