@@ -1,0 +1,39 @@
+# Dependabot keeps the pinned versions moving: the NuGet packages in
+# Directory.Packages.props, the actions the workflows use, and the
+# entharion reference-material pin. Every pull request title goes through
+# the commit-msg hook, so each update names a prefix the hook accepts, and
+# the packages and the actions are grouped so that one week's updates
+# make one short-titled pull request each.
+
+version: 2
+updates:
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      nuget:
+        patterns: ["*"]
+    commit-message:
+      prefix: "build(deps)"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: "build(deps)"
+
+  # The entharion reference-material pin. Dependabot proposes moving it to
+  # the latest upstream commit; whether and when to merge stays a human
+  # decision. CI never fetches the submodule, so these PRs are cheap.
+  - package-ecosystem: "gitsubmodule"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
