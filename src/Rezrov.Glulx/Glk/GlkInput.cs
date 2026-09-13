@@ -17,6 +17,12 @@ public enum GlkInputKind
     Timer,
 
     /// <summary>
+    /// [glk #arrange_events] The player changed the display's size, so
+    /// the windows need laying out again.
+    /// </summary>
+    Arrange,
+
+    /// <summary>
     /// There will never be any input: the player has gone, or the
     /// input was a file that ran out.
     /// </summary>
@@ -42,6 +48,9 @@ public sealed record GlkInput(GlkInputKind Kind, GlkWindow? Window, string? Text
     public static GlkInput Ended { get; } = new(GlkInputKind.Ended, null, null, 0, 0);
 
     public static GlkInput Timer { get; } = new(GlkInputKind.Timer, null, null, 0, 0);
+
+    /// <summary>[glk #arrange_events] The display changed size.</summary>
+    public static GlkInput Arrange { get; } = new(GlkInputKind.Arrange, null, null, 0, 0);
 
     public static GlkInput Line(GlkWindow window, string text, uint terminator = 0) =>
         new(GlkInputKind.Line, window, text, 0, terminator);

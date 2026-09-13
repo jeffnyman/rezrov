@@ -20,6 +20,7 @@ public sealed class DiskGlkFileSystem : IGlkFileSystem
     private readonly string _directory;
     private readonly TextReader _reader;
     private readonly TextWriter _prompt;
+    private readonly Func<FileUsage, FileMode, string?>? _ask;
 
     /// <param name="directory">Where files without a path live.</param>
     /// <param name="reader">
@@ -38,6 +39,18 @@ public sealed class DiskGlkFileSystem : IGlkFileSystem
     }
 
     /// <summary>
+    /// A file system that asks the player through
+    /// <paramref name="ask"/>, which a frontend with dialogs supplies,
+    /// rather than through a prompt and a reader.
+    /// </summary>
+    public DiskGlkFileSystem(string directory, Func<FileUsage, FileMode, string?> ask)
+        : this(directory)
+    {
+        ArgumentNullException.ThrowIfNull(ask);
+        _ask = ask;
+    }
+
+    /// <summary>
     /// Names given up front for each usage, used for a prompt of that
     /// usage instead of asking.
     /// </summary>
@@ -48,6 +61,11 @@ public sealed class DiskGlkFileSystem : IGlkFileSystem
         if (NamedFiles.TryGetValue(usage, out var named))
         {
             return named;
+        }
+
+        if (_ask is not null)
+        {
+            return _ask(usage, mode);
         }
 
         // [glk op:fileref_create_by_prompt] The prompt is inferred from

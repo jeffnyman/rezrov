@@ -1,5 +1,8 @@
 using Rezrov.Core;
 using Rezrov.Core.Blorb;
+using Rezrov.Glulx;
+using Rezrov.Glulx.Execution;
+using Rezrov.Glulx.Glk;
 using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
 using Rezrov.ZMachine.Text;
@@ -90,9 +93,14 @@ internal static class Program
                     return 1;
                 }
 
+                if (packaged.Executable is { ChunkType: "GLUL" } glulx)
+                {
+                    return PlayGlulx(glulx.Data.ToArray(), packaged, path, new TerminalFiles.Presets(transcript, record, save, commands), seed);
+                }
+
                 if (packaged.Executable is not { ChunkType: "ZCOD" } executable)
                 {
-                    Console.Error.WriteLine($"rezrov-tui: {Path.GetFileName(path)} has no Z-code game in it");
+                    Console.Error.WriteLine($"rezrov-tui: {Path.GetFileName(path)} has no game in it");
                     return 1;
                 }
 
@@ -102,8 +110,10 @@ internal static class Program
             case StoryFormat.ZMachine:
                 resources = FindResources(path, blorb);
                 break;
+            case StoryFormat.Glulx:
+                return PlayGlulx(bytes, FindResources(path, blorb), path, new TerminalFiles.Presets(transcript, record, save, commands), seed);
             default:
-                Console.Error.WriteLine($"rezrov-tui: only Z-machine story files can be run yet");
+                Console.Error.WriteLine($"rezrov-tui: only Z-machine and Glulx story files can be run");
                 return 1;
         }
 
@@ -128,7 +138,7 @@ internal static class Program
 
         var window = new Window { Title = title };
         var keys = new KeyMap(UnicodeTranslationTable.ForStory(header, memory));
-        var view = new GameView(keys, () => app.RequestStop());
+        var view = new GameView(() => app.RequestStop());
         window.Add(view);
 
         // The terminal's size is only known once the view is drawn, and
@@ -155,8 +165,18 @@ internal static class Program
             input = header.Version == ZMachineVersion.V6
                 ? new TerminalInput(screen, screen.FontWidth, screen.FontHeight)
                 : new TerminalInput(screen);
-            view.Screen = screen;
-            view.Input = input;
+            view.Picture = screen;
+            view.KeyPressed = key =>
+            {
+                if (keys.ToZscii(key) is not { } zscii)
+                {
+                    return false;
+                }
+
+                input.Enqueue(zscii);
+                return true;
+            };
+            view.Clicked = input.EnqueueClick;
 
             // [zm 2.4.2] A seed makes the game's random numbers
             // predictable, so a session can be played again the same way.
@@ -233,6 +253,132 @@ internal static class Program
             foreach (var error in interpreter.RuntimeErrors)
             {
                 Console.Error.WriteLine($"rezrov-tui: {error}");
+            }
+        }
+
+        return ending is null || !ending.StartsWith("Stopped", StringComparison.Ordinal) ? 0 : 3;
+    }
+
+    /// <summary>
+    /// Runs a Glulx game on the terminal: the Glk display over the
+    /// screen model, files through dialogs, and the machine on a worker
+    /// thread, the way the Z-machine runs.
+    /// </summary>
+    private static int PlayGlulx(byte[] bytes, BlorbFile? resources, string path, TerminalFiles.Presets presets, int? seed)
+    {
+        GlulxMemory memory;
+        try
+        {
+            memory = new GlulxMemory(bytes);
+        }
+        catch (InvalidDataException e)
+        {
+            Console.Error.WriteLine($"rezrov-tui: {e.Message}");
+            return 1;
+        }
+
+        var directory = Path.GetDirectoryName(Path.GetFullPath(path)) ?? Directory.GetCurrentDirectory();
+        using var app = Application.Create().Init();
+        var window = new Window { Title = Path.GetFileName(path) };
+        var view = new GameView(() => app.RequestStop());
+        window.Add(view);
+
+        GlkLibrary? glk = null;
+        string? ending = null;
+        view.Ready = (width, height) =>
+        {
+            var commands = presets.Commands is not null && File.Exists(presets.Commands) ? new StreamReader(presets.Commands) : null;
+            var display = new TerminalGlkDisplay(width, height, () => app.Invoke(() => view.SetNeedsDraw()), commands);
+            view.Picture = display;
+            view.KeyPressed = key =>
+            {
+                if (GlkKeyMap.ToGlk(key) is not { } code)
+                {
+                    return false;
+                }
+
+                display.Enqueue(code);
+                return true;
+            };
+
+            // [glk op:fileref_create_by_prompt] The player is asked
+            // through the same dialogs the Z-machine uses, with the
+            // usage as the title; files named up front are never asked
+            // about.
+            var dialogs = new TerminalFiles(app, presets);
+            var files = new DiskGlkFileSystem(directory, (usage, mode) =>
+            {
+                var title = usage switch
+                {
+                    FileUsage.SavedGame => "Saved game",
+                    FileUsage.Transcript => "Transcript file",
+                    FileUsage.InputRecord => "Command record file",
+                    _ => "Data file",
+                };
+                return mode == Rezrov.Glulx.Glk.FileMode.Read ? dialogs.AskForOpen(title) : dialogs.AskForSave(title);
+            });
+            if (presets.Transcript is not null)
+            {
+                files.NamedFiles[FileUsage.Transcript] = Path.GetFullPath(presets.Transcript);
+            }
+
+            if (presets.Record is not null)
+            {
+                files.NamedFiles[FileUsage.InputRecord] = Path.GetFullPath(presets.Record);
+            }
+
+            if (presets.Save is not null)
+            {
+                files.NamedFiles[FileUsage.SavedGame] = Path.GetFullPath(presets.Save);
+            }
+
+            var library = new GlkLibrary(display, files) { Resources = resources };
+            glk = library;
+            var machine = new GlulxMachine(memory, seed is { } s ? new GlulxRandom((uint)s) : null, library);
+
+            var worker = new Thread(() =>
+            {
+                try
+                {
+                    machine.Run();
+                }
+                catch (NotSupportedException e)
+                {
+                    ending = $"Stopped: {e.Message}";
+                }
+                catch (GlulxException e)
+                {
+                    ending = $"Error: {e.Message}";
+                }
+                catch (EndOfStreamException)
+                {
+                    // The game waited on nothing, which is its end.
+                }
+                finally
+                {
+                    library.CloseFiles();
+                    commands?.Dispose();
+                }
+
+                display.Notice(ending is null ? "[The game has ended. Press a key to leave.]" : $"{ending} Press a key to leave.");
+                app.Invoke(() => app.RequestStop());
+            })
+            {
+                IsBackground = true,
+                Name = "Glulx",
+            };
+            worker.Start();
+        };
+
+        app.Run(window);
+        window.Dispose();
+
+        // What the library noticed, once the terminal is ordinary again.
+        if (glk is not null)
+        {
+            foreach (var warning in glk.Warnings)
+            {
+                Console.Error.WriteLine($"rezrov-tui: glk: {warning}");
             }
         }
 

@@ -25,6 +25,25 @@ public class DiskGlkFileSystemTests : IDisposable
     private string PathOf(string name) => Path.Combine(_directory, name);
 
     [Fact]
+    public void AFrontendCanAnswerThePromptItself()
+    {
+        var asked = new List<(FileUsage, FileMode)>();
+        var files = new DiskGlkFileSystem(_directory, (usage, mode) =>
+        {
+            asked.Add((usage, mode));
+            return usage == FileUsage.SavedGame ? "game.glksave" : null;
+        });
+        files.NamedFiles[FileUsage.Transcript] = "script.txt";
+
+        // A named file is never asked about; the rest go to the
+        // frontend, which may answer with nothing.
+        Assert.Equal("script.txt", files.AskForFile(FileUsage.Transcript, FileMode.Write));
+        Assert.Equal("game.glksave", files.AskForFile(FileUsage.SavedGame, FileMode.Read));
+        Assert.Null(files.AskForFile(FileUsage.Data, FileMode.Write));
+        Assert.Equal([(FileUsage.SavedGame, FileMode.Read), (FileUsage.Data, FileMode.Write)], asked);
+    }
+
+    [Fact]
     public void OpensFilesByTheGlkRules()
     {
         var files = new DiskGlkFileSystem(_directory);

@@ -51,6 +51,13 @@ public sealed class GlkScreen
     public GlkWindow? Root => _root;
 
     /// <summary>
+    /// Cells painted over everything else, from a row and column: the
+    /// line being typed into a text grid, whose cells belong to the
+    /// library, or a prompt to the player. Null for none.
+    /// </summary>
+    public (int Row, int Column, IReadOnlyList<Cell> Cells)? Overlay { get; set; }
+
+    /// <summary>
     /// The cell at a row and column, both from 0, as last painted.
     /// </summary>
     public Cell this[int row, int column] => _rows[row][column];
@@ -106,6 +113,30 @@ public sealed class GlkScreen
         {
             pane.Put(ToChar(character), Attributes(style, _normal));
         }
+    }
+
+    /// <summary>
+    /// Takes back the last character typed into a text buffer window.
+    /// </summary>
+    public void Backspace(GlkWindow window)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+
+        if (_panes.TryGetValue(window, out var pane))
+        {
+            pane.Backspace();
+        }
+    }
+
+    /// <summary>
+    /// How many lines a text buffer window's text wraps to, or zero
+    /// for any other window.
+    /// </summary>
+    public int LineCount(GlkWindow window)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+
+        return _panes.TryGetValue(window, out var pane) ? pane.LineCount : 0;
     }
 
     /// <summary>[glk op:window_clear] A window was cleared.</summary>
@@ -204,6 +235,14 @@ public sealed class GlkScreen
                     break;
                 default:
                     break;
+            }
+        }
+
+        if (Overlay is { } overlay)
+        {
+            for (var i = 0; i < overlay.Cells.Count; i++)
+            {
+                Paint(overlay.Row, overlay.Column + i, overlay.Cells[i]);
             }
         }
     }

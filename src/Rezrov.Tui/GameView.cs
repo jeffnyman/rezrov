@@ -13,33 +13,32 @@ using ZStyle = Rezrov.ZMachine.Screen.TextStyle;
 namespace Rezrov.Tui;
 
 /// <summary>
-/// The view that paints the game's screen buffer and hands keys to the
-/// interpreter.
+/// The view that paints the game's picture of the screen and hands keys
+/// to the interpreter.
 /// </summary>
 /// <remarks>
-/// One view, no widgets: the Z-machine already decided what goes where,
+/// One view, no widgets: the machine already decided what goes where,
 /// so all that is left is to draw the cells with their styles and
-/// colors and to put the terminal's cursor where the game's is.
+/// colors and to put the terminal's cursor where the game's is. Which
+/// machine is behind the picture makes no difference here, since both
+/// come down to an <see cref="ITerminalPicture"/>.
 ///
 /// The terminal's size is not known until the view is first laid out
 /// and drawn, and [zm 8.4] the game must be told its screen size before
 /// it starts, so the game does not start until then: the first draw
 /// with a real viewport calls <see cref="Ready"/>, which builds the
-/// screen and the interpreter to that size and hands them back through
-/// <see cref="Screen"/> and <see cref="Input"/>. A later change of size
-/// is passed on to the screen buffer.
+/// picture and the interpreter to that size and hands the picture back
+/// through <see cref="Picture"/>. A later change of size is passed on
+/// to the picture.
 /// </remarks>
 public sealed class GameView : View
 {
-    private readonly KeyMap _keys;
     private readonly Action _quit;
 
-    public GameView(KeyMap keys, Action quit)
+    public GameView(Action quit)
     {
-        ArgumentNullException.ThrowIfNull(keys);
         ArgumentNullException.ThrowIfNull(quit);
 
-        _keys = keys;
         _quit = quit;
 
         CanFocus = true;
@@ -57,17 +56,27 @@ public sealed class GameView : View
     public Action<int, int>? Ready { get; set; }
 
     /// <summary>
-    /// The screen being painted, once the game has started.
+    /// The picture being painted, once the game has started.
     /// </summary>
-    public TerminalScreen? Screen { get; set; }
+    public ITerminalPicture? Picture { get; set; }
 
-    /// <summary>Where keys go, once the game has started.</summary>
-    public TerminalInput? Input { get; set; }
+    /// <summary>
+    /// Takes a key for the game, answering whether it was one the game
+    /// can use.
+    /// </summary>
+    public Func<Key, bool>? KeyPressed { get; set; }
+
+    /// <summary>
+    /// Takes a click for the game: its column and row, whether it was a
+    /// double click, and its buttons, bit 0 primary, bit 1 secondary,
+    /// bit 2 middle.
+    /// </summary>
+    public Action<int, int, bool, int>? Clicked { get; set; }
 
     // [zm 10.3] A click is input like a key, with its position.
     private void OnMouse(object? sender, Mouse mouse)
     {
-        if (Input is not { } input || !(mouse.IsSingleClicked || mouse.IsDoubleClicked) || mouse.Position is not { } position)
+        if (Clicked is not { } clicked || !(mouse.IsSingleClicked || mouse.IsDoubleClicked) || mouse.Position is not { } position)
         {
             return;
         }
@@ -90,7 +99,7 @@ public sealed class GameView : View
             buttons |= 4;
         }
 
-        input.EnqueueClick(position.X, position.Y, mouse.IsDoubleClicked, buttons == 0 ? 1 : buttons);
+        clicked(position.X, position.Y, mouse.IsDoubleClicked, buttons == 0 ? 1 : buttons);
         mouse.Handled = true;
     }
 
@@ -104,9 +113,8 @@ public sealed class GameView : View
             return;
         }
 
-        if (Input is { } input && _keys.ToZscii(key) is { } zscii)
+        if (KeyPressed is { } pressed && pressed(key))
         {
-            input.Enqueue(zscii);
             key.Handled = true;
         }
     }
@@ -120,37 +128,37 @@ public sealed class GameView : View
             return true;
         }
 
-        if (Screen is null)
+        if (Picture is null)
         {
             var ready = Ready;
             Ready = null;
             ready?.Invoke(width, height);
-            if (Screen is null)
+            if (Picture is null)
             {
                 return true;
             }
         }
 
-        var screen = Screen;
-        if (screen.Width != width || screen.Height != height)
+        var picture = Picture;
+        if (picture.Width != width || picture.Height != height)
         {
-            screen.Resize(width, height);
+            picture.Resize(width, height);
         }
 
-        lock (screen.Sync)
+        lock (picture.Sync)
         {
-            var buffer = screen.Buffer;
+            picture.Repaint();
             var run = new StringBuilder();
 
-            for (var row = 0; row < Math.Min(buffer.Height, height); row++)
+            for (var row = 0; row < Math.Min(picture.Height, height); row++)
             {
                 Move(0, row);
                 TextAttributes? current = null;
                 run.Clear();
 
-                for (var column = 0; column < Math.Min(buffer.Width, width); column++)
+                for (var column = 0; column < Math.Min(picture.Width, width); column++)
                 {
-                    var cell = buffer[row, column];
+                    var cell = picture[row, column];
                     if (current is { } attributes && attributes != cell.Attributes)
                     {
                         SetAttribute(Translate(attributes));
@@ -178,20 +186,21 @@ public sealed class GameView : View
             // one, since a blinking block is a distraction in a game
             // that is all reading. The style is set outright, since the
             // toolkit's default depends on the driver.
-            var cursor = ViewportToScreen(new Point(Math.Min(buffer.CursorColumn, buffer.Width - 1), buffer.CursorRow));
-            Cursor = new Cursor { Position = cursor, Style = buffer.CursorVisible ? CursorStyle.SteadyBlock : CursorStyle.Hidden };
+            if (picture.Cursor is { } at)
+            {
+                var cursor = ViewportToScreen(new Point(Math.Min(at.Column, picture.Width - 1), at.Row));
+                Cursor = new Cursor { Position = cursor, Style = CursorStyle.SteadyBlock };
+            }
+            else
+            {
+                Cursor = new Cursor { Position = ViewportToScreen(new Point(0, 0)), Style = CursorStyle.Hidden };
+            }
         }
 
         SetCursorNeedsUpdate();
         return true;
     }
 
-    /// <summary>
-    /// The model's attributes as the terminal's: [zm 8.3.1] the color
-    /// numbers to the sixteen terminal colors, and [zm 8.7.1] the styles
-    /// to the terminal's, with fixed pitch meaning nothing on a screen
-    /// that is nothing else.
-    /// </summary>
     private static TuiAttribute Translate(TextAttributes attributes)
     {
         var style = TuiStyle.None;

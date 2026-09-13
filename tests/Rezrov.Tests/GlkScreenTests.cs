@@ -221,6 +221,51 @@ public class GlkScreenTests
     }
 
     [Fact]
+    public void ThePaneCountsLinesAndTakesBackCharacters()
+    {
+        var pane = new TextPane();
+        pane.Resize(5);
+        Assert.Equal(1, pane.LineCount);
+
+        foreach (var character in "ab cd ef\ngh")
+        {
+            pane.Put(character, Normal);
+        }
+
+        // "ab cd" fills a line, "ef" is a second, and "gh" on the open
+        // paragraph is the third.
+        Assert.Equal(3, pane.LineCount);
+
+        pane.Backspace();
+        pane.Backspace();
+        pane.Backspace();
+        Assert.Equal(3, pane.LineCount);
+        Assert.Equal((2, 0), pane.Cursor(4));
+
+        pane.Resize(10);
+        Assert.Equal(2, pane.LineCount);
+        pane.Clear();
+        Assert.Equal(1, pane.LineCount);
+    }
+
+    [Fact]
+    public void AnOverlayIsPaintedOverEverything()
+    {
+        var (glk, screen) = Library();
+        var story = glk.OpenWindow(null, 0, 0, GlkWindowType.TextBuffer, 1)!;
+        Print(glk, story, "underneath");
+
+        screen.Overlay = (0, 5, [new Cell('X', Normal), new Cell('Y', Normal)]);
+        Assert.Equal("underXYath          ", Row(screen, 0));
+        Assert.Equal(10, screen.LineCount(story) + 9);
+
+        screen.Overlay = null;
+        screen.Backspace(story);
+        Assert.Equal("underneat           ", Row(screen, 0));
+        Assert.Equal(0, screen.LineCount(glk.OpenWindow(story, WindowMethod.Above | WindowMethod.Fixed, 1, GlkWindowType.TextGrid, 2)!));
+    }
+
+    [Fact]
     public void ThePaneKeepsAScrollbackButNotForever()
     {
         var pane = new TextPane();

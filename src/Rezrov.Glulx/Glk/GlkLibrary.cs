@@ -1122,6 +1122,13 @@ public sealed partial class GlkLibrary
                     return new GlkEvent(EventType.CharInput, window, key, 0);
                 }
 
+                case GlkInputKind.Arrange:
+                    // [glk #arrange_events] The windows are laid out again
+                    // for the new size first, and then the game hears of
+                    // it, with a null window since every window may have
+                    // changed.
+                    Arrange();
+                    return new GlkEvent(EventType.Arrange, null, 0, 0);
                 case GlkInputKind.Ended:
                     throw new EndOfStreamException("The input ended while the game was waiting for the player.");
 

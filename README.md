@@ -12,7 +12,7 @@ Two platform notes. On macOS the executables are not signed, so the first run is
 
 ## Using
 
-Rezrov comes as two programs over one interpreter. `rezrov` is the command line program: give it a story file and it tells you about the file; add `--run` and it plays the game on the console as a plain stream of text. `rezrov-tui` is the terminal program: give it a story file and it plays the game full screen, with the status line, the upper window, styles, and colors that the console cannot draw.
+Rezrov comes as two programs over one interpreter. `rezrov` is the command line program: give it a story file and it tells you about the file; add `--run` and it plays the game on the console as a plain stream of text. `rezrov-tui` is the terminal program: give it a story file and it plays the game full screen, with the status line, the upper window, styles, and colors that the console cannot draw, and for a Glulx game with its windows laid out as the game splits them.
 
 ```sh
 dotnet run --project src/Rezrov.Cli -- entharion/zcode-infocom/zork1-r88-s840726.z3
@@ -95,6 +95,8 @@ dotnet run --project src/Rezrov.Tui -- entharion/zcode-infocom/zork1-r88-s840726
 This takes over the whole terminal, as Infocom's own interpreters did. A Version 3 game gets its status line across the top, later games get their upper window, and text is shown in the styles and colors the game asks for, as far as the terminal has them. Input is edited in place at the game's own cursor, timed input works, and the [MORE] pause appears when a screenful of text has gone by. Mouse clicks are reported to games that ask for them, as the standard's section 10.3 describes, so Journey's and Zork Zero's menus can be clicked as well as typed. When the game turns on a transcript, saves, or restores, a file dialog asks where. Ctrl+Q leaves at any time, and when the game ends by itself the screen stays until a key is pressed, so the last of the text can be read.
 
 The same `--blorb`, `--commands`, `--transcript`, `--record`, `--save`, `--seed`, and `--interpreter` options work here as on the command line, and a `.zblorb` can be given directly. Version 6 games get their windows laid out on the terminal's grid, with the game measuring in units that are a quarter of a cell across and a whole cell down, which is the shape Infocom's games assume when they have no pictures to draw. The character graphics font of the standard's section 16, which Journey borders its screens with and Beyond Zork draws its map and its runes in, is shown with the nearest Unicode box drawing, block, arrow, and runic characters, as far as the terminal's font has them. What the terminal program does not do yet is play sounds beyond a bleep, since a sound frontend needs a decoder for the Blorb formats, or show pictures, which wait for a graphical frontend.
+
+Glulx games run here too, from a `.ulx` or a `.gblorb`. Their windows are laid out on the terminal as the game splits them: a status line or a menu in a text grid window stays where the game put it, text buffer windows wrap their text and scroll, and side by side windows share the rows. Emphasis shows as italic and headings as bold, input is edited in the window that asked for it, the [MORE] pause works per window, and resizing the terminal lays the windows out again and tells the game, as the Glk specification's arrangement events do. File prompts go through the same dialogs. Graphics windows are not opened, since a terminal has nothing to draw them with, and a game that asks first is told so.
 
 ## Building and Testing
 
