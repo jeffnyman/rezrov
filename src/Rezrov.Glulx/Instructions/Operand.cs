@@ -1,79 +1,62 @@
 namespace Rezrov.Glulx.Instructions;
 
 /// <summary>
-/// Where an operand's value comes from or goes to, once the addressing
-/// mode's data size no longer matters.
+/// What an operand refers to, once its addressing mode has been read:
+/// the mode's size no longer matters, only where the value lives.
 /// </summary>
-/// <remarks>
-/// [glulx #instruction] The modes come in families of three that differ
-/// only in how many bytes encode the constant or address, and executing
-/// an instruction cares about the family alone. Zero is its own kind
-/// for a store operand, where it means discard.
-/// </remarks>
 public enum OperandKind
 {
-    /// <summary>A constant, already sign-extended to 32 bits.</summary>
+    /// <summary>The value itself, sign-extended from its mode.</summary>
     Constant,
 
-    /// <summary>A field in main memory at the operand's address.</summary>
+    /// <summary>A main memory address.</summary>
     Memory,
 
     /// <summary>
-    /// The top of the stack: popped for a load, pushed for a store.
+    /// The top of the stack: a pop to load, a push to store.
     /// </summary>
     Stack,
 
-    /// <summary>
-    /// A field in the current call frame's locals at the operand's
-    /// offset.
-    /// </summary>
+    /// <summary>An offset into the current call frame's locals.</summary>
     Local,
 
-    /// <summary>
-    /// A field in main memory at RAMSTART plus the operand's offset.
-    /// </summary>
+    /// <summary>An offset from the start of RAM.</summary>
     Ram,
 
-    /// <summary>A store operand whose value is thrown away.</summary>
+    /// <summary>
+    /// A store to nowhere: the zero mode as a store operand.
+    /// </summary>
     Discard,
 }
 
 /// <summary>
-/// One operand as it appears in the instruction: an addressing mode,
-/// the constant or address the mode's data bytes held, and whether the
-/// opcode reads it or writes it.
+/// [glulx #instruction] One decoded operand: its addressing mode, the
+/// value read for it, and whether the instruction stores to it. The
+/// kind is worked out once here, since the machine asks for it on
+/// every load and store.
 /// </summary>
-/// <remarks>
-/// [glulx #instruction] Nothing is looked up at decode time: an operand
-/// that names a memory address or a local is still only the address,
-/// and a stack operand has not been popped. Operands are evaluated
-/// left to right when the instruction runs, which matters when several
-/// of them use the stack.
-/// </remarks>
-/// <param name="Mode">How the operand was encoded.</param>
-/// <param name="Value">
-/// The constant, sign-extended, or the address or offset, not.
-/// </param>
-/// <param name="IsStore">
-/// [glulx #dictionary-of-opcodes] Whether this is an S operand of the
-/// opcode rather than an L operand.
-/// </param>
-public readonly record struct Operand(AddressingMode Mode, uint Value, bool IsStore)
+public readonly record struct Operand
 {
-    public OperandKind Kind => Mode switch
+    public Operand(AddressingMode mode, uint value, bool isStore)
     {
-        AddressingMode.Zero when IsStore => OperandKind.Discard,
-        AddressingMode.Zero or AddressingMode.Constant8 or AddressingMode.Constant16 or AddressingMode.Constant32 => OperandKind.Constant,
-        AddressingMode.Memory8 or AddressingMode.Memory16 or AddressingMode.Memory32 => OperandKind.Memory,
-        AddressingMode.Stack => OperandKind.Stack,
-        AddressingMode.Local8 or AddressingMode.Local16 or AddressingMode.Local32 => OperandKind.Local,
-        _ => OperandKind.Ram,
-    };
+        Mode = mode;
+        Value = value;
+        IsStore = isStore;
+        Kind = KindOf(mode, isStore);
+    }
+
+    public AddressingMode Mode { get; }
 
     /// <summary>
-    /// The operand as a disassembler might print it: constants with a
-    /// hash, addresses in brackets, and a store operand behind an arrow.
+    /// The constant, the address, or the offset, as the mode says.
     /// </summary>
+    public uint Value { get; }
+
+    /// <summary>Whether this is a store operand.</summary>
+    public bool IsStore { get; }
+
+    public OperandKind Kind { get; }
+
     public override string ToString()
     {
         var text = Kind switch
@@ -88,4 +71,19 @@ public readonly record struct Operand(AddressingMode Mode, uint Value, bool IsSt
 
         return IsStore ? "->" + text : text;
     }
+
+    /// <summary>
+    /// [glulx #instruction] Mode 0 is the constant zero to load and a
+    /// discard to store; 1 to 3 are constants; 5 to 7 addresses; 8 the
+    /// stack; 9 to B locals; D to F RAM offsets.
+    /// </summary>
+    private static OperandKind KindOf(AddressingMode mode, bool isStore) => mode switch
+    {
+        AddressingMode.Zero when isStore => OperandKind.Discard,
+        AddressingMode.Zero or AddressingMode.Constant8 or AddressingMode.Constant16 or AddressingMode.Constant32 => OperandKind.Constant,
+        AddressingMode.Memory8 or AddressingMode.Memory16 or AddressingMode.Memory32 => OperandKind.Memory,
+        AddressingMode.Stack => OperandKind.Stack,
+        AddressingMode.Local8 or AddressingMode.Local16 or AddressingMode.Local32 => OperandKind.Local,
+        _ => OperandKind.Ram,
+    };
 }
