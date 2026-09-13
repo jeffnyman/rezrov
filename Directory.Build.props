@@ -42,6 +42,23 @@
   </PropertyGroup>
 
   <!--
+    The interpreter libraries are built optimized in every configuration.
+
+    The test suite replays whole games through the interpreters, and an
+    unoptimized Glulx interpreter runs an Inform 7 game about nine times
+    slower than an optimized one, which turned a thirty second test run
+    into several minutes. The programs and the tests stay unoptimized, so
+    debugging a frontend or a test body is unchanged. To step through the
+    interpreters themselves with every local in view, build once with
+    `dotnet build -p:Optimize=false`; a property given on the command line
+    overrides this one.
+  -->
+
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Rezrov.Core' Or '$(MSBuildProjectName)' == 'Rezrov.ZMachine' Or '$(MSBuildProjectName)' == 'Rezrov.Glulx'">
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <!--
     Make .editorconfig mean something at the command line and in CI, not
     only inside an editor.
   -->
