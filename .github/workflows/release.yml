@@ -99,7 +99,7 @@ jobs:
           fi
           rm -r "${package}"
 
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.rid }}
           path: dist/*
@@ -126,7 +126,7 @@ jobs:
             exit 1
           fi
 
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         with:
           path: dist
           merge-multiple: true
