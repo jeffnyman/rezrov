@@ -26,6 +26,7 @@ public sealed class TextPane
     public const int Scrollback = 2000;
 
     private readonly List<Paragraph> _paragraphs = [new Paragraph()];
+    private int? _finishedLines;
 
     /// <summary>The width the paragraphs are wrapped to.</summary>
     public int Width { get; private set; }
@@ -35,13 +36,31 @@ public sealed class TextPane
     /// </summary>
     public int ParagraphCount => _paragraphs.Count;
 
+    /// <summary>
+    /// How many lines the whole buffer wraps to at the current width,
+    /// counting the open paragraph's: what a display compares before
+    /// and after to know how much is new.
+    /// </summary>
+    public int LineCount
+    {
+        get
+        {
+            _finishedLines ??= _paragraphs.Take(_paragraphs.Count - 1).Sum(p => Lines(p).Count);
+            return _finishedLines.Value + Lines(Current).Count;
+        }
+    }
+
     /// <summary>The paragraph being printed to.</summary>
     private Paragraph Current => _paragraphs[^1];
 
     /// <summary>Wraps to a new width from now on.</summary>
     public void Resize(int width)
     {
-        Width = Math.Max(width, 0);
+        if (width != Width)
+        {
+            Width = Math.Max(width, 0);
+            _finishedLines = null;
+        }
     }
 
     /// <summary>
@@ -52,9 +71,19 @@ public sealed class TextPane
     {
         if (character == '\n')
         {
+            if (_finishedLines is { } finished)
+            {
+                _finishedLines = finished + Lines(Current).Count;
+            }
+
             _paragraphs.Add(new Paragraph());
             if (_paragraphs.Count > Scrollback)
             {
+                if (_finishedLines is { } counted)
+                {
+                    _finishedLines = counted - Lines(_paragraphs[0]).Count;
+                }
+
                 _paragraphs.RemoveAt(0);
             }
 
@@ -65,11 +94,25 @@ public sealed class TextPane
         Current.Wrapped = null;
     }
 
+    /// <summary>
+    /// Takes back the last character of the open paragraph, for editing
+    /// input; a finished paragraph is left alone.
+    /// </summary>
+    public void Backspace()
+    {
+        if (Current.Cells.Count > 0)
+        {
+            Current.Cells.RemoveAt(Current.Cells.Count - 1);
+            Current.Wrapped = null;
+        }
+    }
+
     /// <summary>[glk op:window_clear] Forgets everything.</summary>
     public void Clear()
     {
         _paragraphs.Clear();
         _paragraphs.Add(new Paragraph());
+        _finishedLines = 0;
     }
 
     /// <summary>

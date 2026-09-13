@@ -33,6 +33,26 @@ public class GlkInputTests
     }
 
     [Fact]
+    public void AChangeOfSizeIsAnArrangementEvent()
+    {
+        var (glk, display, _, window) = Library();
+        display.Width = 30;
+        display.Height = 8;
+        display.Inputs.Enqueue(GlkInput.Arrange);
+        glk.RequestCharEvent(window, false);
+
+        var result = glk.Select();
+
+        // [glk #arrange_events] The windows are laid out again for the
+        // new size, and the event names no window, since all changed.
+        Assert.Equal(EventType.Arrange, result.Type);
+        Assert.Null(result.Window);
+        Assert.Equal((0u, 0u), (result.Value1, result.Value2));
+        Assert.Equal((30, 8), (window.Width, window.Height));
+        Assert.Equal(2, display.ArrangedCount);
+    }
+
+    [Fact]
     public void ALineGoesIntoTheBufferAndComesBackAsAnEvent()
     {
         var (glk, display, memory, window) = Library();

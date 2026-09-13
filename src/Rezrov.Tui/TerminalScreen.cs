@@ -15,7 +15,7 @@ namespace Rezrov.Tui;
 /// until the input side reports a key, which is exactly the pause the
 /// standard asks for.
 /// </remarks>
-public sealed class TerminalScreen : IScreen
+public sealed class TerminalScreen : IScreen, ITerminalPicture
 {
     private readonly Action _repaint;
     private readonly Func<ushort> _waitForKey;
@@ -53,6 +53,19 @@ public sealed class TerminalScreen : IScreen
     /// 24, and Zork Zero, Journey, and Shogun lay themselves out as
     /// they were meant to.
     /// </summary>
+    public Cell this[int row, int column] => Buffer[row, column];
+
+    public (int Row, int Column)? Cursor =>
+        Buffer.CursorVisible ? (Buffer.CursorRow, Math.Min(Buffer.CursorColumn, Buffer.Width - 1)) : null;
+
+    /// <summary>
+    /// The buffer is always up to date, since the interpreter writes
+    /// its cells directly.
+    /// </summary>
+    public void Repaint()
+    {
+    }
+
     public int FontWidth => 4;
 
     public int FontHeight => 1;

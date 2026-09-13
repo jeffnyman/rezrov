@@ -76,7 +76,7 @@ public sealed class TerminalFiles : IFileChooser
     }
 
     // Runs a dialog on the UI thread and waits here for its answer.
-    private string? AskForSave(string title, string? suggested = null) =>
+    internal string? AskForSave(string title, string? suggested = null) =>
         OnUiThread(() =>
         {
             using var dialog = new SaveDialog { Title = title };
@@ -89,7 +89,7 @@ public sealed class TerminalFiles : IFileChooser
             return dialog.Canceled ? null : dialog.Path;
         });
 
-    private string? AskForOpen(string title, string? suggested = null) =>
+    internal string? AskForOpen(string title, string? suggested = null) =>
         OnUiThread(() =>
         {
             using var dialog = new OpenDialog { Title = title };
