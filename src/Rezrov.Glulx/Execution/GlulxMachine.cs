@@ -29,10 +29,18 @@ namespace Rezrov.Glulx.Execution;
 /// </remarks>
 public sealed class GlulxMachine
 {
-    // Instructions in ROM cannot change, so once decoded they are kept.
-    // Code in RAM is decoded afresh each time, since the game may have
-    // written over it.
-    private readonly Dictionary<uint, Instruction> _romInstructions = [];
+    // Instructions in ROM cannot change, so once decoded they are kept,
+    // by address in pages of a thousand or so: only the pages code
+    // actually runs from take any room, and finding one is two array
+    // reads rather than a hash lookup, which was the single largest
+    // cost of running. Code in RAM is decoded afresh each time, since
+    // the game may have written over it.
+    private readonly Instruction?[]?[] _romInstructions;
+
+    // Function headers in ROM, read once each, since a call to one
+    // happens far more often than the header changes, which is never.
+    private readonly Dictionary<uint, FunctionHeader> _romFunctions = [];
+    private uint[] _arguments = new uint[16];
 
     // The values of an instruction's load operands, in operand order,
     // reused from step to step.
@@ -61,6 +69,7 @@ public sealed class GlulxMachine
         Accelerator = new GlulxAccelerator(memory, ReportAccelerationError);
         Stack = new GlulxStackSpace(memory.Header.StackSize);
         Decoder = new InstructionDecoder(memory);
+        _romInstructions = new Instruction?[(memory.RamStart >> PageShift) + 1][];
         Random = random ?? new GlulxRandom();
         Glk = glk ?? new GlkLibrary(new TextWriterGlkDisplay(TextWriter.Null));
         Start();
@@ -274,25 +283,26 @@ public sealed class GlulxMachine
         Enter(Memory.Header.StartFunction, []);
     }
 
+    private const int PageShift = 10;
+    private const int PageMask = (1 << PageShift) - 1;
+
     private Instruction Decode(uint address)
     {
+        // [glulx #memory] ROM cannot change, so an instruction there is
+        // decoded once; RAM can, so an instruction there is decoded
+        // every time it runs.
         if (address >= Memory.RamStart)
         {
             return Decoder.Decode(address);
         }
 
-        if (!_romInstructions.TryGetValue(address, out var instruction))
-        {
-            instruction = Decoder.Decode(address);
-            _romInstructions[address] = instruction;
-        }
-
-        return instruction;
+        var page = _romInstructions[address >> PageShift] ??= new Instruction?[1 << PageShift];
+        return page[address & PageMask] ??= Decoder.Decode(address);
     }
 
     private void Execute(Instruction instruction)
     {
-        var ops = instruction.Operands;
+        var ops = instruction.OperandSpan;
         var info = instruction.Info;
         var size = info.OperandSize;
         var a = _values;
@@ -300,7 +310,7 @@ public sealed class GlulxMachine
 
         // [glulx #instruction] Operands are evaluated from left to right,
         // which matters when more than one of them pops the stack.
-        for (var i = 0; i < ops.Count; i++)
+        for (var i = 0; i < ops.Length; i++)
         {
             if (!ops[i].IsStore)
             {
@@ -555,7 +565,7 @@ public sealed class GlulxMachine
             // [glulx op:glk] The arguments are on the stack as for call,
             // the function runs, and its result is stored.
             case Opcode.Glk:
-                Store(ops[2], Glk.Call(a[0], PopArguments(a[1]), Memory, Stack));
+                Store(ops[2], Glk.Call(a[0], PopArguments(a[1]).ToArray(), Memory, Stack));
                 if (Glk.ExitRequested)
                 {
                     HasQuit = true;
@@ -1034,7 +1044,7 @@ public sealed class GlulxMachine
         }
     }
 
-    private uint[] PopArguments(uint count)
+    private ReadOnlySpan<uint> PopArguments(uint count)
     {
         // [glulx op:call] The arguments were pushed last first, so the
         // first argument is the first popped.
@@ -1043,16 +1053,22 @@ public sealed class GlulxMachine
             throw new GlulxException($"Stack underflow: a call wants {count} arguments and {Stack.Count} values are on the stack.");
         }
 
-        var arguments = new uint[count];
-        for (var i = 0; i < count; i++)
+        // The buffer is reused, since a call consumes its arguments
+        // before anything else can pop a value.
+        if (_arguments.Length < count)
         {
-            arguments[i] = Stack.Pop();
+            _arguments = new uint[Math.Max(count, 2 * (uint)_arguments.Length)];
         }
 
-        return arguments;
+        for (var i = 0; i < count; i++)
+        {
+            _arguments[i] = Stack.Pop();
+        }
+
+        return _arguments.AsSpan(0, (int)count);
     }
 
-    private void Call(uint address, uint[] arguments, Operand result, uint next)
+    private void Call(uint address, ReadOnlySpan<uint> arguments, Operand result, uint next)
     {
         // [glulx #calling-and-returning] A stub records where the result
         // goes and where to continue, then the new frame goes on top.
@@ -1061,7 +1077,7 @@ public sealed class GlulxMachine
         Enter(address, arguments);
     }
 
-    private void Enter(uint address, IReadOnlyList<uint> arguments)
+    private void Enter(uint address, ReadOnlySpan<uint> arguments)
     {
         // [glulx #opcodes_accel] A call of an accelerated address runs
         // the built-in function instead, and returns through the stub
@@ -1072,9 +1088,30 @@ public sealed class GlulxMachine
             return;
         }
 
-        var function = FunctionHeader.Read(Memory, address);
+        var function = FunctionAt(address);
         Stack.PushFrame(function, arguments);
         ProgramCounter = function.CodeAddress;
+    }
+
+    /// <summary>
+    /// The header of the function at an address: kept after the first
+    /// reading when the function is in ROM, read afresh when it is in
+    /// RAM, where the game could have changed it.
+    /// </summary>
+    private FunctionHeader FunctionAt(uint address)
+    {
+        if (address >= Memory.RamStart)
+        {
+            return FunctionHeader.Read(Memory, address);
+        }
+
+        if (!_romFunctions.TryGetValue(address, out var function))
+        {
+            function = FunctionHeader.Read(Memory, address);
+            _romFunctions[address] = function;
+        }
+
+        return function;
     }
 
     private void Return(uint value)

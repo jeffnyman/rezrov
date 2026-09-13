@@ -3,43 +3,58 @@ using System.Text;
 namespace Rezrov.Glulx.Instructions;
 
 /// <summary>
-/// One decoded instruction: what it is and its operands as encoded.
+/// [glulx #instruction] One decoded instruction: where it is, what
+/// opcode it is, its operands, and where the next instruction begins.
 /// </summary>
 /// <remarks>
-/// [glulx #instruction] The three parts of an instruction, read in
-/// order: the opcode number, the addressing modes, and the operand
-/// data. Nothing has been evaluated. Executing is a separate step that
-/// reads the operands according to their modes.
+/// Instructions in ROM never change, so the machine decodes each one
+/// once and keeps it; that makes this the object the machine touches
+/// most, and its operands are handed over as a span rather than
+/// through an interface for that reason.
 /// </remarks>
-/// <param name="Address">Where the instruction begins.</param>
-/// <param name="Info">The opcode the number resolved to.</param>
-/// <param name="Operands">The operands, first to last.</param>
-/// <param name="NextAddress">
-/// The first byte after the instruction, which is where execution
-/// continues unless the instruction says otherwise.
-/// </param>
-public sealed record Instruction(
-    uint Address,
-    OpcodeInfo Info,
-    IReadOnlyList<Operand> Operands,
-    uint NextAddress)
+public sealed class Instruction
 {
+    private readonly Operand[] _operands;
+
+    public Instruction(uint address, OpcodeInfo info, Operand[] operands, uint nextAddress)
+    {
+        ArgumentNullException.ThrowIfNull(info);
+        ArgumentNullException.ThrowIfNull(operands);
+
+        Address = address;
+        Info = info;
+        _operands = operands;
+        NextAddress = nextAddress;
+    }
+
+    /// <summary>The address of the opcode's first byte.</summary>
+    public uint Address { get; }
+
+    /// <summary>The opcode table's entry for the instruction.</summary>
+    public OpcodeInfo Info { get; }
+
+    /// <summary>
+    /// The operands, in the order the instruction lists them.
+    /// </summary>
+    public IReadOnlyList<Operand> Operands => _operands;
+
+    /// <summary>The address just past the last operand's data.</summary>
+    public uint NextAddress { get; }
+
     public Opcode Opcode => Info.Opcode;
 
     public string Name => Info.Name;
 
-    /// <summary>The instruction's size in bytes.</summary>
+    /// <summary>How many bytes the instruction takes.</summary>
     public uint Length => NextAddress - Address;
 
-    /// <summary>
-    /// The instruction in a form close to what a disassembler prints:
-    /// the name, then the operands.
-    /// </summary>
+    /// <summary>The operands, for the machine's inner loop.</summary>
+    internal ReadOnlySpan<Operand> OperandSpan => _operands;
+
     public override string ToString()
     {
         var text = new StringBuilder(Name);
-
-        foreach (var operand in Operands)
+        foreach (var operand in _operands)
         {
             text.Append(' ').Append(operand);
         }

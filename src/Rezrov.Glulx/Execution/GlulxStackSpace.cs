@@ -260,10 +260,9 @@ public sealed class GlulxStackSpace
     /// <paramref name="function"/> at the top of the stack, makes it
     /// current, and puts the arguments where its type says.
     /// </summary>
-    public void PushFrame(FunctionHeader function, IReadOnlyList<uint> arguments)
+    public void PushFrame(FunctionHeader function, ReadOnlySpan<uint> arguments)
     {
         ArgumentNullException.ThrowIfNull(function);
-        ArgumentNullException.ThrowIfNull(arguments);
 
         var frame = StackPointer;
 
@@ -309,12 +308,12 @@ public sealed class GlulxStackSpace
         {
             // [glulx #function] Pushed last argument first, so the first
             // is topmost, and the count above them all.
-            for (var i = arguments.Count - 1; i >= 0; i--)
+            for (var i = arguments.Length - 1; i >= 0; i--)
             {
                 Push(arguments[i]);
             }
 
-            Push((uint)arguments.Count);
+            Push((uint)arguments.Length);
         }
         else
         {
@@ -328,7 +327,7 @@ public sealed class GlulxStackSpace
                 offset = Align(offset, entry.LocalType);
                 for (var i = 0; i < entry.LocalCount; i++)
                 {
-                    if (next < arguments.Count)
+                    if (next < arguments.Length)
                     {
                         WriteLocal(offset, arguments[next++], entry.LocalType);
                     }

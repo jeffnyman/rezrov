@@ -132,18 +132,16 @@ public sealed class GlulxAccelerator
     /// with the arguments a call would have passed, missing ones being
     /// zero.
     /// </summary>
-    public bool TryInvoke(uint address, IReadOnlyList<uint> arguments, out uint result)
+    public bool TryInvoke(uint address, ReadOnlySpan<uint> arguments, out uint result)
     {
-        ArgumentNullException.ThrowIfNull(arguments);
-
         if (!_functions.TryGetValue(address, out var number))
         {
             result = 0;
             return false;
         }
 
-        var first = arguments.Count > 0 ? arguments[0] : 0;
-        var second = arguments.Count > 1 ? arguments[1] : 0;
+        var first = arguments.Length > 0 ? arguments[0] : 0;
+        var second = arguments.Length > 1 ? arguments[1] : 0;
         result = number switch
         {
             1 => ZRegion(first),
