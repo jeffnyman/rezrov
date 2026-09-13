@@ -109,6 +109,12 @@ dotnet test
 
 Neither needs the `entharion` submodule described further down, so a plain clone builds and tests without pulling several hundred megabytes of reference material.
 
+The three interpreter libraries are built optimized even in the Debug configuration, because the test suite replays whole games through them and an unoptimized interpreter makes that run take minutes rather than seconds. The programs and the tests are not, so debugging them is as usual. To step through the interpreter code itself with every local in view, build with optimization off for that session:
+
+```sh
+dotnet build -p:Optimize=false
+```
+
 Tests are xUnit v3 on Microsoft Testing Platform, which means a test project is a real executable rather than a library loaded by a separate runner. You can run one directly, and it reports more detail than `dotnet test` does:
 
 ```sh
