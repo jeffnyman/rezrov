@@ -31,7 +31,7 @@ Glulx files load and run on the whole instruction set, floating point, the memor
 
 A game packaged in a Blorb file can read the data chunks packaged with it through resource streams, a game that asks the time gets the system clock in universal or local time, and the Unicode case and normalization functions cover the whole of Unicode, including the letters that change length when their case does. Graphics and sound are not there yet: the gestalt answers say so, and a game that draws or plays anyway, as several do at startup, gets nothing drawn or played, a false result, and a note on standard error, and plays on.
 
-The options, all of which imply `--run`:
+The options, all of which imply `--run`, and which `rezrov --help` summarizes:
 
 - `--commands <file>` plays commands from the file, one per line, before handing the game to the console. This is the same format the Z-Machine writes to its command recording stream and that Frotz records and replays, so a session recorded by either can be played back by the other. Once the file runs out, the console takes over.
 - `--transcript <file>`, `--record <file>`, and `--save <file>` name the files to use when the game turns on a transcript, starts recording commands, or saves and restores, so that nothing has to be typed at a prompt. Without them Rezrov asks on standard error, which keeps the question out of anything you are capturing from standard output.
