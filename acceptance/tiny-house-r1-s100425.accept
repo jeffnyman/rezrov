@@ -1,0 +1,762 @@
+! SEED=10
+! GAME=../entharion/glulx-code/tiny-house-r1-s100425.ulx
+
+verbose
+notify on
+x me
+i
+x clothes
+ne
+x thermostat
+u
+x dresser
+open dresser
+x computer
+consult Wikipedia about Dan
+consult Wikipedia about universe
+consult Wikipedia about earth
+consult Wikipedia about xyzzy
+take computer
+again
+x bed
+look under bed
+x rifle
+x footlocker
+move footlocker
+x small door
+open it
+in
+take jar and bullets
+x jar
+count pennies
+x bullets
+load rifle
+out. d. sw. w.
+x mailbox
+open mailbox
+take leaflet
+read it
+
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+
+x salesman
+buy snuggy
+x snuggy
+e
+
+x toys
+x sword
+x lantern
+x carpet
+x door
+x couch
+look under couch
+x remote
+x center
+x TV
+turn on TV
+watch TV
+x case
+x chair
+x stains
+x window
+x closet
+open closet
+x cleaner
+ne
+w
+
+x bed
+x cage
+x guinea pig
+x machine
+turn on machine
+take fabric
+read it
+x desk
+x craft desk
+open it
+x Bible
+read Bible
+x tape
+take tape
+x other desk
+open closet
+x crate
+open crate
+e
+u
+
+consult Wikipedia about Noah's Ark
+turn dial to 6
+turn dial to 8
+turn dial to 22
+open footlocker
+take spellbook
+x it
+read it
+filfre
+consult Wikipedia about spells
+copy fabric scroll
+
+# There are six future visions you can get. Many are useful hints, but
+# the one vision you must see is the one about the shed door combination:
+# 0-4-2.
+
+gopscot
+g
+g
+g
+d
+e
+
+x toilet
+x closet
+x shower
+read shower
+x mirror
+read mirror
+use toilet
+turn on shower
+w
+
+set thermostat to 59
+e
+
+wait
+wait
+read mirror
+copy mirror
+read spellbook
+turn off shower
+w
+set thermostat to 65
+ne
+
+x fridge
+open it
+take cheese
+close fridge
+x freezer
+open it
+close freezer
+x sink
+x dishes
+n
+e
+
+x grass
+x shed
+set dial to 0
+set dial to 4
+set dial to 2
+open door
+in
+
+x grill
+x mower
+x table
+x junk
+x box
+open box
+x marijuana
+x lighter
+x hammer
+take box and hammer
+consult Wikipedia on marijuana
+consult Wikipedia on trolls
+out
+w
+s
+sw
+w
+
+open crate
+look in crate
+x grue suit
+x repellent
+x treats
+x manifesto
+read it
+x fish
+take it
+x red scroll
+read it
+take it
+copy it
+read spellbook
+consult Wikipedia on communism
+consult Wikipedia on grue
+e
+ne
+d
+x junk
+x washing
+x block
+push block
+w
+x pencil
+e
+
+x stairs
+look under stairs
+read black scroll
+copy it
+x dryer
+open it
+celuxed dryer
+enter tunnel
+
+x socks
+take sock
+x it
+enter tunnel
+u
+sw
+se
+
+x crib
+open closet
+x mirror
+x toys
+x toy box
+celuxed mirror
+put sock in front of mirror
+enter tunnel
+
+take sock
+read sock
+copy sock
+read spellbook
+enter tunnel
+nw
+ne
+
+open freezer
+celuxed freezer
+enter tunnel
+enter tunnel
+sw
+u
+
+wear winter
+d
+ne
+enter tunnel
+
+x eskimo
+shoot wolf
+ask eskimo about powder
+ask eskimo about fish
+x hole
+x shack
+x rack
+x igloo
+ask eskimo about cold
+give snuggy to eskimo
+enter tunnel
+sw
+u
+in
+
+x vial
+celuxed attic
+enter tunnel
+x dragon
+x golden box
+x treasure
+x torches
+consult Wikipedia about dragon
+ask dragon about box
+enter tunnel. out
+
+wear bikini
+in
+enter tunnel
+
+ask dragon about dragon
+ask dragon about treasure
+ask dragon about box
+ask dragon about heart
+enter tunnel
+out
+
+wear teaching
+d
+sw
+managra spellbook
+read spellbook
+postcog
+ne
+postcog
+se
+postcog
+consult Wikipedia about goblin king
+nw
+ne
+postcog
+d
+postcog
+look
+take crystal
+x it
+look in it
+x light
+w
+
+postcog
+e
+u
+sw
+sw
+
+look in crystal
+anagram spellbook
+celuxed TV
+drop leaflet, remote, hammer, ball
+enter tunnel
+read sign
+consult Wikipedia about fairy tales
+consult Wikipedia about boy who cried wolf
+consult Wikipedia about three little pigs
+consult Wikipedia about Little Red Riding Hood
+consult Wikipedia about Little Miss Muffet
+consult Wikipedia about giant
+consult Wikipedia about Jack and Jill
+consult Wikipedia about Hansel and Gretel
+consult Wikipedia about witch
+consult Wikipedia about woman who swallowed a fly
+
+nw
+x bucket
+take it
+in
+shoot wolf
+x Hood
+ask Hood about wolf
+x wolf's corpse
+x cake
+ask Hood about cake
+load rifle
+out
+se
+w
+
+x troll
+w
+give marijuana to troll
+give lighter to troll
+drop pencil box
+w
+x goat
+x hole
+take dirty scroll
+read it
+copy it
+e
+e
+sw
+x Jack
+x Jill
+ask Jack about Jill
+ask Jack about hill
+ask Jack about crown
+ask Jack about leg
+ask Jill about Jack
+ask Jill about hill
+ask Jill about crown
+u
+consult Wikipedia about climbing hills
+ne
+s
+
+x tuffet
+x miss
+ask miss about tuffet
+ask miss about lunch
+ask miss about spider
+give cheese to miss
+take cheese
+n
+se
+x boy
+x cows
+x wall
+nw
+e
+x straw house
+x stick house
+x brick house
+x straw pig
+ask straw pig for scroll
+x stick pig
+ask stick pig for scroll
+x brick pig
+ask brick pig for scroll
+enter straw house
+open it
+w
+u
+e
+x giant
+x egg
+x machine
+x paintings
+g
+g
+x harp
+x goose
+x eggs
+take egg
+enter machine
+ask giant about machine
+w
+d
+enter tunnel
+ne
+u
+
+wear gown.
+d
+sw
+enter tunnel
+u
+e
+ask giant about machine
+ask giant about himself
+ask giant about harp
+ask giant about goose
+ask giant about egg
+ask giant about horn
+ask giant about heart
+w
+d
+n
+x birds
+s
+
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+
+# The boy's first cry is a false alarm. Fourteen turns later a real wolf
+# stalks the cows, and the poisoned fish must be given within five turns.
+! SEED=3
+se
+put powder on fish
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+give fish to wolf
+
+# Managra turns Wallows into Swallow and adds Stiged, which makes the
+# horse from what is in the toilet. The rhyme's order matters: each
+# animal taken in turn resets the countdown, which then costs one point
+# a turn; out of order it runs down much faster.
+managra spellbook
+read spellbook
+
+nw
+enter tunnel
+ne
+e
+open toilet
+g
+g
+w
+u
+in
+enter tunnel
+give cake to dragon
+swallow fly
+enter tunnel
+out
+d
+sw
+enter tunnel
+s
+sit on tuffet
+eat cheese
+swallow spider
+stand
+n
+n
+throw egg at birds
+swallow bird
+
+# This seed has the cat in the hallway on the way back in.
+! SEED=3
+s
+enter tunnel
+ne
+swallow Jeeba
+swallow Luna
+sw
+enter tunnel
+w
+w
+swallow goat
+e
+e
+swallow cow
+enter tunnel
+ne
+e
+stiged poop
+swallow horse
+anagram spellbook
+digest me
+
+w
+u
+in
+enter tunnel
+open golden box
+x heart
+take it
+enter tunnel
+out
+d
+sw
+enter tunnel
+u
+e
+
+show heart to giant
+break heart
+ask harp about giant
+ask harp about machine
+enter machine
+x machine
+x monitor
+x blue spiral
+x blue circle
+x orange circle
+x orange semi-circle
+x gray square
+x red circle
+x gray cloud-shaped
+x white star
+x white square
+x black square
+x yellow
+push gray square
+x monitor
+push yellow
+x monitor
+push blue circle
+x monitor
+stand
+w
+d
+enter tunnel
+ne
+u
+wear winter
+d
+sw
+enter tunnel
+e
+
+# The big bad wolf appears after twenty-six turns of waiting and dies in
+# the chimney seven turns after that.
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+z
+enter house
+take all scroll
+repair top
+read fixed scroll
+copy it
+out
+w
+enter tunnel
+ne
+u
+wear teaching
+d
+sw
+enter tunnel
+sw
+
+stairs
+u
+x well
+get water
+x crown
+take it
+wear crown
+d
+ne
+n
+n
+
+# The crown is what survives the witch's spell.
+eat house
+n
+shoot witch
+load rifle
+take wand
+read arcane book
+read nature of magic
+read source of magic
+read types of magic
+read powers of wand
+x oven
+open it
+x pies
+x potion box
+take it
+x purple potion
+x green potion
+x blue potion
+x yellow potion
+x orange potion
+x red potion
+s
+s
+s
+enter tunnel
+
+managra spellbook
+exclude tunnel
+ne
+u
+in
+exclude tunnel
+out
+d
+ne
+exclude tunnel
+close freezer
+d
+exclude tunnel
+point wand at light
+chant frobozzle
+enter portal
+
+# The past must be settled before the future is safe to enter.
+se
+take new pencil
+x it
+erase spellbook
+drop pencil
+drop spellbook
+drop wand
+enter portal
+ne
+x clock
+e
+drink purple potion
+
+x bridge
+x soldiers
+x moat
+drink orange potion
+ne
+open east door
+e
+throw yellow potion at goblin
+take iron key
+x window
+d
+ne
+
+x throne
+move throne
+dance
+what babe
+what power
+hoodoo
+do what
+you remind me of the babe
+the babe with the power
+the power of voodoo
+you do
+open trap door
+d
+
+x Dan
+unlock cell with iron key
+give rifle to Dan
+give bullets to Dan
+ask Dan about wand
+ask Dan about David Bowie
+u
+sw
+open south door
+s
+drink red potion
+d
+open west door
+w
+x goblin
+x symbols
+x gold key
+Dan, point wand at goblin
+take gold key
+d
+unlock north door with gold key
+open north door
+n
+x Danny
+throw green potion at David
+quit

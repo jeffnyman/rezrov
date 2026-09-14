@@ -92,7 +92,12 @@ public sealed record AcceptanceResult(string Output, AcceptanceEnding Ending, st
 /// </summary>
 /// <param name="Line">The line of the expected text, counting from 1.</param>
 /// <param name="Description">What was expected there and what came instead.</param>
-public sealed record AcceptanceDifference(int Line, string Description);
+/// <param name="RecordingEnded">
+/// Whether the two agree as far as the expected text goes and the play
+/// simply carries on past it, as happens when a script grows after its
+/// recording was made.
+/// </param>
+public sealed record AcceptanceDifference(int Line, string Description, bool RecordingEnded = false);
 
 /// <summary>
 /// Plays an acceptance script through the interpreter and compares what
@@ -293,10 +298,21 @@ public static class AcceptanceRun
 
         for (var i = 0; i < common; i++)
         {
-            if (!string.Equals(expectedLines[i], actualLines[i], StringComparison.Ordinal))
+            if (string.Equals(expectedLines[i], actualLines[i], StringComparison.Ordinal))
             {
-                return new AcceptanceDifference(i + 1, $"  expected: {expectedLines[i]}\n  actual:   {actualLines[i]}");
+                continue;
             }
+
+            // A recording made from a shorter script ends with a bare
+            // prompt, and the longer play has a command after that
+            // prompt on the same line. That is the recording running
+            // out, not the play going wrong, and it is said so.
+            if (i == expectedLines.Length - 1 && actualLines[i].StartsWith(expectedLines[i], StringComparison.Ordinal))
+            {
+                return new AcceptanceDifference(i + 1, $"the recording ends there, and the play goes on for {actualLines.Length - expectedLines.Length} more lines\n  recorded: {expectedLines[i]}\n  played:   {actualLines[i]}", RecordingEnded: true);
+            }
+
+            return new AcceptanceDifference(i + 1, $"  expected: {expectedLines[i]}\n  actual:   {actualLines[i]}");
         }
 
         if (expectedLines.Length > actualLines.Length)
@@ -306,7 +322,7 @@ public static class AcceptanceRun
 
         if (actualLines.Length > expectedLines.Length)
         {
-            return new AcceptanceDifference(common + 1, $"the play goes on for {actualLines.Length - expectedLines.Length} lines past the end, starting with\n  actual:   {actualLines[common]}");
+            return new AcceptanceDifference(common + 1, $"the recording ends there, and the play goes on for {actualLines.Length - expectedLines.Length} more lines, starting with\n  played:   {actualLines[common]}", RecordingEnded: true);
         }
 
         return null;
@@ -324,7 +340,9 @@ public static class AcceptanceRun
         ArgumentNullException.ThrowIfNull(script);
 
         var expectedName = Path.GetFileName(script.ExpectedPath);
-        var where = $"line {difference.Line} of {expectedName} differs";
+        var where = difference.RecordingEnded
+            ? $"line {difference.Line} of {expectedName} is its last"
+            : $"line {difference.Line} of {expectedName} differs";
 
         // The end of the differing line in the play, and the last
         // command read before that point. The echo of a command follows

@@ -114,7 +114,24 @@ public class AcceptanceTests
         Assert.Null(AcceptanceRun.FirstDifference("a\nb\n", "a\r\nb\r\n"));
         Assert.Equal(2, AcceptanceRun.FirstDifference("a\nb\n", "a\nc\n")!.Line);
         Assert.Contains("1 more were expected", AcceptanceRun.FirstDifference("a\nb\nc\n", "a\nb\n")!.Description, StringComparison.Ordinal);
-        Assert.Contains("goes on for 1 lines past the end", AcceptanceRun.FirstDifference("a\nb\n", "a\nb\nc\n")!.Description, StringComparison.Ordinal);
+        Assert.Contains("goes on for 1 more lines", AcceptanceRun.FirstDifference("a\nb\n", "a\nb\nc\n")!.Description, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ARecordingFromAShorterScriptIsSaidToHaveEnded()
+    {
+        // The recording of a 58-command script ends with a bare prompt;
+        // the same script grown to 458 commands has a command after that
+        // prompt. That is the recording running out, not a change in
+        // the play, and it is told apart from a real difference.
+        var grown = AcceptanceRun.FirstDifference("Living Room\n>", "Living Room\n>x toys\nThey are everywhere.\n>")!;
+        var changed = AcceptanceRun.FirstDifference("Living Room\n>", "Kitchen\n>x toys\n")!;
+
+        Assert.True(grown.RecordingEnded);
+        Assert.Equal(2, grown.Line);
+        Assert.Contains("goes on for 2 more lines", grown.Description, StringComparison.Ordinal);
+        Assert.False(changed.RecordingEnded);
+        Assert.True(AcceptanceRun.FirstDifference("a\nb\n", "a\nb\nc\n")!.RecordingEnded);
     }
 
     [Fact]
@@ -130,10 +147,12 @@ public class AcceptanceTests
         var banner = AcceptanceRun.Describe(new AcceptanceDifference(1, "x"), result, script);
         var reply = AcceptanceRun.Describe(new AcceptanceDifference(3, "x"), result, script);
         var echo = AcceptanceRun.Describe(new AcceptanceDifference(4, "x"), result, script);
+        var ended = AcceptanceRun.Describe(new AcceptanceDifference(4, "x", RecordingEnded: true), result, script);
 
         Assert.StartsWith("line 1 of test.expected differs, before the first command", banner, StringComparison.Ordinal);
         Assert.StartsWith("line 3 of test.expected differs, while playing line 4 of the script, \"look\"", reply, StringComparison.Ordinal);
         Assert.StartsWith("line 4 of test.expected differs, while playing line 6 of the script, \"north\"", echo, StringComparison.Ordinal);
+        Assert.StartsWith("line 4 of test.expected is its last, while playing line 6 of the script, \"north\"", ended, StringComparison.Ordinal);
     }
 
     /// <summary>

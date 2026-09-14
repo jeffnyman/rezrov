@@ -100,9 +100,13 @@ internal static class Acceptance
 
         if (AcceptanceRun.FirstDifference(expected, result.Text) is { } difference)
         {
-            Console.Error.WriteLine($"rezrov: {name}: the play differs from what was recorded");
+            Console.Error.WriteLine(difference.RecordingEnded
+                ? $"rezrov: {name}: the recording ends before the script does"
+                : $"rezrov: {name}: the play differs from what was recorded");
             Console.Error.WriteLine(AcceptanceRun.Describe(difference, result, script));
-            Console.Error.WriteLine("If the change is meant, run again with --update.");
+            Console.Error.WriteLine(difference.RecordingEnded
+                ? "If the script has grown, run again with --update to record the rest."
+                : "If the change is meant, run again with --update.");
             return 1;
         }
 
