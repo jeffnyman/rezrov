@@ -144,6 +144,24 @@ public class InputTests
     }
 
     [Fact]
+    public void CommandFileSeesWhatIsLeftAndTakesARecordedTimeout()
+    {
+        // A recorded timeout is a line of [0], taken only when asked for
+        // and only when no keys of a line are still waiting.
+        var file = new CommandFile(new StringReader("[0]\nab\n"), UnicodeTranslationTable.Default);
+
+        Assert.True(file.HasMore);
+        Assert.True(file.TakeTimeout());
+        Assert.False(file.TakeTimeout());
+        Assert.Equal('a', file.ReadKey());
+        Assert.True(file.HasMore);
+        Assert.False(file.TakeTimeout());
+        Assert.Equal('b', file.ReadKey());
+        Assert.False(file.HasMore);
+        Assert.Null(file.ReadKey());
+    }
+
+    [Fact]
     public void CommandFileContinuesFromLeftoverTextAndHonorsTheMaximum()
     {
         var file = new CommandFile(new StringReader("nder the rock\n"), UnicodeTranslationTable.Default);

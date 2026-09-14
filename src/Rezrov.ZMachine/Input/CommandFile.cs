@@ -42,6 +42,7 @@ public sealed class CommandFile
     // and how many of them have gone.
     private List<ushort>? _keys;
     private int _keyIndex;
+    private string? _pending;
 
     /// <summary>
     /// [zm 10.3.2] The position of the last click read, from the two
@@ -62,10 +63,10 @@ public sealed class CommandFile
     /// Reads the next command, or returns null when the file has ended.
     /// </summary>
     /// <remarks>
-    /// A timer in the request is ignored: the file records what the
-    /// player ended up typing, and a timed-out read is in it as a line
-    /// ending in [0], so the interrupt routine has already had its say.
-    /// Frotz replays the same way.
+    /// A timer in the request is not this class's business: a timed-out
+    /// read that was recorded is in the file as a line ending in [0],
+    /// and the interpreter decides, before asking for a line, whether
+    /// the game's timer has its say first.
     /// </remarks>
     public LineInput? ReadLine(LineInputRequest request)
     {
@@ -138,10 +139,59 @@ public sealed class CommandFile
     }
 
     /// <summary>
+    /// Whether the file has anything left: a line still to read, or
+    /// keys of the last one still to hand out.
+    /// </summary>
+    public bool HasMore => HasPendingKeys || PeekLine() is not null;
+
+    /// <summary>
+    /// Whether keys of the last line read are still to be handed out.
+    /// </summary>
+    public bool HasPendingKeys => _keys is not null && _keyIndex < _keys.Count;
+
+    /// <summary>
+    /// Takes a line of <c>[0]</c>, the code a recording writes for a
+    /// read that timed out, if that is what comes next. The interpreter
+    /// asks this after a timer has ended a replayed read on its own, so
+    /// that a recorded timeout is not then taken for a keypress.
+    /// </summary>
+    public bool TakeTimeout()
+    {
+        if (HasPendingKeys)
+        {
+            return false;
+        }
+
+        if (PeekLine() != "[0]")
+        {
+            return false;
+        }
+
+        _keys = null;
+        NextLine();
+        return true;
+    }
+
+    /// <summary>
     /// Closes the file. The interpreter does this when the file runs out
     /// or the game goes back to the keyboard.
     /// </summary>
     public void Close() => _reader.Dispose();
+
+    // One line of lookahead over the reader, so that the end of the file
+    // and a recorded timeout can be seen before a line is taken.
+    private string? PeekLine()
+    {
+        _pending ??= _reader.ReadLine();
+        return _pending;
+    }
+
+    private string? NextLine()
+    {
+        var line = PeekLine();
+        _pending = null;
+        return line;
+    }
 
     /// <summary>
     /// [zm 7.1.2.3] Writes a finished command as one line of the format
@@ -217,7 +267,7 @@ public sealed class CommandFile
     // One line of the file as ZSCII codes, or null at the end.
     private List<ushort>? ReadCodes()
     {
-        var line = _reader.ReadLine();
+        var line = NextLine();
         if (line is null)
         {
             return null;

@@ -232,6 +232,11 @@ public sealed class Interpreter
     private readonly InterpreterNumber? _interpreterNumber;
     private readonly bool _tandy;
     private CommandFile? _commandFile;
+
+    // The read_char whose timer last ended a replayed read, by address:
+    // the game looping straight back to it gets the file's key without
+    // another interval, the burned one having been the typing time.
+    private int? _replayNimbleAt;
     private int _interruptDepth;
     private int _mouseWindow;
     private MouseClick? _lastClick;
@@ -1550,7 +1555,7 @@ public sealed class Interpreter
         var timer = Timer(a.Length > 1 ? a[1] : (ushort)0, a.Length > 2 ? a[2] : (ushort)0);
         Display.PrepareForInput(InputStream == 1);
         Sound.InputHappened();
-        Store(instruction, ReadKey(timer));
+        Store(instruction, ReadKey(timer, instruction.Address));
     }
 
     /// <summary>
@@ -1995,6 +2000,16 @@ public sealed class Interpreter
         LineInput line;
         var fromFile = false;
 
+        // A line read is a fresh sitting, whatever a keypress before it
+        // burned, so its timer has its interval first.
+        _replayNimbleAt = null;
+        if (_commandFile is not null && _commandFile.HasMore && TimerEndsReplayedRead(request.Timer))
+        {
+            // [zm op:read] The routine ended the read, so nothing was
+            // typed and the terminator is 0.
+            return (new LineInput(request.Initial, 0), true);
+        }
+
         if (_commandFile is not null && _commandFile.ReadLine(request) is { } replayed)
         {
             // [zm 7.1.1.1] Input is echoed to the screen. The keyboard
@@ -2045,10 +2060,26 @@ public sealed class Interpreter
         return (line, fromFile);
     }
 
-    private ushort ReadKey(InputTimer? timer)
+    private ushort ReadKey(InputTimer? timer, int address)
     {
-        if (_commandFile is not null && _commandFile.ReadKey() is { } replayed)
+        if (_commandFile is not null && _commandFile.HasMore)
         {
+            // Keys of a line still under the fingers beat the clock, and
+            // so does the same question asked again straight after its
+            // timer ended it: Custard's editor ends every timed read
+            // from its routine and loops back, and would otherwise never
+            // get a key at all. A timed read elsewhere is a different
+            // question and waits its own interval, which keeps Arthur's
+            // paced sequences on their timeline.
+            var nimble = _commandFile.HasPendingKeys || _replayNimbleAt == address;
+            _replayNimbleAt = null;
+            if (!nimble && TimerEndsReplayedRead(timer))
+            {
+                _replayNimbleAt = address;
+                return 0;
+            }
+
+            var replayed = _commandFile.ReadKey()!.Value;
             if (IsClick(replayed))
             {
                 NoteClick(_commandFile.LastClick);
@@ -2073,6 +2104,27 @@ public sealed class Interpreter
 
         Streams.RecordKey(key, _lastClick);
         return key;
+    }
+
+    /// <summary>
+    /// [zm 10.2 deviates] A replay cannot wait, so for a timed read
+    /// one interval is taken to have passed before the file's input
+    /// arrives: the interrupt routine runs once, and if it ends the
+    /// read, the read ends with nothing typed and the file is left for
+    /// the next one. A recorded timeout, a line of [0], is the same
+    /// event and is taken with it. Without this a title screen that
+    /// waits a while for any key, as Arthur's does, swallows a script's
+    /// first command.
+    /// </summary>
+    private bool TimerEndsReplayedRead(InputTimer? timer)
+    {
+        if (timer is null || !timer.Interrupt())
+        {
+            return false;
+        }
+
+        _commandFile?.TakeTimeout();
+        return true;
     }
 
     private static bool IsClick(ushort code) => code is Zscii.SingleClick or Zscii.DoubleClick or Zscii.MenuClick;

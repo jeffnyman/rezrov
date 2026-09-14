@@ -1,0 +1,1968 @@
+Copyright (C) 1987 Infocom, Inc. All rights reserved.
+Type RESTORE followed by carriage return to restore a saved position, anything else (also followed by carriage return) to start the game anew.
+>>
+
+
+
+Important!
+
+Our records show that you do not have a licence to operate this software.
+
+Normally, you would be required to complete a Licence Application Form and mail it (with proof of purchase) to our Licensing Department, and then wait the customary four to six weeks for processing.
+
+Luckily, for your convenience, we have, at the last minute and at great expense, installed a remarkable new on-line electronic application form on this very disk, which will be processed by our modern 24-hour computer service moments after you fill it in.
+
+[Press any key to begin.]
+
+
+[Your blood pressure just went up.]
+
+You have been granted Licence Number 870602.
+
+Thank you for your cooperation, Ms Nyman. Have a nice day.
+
+
+Well now, Ms Nyman, aren't you glad you left your previous job? The Deep Thought Corporation of America was of course a great company to work for, except for the no-coloured-socks dress code, and you really enjoyed being Vice President (Software Development), especially the opportunities it gave you to cause considerable inconvenience to many hundreds of thousands of people you had never met.
+
+But Happitec is going to be MUCH more fun. The money's better, it's a great place to live and work and you're really looking forward to your Paris vacation.
+
+You're pretty pleased with your new home, too, and don't really mind that the removals company fouled up slightly due to a computer scheduling problem. After all, you won't be using your new place for the next two weeks, and they PROMISED to have everything installed by the time you return.
+
+In fact, the only tiny cloud on the horizon is a silly bit of bother with your bank about a change-of-address card. You know the sort of thing? You send them a change-of-address card, and they say "Oh dearie me, that's not our official change-of-address form, the computer won't like it a bit, you'll have to fill in a proper one, we'll send one to you," and they do, but they send it to your old address along with your new US Excess card and your cheque book...?
+
+Of course you know the sort of thing. It's exactly what has happened to you. But Happitec's enlightened employee policies mean you don't really care. After all, who needs money? Pick up your Happitec cheque, grab a bite of lunch, a cab to the airport and then you'll be living high on the hog at Happitec's expense. What a truly ENVIABLE situation you find yourself in, Ms Nyman.
+
+BUREAUCRACY
+A Paranoid Fantasy
+Copyright (C) 1987 Infocom, Inc. All rights reserved.
+BUREAUCRACY is a trademark of Infocom, Inc.
+Interpreter 6 Version R
+Release 116 / Licence Number 870602
+
+Front Room
+
+This is the living room of your new house, a pretty nice room, actually. At least, it will be when all your stuff has arrived as the removals company said they would have done yesterday and now say they will do while you're on vacation. At the moment, however, it's a bit dull. Plain white, no carpets, no curtains, no furniture. A room to go bughouse in, really. Another room is visible to the west, and a closed front door leads outside.
+
+>w
+Back Room
+
+You're in the back room of your new house, another nice room, at present suitable for lining with latex padding and bouncing off the walls, but likely to be pretty impressive and upwardly mobile once the removals men have sorted out their little problem. The exit leads east to the living room.
+
+You see a combination telephone/answering machine and a table here. On the table you see a hacksaw, an address book, a small case, your Boysenberry computer, a letter and your passport.
+
+>take all
+The hacksaw: Taken.
+The address book: Taken.
+The small case: Taken.
+Your Boysenberry computer: Taken.
+The letter: Taken.
+Your passport: Taken.
+The combination telephone/answering machine: You probably should leave the machine where it is, in case you get an important message.
+
+The doorbell is ringing.
+
+>e
+Front Room
+
+The doorbell is ringing.
+
+>open door
+You open the front door.
+
+"Hi," says the annoyingly bright young man in the doorway. "Chowmail Overnite. Are you Mr Nyman, of 14 Main?" He holds up a large burlap bag. "Here's your order of Llamex(R) brand High-Fibre Llama Treats!"
+
+You're beginning to feel normal again.
+
+>give the us excess card to the man
+[taking the wallet first]
+
+[taking the US Excess card out of the wallet first]
+
+The delivery man glances at your US Excess card and shakes his head. "Sorry," he says, handing the card back to you. "This expired last month. Hey!" he says, with the air of someone who has just thought of a new philosophical explanation of life, suffering and why there's never enough Chinese ravioli for everyone at dinner to have a second one each, "You know what you should do? You should get your bank to send you another one."
+
+Incredibly, you resist the urge to kill the worthless cake-brain on the spot.
+
+>give him the beezer card
+[taking the Beezer card out of the wallet first]
+
+The delivery man makes an imprint of your Beezer card with his portable Imprint-O-Mat, gets you to sign a ridiculous form (which you notice in passing contains a larger number than there are things in the known Universe) and hands the card back to you.
+
+"Thank you," he says, depositing the bag at your feet. "If ever your future pet-feeding plans call for llama food, I hope you'll think of Chowmail. Have a nice day!"
+
+The man closes the front door. You can hear him whistling a cheery llama-food delivery tune as he walks away.
+
+>take the bag
+Taken.
+
+>w
+Back Room
+
+You see a table and a combination telephone/answering machine here.
+
+>press button
+
+--- Type any character for next msg ---
+You hear CLICK followed by a dialling tone.
+
+[Your blood pressure just went up.]
+
+--- Type any character for next msg ---
+The machine says: "Jones here. I'm the new tenant of your old house. There's a whole bunch of mail been arriving here for you. Urgent stuff from the Fillmore Fiduciary Trust. You know what I thought? I thought 'Do the right thing, Jones. Forward the guy's mail.' Then I found out about the termites. Then I found out about the nightly roach-dance. So I thought 'Rats.' I've returned your mail to your bank. Sort it out yourself."
+
+--- Type any character for next msg ---
+You hear CLICK followed by a dialling tone.
+
+[Your blood pressure just went up.]
+
+--- Type any character for next msg ---
+You hear CLICK followed by a dialling tone.
+
+[Your blood pressure just went up.]
+
+--- Type any character for next msg ---
+The machine says: "Hi there! Mr Barty Slartfast? Boysenberry Users' Group here. Just a reminder about our next meeting. We've got this insanely great adventure in, it comes in this blue box and, well, you're an income tax inspector and you're on this, uh, bridge, and, um... well, tell you about it at the meeting tomorrow evening at... hello? Hello?"
+
+--- Type any character for next msg ---
+The machine says: "You have won $25,000! Oops, you're not home, are you? Oh well, too bad. I'll call the alternate winner."
+
+--- Type any character for next msg ---
+You hear CLICK followed by a dialling tone.
+
+[Your blood pressure just went up.]
+
+--- Type any character for next msg ---
+You hear CLICK followed by a dialling tone.
+
+[Your blood pressure just went up.]
+
+--- Type any character for next msg ---
+The machine says: "Look, just because I'm paranoid doesn't mean they aren't out to get me."
+
+>e
+Front Room
+
+>open door
+You open the front door.
+
+>e
+12 Main
+
+You're standing on a well-kept sidewalk to the east of your new house. The street bears north and south. There's an overgrown alleyway to the east.
+
+There's a mailbox here.
+
+>open mailbox
+Yes, there is some mail in the mailbox. No, it is not the cheque from Happitec which you were expecting. It's a leaflet, and it's addressed to 11 Main. There's obviously something wrong with the city mail delivery system (installed at great expense by the Deep Thought Corporation last year).
+
+>take leaflet
+You take the leaflet out of the mailbox.
+
+>read leaflet
+The leaflet is an irritatingly enthusiastic mail-shot for some computer game. "Now available for your Boysenberry!" it says, pointing out that (a) the game comes in a blue box; (b) if you had a Daktari S/M you could have truly amazing graphics; and (c) if you had a Cormorant Honcho you could have utterly incredible sound. Since the Boysenberry has neither sound nor graphics, you wonder what on earth the marketing manager was thinking of. The mail-shot is addressed to 11 Main. The sender used a postage stamp.
+
+>n. w
+11 Main
+
+You see a rather run-down restaurant to the east, and one of those bookstores which looks as if it wouldn't have anything you want to buy to the west. The street continues north and south.
+
+You step into the bookstore.
+
+Bookshop
+
+This is a not-very-nice bookstore which sells "packages" and "products" rather than books. Shelves groan with best sellers and bargain remainders. The exit is to the east.
+
+A sales clerk is standing by a computerised cash register. The wall behind him offers a selection of computer software.
+
+The clerk nods a greeting, and looks you up and down.
+
+>examine software
+Not much of a selection, really. A couple of last year's Boysenberry hits; you've seen them all before.
+
+The clerk notes your interest with a dopey grin. "Great selection, huh? All the latest hits," he remarks.
+
+>ask clerk about software
+The clerk glances furtively around the shop, then gives you a sly look. "You look like a fellow hacker," he half-whispers. "Bet you'd be interested in some, shall we say, SPECIAL carts I keep on the side. Wanna see 'em?"
+
+>>yes
+The clerk pulls a software cartridge out from under the counter.
+
+The clerk holds up the cart for you to see. "It's not against the law to look at it, you know."
+
+>examine cart
+This cart doesn't look at all like the authorised Boysenberry carts you've bought before. Its plastic case is poorly molded, and lacks the familiar logo of a partially digested purple berry.
+
+From the single word printed on the cheap white label, you deduce that this is a recipe program. That is because the word on the label is "RECIPE".
+
+"Take a look at this!" he chortles, holding it up for you to see.
+
+>open case
+You open the small case.
+
+You see an adventure game cartridge and an eclipse predicting cartridge inside.
+
+"Pre-release copy. Custom chips, probably one of a kind." He tosses the cart from hand to hand. "I'm not into cooking, though. Eat out all the time. Wouldn't mind trading this for something."
+
+>take the adventure
+You take the adventure game cartridge out of the small case.
+
+The clerk fawns over the recipe cartridge. "Been looking for a good game," he remarks, eyeing your adventure game cartridge.
+
+>give adventure to clerk
+The clerk takes the adventure game cartridge from you. "I KNEW you were into that stuff," he chortles. He tosses you the recipe cartridge. "Here, have fun."
+
+[Your score just went up.]
+
+>put recipe cart in case
+You put the recipe cartridge in the small case.
+
+The clerk is eyeing you carefully.
+
+>e
+"Have a nice day," calls the clerk as you leave.
+
+11 Main
+
+>drop bag
+You drop the bag of llama treats.
+
+>e
+You step into the dingy restaurant.
+
+Restaurant
+
+You're in a fast-food restaurant. This is merely a bureaucratic convention, since the food is not really fast. Nor is it really food. There's an exit out to the street, and a somewhat grubby door to the south.
+
+>wait
+Time passes.
+
+A harried-looking waitress appears at your side. "May I take your order now, sir?"
+
+>>yes
+The waitress sighs too loudly. "All right, sir, how would you like your burger done? Raw? Rare? Medium? Well-done?"
+
+>>medium
+"Bar-b-que sauce on that?"
+
+>>no
+"Very well, sir. Melted cheese?"
+
+>>no
+"How about bacon?"
+
+>>no
+"Mushrooms?"
+
+>>no
+"Great. Now, you've your choice of french fries, baked potato or salad with that. Which will it be, sir?"
+
+>>salad
+"Salad, right. Would you like dressing on that?"
+
+>>no
+"Right. Now, sir, would you care for a drink?"
+
+>>no
+"Is there any particular kind of drink you want not to have? We've got beer, wine, soda or juice."
+
+>>juice
+"Orange? Apple? Grapefruit? Mango?"
+
+>>orange
+"A glass of water on the side?"
+
+>>no
+The waitress races away. A few moments later, she returns. "Our computer crashed, and we lost your order. It's time for my break, so someone else will have to take your order." She walks away.
+
+>wait
+Time passes.
+
+You're beginning to feel normal again.
+
+>wait
+Time passes.
+
+A surly-looking waiter with huge bunched muscles like the sort of people who kick whole BEACHES in people's faces appears at your side. "Are you ready to order now?"
+
+>>yes
+The waiter sighs too loudly. "All right, sir, how would you like your burger done? Raw? Rare? Medium? Well-done?"
+
+>>medium
+"Bar-b-que sauce on that?"
+
+>>no
+"Very well, sir. Melted cheese?"
+
+>>no
+"How about bacon?"
+
+>>no
+"Mushrooms?"
+
+>>no
+"Great. Now, you've your choice of french fries, baked potato or salad with that. Which will it be, sir?"
+
+>>salad
+"Salad, right. Would you like dressing on that?"
+
+>>no
+"Right. Now, sir, would you care for a drink?"
+
+>>no
+"Is there any particular kind of drink you want not to have? We've got beer, wine, soda or juice."
+
+>>juice
+"Orange? Apple? Grapefruit? Mango?"
+
+>>orange
+"A glass of water on the side?"
+
+>>no
+The waiter squints at his pad with tiny simian eyes, breathing hard with the intellectual effort of it all. "Let's see if I got that right. You want a medium burger with nothing on it, a salad with no dressing, and no orange juice. Is that right?"
+
+>>yes
+The waiter nods. "That'll be a few minutes," he says as he races away.
+
+>wait
+Time passes.
+
+The waiter reappears. "Your burger, sir," he announces, dropping it on the table before you and racing off before you can complain about its size.
+
+>take burger
+You take the hamburger off the table.
+
+>s. w. n
+You slither out the back way, wondering why you never see any live dogs hanging around this restaurant.
+
+Alley
+
+This is an overgrown, grassy alley, surrounded by a tall creosoted fence. An open back door leads north; there's a gap in the fence to the south. The exit leads west.
+
+The waitress you met in the restaurant is standing nearby. Beside her is a mysterious-looking man in Deep Thought Corporation coveralls, whispering into a walkie-talkie that's mauve in colour.
+
+The two freeze at the sight of you. "It's him!" hisses the waitress. Before you can speak or move, they slink around a corner and disappear.
+
+Somebody slams the back door shut.
+
+12 Main
+
+There's a mailbox here.
+
+11 Main
+
+There's a bag of llama treats here.
+
+>take bag
+Taken.
+
+>eat the burger
+You're not hungry but eat anyway.
+
+[Your score just went up.]
+
+>n. e
+10 Main
+
+This is the commercial district. You see a rather shabby brownstone tenement (obviously once a grand family house) to the east, and a travel agency (which is trying to look like a bank) to the west. The Fillmore Fiduciary Trust Bank (which is trying to look like a travel agency) lies to the north. The street continues south.
+
+Hallway
+
+You're in a dark, dank, drab hallway. Grey, greasy stone stairs lead up, and an exit (the door long ago ripped off by drunken opera critics) leads west. There's a closed door in the south wall.
+
+>knock on door
+Somebody unlocks the door from the inside. "Come in, come in," says an impatient voice, and the door opens a little.
+
+>s
+Flat
+
+You're in a dingy flat which smells of old tea bags. A blistered green door leads north.
+
+A piece of mail, as yet undamaged by the collector, lies at your feet.
+
+A mousy little wimp of a fellow is sitting at a table, snipping envelopes into tiny pieces, burrowing through the shredded paper, tittering mousily and grabbing at the stamps with his mousy little hands. The floor is littered with snipped-up paper.
+
+The little man glances up as you enter. "Hi, mister. Can I help you?" he asks in a preoccupied tone.
+
+>give stamp to man
+The mousy man's little black button eyes grow wide when he sees the leaflet. "I don't believe it," he whispers, fondling the stamp. "The Zalagasa 42 Ai-Ai. First and rarest in the ALMOST UNBELIEVABLY RARE LITTLE, UM, WELL, SORT OF MONKEY-TYPE ANIMALS OF THE SOUTHERN HEMISPHERE Series!"
+
+Whooping with glee, the little fellow skitters up and down and performs a series of handstands and cartwheels around his little apartment. Then he opens his pants, stuffs the precious leaflet into his underwear (of which the less said, the better), pulls on a coat and dashes out the door. "Ai-Ai! The Ai-Ai!" he shrieks all the way down the street.
+
+>take the mail
+Most of the mail is rather useless, not even worth picking up. You do find a Popular Paranoia magazine, though.
+
+[Your score just went up.]
+
+>examine mail
+It's the latest issue of POPULAR PARANOIA magazine, addressed to 15 Main. A sweepstakes blurb on the cover says, "You may already have won $1,000,000.00 in gold!!!" There's also one of those cute little orange Postal Service stickers, with a C printed on it.
+
+>n. w. w
+Hallway
+
+10 Main
+
+You step into the travel agency.
+
+Travel Agency
+
+You're in a travel agency which is trying to look like a bank. The exit is to the east.
+
+A travel agent is sitting behind the desk, waiting for customers to explain exactly where they want to go and how they want to get there so that she can get a large commission for misunderstanding everything and sending them to Djakarta.
+
+A large sign is hanging on the wall behind the desk.
+
+>give letter to agent
+The travel agent takes the letter, glances at it, shrugs and tosses a ticket on the desk. "There you go, right?" she yawns. "Like, uh, it's been real."
+
+[Your score just went up.]
+
+>take ticket
+You take the airline ticket off the desk.
+
+>e. s. s. e. s
+10 Main
+
+11 Main
+
+12 Main
+
+There's a mailbox here.
+
+Alley
+
+You squeeze yourself through the gap.
+
+Behind Mansion
+
+You're in the back garden of a mansion. You can enter the house through a door to the west, and there's a gap in the fence to the north.
+
+You can hear an especially easy-listening version of "Do You Know the Way to San Jose?" without any of the twiddly bits playing in the mansion.
+
+>examine the door
+It looks as if the screen door is closed.
+
+>open the door
+You open the screen door.
+
+The radio in the mansion begins to play "Delta Dawn," performed by a world-famous kazoo soloist.
+
+>w
+Porch
+
+Welcome to the porch. It is a porch. Doors from this porch lead south and east. The overall effect is rather porchy.
+
+You can hear "I Write the Songs," with the lyrics mercifully mixed out playing in the mansion.
+
+A macaw with a missing right wing is watching you from a perch in the corner. Under the perch you see some mail.
+
+>listen
+The radio is playing "My Way," backed by a bassoon-and-triangle duet.
+
+The macaw looks at you with one eye, then the other.
+
+>listen
+The radio is playing "Surfin' USA," backed by a bassoon-and-triangle duet.
+
+>listen
+The radio is playing "Boogie Oogie Oogie," with a disco beat.
+
+The macaw scratches its wing.
+
+>listen
+The radio is playing "Delta Dawn," performed a capella by Tony Orlando and Dawn.
+
+>listen
+The radio is playing "My Way," performed by a world-famous kazoo soloist.
+
+The macaw roars defiance at you. "Death to the running dogs of imperialism!"
+
+>e. n. w. s
+Behind Mansion
+
+You squeeze through the gap.
+
+Alley
+
+12 Main
+
+There's a mailbox here.
+
+13 Main
+
+You're standing west of a mansion; its rather ornate door is closed. The road continues north and south.
+
+You can hear "Torn Between Two Lovers," performed on common household appliances playing in the mansion.
+
+>examine the door
+It's a fairly dull door with a fairly interesting doorbell.
+
+The radio in the mansion begins to play something by Andrew Lloyd Webber that's a bit like something else you can't remember.
+
+You hear a sound like a wet oboe. Something is bleating to the south.
+
+>ring doorbell
+When you push the doorbell you hear an earsplitting clatter of bells, buzzers and gongs that shakes the mansion to its foundation.
+
+Nothing happens for a moment. Then an old woman's voice, deep within the mansion, cries "Coming, Cecil!"
+
+You hear footsteps behind the front door.
+
+>n. e. s. w. s
+12 Main
+
+There's a mailbox here.
+
+Alley
+
+You squeeze yourself through the gap.
+
+Behind Mansion
+
+Porch
+
+A macaw with a missing right wing is watching you from a perch in the corner. Under the perch you see some mail.
+
+Trophy Room
+
+This is the trophy room. You'd expect to see defunct lions, or at least school debating awards, but don't. The reason why is a technical secret. Exits lead north and west.
+
+You can hear something by Andrew Lloyd Webber that's a bit like something else you can't remember playing in the mansion.
+
+A dowdy matron is standing in the open doorway, holding an ear trumpet and an elephant gun. Luckily, she's facing away from you at the moment.
+
+A painting of Ronald W. Reagan is hanging on the wall.
+
+The matron is beginning to lock the front door.
+
+>take the painting
+Taken.
+
+You hear the final clicks of the front door being locked.
+
+>n
+Porch
+
+A macaw with a missing right wing is watching you from a perch in the corner. Under the perch you see some mail.
+
+You hear someone humming to the music in the adjacent room.
+
+>show the painting to the macaw
+The macaw is clearly deeply moved by the sight of the painting of Ronald W. Reagan, and starts shrieking a vigorous and relentless R&B number about the joys of political extremism. At the same time it launches into an energetic roach-stomping flamenco dance which miraculously generates enough aerodynamic lift to catapult it (somewhat asymmetrically) into the air, where it rips up Reagan's face (which, to be honest, makes little real difference).
+
+Exhausted but happy, it sinks back to its perch, croons repulsively the first verse of a ballad about pecking the eyes out of oppressors of the American people, and falls into a satisfied coma.
+
+>take the mail
+The macaw, apparently exhausted by the ferocity of its attack on the painting, doesn't seem to notice you.
+
+Most of the mail is rather useless, not even worth picking up. You do find a flyer, though.
+
+[Your score just went up.]
+
+The macaw groans defiance at you. "Power to the downtrodden masses."
+
+>examine the mail
+This is a sweepstakes flyer ("You may already have won $1,000,000.00!!!"), addressed to 14 Main. There's also one of those cute little orange Postal Service stickers, with a D printed on it.
+
+The radio in the next room begins to play an instrumental version of "Yesterday," which should help Paul McCartney pay for GIVE MY REGARDS TO BROAD STREET.
+
+>e. n. w. s. s
+Behind Mansion
+
+You squeeze through the gap.
+
+Alley
+
+12 Main
+
+There's a mailbox here.
+
+13 Main
+
+14 Main
+
+A modest, ochre-and-aubergine striped llama-farm farmhouse stands to the west, its front door closed. The street continues north and south.
+
+A llama is watching you from a pen at the side of the road. A mailbox is attached to the front of the pen.
+
+There's a notice here.
+
+The llama blinks at you stupidly.
+
+>read notice
+The notice says,
+
+"Dear Newspaper Boy,
+
+Please do not leave any papers for the next three weeks. I am away on vacation and do not want papers piling up on my doorstep where thieves can see them.
+
+Have a nice day!"
+
+A tangerine Cougar has just driven past. It was full of burglars, laughing and taking notes.
+
+>open mailbox
+You open the mailbox.
+
+The llama emits a hoarse bleat.
+
+>look in mailbox
+Peering inside, you notice that the back of the mailbox opens directly into the llama's trough. Strangely enough, this doesn't strike you as remotely peculiar.
+
+>examine the trough
+You see some mail in the trough.
+
+>open the bag
+You open the bag of llama treats. The bag is full of Llamex(R) brand High-Fibre Llama Treats.
+
+>empty bag into mailbox
+It's pretty obvious that there's not much anyone can tell YOU about llama-feeding. With deft and practised llama-feeding movements (where did you pick them up, by the way?) you ease the bag into the mailbox, where it immediately slides out the back and lands in the trough with a characteristic and not unpleasant llama-food-landing-in-a-trough noise. The noise is particularly not-unpleasant to the llama, who sniffs at the open bag, emits a hateful little bleat of delight, and begins to chomp on the llama treats inside.
+
+>take the mail
+The llama is sufficiently distracted to keep her tongue to herself when you reach through the mailbox.
+
+Most of the mail is rather useless, not even worth picking up. You do find a coupon booklet, though.
+
+[Your score just went up.]
+
+The llama chomps eagerly on the llama treats.
+
+>examine the mail
+It's a coupon booklet ("Worth Over $10.00!") for a supermarket so far away it would cost you $20.00 to get there, addressed to 13 Main. There's also one of those cute little orange Postal Service stickers, with an E printed on it.
+
+>s
+15 Main
+
+You're at a dead end. A camouflaged and heavily fortified house stands to the south. You'd expect things like a moat and drawbridge, but you can't see them from here. There is a gate of the impenetrable sort; who knows what delights lie behind it? The street leads north.
+
+The short hairs standing up on the back of your neck tell you that either (a) a goose has just walked over your grave or (b) some paranoid individual is spying on you through an extremely well-hidden camera.
+
+>wait
+Time passes.
+
+A gruff voice crackles to life on the intercom. "Unfortunately, there's a radio connected to my brain."
+
+>n. w
+14 Main
+
+A modest, ochre-and-aubergine striped llama-farm farmhouse stands to the west, its front door wide open. The street continues north and south.
+
+A llama is chomping happily on her treats in a pen at the side of the road. A mailbox is attached to the front of the pen.
+
+There's a notice here.
+
+The llama pauses to bleat, then turns back to the llama treats.
+
+Farmhouse
+
+You're in the ochre-and-aubergine llama-farm farmhouse. The place has obviously been ransacked. The exit is to the east.
+
+>wait
+Time passes.
+
+A stranger bearing a really rather horrid resemblance to Woody Allen appears in the open doorway. He is carrying a colossal armoury for one so runty, and his general twitchiness doesn't help you feel any more secure. Guns, knives, hatchets and bombs dangle from various straps, belts and D-loops. For some reason, he makes you feel nervous. He peers around the room uncertainly, then turns to stare at you. "Ahem," he says, shuffling his feet expectantly.
+
+>Unfortunately, there's a radio connected to my brain
+The weirdo consults some notes written on his shirt cuff and shows a look of understanding.
+
+>wait
+Time passes.
+
+The weirdo looks you straight in the eye and says, "Actually, it's the BBC controlling us from London."
+
+>e. s
+You push past the weirdo.
+
+14 Main
+
+A llama is chomping happily on her treats in a pen at the side of the road. A mailbox is attached to the front of the pen.
+
+There's a notice here.
+
+The weirdo follows you out of the farmhouse.
+
+Utterly nonplussed, the weirdo glances at the number on the front door. "Oh, dear," he giggles, blushing. "Wrong address. Never mind." But then he mutters, "Can't trust anyone these days!"
+
+You watch as he trots away down the street.
+
+15 Main
+
+The voice on the intercom crackles to life again. "Unfortunately, there's a radio connected to my brain."
+
+>Actually, it's the BBC controlling us from London
+You hear an electric SNAP as the intercom is switched off.
+
+Nothing happens for a long moment. Then various rumbles and clatters herald the house letting down its defences, one by one. Finally, the gate swings open.
+
+>s
+Foyer
+
+You're in the foyer of the camouflaged house. You could try to exit to the north. There is a stairway leading down. The sophisticated communications and security centre that this place obviously possesses must be hidden somewhere else, rather like the camera.
+
+The twitching weirdo is here. He obviously arrived before you.
+
+The completely, utterly paranoid owner of this house is here. He is also twitching nervously, and holding a machine gun. You are surprised that there are so many heavily-armed Woody Allens in this neighbourhood. He looks you up and down suspiciously. You get the distinct impression that touching the mail you see here would be very unwise.
+
+The paranoid householder stares first at you, then at the weirdo, with growing confusion and disbelief. He starts to say something, then stops. He then stops starting to say it and starts. "How come...", he says. Then he stops again. He clearly believes that this whole thing is part of his paranoia, and then, equally clearly, decides that it doesn't matter.
+
+"Right. One of you is an impostor. I'm pretty sure that it's you, Nyman, but, to be sure, I'm going to grill... going to ask you a few simple questions. Right."
+
+"What device is used by the banks to keep track of the whereabouts of American citizens?"
+
+>>ATM
+"What do Ronald Wilson Reagan, Daniel Miguel Ortega, Dwight Eugene Gooden and Johnny Herman Carson have in common (and are a menace because of it)?"
+
+>>666
+"The existence of which one of the fifty states of the union is a fiction invented by the Trilateral Commission for its own nefarious purposes?"
+
+>>Delaware
+"What well-meaning legislation was actually a communist-inspired plot to destroy the American family?"
+
+>>GI bill
+"What secret FBI surveillance method is masquerading under the guise of a public service?"
+
+>>traffic helicopters
+The paranoid says, "You passed the test. This means that either one of you could be the impostor." He presses a button on the wall, and a trap door opens in the floor. Both you and the stranger fall into a gaol below.
+
+Gaol
+
+You're in a gaol cell in the basement of the paranoid's house. To the north is an exit into the basement. The gaol door is closed. You can see a stairway in the basement leading up.
+
+A wild-eyed, twitching oddity looking a bit like a heavily-armed Woody Allen is standing nearby, holding a small armoury of weapons which he fingers nervously, each in its turn.
+
+>examine door
+It's a perfectly ordinary gaol door with perfectly ordinary high-tensile chrome molybdenum bars welded firmly into place.
+
+>cut bar with hacksaw
+It would take you forever to saw through the bars in the door with that.
+The weirdo observes your futile efforts to saw through the bars. He says, "What a great idea! Perhaps this will help." He hands you a Swiss army knife from his pocket.
+
+>examine knife
+This is one of those multi-function Swiss army knives. It appears to have all of the usual blades, screwdrivers, bottle openers, hair dryers and food processors one associates with such devices. In addition, there's a button marked POWER SAW and a lever marked GENERATOR.
+
+>press button
+The Swiss army knife ejects a power saw.
+
+>take power saw
+Taken.
+
+>pull lever
+The Swiss army knife ejects a portable foot-powered generator.
+
+>plug the power saw into the generator
+You plug the power saw into the portable foot-powered generator.
+
+>sit on the generator
+You sit on the portable foot-powered generator and start pedalling.
+
+>give the power saw to the weirdo
+The weirdo starts the saw, cuts the door open and drops the power saw. You get off the portable foot-powered generator.
+
+>sit on the generator
+You sit on the portable foot-powered generator and start pedalling.
+
+>wait
+Time passes.
+
+The weirdo says "I'm getting outa here!" and leaves the gaol.
+
+>stand up
+You stop pedalling and get off the portable foot-powered generator.
+
+>n. u
+Basement
+
+This is the basement of the paranoid's house. At the south end of the basement is a gaol. The gaol door is open. A stairway leads up.
+
+Foyer
+
+There's some mail here.
+
+>take the mail
+Most of the mail is rather useless, not even worth picking up. Amid the junk, you find an envelope and a soggy former money order. You regretfully leave the soggy former money order behind, and take the envelope.
+
+[Your score just went up.]
+
+>examine the mail
+The closed envelope is addressed to Jeff Nyman, 12 Main. There's also one of those cute little orange Postal Service stickers, with a B printed on it.
+
+>open the envelope
+You open the envelope.
+
+You see a cheque and a memo inside.
+
+>read the memo
+It's a memo from US Excess Travel Services.
+
+Dear Jeff Nyman:
+Your account is overdue by $75. You have ignored our many previous attempts to collect this money. We have taken appropriate action (see enclosure).
+
+Yours truly,
+L. C. J. Tester, Credit Manager
+
+>read the cheque
+This is a cheque drawn on the Fillmore Fiduciary Trust, in the amount of -$75.00 (yes, that is a minus sign). It's made out to Jeff Nyman.
+
+>n. n. n. n. n. n. n. n
+As you leave the house, it puts on a very impressive display, shutting itself up after you. Finally, you pass through the gate, which rattles shut behind you.
+
+15 Main
+
+14 Main
+
+A llama is chomping happily on her treats in a pen at the side of the road. A mailbox is attached to the front of the pen.
+
+There's a notice here.
+
+The llama is still eating the llama treats.
+
+13 Main
+
+The radio in the mansion begins to play "Surfin' USA," performed by a world-famous kazoo soloist.
+
+12 Main
+
+There's a mailbox here.
+
+11 Main
+
+10 Main
+
+A nerdy-looking young man you've never seen before stumbles into view. "Are you Jeff Nyman, of 12 Main, Springfield, formerly of 5 Hippo Vista, Rhinoceros, New Jersey?" he asks in an obnoxiously whiny voice. "I have something I know you'll want. It's a real Star Trek phaser! Only 76 bucks!"
+
+As you enter, you hear an announcement say, "WARNING: The bank will close in 30 minutes."
+
+"Hey! Wait!" cries the nerd. "Can I go out with your sister?"
+
+Bank
+
+You are in The Fillmore Fiduciary Trust Bank. There is an exit to the south and teller windows to the north.
+
+Teller #5
+
+A sign on the window says NEXT WINDOW PLEASE.
+
+>go to window 8
+Teller #8
+
+This window has a sign above it that says:
+THIS WINDOW FOR WITHDRAWALS ONLY.
+
+The teller at the window says, "Do you wish to make a withdrawal?"
+
+>>yes
+"Here is a withdrawal slip," she says as she hands you one.
+
+>go to window 2
+Teller #2
+
+This window has a sign above it that says:
+THIS WINDOW FOR CHECK CASHING ONLY.
+
+The teller at the window says, "Do you wish to cash a check?"
+
+>>yes
+"Please give me the check," she says.
+
+>put knife in pocket
+You put the Swiss army knife in your pocket.
+
+>take cheque from envelope
+You take the cheque out of the envelope.
+
+>show cheque to teller
+She takes the cheque and says, "Please show me some ID."
+
+>show passport to teller
+The bank teller looks at your passport. She returns your cheque to you. She says, "Your ID's OK, but I'm afraid I've run out of negative money; the Treasury has it all."
+
+>go to window 10
+Teller #10
+
+This window has a sign above it that says:
+THIS WINDOW FOR DEPOSITS ONLY.
+
+The teller at the window says, "Do you wish to make a deposit?"
+
+>>no
+The bank teller instructs you to go to window 4.
+
+>fill out withdrawal slip
+
+
+[Your blood pressure just went up.]
+
+You have now filled out the slip.
+
+>give slip to teller
+She takes the withdrawal slip and asks you for the cheque or money.
+
+>give cheque to teller
+"Please show me some ID."
+
+>show passport to teller
+The bank teller looks at your passport. She says, "Let's see, you are depositing -$75 using a withdrawal slip. Since a withdrawal slip is the negative of a deposit slip, negative of -$75 is $75. It all makes perfect sense. Your new balance is $85.00. Have a nice day."
+
+>go to window 8
+Teller #8
+
+This window has a sign above it that says:
+THIS WINDOW FOR WITHDRAWALS ONLY.
+
+>ask for slip
+[spoken to the bank teller]
+
+The teller at the window says, "Do you wish to make a withdrawal?"
+
+>>yes
+"Here is a withdrawal slip," she says as she hands you one.
+
+>fill out slip
+
+
+[Your blood pressure just went up.]
+
+You have now filled out the slip.
+
+>give slip to teller
+"May I see some ID please."
+
+>show passport to teller
+The bank teller looks at your passport. She hands you your money and says, "Your new balance is $10.00. Have a nice day."
+
+[Your blood pressure just went up.]
+
+[Your score just went up.]
+
+>s. s. s. s. w. w
+Bank
+
+10 Main
+
+11 Main
+
+12 Main
+
+There's a mailbox here.
+
+You hear the tail end of a message on your answering machine.
+
+Front Room
+
+You're beginning to feel normal again.
+
+Back Room
+
+You see a table and a combination telephone/answering machine here.
+
+>read address book
+On opening the address book, you find that in common with many loose-leaf address books, most of the pages are loose and have fallen out. There are only two or three left. Most of these are stuck together with jam, chewing gum or an unpleasant combination of both.
+
+Which page do you want to read, the first page, the middle page, or the last page?
+
+>read first page
+This page is labelled NAME AND ADDRESS OF OWNER.  In your own handwriting you see
+
+Jeff A. Nyman
+5 Hippo Vista
+Rhinoceros, NJ 81818
+421-3224
+
+which has been crossed out (aren't you glad you moved?). Under that you've written
+
+Jeff A. Nyman
+12 Main
+Springfield, IL 62701
+5551212
+
+There's also a notice on this page which says, "If lost, please return this address book to the owner at the above address. $25 reward."
+
+>read last page
+Only two entries are legible on this page.
+
+Mr Ollie Fassbaum, Manager
+The Happitec Corporation
+17 Okapi Plaza
+Springfield, IL 62701
+976-6438
+
+and
+
+Getlost Airport Cab
+977-9070
+
+>call 977-9070
+After a few rings a man answers. "Getlost Airport Cab. Last name of passenger please."
+
+>>Nyman
+"Ok, buddy, where do you wanna go?"
+
+>>airport
+"Great, buddy. The airport's our specialty. What's the name of your street?"
+
+>>main
+"Street number?"
+
+>>12
+"Okay. Lemme put you on hold for a minute while I see what we got in your area."
+
+CLICK!
+
+[Your blood pressure just went up.]
+
+>wait
+Time passes.
+
+The cab company plays you "I Write the Songs," backed by a bassoon-and-triangle duet.
+
+>wait
+Time passes.
+
+The cab company plays you "(I Can't Get No) Satisfaction," crooned by Barry Manilow.
+
+>wait
+Time passes.
+
+The cab company plays you "I Write the Songs," crooned by Mick Jagger.
+
+>wait
+Time passes.
+
+A man's voice interrupts Herb Alpert and the Tijuana Brass doing a Sex Pistols medley. "Okay, Mr Nyman. We'll send a cab over to 12 Main right away. Thanks for calling Getlost."
+
+He hangs up.
+
+>e. e
+Front Room
+
+12 Main
+
+There's a mailbox here.
+
+>wait
+Time passes.
+
+You see a Getlost cab wandering up and down the street looking at all the house numbers.
+
+>wait
+Time passes.
+
+The cab pulls up in front of you.
+
+>enter cab
+The driver says, "Are you the one who called for a cab?"
+
+>>yes
+"Let's see some ID then."
+
+>show passport
+[to the cab driver]
+
+The cab door pops open and you climb in. The cab driver says, "You going to the airport, buddy?"
+
+>>yes
+"Good. I like the airport," says the cab driver, and sets off. He drives through the town and takes the main highway out to the airport, humming "Leaving on a Jet Plane" by Peter, Paul and Mary happily to himself.
+
+In The Cab
+
+You're in the back seat of a Getlost cab.
+
+>wait
+Time passes.
+
+The cab driver drives on. He shows you pictures of his kids and mentions that they like the airport a lot also. He says that he has a lot of regular customers who regularly go to the airport. "I had John Travolta in the cab once," he says. "Wanted to go to some club, wouldn't go to the airport. And where is he now? See that movie "Perfect"? Terrible. Should have gone to the airport." And so on.
+
+>wait
+Time passes.
+
+You arrive at the airport. The cab driver says, "That'll be $17.50, buddy."
+
+>pay driver $17.50
+With a bitter sneer the cab driver spins his wheels in a puddle and drives off, drenching you with dirty water.
+
+You arrive at the airport.
+
+You see a Deep Thought Corporation computer repairman in mauve overalls peering blankly at one of the computerised signs which is changing from Agony Airlines to Quantum Airways, whereupon he disappears into the crowd.
+
+Airport Entrance
+
+You're at an entrance marked:
+  Air Worst
+  Worsted Airlines
+  Omnia Gallia
+  Air Zalagasa
+  Frontline Airlines
+  Quantum Airways
+Other entrances stretch off to the east and west.
+
+You hear "Tie a Yellow Ribbon 'Round the Old Oak Tree," with 101 strings being played very soothingly.
+
+>n. n. s. s. e. e. e. n. n
+Airport Concourse
+
+You're in the main concourse. To the north, there's a ticket desk for Omnia Gallia; overhead are signs pointing to various airlines:
+  east: Air Zalagasa
+  west: Nocturnal Aviation
+  east: Flying Boxcar
+  east: Northwest Accident
+  east: Air America
+The concourse continues to the east and west; there's an exit to the south.
+
+"Your attention, please. Would anyone who fancies making some announcements like these please pick up the white courtesy phone."
+
+As you approach the desk, you notice a sign, which a departing Deep Thought Corporation repairman in mauve overalls has just finished fiddling with.
+
+Omnia Gallia Desk
+
+You're standing in front of the deserted Omnia Gallia desk.
+
+"Your attention, please. Would anyone who knows where the white courtesy phone is located please pick up the white courtesy phone."
+
+Airport Concourse
+
+[Your blood pressure just went up.]
+
+You see a Deep Thought Corporation computer repairman in mauve overalls peering blankly at one of the computerised signs which is changing from Frontline Airlines to Agony Airlines, whereupon he disappears into the crowd.
+
+Airport Entrance
+
+Amid the mob, you find that your address book has slipped out of your grasp.
+
+You see a Deep Thought Corporation computer repairman in mauve overalls peering blankly at one of the computerised signs which is changing from Air Moosehead to KiwiAir, whereupon he disappears into the crowd.
+
+Airport Entrance
+
+You're at an entrance marked:
+  Foster Airways
+  KiwiAir
+  Air Zalagasa
+  Flying Boxcar
+  Untied
+Other entrances stretch off to the east and west.
+
+"Your attention, please. Would whoever dropped no tea in the main concourse please pick up the white courtesy phone."
+
+You see a Deep Thought Corporation computer repairman in mauve overalls peering blankly at one of the computerised signs which is changing from Kirin Airlines to Air Moosehead, whereupon he disappears into the crowd.
+
+Airport Entrance
+
+You're at an entrance marked:
+  Air Moosehead
+  Air Laphroig
+  Air Zalagasa
+  Northwest Accident
+  Massive
+Other entrances stretch off to the east and west.
+
+You hear the theme song to "Mister Ed," hummed backwards by Billy Graham being played very soothingly.
+
+You see a Deep Thought Corporation computer repairman in mauve overalls peering blankly at one of the computerised signs which is changing from Low Ceiling to Frontline Airlines, whereupon he disappears into the crowd.
+
+Airport Entrance
+
+You're at an entrance marked:
+  Air America
+  Tickoff Air
+  Frontline Airlines
+  Pan Universal
+Other entrances stretch off to the east and west; there's a Lost and Found office to the south.
+
+"Your attention, please. Would the Deep Thought Corporation repair crew please pick up the white courtesy phone."
+
+Airport Concourse
+
+You're in the main concourse. To the north, there's a ticket desk for Air Zalagasa; overhead are signs pointing to various airlines:
+  west: Nocturnal Aviation
+  west: Air Worst
+  west: Foster Airways
+  west: Omnia Gallia
+  west: Air Moosehead
+The concourse continues to the east and west; there's an exit to the south.
+
+The snivelling, ratty and ineffectual nerd stumbles into view again. "There you are!" he whines. "I've got something I know you'll want. A real Star Trek phaser! Only 58 bucks!"
+
+"Your attention, please. Would anyone interested in seeing some gladiator movies please pick up the white courtesy phone."
+
+You're beginning to feel normal again.
+
+"Hey! Wait!" cries the nerd. "Can I go out with your sister?"
+
+Air Zalagasa Desk
+
+You're standing in line at the Air Zalagasa desk, just north of the concourse. A number of people are waiting in front of you in an annoying manner.
+
+A clerk is standing behind the desk, talking to the first person in line.
+
+You hear a hatefully familiar whine close at hand. "There you are!" he whines. "I've got something I know you'll want. A Little Computer Animals program! Only 58 bucks!"
+
+>wait
+Time passes.
+
+The nerd waves the Little Computer Animals program impatiently. "C'mon, buddy. 58 bucks! A bargain!"
+
+You hear "Boogie Oogie Oogie," backed by too many clarinets being played very soothingly.
+
+There's now only one person, a very fat man, standing in front of you. He explains to the clerk that he wishes to exchange the ticket he has for one to Mombasa the month after, only instead of it being a direct return he wants to come back via Nice instead and spend a week there or maybe longer because he's meeting his wife who'll be flying in from Rome, Italy, and can he use part of his accumulated Frequent Flyer mileage to offset the price of her connexion between Hong Kong and Rome? She'll be in Hong Kong before going to Rome, he adds, by way of explanation.
+
+The fat man seems to be tapping his feet to the indistinguishable beat of "Leader of the Pack," performed by a world-famous kazoo soloist.
+
+A voice on the public address system says, "Air Zalagasa announce the imminent departure of flight 42 to Paris, with service to Zalagasa. Would all remaining passengers please check in immediately at the Air Zalagasa desk. Thank you."
+
+>wait
+Time passes.
+
+"No money, no Little Computer Animals program," whines the nerd.
+
+The fat man in front of you explains that his wife already has a ticket with Cathay Pacific from Hong Kong to Rome, and wonders if it is possible to change that to Air Zalagasa and use some of his mileage credits. The clerk explains that Air Zalagasa do not fly that route, and that mileage credits aren't transferable to other passengers anyway. The man says that he'd heard that on some airlines it was and the clerk says not as far as she knows, the man says that's a pity, the clerk agrees, and starts to look up next month's flights to Mombasa.
+
+"Air Zalagasa announce the momentary departure of flight 42 to Paris. All passengers should be on board at this time."
+
+>wait
+Time passes.
+
+The nerd stumbles out of sight with the Little Computer Animals program. "I'll be back," he threatens.
+
+The fat man in front of you turns to you and smiles. "Takes forever, doesn't it? I thought you could transfer these Frequent Flyer things. Should be able to for your wife. Isn't the music great?" He turns back to the clerk without listening for your answer.
+
+>wait
+Time passes.
+
+"Omnia Gallia paging passenger Jeff Nyman; please pick up the white courtesy phone."
+
+The Air Zalagasa clerk explains to the fat man in front of you that flights to Mombasa go via Paris which means changing airports, and that on his fare schedule he wouldn't be allowed a stopover in Nice.
+
+"Air Zalagasa announce the departure of flight 42 to Paris. This flight is now closed. Have a nice day."
+
+The fat man in front of you says he won't bother, then, he'll just go to Nice next month as he originally planned. The clerk hopes that he has a nice day, the man walks away, and the clerk turns to you. "Welcome to Air Zalagasa, sir," smiles the clerk vacantly. "May I help you?"
+
+>give ticket to clerk
+"Ah, Omnia Gallia. I think you'll find our food much better. You have two choices: either you can get a ticket direct to Paris through Zalagasa, at the same price, or for an additional $200, in cash, you can get a nonstop to Paris. Which will it be?"
+
+>>direct flight
+"Very good, sir. Here's your new ticket, on our Flight 42. Have a nice day!" burbles the Air Zalagasa clerk, turning her attention to the person behind you in line.
+
+[Your score just went up.]
+
+>s
+Airport Concourse
+
+You notice a pillar here, with a single Gush-O-Slush(R) Spam-For-The-Ears(TM) speaker producing sound at a particularly high volume. In the ceiling above the pillar, there's a grate covering a duct of some sort.
+
+"Your attention, please. Would the owner of a Baader-Meinhof shoulder-bag which has just exploded outside the terminal please pick up the white courtesy phone."
+
+>climb pillar
+Dangerous. Very risky. The pillar is quite narrow and smooth, and doesn't offer much in the way of grip. Nevertheless, you manage to climb about halfway up before you take a break.
+
+Pillar
+
+You're halfway up the pillar.
+
+A crowd of curious onlookers are gathering below.
+
+"Your attention, please. Would anyone finding a digital watch engraved 'Prosser' please pick up the white courtesy phone."
+
+>up
+You shin further up the pillar. This is getting very dangerous.
+
+Top Of Pillar
+
+You're at the top of the pillar. A closed grate is visible in the ceiling overhead, and there's a speaker attached to the pillar here.
+
+The crowd below is growing.
+
+You hear "Boogie Oogie Oogie," performed by a world-famous kazoo soloist being played very soothingly.
+
+>examine speaker
+It's a perfectly ordinary Gush-O-Slush(R) Spam-For-The-Ears(TM) speaker, playing "Tie a Yellow Ribbon 'Round the Old Oak Tree," performed on common household appliances very loudly and soothingly at you.
+
+Peering behind the speaker, you notice a red wire and a black wire connected to the back.
+
+>pull red wire
+You grasp the red wire and, with a firm yank, pull it out of the Gush-O-Slush(R) Spam-For-The-Ears(TM) speaker.
+
+Pop! The speaker emits an electric squawk and stops playing "Boogie Oogie Oogie," with a disco beat very soothingly.
+
+You hear a patter of applause from the crowd below. Alas, music can still be heard from the many other speakers in the terminal.
+
+You hear "I Write the Songs," backed by an angelic chorus being played very soothingly.
+
+>pull black wire
+You grasp the black wire and, with a firm yank, pull it out of the Gush-O-Slush(R) Spam-For-The-Ears(TM) speaker.
+
+"Omnia Gallia paging passenger Jeff Nyman; please pick up the white courtesy phone."
+
+>connect red to black
+[the black wire]
+
+[the red wire]
+
+With an electric squawk, all the other Gush-O-Slush(R) Spam-For-The-Ears(TM) speakers in the entire terminal stop playing "My Way," backed by a bassoon-and-triangle duet very soothingly.
+
+The applause of the crowd is deafening.
+
+[Your score just went up.]
+
+>open grate
+You open the grate.
+
+>u. u. u. u
+Duct
+
+You're at the bottom of an air conditioning duct that curves upward to the south. An open grate leads downward.
+
+You crawl higher into the duct.
+
+Duct
+
+You're in a narrow air conditioning duct that curves upward to the east, and downward to the north.
+
+You crawl higher into the duct.
+
+Duct
+
+You're in a narrow air conditioning duct that curves upward to the north, and downward to the west.
+
+You crawl higher into the duct.
+
+Duct
+
+You're at the top end of a narrow air conditioning duct. Light filters in through a closed grate to the east.
+
+>open grate
+You open the grate.
+
+>e
+You emerge from the duct amidst a cloud of sparks and steam.
+
+Control Tower
+
+You're in the air traffic control tower. There's an open grate to the west.
+
+Several air traffic controllers are hunched over consoles.
+
+Since air traffic controllers spend most of their lives staring thoughtfully into the clouds, they are a superstitious lot and, understandably, they mistake you, briefly, for some species of god. They are also a fairly short-tempered bunch, and with reason. All their working hours are spent looking after pilots and seeing that the poor little lambs are all right and know where they're supposed to be going and don't crash into things, but WHO GETS THE DATES at the end of the day? Not the air traffic controllers, that's who. Bear this in mind as you strut, godlike, before them. They may think you're a pretty heavy-duty deity right now, but they could come leaping back to their senses at any moment, and a maddened pack of air traffic controllers who realise they've been conned again is not something you would want to be set on by. Ask what you will of them, but be quick about it. And do try to sound like Sir Laurence Olivier if you possibly can.
+
+A console radio crackles to life nearby. "Air Zalagasa flight 42 to Springfield tower. Request permission to take off."
+
+>tell controllers to stop flight 42
+One of the controllers prostrates himself at your words. "It shall be done, O mighty one!" He turns to the radio console and barks, "Tower to flight 42. Request denied. Return to terminal immediately!"
+
+The radio mutters something impolite. "Acknowledged, tower. We'll taxi her back to the terminal."
+
+[Your score just went up.]
+
+>w. d. d. d. d. d. d
+Duct
+
+You slip down the duct.
+
+Duct
+
+You're in a narrow air conditioning duct that curves upward to the north, and downward to the west.
+
+You slip down the duct.
+
+Duct
+
+You're in a narrow air conditioning duct that curves upward to the east, and downward to the north.
+
+You slip down the duct.
+
+Duct
+
+You're at the bottom of an air conditioning duct that curves upward to the south. An open grate leads downward.
+
+Top Of Pillar
+
+You cautiously descend the pillar.
+
+Pillar
+
+You slide the last few feet to the floor, where a grateful cheering crowd carries you shoulder high to the front of the check-in desk. There, you are quickly issued a boarding card and passed into the personal care of a passing airline official, who whisks you through all the formalities in a way which shows it's perfectly possible really, if they put their minds to it. Within three minutes you are sitting in a seat on a plane, and three minutes later still you have taken off and the plane is safely on its way to Zalagasa.
+You are sitting in an incredibly comfortable FubAero 7-11 Air Zalagasa jet, cruising 30,000 feet above somewhere which you don't know where it is.
+
+Seat 3B
+
+This is an incredibly comfortable FubAero Comf-O-Mat (TM) seat equipped with its own set of passenger station comfort controls. There are buttons to recline the seat, call the attendant and control the lighting, and a socket. The seat back in front of you contains a table and a pocket; the seat pocket contains a bulge, a safety card and an airline magazine.
+
+>sit in seat 3c
+Seat 3C
+
+>take safety card
+You take the safety card out of the seat pocket.
+
+>read safety card
+This is a shiny card showing happy smiling Zalagasans in a shiny Air Zalagasa aeroplane to which all sorts of terrible things are happening.
+
+The first picture shows a happy smiling stewardess waving her arms in the air. The second picture shows some happy, smiling Zalagasan passengers cheerfully removing false teeth, wigs, glass eyes, spectacles, and ornamental nose bones. The third picture shows some Zalagasan passengers who are almost certainly happy and smiling but you can't tell because they are all bent double, clasping their knees. The fourth picture appears to have been chewed off by a llama or something, so you can't tell what the happy, smiling Zalagasans which it undoubtedly showed were actually doing.
+
+>take the headphones
+You take the headphones out of the seat pocket.
+
+>wear headphones
+You put on the headphones.
+
+>plug in headphones
+You plug in the headphones.
+
+>press light button
+"Welcome to seat 6B. The recline function of your Comf-O-Mat electrically-controlled passenger station has been centrally disabled at this time for your comfort and safety. We will be making this facility available to you after takeoff, or after we reach our assigned cruising altitude. Or possibly after we have finished reading the passenger manifest and laughing at your silly names. Oops. This is a recording."
+
+>take off headphones
+You take off the headphones.
+
+>drop headphones
+[unplugging the headphones first]
+
+You put down the headphones.
+
+>wait
+Time passes.
+
+>wait
+Time passes.
+
+An announcement comes over the P.A. system, with the emphasis on all the wrong words: "At this time, we will be serving you with dinner. Please return to your seats for your comfort and safety."
+
+The flight attendant appears and, after a brief consultation, rewards your neighbour with a delicious concoction involving raspberries and kiwi fruit. She then asks you what you would like for dinner. "We have Chicken Kiev with raspberry vinegar and a kiwi fruit, or we have Filet with raspberries and kiwi vinegar dressing. Which would you prefer?"
+
+>>filet
+The flight attendant goes away for a while, then returns. "We are out of the Filet, sir. Would you like the Chicken?"
+
+>>yes
+"We are also out of that, sir. I do have a Zalagasan specialty: llama stewed with pulped roots and other sorts of Zalagasan stuff. Would you like that?"
+
+>>no
+"Excellent!" says the attendant. She unfolds your table and puts a bowl full of something horrible which you do not want to look at on it. The subsequent vanishing act she puts on is a sight to behold.
+
+"Ladies and gentlemen, at this time we will be enabling the various comfort control functions of your Comf-O-Mat (TM) seats. For your safety and comfort, please do not abuse them."
+
+>stand up
+Gingerly edging past your dish of virulent food, you get out of your seat.
+
+Aisle, At Row 3
+
+You are standing in the aisle, at row 3. Both seats B and C are unoccupied; there are two politicians in seats D and E, both in obvious need of lithium therapy. 
+
+>s. s. s. s. s
+Aisle, At Row 4
+
+You are standing in the aisle, at row 4. Two Zalagasans are sitting in seats B and C playing "I Left My Heart in San Francisco" on ethnic nose flutes; both seats D and E are unoccupied. 
+
+Aisle, At Row 5
+
+You are standing in the aisle, at row 5. Seat B is empty; seat C is occupied by an old woman, clutching a misshapen thing; both seats D and E are occupied. 
+
+Aisle, At Row 6
+
+You are standing in the aisle, at row 6. There are two Frobozzco executives in seats B and C; seat D is empty; seat E is occupied by a fat man. 
+
+Aisle, At Row 7
+
+You are standing in the aisle, at row 7. Both seats B and C are occupied; seat D is empty; seat E is occupied by a man sleeping, his head in a book. He is snoring gently. 
+
+Aisle, At Row 8
+
+You are standing in the aisle, at row 8. There is a mother in seat C; her baby, resting quietly for the moment, is next to her in seat B; both seats D and E are unoccupied. 
+
+>sit in seat 8d
+Just as you're settling in, a flustered flight attendant rushes up to you. "You left your personal belongings in your old seat, sir! Please don't let it happen again."
+
+Seat 8D
+
+>press the light button
+There is a dreadful wet squelch from towards the front of the cabin, and, briefly, a whiff of something truly hellish.
+
+>stand up
+You neatly tuck your headphones into the seat pocket.
+
+Aisle, At Row 8
+
+>n. n. n. n. n
+Unfortunately, you wake the baby as you tiptoe past. It immediately emits a hateful little bleat. You wonder if it has any llama blood in it, then it starts to scream. The mother picks it up and walks up and down the aisle for a moment to calm it. Within seconds, it falls into a stupid, half-witted sleep.
+
+Aisle, At Row 7
+
+Aisle, At Row 6
+
+Aisle, At Row 5
+
+Aisle, At Row 4
+
+Aisle, At Row 3
+
+>sit in seat 3c
+You are in your seat. There is no sign of your dinner which has been slammed between the table and the seat in front of you when it reclined. Only a tiny trickle of greenish slime betrays that the hateful food was ever there. A small piece of laminated card has fallen from the seat-back.
+
+Seat 3C
+
+>put all in my pocket
+The safety card: There isn't enough room in your pocket.
+$57.50: Done.
+The envelope: There isn't enough room in your pocket.
+The coupon booklet: There isn't enough room in your pocket.
+The flyer: There isn't enough room in your pocket.
+The damaged painting of Ronald W. Reagan: The damaged painting of Ronald W. Reagan is too big to fit in your pocket.
+The Popular Paranoia magazine: There isn't enough room in your pocket.
+The Beezer card: Done.
+The US Excess card: Done.
+The wallet: Done.
+Your passport: There isn't enough room in your pocket.
+Your Boysenberry computer: Your Boysenberry computer is too big to fit in your pocket.
+The small case: The small case is too big to fit in your pocket.
+The hacksaw: There isn't enough room in your pocket.
+
+A flight attendant comes up to you, glowering angrily. Then she notices that your food has gone. "Oh... er..." she mutters in confusion. "Ah... my colleague must have taken your plate. Hope you enjoyed your meal, sir." She looks as if she is almost tempted to be polite, except that she doesn't know how, and walks away.
+
+>take laminated card
+You take the small piece of laminated card from under the seat.
+
+The flight attendant reappears. "There is a telephone call for you, sir," she says, and walks away.
+
+>stand up
+Aisle, At Row 3
+
+>s. s. s. s. s. s. s
+Aisle, At Row 4
+
+Aisle, At Row 5
+
+Aisle, At Row 6
+
+Aisle, At Row 7
+
+Aisle, At Row 8
+
+Aisle, At Row 9
+
+You are standing in the aisle, at row 9. Seat B is empty; seat C is occupied by a red-faced, angry-looking man; both seats D and E are unoccupied. 
+
+Rear Of Aeroplane
+
+There is a telephone here, with a slot for credit cards. The emergency hatch lies to the east, and the lavatory is south.
+
+The phone is ringing.
+
+>pick up phone
+"Hello? Hello? Mr Nyman?"
+
+>>yes
+"Mr Jeff A. Nyman?"
+
+>>yes
+"This is Myrtle? The waitress from the restaurant? I was just wondering, did you recall to leave me a gratuity this morning?"
+
+>>no
+"Oh. Well, you really should ha...
+
+The line is disconnected. For a moment you hear a hum, and then voices.
+
+"Uh, Roger, Air Zalagasa 612, say your message."
+
+"Uh, Air Zalagasa 612, we have engine failure and our port wing is about to drop off. We anticipate a crash situation at this time."
+
+"Roger, Air, uh, Zalagasa 612, estimate your crash time please."
+
+"Air Zalagasa 612, about five minutes from now."
+
+"Understood. By the way, there was no crash filed for this time in your flight plan. You really should apply in triplicate for permission to crash, at least half an hour before take off."
+
+Click.
+
+You hang up.
+
+>wait
+Time passes.
+
+The flight attendant appears. "If you could return to your seat, sir, we'd appreciate it. We need to talk to all the passengers about something."
+
+The flight attendant seems strangely reluctant to leave.
+
+>attendant, stinglai ka'abi
+"Oh! You're one of us," says the attendant, smiling. "If I'd known, I'd never have given you the Zalagasan Special. Awful, wasn't it?"
+
+She hands you a parachute and helps you strap it to your back. "You go first," she smiles, "I just have to make some pointlessly reassuring noises to the animals back there." She leaves.
+
+>open hatch
+It is incredibly complicated with a huge handle saying "LIFT THEN PULL," although you can bet it's not as easy as that.
+
+>lift handle
+That wasn't too bad. Bet the next step is a real killer.
+
+>pull handle
+You lost your bet. It IS as easy as that.
+
+The hatch falls open. The aircraft immediately fills with a dense white vapour through which you can just make out oxygen masks falling from the overhead lockers.
+
+>e. e. e
+No.
+
+No.
+
+>w
+Too late to say anything now. The slipstream has pulled you out of the aircraft and you think you are falling through the air.
+
+[Your score just went up.]
+
+Falling
+
+You're outside the plane.
+
+Of course, it's absurd to suppose that you can fly, and maybe it's just the effect of not much oxygen on not much gray matter, but your fall seems to have been interrupted. This illusion is quickly dispelled as you notice that one of the straps on your parachute is caught in the plane's emergency hatch.
+
+Such directions are useless here.
+
+>wait
+Time passes.
+
+You are currently freezing to death from the -20 degree temperature, you're suffocating from the rarified 30,000 foot air, and, as if these weren't bad enough, you're trailing about fifteen feet behind the escape hatch of your flight to Zalagasa, which you really didn't want to be on anyway.
+
+>knock on window
+The flight attendant opens the door. "Oh!" She seems surprised. "We aren't going to crash after all -- it was just a computer malfunction. Thank you for choosing Air Zalagasa, and have a nice day."
+
+She frees the strap and you plummet down.
+
+Falling
+
+In midair, heading down.
+
+You're plummeting downward at an alarming rate.
+
+>pull ripcord
+The parachute opens. You are floating serenely through a clear blue sky which is unfortunately totally obscured by thick black clouds.
+
+The nerd falls past you. He starts to try to sell you a walking stick for 58 bucks but is gone before he has time to speak. He has no parachute. This does not seem to worry him at all.
+
+Your downward drift continues.
+
+>wait
+Time passes.
+
+Crunch! You have landed in a tree. Dozens of Ai-Ais cluster about you briefly, then flee in terror. Yet again, $25,000 has evaded your grasp.
+
+Hanging From A Tree
+
+You are hanging upside down by your parachute from the branches of a tree.
+
+Your philosophical side tells you, "It could be worse; it could be raining," while your rational side tells you that, in fact, it is.
+
+>take off parachute
+You cleverly slip the parachute off your back, and immediately plummet towards the ground below.
+
+SPLASH!
+
+Cooking Pot
+
+You are in a cooking pot beneath the tree from which you were previously hanging. The force of your impact seems to have emptied the pot. There is a tribe of Zalagasans dancing around the pot, chanting "Z-BUG! Z-BUG!"
+
+[Your score just went up.]
+
+>put recipe cart in computer
+The recipe cartridge slips into your Boysenberry computer with a thrilling little CLICK...
+
+BCDOS 1.0
+All diagnostics completed
+Press any key to boot...
+
+Your screen goes blank.
+
+The entire tribe go into an ecstatic frenzy. They grab the cartridge from your computer and run off to try it out on their Boysenberry. One kindly soul, remorseful at taking your cartridge without compensation, gives you another one. "Maybe you'll like this." He also hands you an address book. "If you see that nerdly fellow, give him this. He dropped it here just now."
+
+[Your score just went up.]
+
+>get out of pot
+You get out of the pot while the Zalagasans are busy cataloguing their missionary and explorer recipe for the upcoming NATIONAL GEOGRAPHIC article. Stumbling along, you fall into a hole, and end up in a grubby antechamber underground.
+
+Grubby Antechamber
+
+You're in a foul, unkempt antechamber which smells strongly of old socks. There's a closed locker door in the west wall, and an exit to the east. It's not at all clear how you managed to end up here; there's no trace of whatever entrance you used.
+
+The ghastly nerd reappears at your side, peering myopically through his filthy Coke-bottle spectacles. "There you are!" he whines. "I've got something I know you'll want. A Boysenberry XiGT6HP Special! Only 58 bucks!"
+
+>examine locker
+[the locker door]
+
+The door is closed. There are three handles on the door, arranged in a row. The left handle is pointing up. The middle handle is pointing down. The right handle is pointing up. There's also a sign attached to the door.
+
+The nerd waves the Boysenberry XiGT6HP Special impatiently. "C'mon, buddy. 58 bucks! A bargain!"
+
+>read the sign
+The sign contains the rather arcane text:
+010
+100
+001
+111
+and nothing else. You wonder why it doesn't just say Locker 2417.
+
+"No money, no Boysenberry XiGT6HP Special," whines the nerd.
+
+>turn left and middle handles
+[the left handle]
+
+The left handle is now pointing down.
+The middle handle is now pointing up.
+You hear a click inside the door.
+
+The nerd stumbles out of sight with the Boysenberry XiGT6HP Special. "I'll be back," he threatens.
+
+>turn left and right handles
+[the left handle]
+
+The left handle is now pointing up.
+The right handle is now pointing down.
+You hear a click inside the door.
+
+>turn left and middle handles
+[the left handle]
+
+The left handle is now pointing down.
+The middle handle is now pointing down.
+You hear a sharp click, as if something inside the door had moved.
+
+>open door
+The locker door swings open.
+[Your score just went up.]
+
+>w
+Locker
+
+You're in a large locker. The exit is an open locker door to the east.
+
+There's a magnetic key-card on the floor.
+
+>get key card
+Taken.
+
+>examine key card
+It's a standard sort of plastic key-card with a magnetic stripe. It's embossed with the letters "R.Q.H."
+
+>e
+Grubby Antechamber
+
+>put unlabeled cart in computer
+The unlabelled cartridge slips into your Boysenberry computer with a thrilling little CLICK...
+
+BCDOS 1.0
+All diagnostics completed
+Press any key to boot...
+
+Your screen goes blank.
+
+[Your blood pressure just went up.]
+
+>e
+Switchgear Room 15
+
+You are in a switchgear room, with exits in all directions. Inscribed on the wall is the number 15.
+
+The snivelling, ratty and ineffectual nerd stumbles into view again. "There you are!" he whines. "I've got something I know you'll want. A Boysenberry XiGT6HP Special! Only 58 bucks!"
+
+>e
+"Hey! Wait!" cries the nerd. "Can I go out with your sister?"
+
+Switchgear Room 40
+
+You are in a switchgear room, with exits in all directions. Inscribed on the wall is the number 40.
+
+You're beginning to feel normal again.
+
+>w
+Switchgear Room 65
+
+You are in a switchgear room, with exits in all directions. Inscribed on the wall is the number 65.
+
+>w
+Switchgear Room 88
+
+You are in a switchgear room, with exits in all directions. Inscribed on the wall is the number 88.
+
+>n
+Switchgear Room 111
+
+You are in a switchgear room, with exits in all directions. Inscribed on the wall is the number 111.
+
+>n
+Switchgear Room 145
+
+You are in a switchgear room, with exits in all directions. Inscribed on the wall is the number 145.
+
+You hear a hatefully familiar whine close at hand. "There you are!" he whines. "I've got something I know you'll want. A Little Computer Animals program! Only 58 bucks!"
+
+>d
+"Hey! Wait!" cries the nerd. "Can I go out with your sister?"
+
+As you approach what seems to be a blank wall, it slides open, then closes again after you pass through. It looks like a blank wall from the other side, too.
+
+Airlock
+
+This is a bare, inhospitable room. Nothing actually happens here at all; it is merely a sort of nasty one-way filter. It's a bit like being inside the "mind" of a tax inspector, really.
+
+In fact, it is an airlock. The door by which you entered has disappeared, flush with the wall. A door leads north. Pretty atmospheric, eh?
+
+There's a closed airlock door in the north wall, with a card reader slot in it.
+
+>put key card in reader
+The card slides smoothly in the reader slot, and you hear what could be a bolt snapping back.
+
+>open door
+In your current relaxed state, you can't get the airlock door to move at all.
+
+[Your blood pressure just went up.]
+
+>open door
+The airlock door seems to budge a little, but springs back in place.
+
+[Your blood pressure just went up.]
+
+>open door
+You pull with all your strength, but the airlock door opens only a little.
+
+[Your blood pressure just went up.]
+
+>open door
+You pull with all your strength, but the airlock door opens only a little.
+
+[Your blood pressure just went up.]
+
+>open door
+Your current rage level is so great that you have the strength of ten.
+You open the airlock door.
+
+>n. w. w. w
+You stumble through a brightly lit corridor. As you go, you hear the airlock door slam shut; when you reach the end of the corridor, you look around and find that the wall behind you has no opening.
+
+[Your score just went up.]
+
+Persecution Complex
+
+You are in the Persecution Complex. It is a long brightly lit hall running west, with 3 TV screens on each side of the hall. The screens resemble the security monitors one might find at a guard's station. There is a sign here.
+
+Persecution Complex
+
+There are screens to your right and left.
+
+Persecution Complex
+
+There are screens to your right and left.
+
+Persecution Complex
+
+There are screens to your right and left.
+
+>examine left screen
+You look at this screen and see an image of a computer room with a dirty great mainframe and banks of those flashing lights they put in computer rooms so that people think "Gosh, how complicated computers are, and how amazingly clever the people who work them must be."
+
+The nerd is sitting at a terminal, hacking away. He looks about as happy as someone who has clearly never been out with girls can look. Above his head is a monitor screen, showing a really rather attractive individual looking at a monitor screen which shows a computer room with a dirty great mainframe...
+
+>w
+Persecution Complex
+
+There's a modular plug here.
+
+>examine computer
+This is the remarkable Boysenberry laptop computer, made by a subsidiary of your old employers, the Deep Thought Corporation of America. There are no operating controls of any sort, not even an on/off switch. All you see are a tiny screen, a keyboard, a modular jack and a slot for program cartridges.
+
+>read first page
+This page is labelled NAME AND ADDRESS OF OWNER. You see
+
+RANDOM Q HACKER
+5 RAINBOW TURTLE Vista
+Rhinoceros, NJ 81818
+421-3224
+
+which has been crossed out (aren't you glad you moved?). Under that you see
+
+Jeff A. Nyman
+12 Main
+Springfield, IL 62701
+5551212
+
+There's also a notice on this page which says, "If lost, please return this address book to the owner at the above address. $25 reward."
+
+>connect modular plug to jack
+With an irritating little CLICK (it used to be thrilling, but, quite frankly, you have really had enough of the damned Boysenberry by now) your portable computer lurches into action.
+
+Boysenberry Terminal Emulator 5.21
+All diagnostics completed
+Press any key to boot...
+The DVH2 shuts down. In the distance you hear a familiar gloomy moan like a damp llama, as the nerd yells and screams at his huge computer.
+
+"I'll give you 58 bucks to get working again," he yells, but unfortunately, thanks to your timely intervention, he has hacked into his own mainframe and destroyed its crucial I/O operations.
+
+[Your score just went up.]
+
+The modular plug is automatically ejected from the jack like a little rat from a tiny drainpipe.
+
+>w. u
+Air Shaft
+
+This is a room where hot air is discharged, even barer than the airlock. It's like being inside the President's mind, except for the scrawled graffiti on the walls, one of which says, "This is the werst departure luonge what I ever seen". The others are unreadable.
+
+An exit leads up.
+
+You struggle up the air shaft, and find yourself back above ground.
+
+Landing Strip
+
+This is a bare landing strip surrounded by jungle. An air shaft leads down.
+
+>wait
+Time passes.
+
+In the distance you hear the sound of Zalagasans having a huge row about whether bearnaise sauce or grated Parmesan is better with boiled visitor.
+
+>wait
+Time passes.
+
+For some reason, the Zalagasans have started droning... or have they? No, it is the sound of an aircraft in the distance. The sound of the engines gets louder and louder until suddenly an ancient DC-3 appears nightmarishly low above the treetops, circles the airfield once, and lands with a cloud of dust and a squeal of brakes.
+
+The door opens and you leap on board to be greeted by a beautiful copilot. "You finally fixed that dreadful nerd," she says. "You wouldn't believe what he was doing, even to our own navigation systems. It was as if he didn't care who he inconvenienced, even himself, as long as he was hacking. Gosh, I'm just so grateful I could die!"
+
+With that, the copilot enfolds you in her arms and you begin to realise why people like private aeroplanes.
+
+After an eventful and invigorating flight, you land at your home airport, pass through customs without the least difficulty, and are ushered into a waiting taxi, which drives you straight to the wrong place. Perhaps you thought that the taxi company was being fouled up by the nerd. Wrong. Taxi companies foul up because that's what they like doing.
+
+[Your score just went up.]
+
+Hallway
+
+>w. s. s. w
+10 Main
+
+11 Main
+
+12 Main
+
+There's a mailbox here.
+
+Front Room
+
+This is the front room of your new house. While you were absent, the removals firm delivered all your belongings and installed them exactly where you had specified. The carpets have been laid, the curtains hang luxuriously in the windows, your books have been arranged in order and the record player is playing your favourite album.
+
+There's a new letter here.
+
+>read letter
+
+
+"Dear Mr Nyman,
+
+I would like on behalf of Fiduciary to apologize profusely for the problems you have been encountering lately. This was due partly to mysterious computer problems which have suddenly ceased to plague us, but also to the inability of our staff to show any initiative at all when confronted with a systems breakdown.
+
+I have immediately initiated a training program to counteract this ridiculous bureaucracy, and trust that in your future dealings with Fiduciary you will have no cause for complaint.
+
+By way of compensation I have waived all interest and administration charges for this quarter, and would also like you to accept this free first-class ticket to Paris.
+
+I also enclose your check book and a new Gold Beezer card and have raised your credit limit to $10,000.
+
+Sincerely yours,
+
+Joel X. Slartibartfast
+PRESIDENT"
+
+Glowing with pleasure at your notable victory, you do not even notice that the bank letter has been redirected from your old address, to which it was originally sent. You have a nice hot drink and turn in for the night, humming a happy little song about how much you are looking forward to your trip to Paris. You are particularly pleased with your impression of the accordion accompaniment and fall asleep with the words "Bonjour, Ma'm'selle" on your lips.
+
+You have won. Thank you for playing Bureaucracy, and if your future entertainment plans should include interactive fiction, please think of Infocom. Have a nice day.
+
+[Your score just went up.]
+
+[Your blood pressure is 138/89, in 334 moves. Your status is Really Pissed Off. Your score is 21 out of a possible 21, making you a Bureaucrat.]
+
+RESTORE, RESTART, or QUIT?
+>>quit

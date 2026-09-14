@@ -445,9 +445,12 @@ public sealed class WindowedScreenModel : IScreenModel
                 _streamColumn = 0;
                 _streamRow = -1;
                 break;
-            case >= 0 and < WindowCount:
+            case CurrentWindowCode or (>= 0 and < WindowCount):
                 {
-                    var target = _windows[window];
+                    // [zm 8.8.3] -3 names the current window here as in
+                    // every other window operation; Arthur erases it so
+                    // on the way out.
+                    var target = Resolve(window)!;
                     var (top, left, rows, columns) = CellRect(target);
                     FillCells(top, left, rows, columns, Cell.Blank(BlankFor(target)));
                     ResetCursor(target);
