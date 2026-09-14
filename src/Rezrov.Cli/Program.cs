@@ -30,6 +30,13 @@ internal static class Program
             return 0;
         }
 
+        if (args is ["--help"] or ["-h"])
+        {
+            // Asked for, the help goes to standard output and is no error.
+            Help(Console.Out);
+            return 0;
+        }
+
         // The acceptance command stands on its own: a script says which
         // game to play, so there is no story file on the command line.
         if (args.Length > 0 && args[0] == "--accept")
@@ -162,13 +169,48 @@ internal static class Program
         };
     }
 
+    /// <summary>
+    /// The help, on standard error, for a command line that could not
+    /// be understood.
+    /// </summary>
     private static int Usage()
     {
-        Console.Error.WriteLine("usage: rezrov <story-file> [--run] [--trace] [--commands <file>] [--transcript <file>] [--record <file>] [--save <file>] [--blorb <file>] [--seed <number>] [--interpreter <machine>] [--tandy]");
-        Console.Error.WriteLine($"       machines: {string.Join(", ", InterpreterNumbers.AllNames)}, or a number from 1 to 11");
-        Console.Error.WriteLine("       rezrov --accept <script> [--update | --resume]");
-        Console.Error.WriteLine("       rezrov --version");
+        Help(Console.Error);
         return 2;
+    }
+
+    private static void Help(TextWriter writer)
+    {
+        var names = InterpreterNumbers.AllNames.ToList();
+        writer.Write($"""
+            usage: rezrov <story-file> [options]
+                   rezrov --accept <script> [--update | --resume]
+                   rezrov --version
+                   rezrov --help
+
+            Given a story file alone, rezrov describes it. With --run it plays the
+            game on the console, as a plain stream of text.
+
+            options:
+              --run                    play the game
+              --trace                  play, listing every instruction on standard error
+              --commands <file>        take commands from a file before the console
+              --transcript <file>      write the transcript the game keeps to a file
+              --record <file>          write the commands typed to a file
+              --save <file>            save to and restore from this file, unasked
+              --blorb <file>           take sounds and pictures from this resource file
+              --seed <number>          seed the game's random numbers, so a play repeats
+              --interpreter <machine>  tell the game which machine it is running on
+              --tandy                  set the Tandy bit for a Version 1 to 3 game
+
+            machines: {string.Join(", ", names.Take(6))},
+                      {string.Join(", ", names.Skip(6))}, or a number from 1 to 11
+
+            The acceptance command plays a script and checks the play against the
+            recording beside it: --update records the play afresh, and --resume
+            hands the game over at the console where the script ends.
+
+            """);
     }
 
     private static int DescribeBlorb(byte[] bytes, string path)

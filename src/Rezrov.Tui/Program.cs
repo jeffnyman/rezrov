@@ -25,6 +25,13 @@ internal static class Program
             return 0;
         }
 
+        if (args is ["--help"] or ["-h"])
+        {
+            // Asked for, the help goes to standard output and is no error.
+            Help(Console.Out);
+            return 0;
+        }
+
         string? blorb = null;
         string? commands = null;
         string? transcript = null;
@@ -73,8 +80,7 @@ internal static class Program
 
         if (usage)
         {
-            Console.Error.WriteLine("usage: rezrov-tui <story-file> [--blorb <file>] [--commands <file>] [--transcript <file>] [--record <file>] [--save <file>] [--seed <number>] [--interpreter <machine>] [--tandy]");
-            Console.Error.WriteLine($"       machines: {string.Join(", ", InterpreterNumbers.AllNames)}, or a number from 1 to 11");
+            Help(Console.Error);
             return 2;
         }
 
@@ -388,6 +394,32 @@ internal static class Program
         }
 
         return ending is null || !ending.StartsWith("Stopped", StringComparison.Ordinal) ? 0 : 3;
+    }
+
+    private static void Help(TextWriter writer)
+    {
+        var names = InterpreterNumbers.AllNames.ToList();
+        writer.Write($"""
+            usage: rezrov-tui <story-file> [options]
+                   rezrov-tui --version
+                   rezrov-tui --help
+
+            Plays the game full screen in the terminal. Ctrl+Q leaves at any time.
+
+            options:
+              --commands <file>        take commands from a file before the keyboard
+              --transcript <file>      write the transcript the game keeps to a file
+              --record <file>          write the commands typed to a file
+              --save <file>            save to and restore from this file, unasked
+              --blorb <file>           take sounds and pictures from this resource file
+              --seed <number>          seed the game's random numbers, so a play repeats
+              --interpreter <machine>  tell the game which machine it is running on
+              --tandy                  set the Tandy bit for a Version 1 to 3 game
+
+            machines: {string.Join(", ", names.Take(6))},
+                      {string.Join(", ", names.Skip(6))}, or a number from 1 to 11
+
+            """);
     }
 
     private static BlorbFile? ReadBlorb(byte[] bytes, string path)
