@@ -393,6 +393,116 @@ public partial class InterpreterTests
     }
 
     [Fact]
+    public void AReplayedTimedReadLetsItsTimerHaveTheFirstSay()
+    {
+        // [zm 10.2 deviates] A replay cannot wait, so the routine runs
+        // once before the file is consulted. Ending the read, it leaves
+        // the key in the file. A timed read elsewhere is another
+        // question and gets an interval of its own; an untimed read
+        // takes the key. Arthur's title screen, then its restore
+        // question, are exactly this.
+        var files = new ScriptedFiles { CommandFile = new StringReader("n\n") };
+        var run = Execute(
+            new Assembler()
+                .Variable(Op.InputStream, true, Small(1))
+                .Variable(Op.ReadChar, true, Small(1), Small(5), Large(RoutineA / 4)).Store(G0)
+                .Variable(Op.ReadChar, true, Small(1), Small(5), Large(RoutineA / 4)).Store(G1)
+                .Variable(Op.ReadChar, true, Small(1)).Store(G2)
+                .Quit(),
+            story => story.Routine(RoutineA, 0, new Assembler().Short0(Op.Print).Text("tick").Short0(Op.Rtrue).ToArray()),
+            files: files);
+
+        Assert.Equal(0, run.Global(G0));
+        Assert.Equal(0, run.Global(G1));
+        Assert.Equal('n', run.Global(G2));
+        Assert.Equal("ticktick", run.Output);
+    }
+
+    [Fact]
+    public void AGameLoopingBackToTheSameTimedReadGetsTheKeyAtOnce()
+    {
+        // Custard's editor ends every timed read from its routine and
+        // loops straight back to the same read_char: the burned interval
+        // was typing time, so the key lands on the retry. The jz branches
+        // back over its own 4 bytes and the read's 7.
+        var files = new ScriptedFiles { CommandFile = new StringReader("n\n") };
+        var run = Execute(
+            new Assembler()
+                .Variable(Op.InputStream, true, Small(1))
+                .Variable(Op.ReadChar, true, Small(1), Small(5), Large(RoutineA / 4)).Store(G0)
+                .Short1(Op.Jz, Var(G0)).Branch(true, -9)
+                .Quit(),
+            story => story.Routine(RoutineA, 0, new Assembler().Short0(Op.Print).Text("tick").Short0(Op.Rtrue).ToArray()),
+            files: files);
+
+        Assert.Equal('n', run.Global(G0));
+        Assert.Equal("tick", run.Output);
+    }
+
+    [Fact]
+    public void AReplayedTimedReadTakesTheKeyWhenTheRoutineCarriesOn()
+    {
+        var files = new ScriptedFiles { CommandFile = new StringReader("n\n") };
+        var run = Execute(
+            new Assembler()
+                .Variable(Op.InputStream, true, Small(1))
+                .Variable(Op.ReadChar, true, Small(1), Small(5), Large(RoutineA / 4)).Store(G0)
+                .Quit(),
+            story => story.Routine(RoutineA, 0, new Assembler().Short0(Op.Print).Text("tick").Short0(Op.Rfalse).ToArray()),
+            files: files);
+
+        Assert.Equal('n', run.Global(G0));
+        Assert.Equal("tick", run.Output);
+    }
+
+    [Fact]
+    public void ARecordedTimeoutIsTakenWithTheTimerThatEndsTheRead()
+    {
+        // A recording of a timed-out read holds a line of [0], which
+        // stands for the same timeout the routine has just produced and
+        // must not then be taken for a keypress.
+        var files = new ScriptedFiles { CommandFile = new StringReader("[0]\nn\n") };
+        var run = Execute(
+            new Assembler()
+                .Variable(Op.InputStream, true, Small(1))
+                .Variable(Op.ReadChar, true, Small(1), Small(5), Large(RoutineA / 4)).Store(G0)
+                .Variable(Op.ReadChar, true, Small(1)).Store(G1)
+                .Quit(),
+            story => story.Routine(RoutineA, 0, new Assembler().Short0(Op.Rtrue).ToArray()),
+            files: files);
+
+        Assert.Equal(0, run.Global(G0));
+        Assert.Equal('n', run.Global(G1));
+    }
+
+    [Fact]
+    public void AReplayedTimedLineReadEndsWithNothingTyped()
+    {
+        var files = new ScriptedFiles { CommandFile = new StringReader("look\n") };
+        var run = Execute(
+            new Assembler()
+                .Variable(Op.InputStream, true, Small(1))
+                .Variable(Op.Aread, true, Large(TextBuffer), Large(ParseBuffer), Small(10), Large(RoutineA / 4)).Store(G0)
+                .Variable(Op.Aread, true, Large(SecondTextBuffer), Large(ParseBuffer)).Store(G1)
+                .Quit(),
+            story =>
+            {
+                story.Routine(RoutineA, 0, new Assembler().Short0(Op.Rtrue).ToArray());
+                story.Bytes[TextBuffer] = 20;
+                story.Bytes[SecondTextBuffer] = 20;
+                story.Bytes[ParseBuffer] = 5;
+            },
+            files: files);
+
+        // The first read is ended by its routine with nothing typed and
+        // the line is left in the file for the second.
+        Assert.Equal(0, run.Global(G0));
+        Assert.Equal(0, run.Story.Bytes[TextBuffer + 1]);
+        Assert.Equal(Zscii.Newline, run.Global(G1));
+        Assert.Equal("look", Ascii(run, SecondTextBuffer + 2, 4));
+    }
+
+    [Fact]
     public void InputStreamOnePlaysAFileOfCommandsThenReturnsToTheKeyboard()
     {
         var input = new ScriptedInput("wait");
