@@ -1,0 +1,187 @@
+
+Word has come that your grandmother's fields have been put to the torch by Sir Guy of Gisbourne, and that she is in grave danger of starving during the winter without any sustenance. You resolve to take her a loaf of bread, which you figure will last her maybe 3 days.
+
+Little Green Robbing Hood
+An Incautionary Tale
+Release 1 / Serial number 060120 / Inform v6.21 Library 6/2
+Standard interpreter 1.1
+
+Forest's Edge
+You're on the northern edge of Barnsdale Forest. Your grandmother's house is on the other side. The civilized world lies to the north, east, and west, and a well-worn trail leads to the south.
+
+>examine me
+You are Little Green Robbing Hood. You pick up everything that's not nailed down. You don't give it to the poor, though, unless the poor have the plot device you need to solve the next puzzle.
+
+>i
+You are carrying:
+  a basket (which is closed)
+  a hooded green cloak (being worn)
+  a quiver (being worn)
+    many arrows
+  a longbow
+
+>examine basket
+This basket is normally where you stash the gold coins and haunches of venison and shiny swords you steal from people who deserve them less than you do. Today you're being virtuous, though, so this basket is full of good things for your grandma. One good thing, anyways. Well, one mediocre thing. Bread's not that special, really.
+
+>open basket
+You open the basket, revealing a loaf of bread.
+
+>examine loaf
+Just an ordinary loaf of bread, oven-baked and crusty.
+
+>close basket
+You close the basket.
+
+>examine cloak
+You wear this cloak for protection against the elements and disguise. Not that a green hooded cloak is inconspicuous wear, but it conceals your face fairly effectively.
+
+>examine quiver
+Your quiver is full of arrows.
+
+>examine arrows
+Your cedar arrows are fletched with bright green feathers. You never asked where the feathers came from, but their sheer multitude goes a long way towards explaining why there are no parrots in Sherwood Forest.
+
+>examine bow
+Your faithful longbow is carved of yew and worn smooth by years of use. Since you're on the lookout for danger, it's strung and ready to fire.
+
+>south
+
+Path (near the forest's edge)
+The forest is peaceful here, quiet but for the rustling of leaves and nearby birdsong. Off to the north the path opens up significantly, while it narrows further as it turns to the southeast. An ill-maintained side-path leads off to the southwest.
+
+A copper coin lies half-buried on the ground.
+
+>take coin
+Taken.
+
+[Your score has just gone up by one point.]
+
+>examine coin
+Some luckless traveler will not be able to buy food and lodging for the night, but now you can. Yay money!
+
+>southeast
+
+Path (deep in the forest)
+The path is narrow but well-worn here, and the forest is disturbingly free of natural sounds. From not too far off along the path to the south you can hear the clank of metal and the heavy breathing of horses. You can retreat to to northwest.
+
+A silver coin lies heads-up on the ground.
+
+>examine silver
+Silver! This is so much better than those lame copper coins. About 10 times better.
+
+>take silver
+Taken.
+
+[Your score has just gone up by ten points.]
+
+>northwest
+
+Path (near the forest's edge)
+
+>southwest
+
+Side path (deep in the forest)
+This path is tiny and forebidding. You're pretty certain your mama told you not to go on paths like this one, but it's too late now. You can't even see where you came from or where you're going.
+
+There's a coin wedged in the crook of a tree, but any sort you recognize.
+
+>take coin
+(the electrum coin)
+Taken.
+
+[Your score has just gone up by fifty points.]
+
+>examine electrum
+You're not even sure what electrum is, and you were pretty certain they didn't make coins out of it. But your innate greed-sense tells you that it might be worth as much as half a gold piece in a favorable market.
+
+>southwest
+
+Completely lost
+You're completely lost, in spite of your woodcraft. The trees, once friendly and embracing, seem to reach out to ensnare you.
+
+A small, shiny, yellow disc lies on the ground. Could some fool have possibly left gold?
+
+>take yellow
+Taken.
+
+[Your score has just gone up by one hundred points.]
+
+>examine yellow
+When you find gold, you know you're doing something right. It's a plain unadorned disc, which seems somehow appropriate. Gold should just be gold.
+
+>southeast
+
+Forest clearing
+You recognize this clearing! In spite of your difficulties getting here, you seem to be quite close to your grandmother's cottage, off to the east.
+
+Travelers today certainly are careless. A white coin has been trod into the ground here.
+
+An anthropomorphic fox dressed all in green lounges against a tree.
+
+>examine white coin
+Damn. Platinum. You need to roll double zeroes on a monster-encounter table to get this stuff.
+
+>take white coin
+The fox grins at you in a way you don't much care for as you apporach the coin, so you sidle around a bit and bend at the knees, keeping your eyes on him all the while.
+
+[Your score has just gone up by five hundred points.]
+
+>examine fox
+This fox is one weird cat, or would be if foxes were felines. He's wearing a long green vest, a green tricorn hat with a red feather, and a quiver full of arrows. The ensemble doesn't really seem to work. You think you dress much better.
+
+>east
+The fox blocks your way. "Can't let you get there first, nuh-uh. Against the rules. Unless you want to play the wolf this time."
+
+>shoot fox
+You miss badly. You're rather out of practice.
+
+>kill fox
+Your arrow flies true, and strikes your foe square in the heart. You begin to exult, and are then distracted by an alarming pain mid-chest...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+You are lying on the ground, and you can't move. It's awfully cold, but somehow that doesn't bother you. The front of your shirt is wet, and you're quite certain you're dreaming, because there's a fox whispering something to you. You can't catch what he's saying, but as he straightens up he speaks clearly:
+
+"It's my turn now."
+
+
+    *** I should really apologize here, I guess ***
+
+
+In that game you scored 661 out of a possible 651, in 29 turns.
+
+Would you like to RESTART, RESTORE a saved game or QUIT?
+> quit

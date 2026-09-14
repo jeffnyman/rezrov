@@ -1,0 +1,566 @@
+
+
+You were looking for a birthday present for your niece Isabelle, that was it. The toy stores along Regent Street were blaring out pop music and the window displays were garish scenes of animated computer violence. But down a dim Victorian arcade you came across a different kind of toyshop, with a peeling rocking-horse behind a grimy window. Perhaps in here, you thought...
+
+
+THE MAGIC TOYSHOP
+A fun game for all the family
+by Gareth Rees
+New players should type "help"
+Release 1 / Serial number 951018 / Inform v1502 Library 5/12
+
+Toyshop
+Who knows what might be hidden in the dark rafters and shadowy corners of this emporium?
+
+There's a closed oak chest in the northeast corner.
+
+A young woman stands attentively nearby.
+
+>wait
+Time passes.
+
+"Welcome," says the young woman, "My father usually runs the store, but I'm afraid he isn't here today and I'm looking after the store. My name is Catharine."
+
+>wait
+Time passes.
+
+Catharine opens the chest and roots around inside it. "I wonder if your niece would like something like this?" she says. "It's quite old, but I think it still works." She closes the chest and shows you a small cardboard box. She holds it up to her ear and shakes it. "Sounds like it's all there. It does require some assembly, though," she adds, and hands the box to you.
+
+[Your score has just gone up by one point.]
+
+>examine box
+The box is very faded, perhaps as a result of lying unpurchased on a shelf for too many years. You can make out the words "Airfix" and "voice activated", and a picture of something that might be a model car.
+
+>open box
+You open the cardboard box.
+
+>empty box
+grey gadget: Dropped.
+wheeled gadget: Dropped.
+
+>shake box
+You give the box a vigourous shake, and you hear a satisfactory rattle.
+
+>empty box
+tube of glue: Dropped.
+
+>take all
+tube of glue: Taken.
+wheeled gadget: Taken.
+grey gadget: Taken.
+oak chest: That's fixed in place.
+Catharine: I don't suppose Catharine would care for that.
+
+>drop box
+Dropped.
+
+>wait
+Time passes.
+
+Catharine extracts a piece of paper from the chest, places it on the floor, and sits by it. She draws a three by three grid of squares, and carefully writes an "X" into the centre square. "Try playing me at noughts and crosses," she says to you. "But I warn you, I'm unbeatable!"
+
+[Your score has just gone up by one point.]
+
+>wait
+Time passes.
+
+>examine paper
+
+   |   |   
+---+---+---
+   | X |   
+---+---+---
+   |   |   
+
+[The squares are numbered from 1 to 9, with 1 at the bottom left and 9 at the top right. To play, type "play o at 1", or just "play 1" for short. To see the numbers, type "help on"; to turn them off, type "help off".]
+
+>play o at 2
+Catharine plays square number nine.
+
+   |   | X 
+---+---+---
+   | X |   
+---+---+---
+   | O |   
+
+"Your move," she says.
+
+>play o at 1
+Catharine plays square number three.
+
+   |   | X 
+---+---+---
+   | X |   
+---+---+---
+ O | O | X 
+
+"Your move," she says.
+
+>play x at 7
+
+ X |   | X 
+---+---+---
+   | X |   
+---+---+---
+ O | O | X 
+
+"Well done," says Catharine. "You appear to have won. That's definitely three in a row you have there. And to think that I considered myself unbeatable! It just goes to show that you can always learn something new about a game." She tidies the paper away.
+
+[Your score has just gone up by one point.]
+
+>examine glue
+A little tube with a nozzle on one end. Writing along the side reads "Super Safe Wonder Glue! Sticks only metal. Completely non-toxic and safe for all other materials."
+
+[To apply the glue to an object, use "squeeze glue onto thing".]
+
+>squeeze glue on grey
+You squeeze some glue onto the grey gadget and it spreads out to form a sticky film.
+
+>put grey on wheeled
+You bring the two gadgets together, and they adhere. The resulting object looks not at all like a car, and quite a lot like a mouse.
+
+"That's a pretty robot mouse you have there," says Catharine. "Looks like just what I need. You see, I dropped my key through the floorboards from the attic, and it's fallen into the wainscot somewhere. Perhaps if you could send the mouse into that mousehole over there, then it could find my key."
+
+"You might like to have a go at this problem," says Catharine. She reaches into a pocket and extracts a strange metal object. "It's a gnomon," she says, handing it to you. "It's the missing part of that sundial over there. Can you repair it?"
+
+[Your score has just gone up by three points.]
+
+>take mouse
+Taken.
+
+>put mouse in hole
+You put the robot mouse into the hole.
+
+>wait
+Time passes.
+
+>wait
+Time passes.
+
+>wait
+Time passes.
+
+>wait
+Time passes.
+
+>wait
+Time passes.
+
+>wait
+Time passes.
+
+Catharine extracts a piece of paper from the chest, sits down by it, and draws nine dots in three rows of three. "Do you know how to play dots and boxes?" she asks. "We take turns to draw an edge between two dots. Whoever draws the last edge around one of the four boxes captures that box and writes their initial in it - that's `Z' for you and `C' for me. I'll let you start, but since it's an advantage to start, if we get two boxes apiece then I win. And I warn you, I'm unbeatable."
+
+[Your score has just gone up by one point.]
+
+>examine gnomon
+It's the part of a sundial that casts the shadow. Made of metal, there is a long screw on one end.
+
+>examine sundial
+You're not quite sure why you never noticed the sundial before. It's a square pedestal of stone, with markings for the hours. The gnomon is missing, and there is a small hole in the centre of the flat surface.
+
+>put gnomon on sundial
+You attempt to screw the gnomon into the sundial, but it won't fit. After some examination, you realise that this is because the screw threads of the gnomon and the sundial have opposite chirality.
+
+>ask catherine about gnomon
+"The word `chirality' means handedness," says Catharine. "It refers to the sense in which a spiral coils, clockwise or anticlockwise."
+
+>again
+"The only thing stopping you is the screw thread on the gnomon," says Catharine. "If it weren't for that, it would be easy."
+
+>again
+"Can you find a way to reflect the gnomon?" asks Catharine. "Remember, a reflection in three dimensions is a rotation in four dimensions." She giggles.
+
+>again
+"If you can't reflect the screw thread," says Catharaine, "maybe you could find a way to file down the gnomon so it fits?"
+
+>again
+"I don't think I should give you any more help with that," says Catharine. "If I gave the game away, it would only spoil your fun!"
+
+>examine paper
+
++ a + b +
+g   h   i
++ c + d +
+j   k   l
++ e + f +
+
+[The edges are labelled with letters from A to L. To fill in an edge, type for example "play A". Type "help on" to see the letters; type "help off" to turn them off.]
+
+>play e
+Catharine draws the line "b".
+
++   +---+
+         
++   +   +
+         
++---+   +
+
+"Your move," she says.
+
+>play f
+Catharine draws the line "a".
+
++---+---+
+         
++   +   +
+         
++---+---+
+
+"Your move," she says.
+
+>play l
+Catharine draws the line "g".
+
++---+---+
+|        
++   +   +
+        |
++---+---+
+
+"Your move," she says.
+
+>play k
+Catharine closes one box and draws the line "h".
+
++---+---+
+|   |    
++   +---+
+    | C |
++---+---+
+
+"Your move," she says.
+
+>play i
+
++---+---+
+|   | Z |
++   +---+
+    | C |
++---+---+
+
+"You get another move," says Catharine.
+
+>play c
+
++---+---+
+| Z | Z |
++---+---+
+    | C |
++---+---+
+
+"You get another move," says Catharine.
+
+>play j
+
++---+---+
+| Z | Z |
++---+---+
+| Z | C |
++---+---+
+
+"The game is over," says Catharine. "You scored three boxes to my one. It seems that you won. Well, my. I was sure that Mister Conway said that my symmetry strategy would never fail. Still, we live and learn." She tidies away the finished game.
+
+Catharine rummages around in the chest and extracts a large wooden board on which three pegs are set. Three metal disks, each with a hole in the middle, are threaded onto the left peg. "This puzzle is called the Towers of Hanoi," she says. "The idea is to move the three disks from the left peg to the right peg in only six moves, without putting a disk on top of a smaller one, and only picking up the top disk from a peg. Here, have a go."
+
+[Your score has just gone up by two points.]
+
+>wait
+Time passes.
+
+>examine board
+
+    ==|==            |              |        
+  ====|====          |              |        
+======|======        |              |        
+------+--------------+--------------+------
+
+[The disks are called "small", "medium" and "big"; the pegs are "left", "middle" and "right".]
+
+>take small
+Taken.
+
+>file gnomon with small
+The disk from the Towers of Hanoi set isn't a particularly good file, but you make do, and with a lot of effort you manage to file down the gnomon's screw thread.
+
+>squeeze glue on small
+You squeeze some glue onto the small disk and it spreads out to form a sticky film.
+
+>put small on medium
+The small disk adheres to the medium disk.
+
+    ==|==            |              |        
+  ====|====          |              |        
+======|======        |              |        
+------+--------------+--------------+------
+
+"That's one move," says Catharine.
+
+>take small
+Taken. The medium disk comes with it.
+
+>put medium on middle
+
+      |              |              |        
+      |            ==|==            |        
+======|======    ====|====          |        
+------+--------------+--------------+------
+
+"That's two moves," says Catharine.
+
+>take large
+Taken.
+
+>put large on right
+
+      |              |              |        
+      |            ==|==            |        
+      |          ====|====    ======|======  
+------+--------------+--------------+------
+
+"That's three moves," says Catharine.
+
+>take small
+Taken. The medium disk comes with it.
+
+>put medium on right
+
+      |              |            ==|==      
+      |              |          ====|====    
+      |              |        ======|======  
+------+--------------+--------------+------
+
+"You did it!" says Catharine excitedly. "And there was me thinking that it took two to the power of n moves, less one, to move a stack of n disks from one peg to another!"
+
+[Your score has just gone up by one point.]
+
+>squeeze glue on gnomon
+You squeeze some glue onto the gnomon and it spreads out to form a sticky film.
+
+>put gnomon on sundial
+The filed-down gnomon fits into the hole and adheres.
+
+[Your score has just gone up by one point.]
+
+>wait
+Time passes.
+
+>examine paper
+You can't see any such thing.
+
+>move B up
+"You can't move a piece any more once it's left the board," says Catharine.
+
+Catharine open the chest and extracts another piece of paper and four small pieces. The paper has a three-by-three grid of squares on it, like a noughts and crosses game. Catharine places two pieces at the left and two pieces at the bottom.
+
+"This is a game called Dodgems," she says. "You have the pieces at the bottom, and I have the pieces at the left. You can move your pieces up, left or right, and I can move mine up, down, or right. Your aim is to get both your pieces off the top of the board before I get mine off the right hand side."
+
+[Your score has just gone up by one point.]
+
+>move a up
+Catharine moves piece 1 rightwards.
+
+   | 1 |   
+---+---+---
+ 2 | A |   
+---+---+---
+   |   | B 
+
+[To move piece A to the left, type "move a left". The allowable directions are "left", "right" and "up".]
+
+"Your move," she says.
+
+>move b up
+Catharine moves piece 1 rightwards.
+
+   |   | 1 
+---+---+---
+ 2 | A | B 
+---+---+---
+   |   |   
+
+"Your move," she says.
+
+>move a up
+Catharine moves piece 2 rightwards.
+
+   | A | 1 
+---+---+---
+   | 2 | B 
+---+---+---
+   |   |   
+
+"Your move," she says.
+
+>move a left
+Catharine moves piece 2 downwards.
+
+ A |   | 1 
+---+---+---
+   |   | B 
+---+---+---
+   | 2 |   
+
+"Your move," she says.
+
+>move a up
+Catharine moves piece 1 rightwards off the board.
+
+   |   |   
+---+---+---
+   |   | B 
+---+---+---
+   | 2 |   
+
+"Your move," she says.
+
+>move b up
+Catharine moves piece 2 rightwards.
+
+   |   | B 
+---+---+---
+   |   |   
+---+---+---
+   |   | 2 
+
+"Your move," she says.
+
+>move b up
+
+"You win!" says Catharine. "A splendid performance." She clears away the paper and the pieces.
+
+[Your score has just gone up by one point.]
+
+>look
+
+Toyshop
+Who knows what might be hidden in the dark rafters and shadowy corners of this emporium?
+
+There's a closed oak chest in the northwest corner.
+
+Catharine stands attentively nearby.
+
+You can also see a Towers of Hanoi board, a sundial (on which is a gnomon) and a cardboard box (which is empty) here.
+
+Catharine looks at the shadow on the sundial. "It looks like it's tea-time," she says. "Perhaps you would care to join me in some food?" She opens the chest, picks up a wicker hamper, and closes the chest again.
+
+[Your score has just gone up by one point.]
+
+>take mushroom, egg, bread
+mushroom: Taken.
+egg: Taken.
+baguette: Taken.
+
+>examine sundial
+You're not quite sure why you never noticed the sundial before. It's a square pedestal of stone, with markings for the hours. The gnomon casts a shadow over the flat surface.
+
+>put mushroom in shadow
+You place the mushroom on the sundial. As the tip of the shadow falls across the mushroom, a white door appears in the mushroom's stalk. An inch-high man in shorts and t-shirt walks through the door and stares up at you, aghast, before turning on his heels and exiting through the door, which vanishes as soon as it closes. He left something behind, though.
+
+>examine sundial
+You're not quite sure why you never noticed the sundial before. It's a square pedestal of stone, with markings for the hours. The gnomon casts a shadow over the flat surface. On the sundial are a featureless mahogany rod and a mushroom.
+
+>take rod
+Taken.
+
+>strike rod
+The rod charges with etherial power, drawn up from the earth through ley lines...
+
+>point rod at egg
+A tiny gout of fire leaps out from the tip of the rod, neatly cooking the egg, which is now too hot to hold, and you drop it.
+
+>drop rod, glue
+featureless mahogany rod: Dropped.
+tube of glue: Dropped.
+
+>put bread in hole
+You push the baguette into the mousehole. The loaf encounters an obstacle, which you push as far into the hole as you can.
+
+>hole, n, w, w, n, n
+From somewhere inside the hole, you hear tiny wheels spin.
+
+From somewhere inside the hole, you hear tiny wheels spin.
+
+From somewhere inside the hole, you hear tiny wheels spin.
+
+From somewhere inside the hole, you hear tiny wheels spin.
+
+From somewhere inside the hole, you hear tiny wheels spin, followed by an excitable high-pitched beep and a dull clanging noise.
+
+>hole, e, s, s, s
+From somewhere inside the hole, you hear tiny wheels spin.
+
+From somewhere inside the hole, you hear tiny wheels spin.
+
+From somewhere inside the hole, you hear tiny wheels spin.
+
+From somewhere inside the hole, you hear tiny wheels spin.
+
+>hole, e, e, e
+From somewhere inside the hole, you hear tiny wheels spin.
+
+From somewhere inside the hole, you hear tiny wheels spin.
+
+The mouse runs back out of the hole, looking dustier but none the worse for its adventure, and then almost looks proud as a magnet cuts out and something metal drops off the underside of the mouse onto the floor. The lost key is found!
+
+[Your score has just gone up by one point.]
+
+>take key, egg
+small brass key: Taken.
+egg: Taken.
+
+>eat egg
+You eat the egg. Not bad.
+
+[Your score has just gone up by one point.]
+
+>unlock chest with key
+You turn the brass key in the lock, and with a click, a panel in the side of the chest slides away, revealing a little LCD screen and a keypad with six keys: "1" to "5" and "send".
+
+"Aha!" says Catharine, "You've found the combination lock to the chest. You probably won't get very far with it unless I give you some hints, so here goes.
+
+"Some combinations are said to generate other combinations according to certain rules. When you enter a combination, the chest either beeps, or displays the generated combination on the screen. If a combination generates itself, then the chest opens."
+
+[Your score has just gone up by one point.]
+
+>drop key, bread
+small brass key: Dropped.
+baguette: Dropped.
+
+>type 543251543251
+The screen reads "Output: 543251543251".
+
+There's a series of clicks from somewhere inside the chest, and the lid pops open.
+
+[Your score has just gone up by one point.]
+
+>enter chest
+You climb into the chest, which turns out to be full of drapery: large engulfing folds of cloth. You struggle to be free of them, and pulling the last one aside, you find yourself walking down a Victorian arcade. Looking around, you see no sign of the toyshop, but clutched in your hands, you find a wrapped parcel with a tag saying "To Isabelle, on her birthday." You are unsure of how you acquired it, but you are somehow sure that Isabelle will enjoy it...
+
+
+    *** You have won ***
+
+
+In that game you scored 20 out of a possible 20, in 93 turns.
+
+Would you like to RESTART, RESTORE a saved game, give the FULL score for that game or QUIT?
+> full
+
+In that game you scored 20 out of a possible 20, in 93 turns.
+
+You solved nine puzzles:
+
+    The Airfix model
+    Noughts and crosses
+    The gnomon and the sundial
+    The robot mouse
+    Dots and boxes
+    The towers of Hanoi
+    Dodgems
+    The egg
+    The infernal machine
+
+Would you like to RESTART, RESTORE a saved game, give the FULL score for that game or QUIT?
+> quit
+[rezrov: At 8C69, get_child L00 -> L03 ?2: object 0 is not an object]
+[rezrov: At 87B8, test_attr G25 #03 ?~8: object 0 is not an object]

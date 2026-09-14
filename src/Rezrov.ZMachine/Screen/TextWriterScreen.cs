@@ -11,7 +11,14 @@ namespace Rezrov.ZMachine.Screen;
 /// not ask the model to wrap or page, since whatever shows the stream
 /// does that. The width and height are still reported, because
 /// [zm 8.4] the header must hold some dimensions and games lay text out
-/// by them. [zm 16] The character graphics font is offered, as the
+/// by them; the height is 255 unless told otherwise, which [zm 8.4.1]
+/// means infinite. The standard advises against that number, for the
+/// sake of games that send the cursor to the bottom of the screen, but
+/// [zm 8.4.1 deviates] a stream has no bottom to send it to, and a game
+/// that sizes its work by the height then rolls its dice as it does on
+/// the other interpreters whose plain frontends say 255, so a script
+/// made on one of those plays here unchanged. [zm 16] The character
+/// graphics font is offered, as the
 /// nearest Unicode characters, since a text stream can carry those.
 /// </remarks>
 public sealed class TextWriterScreen : IScreen
@@ -32,7 +39,7 @@ public sealed class TextWriterScreen : IScreen
     /// on the row the last one was on is the echo of a key being typed
     /// and is not written, nor is a window with nothing on it.
     /// </param>
-    public TextWriterScreen(TextWriter writer, int width = 80, int height = 24, bool showUpperWindow = false)
+    public TextWriterScreen(TextWriter writer, int width = 80, int height = 255, bool showUpperWindow = false)
     {
         ArgumentNullException.ThrowIfNull(writer);
         ArgumentOutOfRangeException.ThrowIfLessThan(width, 1);

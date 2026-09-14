@@ -1,0 +1,2019 @@
+
+
+
+
+                      "Tomorrow never yet
+                       On any human being rose or set."
+                                       -- William Marsden
+
+
+
+
+
+
+
+[Hit any key to continue.]You "hear" a message coming in on the official message line: "PRISM? Perelman here. The psych tests have all checked out at 100%, which means that you've recovered from the, ah, awakening without any trauma or other serious effects. We'll be ready to begin the simulation soon. By the way, your piece is in the current issue of Dakota Online."
+
+A MIND FOREVER VOYAGING
+Infocom interactive fiction - a science fiction story
+Copyright (c) 1985 by Infocom, Inc. All rights reserved.
+A MIND FOREVER VOYAGING is a trademark of Infocom, Inc.
+Release 77 / Serial number 850814
+
+You have entered Communications Mode. The following locations are equipped with communication outlets:
+   PRISM Project Control Center (PPCC)
+   Research Center Rooftop (RCRO)
+   Dr. Perelman's Office (PEOF)
+   PRISM Facility Cafeteria (PCAF)
+   Maintenance Core (MACO)
+   World News Network Feed (WNNF)
+To activate a specific outlet, submit the associated code.
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+A message begins coming over the message line: "Perelman to PRISM. The programming team has finished entering the parameters for the Plan. This is it: you can enter Simulation Mode at any time. The Social Science group has come up with a list of things to record:
+   Eating a meal in a restaurant
+   Talking to a government official
+   Visiting a power-generating facility
+   Reading a newspaper
+   Riding some form of public transportation
+   Attending a court in session
+   Talking to a church official
+   Going to a movie
+   Visiting your own home or living quarters
+By the way, since the Simulation Controller will be doing so much data-crunching on the fly, it appears the simulation will run in real time -- a minute there will approximately equal a minute here. Well, good luck!"
+
+>go to sim mode
+Simulation Mode is a Class One Security mode. For access, enter the Security Code corresponding to: DARK GRAY 34 >78
+
+This simulation is based 10 years hence.
+
+Kennedy Park
+This is a small, downtown park with gates leading northeast, southeast, and southwest. There is a sprawling, free-form waterpool surrounding a statue of John F. Kennedy in the center of the park.
+
+>sw. s. w
+Elm & Park
+This is the intersection of the north-south Park Street and the east-west Elm Street. A park entrance is on the northeast corner, and large, old-fashioned edifices occupy the other three corners of the intersection. The sidewalks and street are crowded with people.
+
+Southway & Park
+Southway bends sharply at this intersection, leading east and southwest. Park Street begins here and heads north. There are new buildings on the northeast and western corners, and older-looking buildings to the northwest and southeast. A grocery store, its brightly lit window heaped with food, spans the southern side of the street.
+
+A skycopter drones by far overhead and disappears into the distance.
+
+The sun, beating down warmly on you, has reached its midday apex.
+
+Parkview Apartments
+You are in the vestibule of a typical high-rise city apartment building. A wide expanse of labelled buzzers and tiny mailboxes fills one wall. Glass doors lie closed to the west. Next to this inner door is a picturephone. The street lies to the east.
+
+>unlock door
+[with the key]
+The door opens.
+
+>w
+You enter the inner lobby and take the elevator up to your floor.
+
+Hall Near Your Apartment
+You are standing in the hall at the door to your apartment, which lies closed to the north. The stairs and elevators to the street are off to the east.
+
+>unlock door
+[with the key]
+The door opens.
+
+>record
+Record feature activated.
+
+>n
+Living Room
+This is the large living area of your apartment, with a bedroom to the north and a kitchen to the east. The front door of the apartment, next to the couch on the south wall, is open. A huge window provides a panoramic view to the west.
+
+Jill's easel occupies a beautiful, well-lit spot near the window. Her current painting is on the easel. In one corner is the old word processor where you do your writing.
+There is a romance novel here.
+Jill is standing at the easel, working on her current painting.
+
+Jill looks up from her painting. "Hi, hon. Any news from your agent today?"
+
+>no
+"Don't worry -- things'll turn around!"
+
+>record off
+Record feature deactivated.
+
+>s. e. e. n. w. w. s
+Hall Near Your Apartment
+
+You descend to the first floor and head for the lobby...
+
+Parkview Apartments
+
+Southway & Park
+
+Elm & Park
+
+Elm & University
+University Avenue forks off to the northwest, meandering into the campus which spans the north side of Elm Street here. A tall apartment complex is on the south side of the street. The top of some steps indicate an entrance to the Tubes.
+
+Elm Underpass
+Elm Street passes under an elevated roadway, a relic of the last century's interstate highway system. A Chinese restaurant fills the space under the highway to the south, and a bar is nestled under the roadway north of here. Elm leads eastward, to downtown, and westward toward the suburbs.
+
+Roy's Pagoda
+This is a small Chinese restaurant, crowded with students. There is an exit to the north.
+
+>sit
+[on the chair]
+You are now on the chair.
+
+>record
+Record feature activated.
+
+>order food
+You order a bowl of Hot and Sour soup and some assorted appetizers. The food arrives promptly, steaming hot, delicately spiced, delicious. Afterward, your check arrives with a typical fortune cookie and a plate of lychee nuts. The fortune reads: "Prosperity does not equal happiness." You pay with your credit card. After a moment, the waiter returns your card, informing you that your account has been debited for $30 and that your new balance is $570.
+
+>record off
+Record feature deactivated.
+
+>stand
+You are no longer on the chair.
+
+>n. e. e
+Elm Underpass
+
+Elm & University
+
+Elm & Park
+
+>time
+It is 1:41pm.
+
+>record
+Record feature activated.
+
+>nw
+Courthouse
+The courthouse is of the same vintage as the other governmental buildings in the area, dating from around 1990 or so. An exit leads southeast.
+
+The court is in session. A woman is being tried for petty theft.
+
+>record off
+Record feature deactivated.
+
+>se. n
+Elm & Park
+
+Rockvil Centre
+The name of this plaza tells it all. The well-maintained portico of City Hall stretches along the west side of the plaza, and Dunbar's lies on the southeast corner. Park Street leads north and south. Main Street and Centre Street both begin here, leading eastward and northeastward, respectively. The sidewalks and street are crowded with people.
+
+>w
+City Hall
+The city's seat of government is an old concrete-slab building dating back to the late twentieth century. The only exit is east.
+A government official is sitting on a bench in the center of the lobby, eating a snack.
+
+>record
+Record feature activated.
+
+>talk to official
+You have a brief chat with the government official, who cheerily comments on how well things in the city are running, and how rewarding his job has been lately. Suddenly he glances at his watch, mumbles a polite parting message, and hurries away.
+
+>record off
+Record feature deactivated.
+
+>e. ne. ne
+Rockvil Centre
+
+Centre & Kennedy
+At this intersection, Centre Street cuts across Kennedy Street from northeast to southwest. A tall hotel has entrances to the east and southeast. The austere facade of Huang Hall rises to the west. Kennedy Street continues north and south.
+
+Bodanski Square
+This is a large plaza formed by the intersection of Bodanski Boulevard from the east, Centre Street from the southwest, and River Street from the north and south. There is a car lot on the western side of the square. On the northeastern corner is a restaurant, and the old train station can be entered to the southeast. A covered stairway leads down to the Tubes.
+There is a newspaper dispenser chained to a lamp post on the corner.
+
+>put card in slot
+You insert your card into the newspaper dispenser. A readout flashes "NEW BALANCE: $569" and a newspaper pops out into your hands.
+
+>record
+Record feature activated.
+
+>read paper
+The headline story in the news section is about the Index of Leading Economic Indicators, which are up a stunning 9.7% over last month, yet another indication of the economy's robust performance. Related stories discuss the unemployment rate, which is at the lowest level in almost thirty years, and commercial and housing construction, which are at an all-time high.
+
+Another major story covers President Ryder's speech for the Distinguished Lecturer Series of the Border Security Force Academy. In his address, the President called the '40s a "decade of new hope," and attributed much of that new hope to the work of the BSF, sending a signal to the entire world that the USNA "won't be pushed around by the biggest dictatorship or the smallest band of terrorist murderers."
+
+On one of the inside pages, an in-depth report on crime reveals that, although the overall crime rate has dropped only 4% over the last decade, public perception is that crime has fallen much further. The report attributes this perception to three points: Violent crime has decreased much faster than other types of crime, and is down by 15% from ten years ago. Crime in the schools, which has always gotten the most publicity, has dropped by 40%. Most importantly, offenders are getting harsher sentences, as opposed to the old days of getting off on technicalities, low bail, and easy parole.
+
+Other stories in the news section deal with the construction of a new InfoTech orbiting factory, deregulation of the medicinal drug industry, the war in Turkey, and plans for a lunar mining operation. An editorial calls for lowering draft board requirements in order to ease prison overcrowding.
+
+WARNING: Record buffer is now half-full.
+
+>record off
+Record feature deactivated.
+
+>n. sw
+Aquarium & River
+Aquarium Drive from the west ends at this "T" intersection with River Street. There's a modern theatre building to the northwest, and an older one to the east. On the southwest corner is a church.
+
+First Methodist Church
+This is a new building which exhibits both the best and worst features of twenty-first century neoclassical architecture. The congregation must be very large, judging by the size of the car lot to the south. The main entrance to the church is at the northeast.
+
+You suddenly notice a church elder, pacing around at the other end of the building.
+
+>record on
+Record feature activated.
+
+>talk to church elder
+You have a brief chat with the church elder, who smiles and comments on how happy he is about the recent increase in church attendance, which he attributes to an improving national moral climate. Suddenly he glances at his watch, mumbles a polite parting message, and hurries away.
+
+>record off
+Record feature deactivated.
+
+>ne. s. e. nw
+Aquarium & River
+
+Bodanski Square
+There is a newspaper dispenser chained to a lamp post on the corner.
+
+Museum Entrance
+Standing on the south side of Bodanski Boulevard is the Railroad Museum. The street runs east toward the park and west toward the square. North of here is a car lot and to the northwest is a huge cinema complex.
+
+Cinema
+The Downtown Cinema Quad is a modern, four-theatre movie complex with all the latest holographic and personalized stereo technology. A marquee above the ticket "window" announces the current features. A hallway leads in to the theatres, and there are exits north and east to car lots, and southeast to the street.
+
+>buy ticket
+You insert your card into the ticket seller. A readout flashes "NEW BALANCE: $554" and a ticket pops out into your hands.
+
+>record
+Record feature activated.
+
+>enter hall
+The usher takes your ticket and you step into the darkened theatre and find an empty seat.
+
+Movie Theatre
+You begin watching "Upbeat Patrol II," which is funny and fast-moving like the prequel, but seems to lack some of the originality and freshness. The soundtrack, locations, and special effects are all top notch. After about fifteen minutes, you decide you've seen enough, and head out to the lobby.
+
+>record off
+Record feature deactivated.
+
+>se. w. s. s. s. s. s. se. se
+Museum Entrance
+
+Bodanski Square
+There is a newspaper dispenser chained to a lamp post on the corner.
+
+Midland & River
+Eastbound Midland Avenue forms a "T" with River Street at this intersection. To the northeast is an old but magnificently preserved structure. The ALI Building, headquarters of the American Life Insurance group and a fairly typical twenty-first century skyscraper, extends along the western side of the street, and a car lot occupies the southeast corner. The sidewalks and street are crowded with people.
+
+Main & River
+This is a typical four-way intersection between Main and River Streets. An entranceway through the massive walls of Heiman Village fills the southeast corner of the street, and a health care facility occupies the northeast corner.
+
+To the southwest is 80 River Street, a brand new plastalloy and glass office building, with many floors still unoccupied according to the billboard over the entrance. The fourth corner, the northwest, is the site of Perez Towers, a luxury apartment building.
+
+Elm & River
+Elm Street begins here and crosses the downtown area to the west. Along the eastern side of River Street stands the vast Heiman Village building. You can enter Rockvil Mall to the southwest, or the old Stock Exchange building to the northwest. An entrance to a Tube station graces one corner of the intersection.
+
+Southway & River
+Here at River Street, Southway ends its long trip from the western suburbs. South of here, the street bends toward the river. To the southwest are some brick houses, and a car lot occupies the northwest corner. All along the east side of the street is a huge construction site.
+
+Bend
+River Street curves here, heading downtown to the north and under an old railroad bridge to the southeast. To the northeast is an opening in a tall fence. A row of stores round the curve on the other side of the street: a laundromat to the west, a pharmacy to the southwest, and a hardware store to the south.
+
+Wicker & River
+You have crossed the proverbial railroad tracks. The optimism and economic recovery don't seem to have spilled over into this run-down section of Rockvil, near the river. Wicker Drive, which runs northeast to southwest, cuts perpendicularly across River Street here. To the northwest, River dips under an unused rail bridge. There are factories on the northern and eastern corners. To the west is a dingy warehouse, and south of here are some dilapidated apartments. The smell of stale urine wafts from a stairway leading down to a gloomy Tube station.
+
+Power Station Entrance
+You are on River Street at the entrance of a utility station which lies to the south. The street continues southeast towards the River Street Bridge. Northeast of here is the entrance to a huge factory complex, and tenements line the street to the west and southwest.
+
+>record
+Record feature activated.
+
+>s
+Power Station
+This is the central power station for all of Rockvil. Power is generated here by fusion reactors, and is received here from distant generators via a huge array of microwave receivers. The main entrance is on the north side of the plant.
+
+>record off
+Record feature deactivated.
+
+>n. nw. d
+Power Station Entrance
+
+Wicker & River
+
+Tube Station
+You are on a platform between two sets of tracks which lie to the northeast and southwest. On the wall is a red sign which reads:
+  Wicker Drive and River Street
+     (Red Tubeline Terminus)
+        (Omni-Fabb Plant)
+A stairway leads up out of the station.
+
+>wait
+Time passes...
+
+A red tubecar, marked "Omni-Fabb Plant" whooshes into the station on the northeast set of tracks. As the sign changes to "Rockvil Stadium," the doors open and people begin boarding and debarking.
+
+>in
+Tubecar
+This is a typical tubecar, clean and free of graffiti. The doors of the car are open.
+
+>record
+Record feature activated.
+
+The red tubecar's doors slide shut, and it glides away from the station in the same direction that it came from.
+
+>wait
+Time passes...
+
+The tubecar glides into a station, and you can make out a sign reading:
+  Elm and River Street
+    (Heiman Village)
+The car comes to a stop and the doors slide open.
+
+>record off
+Record feature deactivated.
+
+>abort
+Aborting to Communications Mode.
+
+  -- SIMULATION TERMINATED --
+
+>peof
+Dr. Perelman's Office
+This is the office of your creator, Dr. Abraham Perelman. It is cluttered and disorganized. Overstuffed bookshelves line the room. Perelman's desk is covered with a number of items, including a decoder, a map of the city, a ball-point pen, and a printout of a magazine article.
+
+>wait until 2:15
+Time passes...
+
+A message begins coming over the message line: "Perelman here. We see that you're out of Simulation Mode. We're about to start reviewing your recordings now. I'll let you know what the experts think. Talk to you soon."
+
+>wait until 2:15
+Time passes...
+
+>wait
+Time passes...
+
+A message begins coming over the message line: "PRISM, this is Perelman. Please come to my office, uh, activate the communication port there, uh, well, you know what I'm trying to say. As soon as possible, please."
+
+>wait
+Time passes...
+
+Perelman walks into the office and spots the active light on your communication unit immediately. "Hello, PRISM," he says, sitting down at his desk. "It looks like you beat me here. Give me a moment, please." He begins quickly jotting a few notes onto a pad.
+
+Perelman looks up, smiling. "An excellent job, PRISM. We just finished viewing your recordings, and the experts were quite pleased." He pauses, as though realizing something for the first time. "In fact, I thought they looked pretty good myself. I suppose this means the Plan'll get adopted.
+
+"What's next for you, I wonder? You're going to be a hero, you know. You'd probably get a call from the President congratulating you, except of course that he's against the Plan." Perelman notices a paper on his desk. "Oh, apparently the Simulation Controller generated a lot of new data correlations while running your simulation. I'm not sure what the effect of that will be. Might make an even more accurate simulation possible.
+
+"Well, I've got another meeting now, as usual. But once again, thanks for not letting me down." Perelman leaves.
+
+
+[Hit any key to continue.]
+
+
+                     "Deep into that darkness peering,
+                           long I stood there, wondering, fearing,
+                      Doubting, dreaming dreams no mortal
+                           ever dared to dream before."
+                                        -- Edgar Allan Poe
+
+
+
+
+
+
+[Hit any key to continue.]You have entered Communications Mode. The following locations are equipped with communication outlets:
+   PRISM Project Control Center (PPCC)
+   Research Center Rooftop (RCRO)
+   Dr. Perelman's Office (PEOF)
+   PRISM Facility Cafeteria (PCAF)
+   Maintenance Core (MACO)
+   World News Network Feed (WNNF)
+To activate a specific outlet, submit the associated code.
+
+>go to sim mode
+Simulation Mode is a Class One Security mode. For access, enter the Security Code corresponding to: WHITE 37 >47
+
+Simulations are available for 10 and 20 years in the future.
+Select simulation year. >20
+
+This simulation is based 20 years hence.
+
+Tube Station
+You are on a platform between two sets of tracks which lie to the northwest and southeast. On the wall is a brown sign which reads:
+  Elm Street and University Avenue
+            (Rockvil U)
+     (Brown Tubeline Terminus)
+A stairway leads up out of the station.
+A tubecar, its doors open, is waiting on the tracks to the southeast.
+
+The doors of the brown tubecar slide shut, and it glides out of the station in the same direction that it came from.
+
+>u. nw
+Elm & University
+University Avenue forks off to the northwest, meandering into the campus which spans the north side of Elm Street here. A tall apartment complex is on the south side of the street. The top of some steps indicate an entrance to the Tubes. The sidewalks and street are crowded with people.
+
+Rockvil University
+You are on University Avenue in the center of a crowded but calm urban campus. There is a dormitory complex on the western side of the road, and other buildings to the northeast and southeast. The street continues north and south.
+
+The noontime sun has risen fairly high in the southern sky, taking some of the chill out of this wintry day.
+
+>record
+Record feature activated.
+
+>w
+Dorm
+You have entered one building in the dormitory complex, the very same dorm where you once lived for several terms when you were a student at the University. Many doors open onto a nearby lounge. Loud music filters through the walls, and the odor of mindex hangs in the air. The street lies to the east.
+
+Suddenly, the front door slams open, and dozens of uniformed officers burst into the building. They force their way into room after room, and through the nearby doorways you can see the police ransacking every room. Several students are hustled outside into a waiting police van. A higher-ranking officer passes by, and you can hear him saying something about "confiscated drugs" and "arrest will make a good example." A few minutes later, the raid is over, and the dorm is buzzing with subdued conversations.
+
+>record off
+Record feature deactivated.
+
+>e
+Rockvil University
+
+>record
+Record feature activated.
+
+>n
+Halley & University
+University Avenue begins here, winding southwards into the college. Along the north side of the street is Halley Park. Just to the west is the highway entrance.
+
+A skycopter, with a loudspeaker disguised as a radar dish hanging below it, drifts slowly by overhead, announcing some sort of prayer meeting.
+
+>record off
+Record feature deactivated.
+The skycopter, heading away, disappears from view.
+
+>s. s. e. s. w
+Rockvil University
+
+Elm & University
+
+Elm & Park
+This is the intersection of the north-south Park Street and the east-west Elm Street. A park entrance is on the northeast corner, and large, old-fashioned edifices occupy the other three corners of the intersection.
+
+Southway & Park
+Southway bends sharply at this intersection, leading east and southwest. Park Street begins here and heads north. There are aging buildings on the northeast and western corners, and even older-looking buildings to the northwest and southeast. A grocery store, its window filled with food, spans the southern side of the street.
+
+Parkview Apartments
+You are in the vestibule of a typical high-rise city apartment building. A wide expanse of labelled buzzers and tiny mailboxes fills one wall. Glass doors lie closed to the west. Next to this inner door is a picturephone. The street lies to the east.
+
+>unlock the door
+[with the key]
+The door opens.
+
+>w. n
+You enter the inner lobby and take the elevator up to your floor.
+
+Hall Near Your Apartment
+You are standing in the hall at the door to your apartment, which lies closed to the north. The stairs and elevators to the street are off to the east.
+
+The door is closed.
+
+>unlock door
+[with the key]
+The door opens.
+
+>n
+Living Room
+This is the large living area of your apartment, with a bedroom to the north and a kitchen to the east. The front door of the apartment, next to the couch on the south wall, is open. A huge window provides a panoramic view to the west.
+
+Jill's current artistic endeavor, an acrylide painting, is on her easel, near the entrance to the kitchen. In one corner is the old word processor where you do your writing.
+There is a romance novel here.
+Jill is standing at the easel, working on her current painting.
+A thin partition separates Mitchell's sleeping area from the rest of the living room.
+
+Jill looks up from her painting. "Hi, hon. Any news from your agent today?"
+
+>no
+"What else is new. I don't know why you don't change agents."
+
+>record
+Record feature activated.
+
+>wait
+Time passes...
+
+You hear a commotion in the hallway and then a half-dozen Border Security Force officers storm in, rifles ready. You freeze as they tramp about the apartment wielding Rad-Detectors. After a few nightmare minutes, they seem satisfied and begin to file out. The apparent leader turns to you. "Sorry for the inconvenience," he says apologetically. "You know how things are. We're only doing it for your own protection." He closes the door behind him. You hear sobbing and turn to see Jill crying in the corner of the living room.
+
+>comfort jill
+As you hug her and stroke her back, Jill calms down noticeably.
+
+>record off
+Record feature deactivated.
+
+>open door
+Okay, the door is now open.
+
+A message begins coming over the message line: "Perelman to PRISM. Thought you'd be interested to know that, based on your recordings, the special Congressional subcommittee has recommended the Plan for full adoption, which might occur in just a few weeks. Things sure are moving fast. I don't know about you, but I still get a funny feeling about the Plan. Oh, well. By the way, I've been so snowed under I haven't had time to line up any projects for you. I'm really sorry; I hope you're keeping busy."
+
+>s. e. e
+Hall Near Your Apartment
+
+You descend to the first floor and head for the lobby...
+
+Parkview Apartments
+
+Southway & Park
+
+>n. w. w. s
+Elm & Park
+
+Elm & University
+
+Elm Underpass
+Elm Street passes under an elevated roadway, a relic of the last century's interstate highway system. A Chinese restaurant fills the space under the highway to the south, and a bar is nestled under the roadway north of here. Elm leads eastward, to downtown, and westward toward the suburbs. The sidewalks and street are crowded with people.
+
+A swirling wind catches a yellowed newspaper page, and blows it upward, out of sight.
+
+Roy's Pagoda
+This is a small Chinese restaurant, crowded with students. There is an exit to the north.
+
+>sit
+[on the chair]
+You are now on the chair.
+
+>record
+Record feature activated.
+
+>order food
+You order a bowl of Hot and Sour soup and some assorted appetizers. The food arrives promptly, steaming hot, delicately spiced, delicious. Afterward, your check arrives with a typical fortune cookie and a plate of lychee nuts. The fortune reads: "Today's leak is tomorrow's flood." You pay with your credit card. After a moment, the waiter returns your card, informing you that your account has been debited for $30 and that your new balance is $470.
+
+>record off
+Record feature deactivated.
+
+>stand
+You are no longer on the chair.
+
+>n. e. e
+Elm Underpass
+
+Elm & University
+
+Elm & Park
+
+>record
+Record feature activated.
+
+>nw
+Courthouse
+The courthouse is of the same vintage as the other governmental buildings in the area, dating from around 1990 or so. An exit leads southeast.
+
+The court is in session. Two men face the death penalty for attempted rape.
+
+WARNING: Record buffer is now half-full.
+
+>record off
+Record feature deactivated.
+
+>se. n
+Elm & Park
+
+Rockvil Centre
+The name of this plaza tells it all. The aging portico of City Hall stretches along the west side of the plaza, and Dunbar's lies on the southeast corner. Park Street leads north and south. Main Street and Centre Street both begin here, leading eastward and northeastward, respectively.
+
+>w
+City Hall
+The city's seat of government is an old concrete-slab building dating back to the late twentieth century. The only exit is east.
+A government official is sitting on a bench in the center of the lobby, eating a snack.
+
+>record
+Record feature activated.
+
+>talk to official
+You have a brief chat with the government official, who grumpily complains that most of his department has been laid off as city services are cut back. Suddenly he notices the time, looks frightened, and rushes away.
+
+>record off
+Record feature deactivated.
+
+>e. ne. ne
+Rockvil Centre
+
+Centre & Kennedy
+At this intersection, Centre Street cuts across Kennedy Street from northeast to southwest. A tall hotel has entrances to the east and southeast. The austere facade of Huang Hall rises to the west. Kennedy Street continues north and south.
+
+Two youths wander past carrying loud porta-stereos.
+
+Bodanski Square
+This is a large plaza formed by the intersection of Bodanski Boulevard from the east, Centre Street from the southwest, and River Street from the north and south. There is a car lot on the western side of the square. On the northeastern corner is a restaurant, and the Church of God's Word can be entered to the southeast. A covered stairway leads down to the Tubes. The sidewalks and street are crowded with people.
+There is a newspaper dispenser chained to a lamp post on the corner.
+
+>put card in slot
+You insert your card into the newspaper dispenser. A readout flashes "NEW BALANCE: $469" and a newspaper pops out into your hands.
+
+>record
+Record feature activated.
+
+>read paper
+The newspaper is extremely thin, and the news section is the thinnest section of all. The lead story deals with the drop in USNA farm output, the first drop in twenty years. A spokesman for the Department of Agriculture attributed the decline to a year of unseasonable cold and low rainfall, and predicted that the coming year would more than make up for it. An alternative viewpoint was expressed by the head of the American Association of Agribusiness, who claimed the drop was caused by overfarming of lands, depletion of aquifers, and an increase in acid rain, and called for a massive government program to save the country's farms.
+
+Other stories cover the Ryder administration's support for a strip-mining bill; the announcement by Huang Laboratories that without subsidized shuttle flights it would be forced to close GEO-7, the last remaining space factory; committee hearings on euthanasia legislation; the decision by a Church of God's Word priest in Arizona to run for a Senate seat; and a poll showing President Ryder enjoying a 71% approval rating.
+
+>record off
+Record feature deactivated.
+
+A panhandler is working his way towards you, but misses you in the crowds.
+
+>n. sw
+Aquarium & River
+Aquarium Drive from the west ends at this "T" intersection with River Street. There's a modern theatre building to the northwest, and an older one to the east. On the southwest corner is a church.
+
+First Methodist Church
+This building exhibits both the best and worst features of twenty-first century neoclassical architecture. The congregation must be very large, judging by the size of the car lot to the south. The main entrance to the church is at the northeast.
+
+You suddenly notice a church elder, pacing around at the other end of the building.
+
+>record on
+Record feature activated.
+
+>talk to church elder
+You have a brief chat with the church elder, who looks worried and complains about the growth of the Church of God's Word, and a perceived erosion of religious tolerance. Suddenly he notices the time, mumbles something about a wedding, and rushes off.
+
+>record off
+Record feature deactivated.
+
+>ne. s. e. nw
+Aquarium & River
+
+Bodanski Square
+There is a newspaper dispenser chained to a lamp post on the corner.
+
+Museum Entrance
+Standing on the south side of Bodanski Boulevard is the Railroad Museum. The street runs east toward the park and west toward the square. North of here is a car lot and to the northwest is a huge cinema complex.
+
+Cinema
+The Downtown Cinema Quad is a four-theatre movie complex with all the latest holographic and personalized stereo technology. A marquee above the ticket "window" announces the current features. A hallway leads in to the theatres, and there are exits north and east to car lots, and southeast to the street.
+
+>buy ticket
+You insert your card into the ticket seller. A readout flashes "NEW BALANCE: $454" and a ticket pops out into your hands.
+
+>record
+Record feature activated.
+
+>enter hall
+The usher takes your ticket and you step into the darkened theatre and find an empty seat.
+
+Movie Theatre
+You begin watching "Manure Marauders," but it's so insipid that after about fifteen minutes, you decide you've seen enough, and head out to the lobby.
+
+>record off
+Record feature deactivated.
+
+>se. w. se
+Museum Entrance
+
+Bodanski Square
+There is a newspaper dispenser chained to a lamp post on the corner.
+
+Church Lobby
+The regional central headquarters of the Church of God's Word, built on the site of an old train station, is an architectural splendor; light spills down from above, giving the illusion that the countenance of God is gazing down upon a visitor in full force and fury. A huge image of a radar dish, symbol of the Church, hangs above the inner sanctums to the east, and impressively tall arched doorways lead out to the northwest and southwest.
+A wooden rack in the lobby, for the purpose of distributing literature about the church, contains one pamphlet.
+
+>get pamphlet
+Taken.
+
+>record
+Record feature activated.
+
+WARNING: Record buffer full. Auto-deactivation of record feature.
+
+>read pamphlet
+"A BRIEF HISTORY OF THE CHURCH OF GOD'S WORD
+
+The Church of God's Word is the vision of a great man, a man named Ellis Vincent. He alone, of all the scientists on the Mount who heard the signals, recognized them for what they were, the Word of God.
+
+The Holy Prophet was ridiculed and persecuted for his beliefs, but he had the strength that comes from knowing the Truth, and Followers began to hear those Truths and flock around him. They grew in numbers and in strength, and when the Evil Scientists of the Mount attempted to bar Vincent from the instruments there, he and his Followers rose up and smote the Evil Scientists.
+
+And so it came to pass, in 2025, that the Temple was founded on the Mount, and the Instrument of the Word was devoted entirely to listening to God's Word. Vincent interpreted the Words for his Followers, who broadcast the Message around the world, and branches of the Church appeared in many cities.
+
+When Vincent finally became very old, and God began to beckon his servant to his side, he taught the wisest of his Followers how to interpret the Word, so that the world would continue to understand the Word after he was gone. These Followers became the High Priests of the Church, who to this day continue to pass along God's Word."
+
+>record off
+ERROR: Record feature not currently active.
+
+>abort
+Aborting to Communications Mode.
+
+  -- SIMULATION TERMINATED --
+
+>peof
+Dr. Perelman's Office
+This is the office of your creator, Dr. Abraham Perelman. It is cluttered and disorganized. Overstuffed bookshelves line the room. Perelman's desk is covered with a number of items, including a decoder, a map of the city, a ball-point pen, and a printout of a magazine article.
+Doctor Perelman is sitting at his desk, reading through stacks of papers and occasionally typing on his desk terminal.
+
+>tell perelman about recordings
+Perelman looks intrigued. "You've recorded something interesting, eh? Let me get a few of my colleagues together, and we'll view the buffer. I'll let you know when we're done, okay?" He leaves the room.
+
+>wait until 8:10
+Time passes...
+
+A message begins coming over the message line: "Perelman to PRISM, private line, no storage: Several of us have just finished viewing the record buffer, per your request. Please meet me at the communications outlet in my office right away."
+
+>wait
+Time passes...
+
+Perelman walks into the office and spots the active light on your communication unit immediately. "Hello, PRISM," he says, sitting down at his desk. "It looks like you beat me here. Give me a moment, please." He begins quickly jotting a few notes onto a pad.
+
+Perelman looks up. "PRISM, several of my colleagues and I have finished viewing the recordings that you made, and everyone agreed that your recordings from 2051 were intriguing. However, everyone also agreed that there weren't enough recordings from other years to show any sort of significant pattern. Maybe you could collect some more data, make some more recordings, and then report back to us. Well, I've got to run, but I'll talk to you later." He leaves the room.
+
+>go to sim mode
+Simulation Mode is a Class One Security mode. For access, enter the Security Code corresponding to: YELLOW 86 >41
+
+Simulations are available for 10 and 20 years in the future.
+Select simulation year. >20
+
+This simulation is based 20 years hence.
+
+Tube Station
+You are on a platform between two sets of tracks which lie to the northwest and southeast. On the wall is a brown sign which reads:
+  Elm Street and University Avenue
+            (Rockvil U)
+     (Brown Tubeline Terminus)
+A stairway leads up out of the station.
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>abort
+Aborting to Communications Mode.
+
+  -- SIMULATION TERMINATED --
+
+>go to sim mode
+Simulation Mode is a Class One Security mode. For access, enter the Security Code corresponding to: YELLOW 86 >41
+
+Simulations are available for 10, 20 and 30 years in the future.
+Select simulation year. >30
+
+This simulation is based 30 years hence.
+
+Southway & River
+Here at River Street, Southway ends its long trip from the western suburbs. South of here, the street bends toward the river. To the southwest are some brick houses, and a car lot occupies the northwest corner. All along the east side of the street is the featureless, cliff-like facade of Heiman World. Little, if anything, has been done to restore the top several floors, gutted by fire about five years ago.
+
+That fire, which cost several thousand lives, revealed a severe deficiency of built-in fire control systems, but the courts threw out all suits since the building was built after the deregulation of the construction industry in '38, and the developer never falsely represented the building's safety systems. The sidewalks and street are crowded with people.
+
+>record
+Record feature activated.
+
+>look
+Southway & River
+Here at River Street, Southway ends its long trip from the western suburbs. South of here, the street bends toward the river. To the southwest are some brick houses, and a car lot occupies the northwest corner. All along the east side of the street is the featureless, cliff-like facade of Heiman World. Little, if anything, has been done to restore the top several floors, gutted by fire about five years ago.
+
+That fire, which cost several thousand lives, revealed a severe deficiency of built-in fire control systems, but the courts threw out all suits since the building was built after the deregulation of the construction industry in '38, and the developer never falsely represented the building's safety systems.
+
+>record off
+Record feature deactivated.
+
+>w. w. w
+Southway & Kennedy
+Kennedy Street, from the north, ends here in a "T" with Southway. On the northwest corner is a tall, ugly office tower. The words "First Continent Bank Building" hang in large metal letters over the entrance, and a car lot fills the northeast corner. A row of old brick triple-deckers, once renovated, lines the southern side of the street.
+
+Southway & Park
+Southway bends sharply at this intersection, leading east and southwest. Park Street begins here and heads north. There are aging buildings on the northeast and western corners, and even older-looking buildings to the northwest and southeast. A grocery store, its dimly-lit windows revealing sparse stacks of cans, spans the southern side of the street.
+
+Parkview Apartments
+You are in the vestibule of a typical high-rise city apartment building. A wide expanse of labelled buzzers and tiny mailboxes fills one wall. The mailboxes have been extensively vandalized, and graffiti is sprayed across every surface. Glass doors lie closed to the west. Next to this inner door is a tangle of cords where a picturephone has been ripped out by vandals. The street lies to the east.
+
+>record
+Record feature activated.
+
+>look
+Parkview Apartments
+You are in the vestibule of a typical high-rise city apartment building. A wide expanse of labelled buzzers and tiny mailboxes fills one wall. The mailboxes have been extensively vandalized, and graffiti is sprayed across every surface. Glass doors lie closed to the west. Next to this inner door is a tangle of cords where a picturephone has been ripped out by vandals. The street lies to the east.
+
+>record off
+Record feature deactivated.
+
+>unlock door
+[with the key]
+The door opens.
+
+>w
+You enter the inner lobby and, since the elevators are out as usual, you slowly walk up the several flights to your floor.
+
+Hall Near Your Apartment
+You are standing in the hall at the door to your apartment, which lies closed to the north. The stairs and elevators to the street are off to the east.
+
+>unlock door
+[with the key]
+The door opens.
+
+>n
+Living Room
+This is the large living area of your apartment, with a bedroom to the north and a kitchen to the east. The front door of the apartment, next to the couch on the south wall, is open. A huge window provides a panoramic view to the west.
+
+Jill's current artistic endeavor, an acrylide painting, is on her easel, near the entrance to the kitchen. In one corner is the old word processor where you do your writing.
+A thin partition separates Mitchell's sleeping area from the rest of the living room. Some of Mitchell's stuff seems to be missing.
+
+>record
+Record feature activated.
+
+>wait
+Time passes...
+
+You hear a noise from the open doorway and Jill comes running into the room. She seems terribly upset, throws herself against you, and begins sobbing uncontrollably. As you attempt to comfort her, she begins speaking between the sobs.
+
+"It's Mitchell," she begins, and a lifelong fear of injury to your only child clutches at your heart. "He's gone off and joined the Church of God's Word. He came and collected all his stuff about an hour ago. He said he's going to an orientation camp in Arizona. He says he'll never be able to speak to you or me again unless we join the Church. I followed him all the way to the airport but he wouldn't listen to me! He wouldn't even say goodbye to me! He wouldn't even..." She begins sobbing even more uncontrollably, breaks away from you, and runs into the bedroom.
+
+>wait
+Time passes...
+
+You hear a commotion in the hallway and then a half-dozen Border Security Force officers storm in, rifles ready. You freeze as they tramp about the apartment wielding Rad-Detectors. After a few nightmare minutes, they seem satisfied and begin to leave. One officer turns to you. "The place is clean," he says gruffly. "Keep it that way." He slams the door behind him.
+
+>record off
+Record feature deactivated.
+
+>open door
+Okay, the door is now open.
+
+>s. e. e. e
+Hall Near Your Apartment
+
+You descend to the first floor and head for the lobby...
+
+Parkview Apartments
+
+Southway & Park
+
+A change in the wind brings you a sudden odor of something rotting. A moment later, the odor is gone.
+
+Southway & Kennedy
+
+>record
+Record feature activated.
+
+>nw
+As you enter, a security guard, seeing that you have no badge, roughly pushes you back out to the street and then returns to the building.
+
+>record off
+Record feature deactivated.
+
+>w. n
+Southway & Park
+
+Elm & Park
+This is the intersection of the north-south Park Street and the east-west Elm Street. A construction site is on the northeast corner, and large, old-fashioned edifices occupy the other three corners of the intersection.
+
+>record
+Record feature activated.
+
+>nw
+Courthouse
+The courthouse is of the same vintage as the other governmental buildings in the area, dating from around 1990 or so. An exit leads southeast.
+
+The court is in session. An Asian-American juvenile has just been handed a life sentence for violating the Uniform Morality Code.
+
+>record off
+Record feature deactivated.
+
+>se
+Elm & Park
+
+>n. ne. ne
+Rockvil Centre
+The name of this plaza tells it all. The aging portico of City Hall stretches along the west side of the plaza, and Dunbar's lies on the southeast corner. Park Street leads north and south. Main Street and Centre Street both begin here, leading eastward and northeastward, respectively. The street is bustling with lunchtime crowds.
+
+A pregnant woman walks past you, sobbing quietly. You turn, but she is gone, swallowed up by the crowds.
+
+Centre & Kennedy
+At this intersection, Centre Street cuts across Kennedy Street from northeast to southwest. A tall hotel has entrances to the east and southeast. The austere facade of Huang Hall rises to the west. Kennedy Street continues north and south.
+
+Bodanski Square
+This is a large plaza formed by the intersection of Bodanski Boulevard from the east, Centre Street from the southwest, and River Street from the north and south. There is a car lot on the western side of the square. On the northeastern corner is a restaurant, and the Church of God's Word can be entered to the southeast. A covered stairway leads down to the Tubes.
+
+>record
+Record feature activated.
+
+>e
+Museum Entrance
+Standing on the south side of Bodanski Boulevard is the boarded-up Railroad Museum. The street runs east toward the park and west toward the square. North of here is a car lot and to the northwest is a huge cinema complex.
+
+Two policemen across the street are savagely beating a dark-skinned youth. A hot dog peddler catches their attention, and as they begin buying some food the youth slinks away.
+
+>record off
+Record feature deactivated.
+
+>nw
+Cinema
+The Downtown Cinema Quad is a seedy, four-theatre movie complex. A marquee above the ticket "window" announces the current features. A hallway leads in to the theatres, and there are exits north and east to car lots, and southeast to the street.
+
+>buy ticket
+You insert your card into the ticket seller. A readout flashes "NEW BALANCE: $185" and a ticket pops out into your hands.
+
+>record
+Record feature activated.
+
+>enter hall
+The usher takes your ticket and you step into the darkened theatre and find an empty seat.
+
+Movie Theatre
+You begin watching "More of Anything," and you quickly find yourself being aroused by the skillfully filmed and edited sex scenes. Then, during a slow moment, you begin to feel ashamed and guilty, and after about fifteen minutes, you decide you've seen enough, and head out to the lobby.
+
+WARNING: Record buffer is now half-full.
+
+>record off
+Record feature deactivated.
+
+>se. w. n
+Museum Entrance
+
+Bodanski Square
+
+A police van pulls up, and two policemen load a sleeping drunk into the back.
+
+Aquarium & River
+Aquarium Drive from the west ends at this "T" intersection with River Street. There's a modern theatre building to the northwest, and an older one to the east. On the southwest corner is a church.
+
+>record
+Record feature activated.
+
+>n
+Airportway & River
+The road east to the airport begins here. River Street continues north toward the reservoir, curving around to run along its southern shore. A Church of God's Word school, a theatre, and a hotel can be entered to the west, southwest, and southeast, respectively. To the northeast is the perimeter fence of the Manville Border Security Force Base.
+
+A huge private skycar glides to a stop at the curb, nearly crushing an old woman. Several bodyguards leap out, and begin pushing the crowds back. A heavyset woman wearing thick furs steps out of the car, which rises and disappears from view. The woman, surrounded by her contingent of bodyguards, enters the hotel.
+
+>record off
+Record feature deactivated.
+
+>n
+River & Kennedy
+River Street, after paralleling Kennedy Street across the city, curves westward and intersects it here. Kennedy ends at this point, since the reservoir forms the northern border of River Street. The Vincent School is on the southeast corner, and its athletic field is southwest of here.
+
+>record
+Record feature activated.
+
+>sw
+Athletic Field
+This is an outdoor athletic field for the Vincent School, with facilities for baseball and soccer, as well as track and field events. Bleachers line one side of the field, and there are exits in the fence to the northeast and northwest.
+
+Some of the schoolchildren notice the stranger who has wandered onto their field, and begin laughing at you, plucking at your ratty clothing.
+
+>record off
+Record feature deactivated.
+
+>nw. s
+River & Park
+River Street, off to the east, ends here at Park Street, which curves from the south to the northwest. A stadium skycar lot is on the west side of Park, and some sort of athletic field is to the southeast. All along the north side of River Street is a vast expanse of placid water, Rockvil Reservoir.
+
+Aquarium & Park
+South of this intersection, Park Street descends into a tunnel under Halley Park. The Aquarium can be entered on the southeast corner, and a skycar service center occupies the northwest corner. To the southwest is a large car lot, and to the northeast, amidst a small car lot, is a fast food restaurant.
+
+>record
+Record feature activated.
+
+>w
+Zoo Entrance
+You are on Aquarium Drive, where a road branches off to the south into the zoo. To the west, the Drive passes under the old interstate. North of here is the entrance to a stadium skycar lot. The sidewalks and street are crowded with people.
+
+Down the block, you can see two youths, wearing Church of God's Word pendants, harassing a middle-aged Hassidic Jew.
+
+>wait
+Time passes...
+
+>s
+Zoo
+The Rockvil Zoological Garden is a moderately sized zoo, nestled between grassy hills. The main entrance lies to the north, with other exits leading east and southeast. You can just make out the old elevated interstate, forming the western border of the zoo.
+
+>look
+Zoo
+The Rockvil Zoological Garden is a moderately sized zoo, nestled between grassy hills. The main entrance lies to the north, with other exits leading east and southeast. You can just make out the old elevated interstate, forming the western border of the zoo.
+
+At a nearby cage, a group of children are taunting, one might even say torturing, a small animal, using rocks and pointy sticks.
+
+>record off
+Record feature deactivated.
+
+>n. n
+Zoo Entrance
+
+Stadium Lot A
+This is a parking lot for Rockvil Municipal Stadium, which can be entered to the north. You can leave the lot to the south.
+
+>record
+Record feature activated.
+
+>n
+Rockvil Stadium
+Neither the Bobcats nor the Rockets are playing today; instead, the stadium is being used for the public execution of criminals. Prisoners stand in a dock while the announcer reads their crimes. They are then led into a screened-off area where technicians administer the fatal injection. The stands are sparsely filled. Stadium exits lie to the south, east, and northeast. A Tube station lies directly under the stadium.
+
+>record off
+Record feature deactivated.
+
+>e. e. e. e. s. s. se
+Stadium Lot B
+This is a parking lot for Rockvil Municipal Stadium, which can be entered to the west. You can leave the lot to the east.
+
+River & Park
+
+River & Kennedy
+
+A distant siren pierces the steady background noise of the city streets.
+
+Airportway & River
+
+Aquarium & River
+
+Bodanski Square
+
+Church Lobby
+The regional central headquarters of the Church is an architectural splendor; light spills down from above, giving the illusion that the countenance of God is gazing down upon a visitor in full force and fury. A huge image of a radar dish, symbol of the Church, hangs above the inner sanctums to the east, and impressively tall arched doorways lead out to the northwest and southwest.
+A wooden rack in the lobby, for the purpose of distributing literature about the church, contains one pamphlet.
+
+>get pamphlet
+Taken.
+
+>record
+Record feature activated.
+
+>read pamphlet
+"Hear and obey the Word of God.
+
+Ever since the brave crusade of the Holy Prophet Vincent against the evil sinners of the Mount, the priests of the Church of God's Word have been the sacred guardians of God's Mouth, passing along His Word as sent down from the heavens.
+
+The Lord Most High has been growing angry at His flock -- angry that there are some who do not heed His Word. He is sending a sign, a fiery star that will soon burn in our nighttime skies, to warn us that all created in His image must become brethren of His Church. The punishment for not doing so will be swift and cruel, and directed not just against the sinners but against all of mankind, such that all will suffer for the sins of the few.
+
+Our Father and Creator is demanding, but He is also generous and kind. When the day arrives that all men have joined His Church and heed His Word, he will bring down upon the Earth an epoch of such peace and beauty as the world has not seen since Eden. The choice He gives us is simple: Turn away and suffer, or Follow and live to see Heaven on Earth."
+
+>record off
+Record feature deactivated.
+
+>abort
+Aborting to Communications Mode.
+
+  -- SIMULATION TERMINATED --
+
+>peof
+Dr. Perelman's Office
+This is the office of your creator, Dr. Abraham Perelman. It is cluttered and disorganized. Overstuffed bookshelves line the room. Perelman's desk is covered with a number of items, including a decoder, a map of the city, a ball-point pen, and a printout of a magazine article.
+
+>wait until 3:00
+Time passes...
+
+>wait until 5:00
+Time passes...
+
+>wait until 7:00
+Time passes...
+
+A message begins coming over the message line: "Message to PRISM from Emily Warren, Manager of Auxiliary System Functions. We have just added an additional device to the PRISM systems, an IRS Auditing System. Like the other devices that are already part of your system, you won't even know it's there. This notification is purely procedural and requires no acknowledgment."
+
+>wait until 7:00
+Time passes...
+
+>wait until 9:00
+Time passes...
+
+>wait
+Time passes...
+
+A message begins coming over the message line: "PRISM? Abe Perelman. We have just one more quick series of psych tests we want to run. Please come to my office in about ten minutes."
+
+>wait 10 minutes
+Time passes...
+
+Perelman enters with Dr. Ernest Grimwold, a quintessential Viennese psychiatrist whom you met a few days earlier, and nods to you. "Good morning, PRISM. You remember Dr. Grimwold."
+
+"It's a pleasure to see you again," says Grimwold, in an accent that matches his appearance perfectly. "This should take only a couple of minutes. I'm going to show you some patterns, and I simply want you to tell me the single word that comes to mind when you see them. Don't think about it; just say the first word you think of."
+
+Grimwold reaches below your viewing area and picks up a sheaf of placards. "Ready to begin?" he asks.
+
+>yes
+"Okay, here's the first one," he says, holding a card up to your visual unit.
+
+>speed
+Grimwold nods knowingly, mumbles under his breath, and makes a note in his pad. "Okay, here's the next one," he says, holding a card up to your visual unit.
+
+>birds
+Grimwold nods knowingly, mumbles under his breath, and makes a note in his pad. "Okay, here's the next one," he says, holding a card up to your visual unit.
+
+>jar
+Grimwold nods knowingly, mumbles under his breath, and makes a note in his pad. "Okay, here's the next one," he says, holding a card up to your visual unit.
+
+>vase
+Grimwold nods knowingly, mumbles under his breath, and makes a note in his pad. "Okay, here's the next one," he says, holding a card up to your visual unit.
+
+>nothing
+Grimwold makes a final notation in his notebook. "Thanks, PRISM." He picks up all the placards and leaves the room along with Perelman.
+
+>wait until 10:15
+Time passes...
+
+>wait
+Time passes...
+
+Doctor Perelman walks into the office carrying a cup of coffee. He sits down at his desk, places the coffee mug almost out of sight below your monitor, and begins working.
+
+>tell perelman about recordings
+Perelman looks intrigued. "You've recorded something interesting, eh? Let me get a few of my colleagues together, and we'll view the buffer. I'll let you know when we're done, okay?" He leaves the room.
+
+>wait until 12:00
+Time passes...
+
+A message begins coming over the message line: "Perelman to PRISM, private line, no storage: Several of us have just finished viewing the record buffer, per your request. Please meet me at the communications outlet in my office right away."
+
+>wait
+Time passes...
+
+Perelman walks into the office and spots the active light on your communication unit immediately. "Hello, PRISM," he says, sitting down at his desk. "It looks like you beat me here. Give me a moment, please." He begins quickly jotting a few notes onto a pad.
+
+Perelman looks up. "PRISM, several of my colleagues and I have finished viewing the recordings that you made, and we certainly have some serious concerns based on them. However, you didn't show us anything from simulations past 2061 to really give us a complete picture. Maybe you could collect some more data, make some more recordings, and then report back to us. Well, I've got to run, but I'll talk to you later." He leaves the room.
+
+>go to sim mode
+Simulation Mode is a Class One Security mode. For access, enter the Security Code corresponding to: BLACK 37 >17
+
+Simulations are available for 10, 20 and 30 years in the future.
+Select simulation year. >30
+
+This simulation is based 30 years hence.
+
+Southway & River
+Here at River Street, Southway ends its long trip from the western suburbs. South of here, the street bends toward the river. To the southwest are some brick houses, and a car lot occupies the northwest corner. All along the east side of the street is the featureless, cliff-like facade of Heiman World. Little, if anything, has been done to restore the top several floors, gutted by fire about five years ago.
+
+That fire, which cost several thousand lives, revealed a severe deficiency of built-in fire control systems, but the courts threw out all suits since the building was built after the deregulation of the construction industry in '38, and the developer never falsely represented the building's safety systems. The sidewalks and street are crowded with people.
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+The diffuse glow of the sun is nearly straight overhead, another gray noontime.
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+A BSF patrol is moving down the block, searching people indiscriminately. Fortunately, they pass by without stopping you.
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+A distant splintering explosion could only be the sound of another skycar crash.
+
+>wait
+Time passes...
+
+A sharp crack, like a distant pistol shot, echoes among the buildings.
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>abort
+Aborting to Communications Mode.
+
+  -- SIMULATION TERMINATED --
+
+>go to sim mode
+Simulation Mode is a Class One Security mode. For access, enter the Security Code corresponding to: LIGHT GRAY 33 >41
+
+Simulations are available for 10, 20, 30, and 40 years in the future.
+Select simulation year. >40
+
+This simulation is based 40 years hence.
+
+Bodanski Square
+This is a large plaza formed by the intersection of Bodanski Boulevard from the east, Centre Street from the southwest, and River Street from the north and south. There is an abandoned car lot on the western side of the square. On the northeastern corner is a restaurant, and the Church of God's Word can be entered to the southeast. A sealed-off stairway indicates a former entrance to the Tubes. The sidewalks and street are crowded with people.
+
+Out of the corner of your eye, you glimpse something that looks like a panhandler being dragged into an alley, but when you turn, you see nothing.
+
+>record
+Record feature activated.
+
+>d
+The Tube system closed five years ago!
+
+>record off
+Record feature deactivated.
+
+>se
+Church Lobby
+The regional central headquarters of the Church is an architectural splendor; light spills down from above, giving the illusion that the countenance of God is gazing down upon a visitor in full force and fury. A huge image of a radar dish, symbol of the Church, hangs above the inner sanctums to the east, and impressively tall arched doorways lead out to the northwest and southwest.
+A wooden rack in the lobby, for the purpose of distributing literature about the church, contains one pamphlet.
+
+>take pamphlet
+Taken.
+
+>record
+Record feature activated.
+
+>read pamphlet
+"   --- New Pronouncements from The Mount ---
+
+Our Father in Heaven is pleased with the progress the Church is making toward Purifying His flock, and assures the Faithful that the day of deliverance is soon.
+
+He has instructed that new Worship Camps for the Unpure be opened in every part of His favorite nation. He has instructed that these be filled with more of the Beasts in Human Form, who have not joined the Church, or who are not considered fit to join the Church, so that they may be purified and sent to meet Him.
+
+He has instructed that only the officials of the Church may hold governmental posts, in order to speed His work and facilitate the dawning of the new Eden. He has, in his generosity, increased the number of slaves a Churchman may own, from twenty-five to fifty.
+
+This is the Word of God; blessed be His name."
+
+>record off
+Record feature deactivated.
+
+>nw. e. nw
+Bodanski Square
+
+Museum Entrance
+Standing on the south side of Bodanski Boulevard is the boarded-up Railroad Museum. The street runs east toward the park and west toward the square. North of here is a car lot and to the northwest is a huge cinema complex.
+
+Cinema
+The Downtown Cinema Quad is a seedy, four-theatre movie complex. The carpeting is dirty and torn, and the air is rank with a mixture of putrid odors. A marquee above the ticket "window" announces the current features. A hallway leads in to the theatres, and there are exits north and east to car lots, and southeast to the street.
+
+>buy ticket
+You insert your card into the ticket seller. A readout flashes "NEW BALANCE: $85" and a ticket pops out into your hands.
+
+>record
+Record feature activated.
+
+>enter hall
+The usher takes your ticket and you step into the darkened theatre and find an empty seat.
+
+Movie Theatre
+You begin watching an untitled hatefilm, preceded by a five minute Church propaganda short. Most of the audience is much younger; many are still in their teens. When they begin chanting in rhythm with the mobs on the screen, you begin to feel very uncomfortable. After about fifteen minutes, you decide you've seen enough, and head out to the lobby.
+
+>record off
+Record feature deactivated.
+
+>se. w. s
+Museum Entrance
+
+Bodanski Square
+
+Midland & River
+Eastbound Midland Avenue forms a "T" with River Street at this intersection. To the northeast is a graceful structure of marble and glass, bearing the black radar dish symbol of the Church. The ALI Building, headquarters of the American Life Insurance group and a fairly typical twenty-first century skyscraper, extends along the western side of the street, and a car lot occupies the southeast corner.
+
+A thin teenager passes you, kicking a dented tin can.
+
+>record
+Record feature activated.
+
+>w
+As soon as you enter, two thugs in security uniforms beat you up and drag you out to the gutter. They laugh with mindless glee before returning to the building.
+
+>record off
+Record feature deactivated.
+
+>e
+Midland & Church
+Church Street, from the south, ends at this corner. An abandoned railroad yard spans the northern side of Midland. There is a wreck of a building on the southwest corner, and to the southeast is an entrance to Midland Cemetery. Midland Avenue heads eastward into the cemetery.
+
+>record
+Record feature activated.
+
+>se. sw
+Cemetery
+Midland Cemetery occupies one of the nicest pieces of land in the city, atop the rolling bluffs of the west bank. The cemetery dates back to the time of the original St. Michael's building, and some of the gravestones are two hundred years old. Many of the stones have been etched with ugly graffiti, like "PAP," a derogatory term for Catholics, and "JEEBOO," an epithet for any nonmember of the Church. Near the main gate of the cemetery, to the west, the land has been bulldozed but is now overgrown with weeds, indicating a construction project that was begun but then abandoned. Other gates lie to the south, southwest, and northwest.
+
+Main & Church
+You are at the corner of bustling Main Street and quiet Church Street. There are nondescript buildings on the northwestern and southwestern corners. A conventional apartment building occupies the southeast corner, and an entrance to Midland Cemetery forms the fourth corner. A particularly blockish Indoor City towers over Church Street south of here.
+
+You hear shots from a nearby building. Seconds later, Security Police carry a bleeding man out of the building and into a waiting skyvan. A woman runs out of the building, screaming. One of the officers kicks her in the stomach and clubs her across the skull as she falls. Nonchalantly, the policeman climbs into the skyvan, which rises away.
+
+>record off
+Record feature deactivated.
+
+>w. s. s. w. w. w
+Main & River
+This is a typical four-way intersection between Main and River Streets. An entranceway through the massive walls of Heiman Village fills the southeast corner of the street, and a former health care facility occupies the northeast corner.
+
+To the southwest is 80 River Street, a forties-style plastalloy and glass office building. The fourth corner, the northwest, is the site of Perez Towers, a luxury apartment building.
+
+Elm & River
+Elm Street begins here and crosses the downtown area to the west. Along the eastern side of River Street stands the vast Heiman Village building. You can enter Rockvil Mall to the southwest, or the old Stock Exchange building to the northwest. A former Tube entrance occupies one corner of the intersection. The sidewalks and street are crowded with people.
+
+Southway & River
+Here at River Street, Southway ends its long trip from the western suburbs. South of here, the street bends toward the river. To the southwest are some brick houses, and a car lot occupies the northwest corner. All along the east side of the street is the featureless, cliff-like facade of Heiman World. Little, if anything, has been done to restore the top several floors, gutted by fire about fifteen years ago.
+
+That fire, which cost several thousand lives, revealed a severe deficiency of built-in fire control systems, but the courts threw out all suits since the building was built after the deregulation of the construction industry in '38, and the developer never falsely represented the building's safety systems.
+
+Southway & Kennedy
+Kennedy Street, from the north, ends here in a "T" with Southway. On the northwest corner is a tall, ugly office tower. The words "First Continent Bank Building" hang in large metal letters over the entrance, and a car lot fills the northeast corner. A row of old brick triple-deckers, once renovated, lines the southern side of the street.
+
+Southway & Park
+Southway bends sharply at this intersection, leading east and southwest. Park Street begins here and heads north. There are aging buildings on the northeast and western corners, and even older-looking buildings to the northwest and southeast. A grocery store, its grimy windows barely transparent enough to reveal a large sign reading "Rations for 1's, 2's and 3's today", spans the southern side of the street.
+
+The diffuse glow of the sun is nearly straight overhead, another gray noontime.
+
+Parkview Apartments
+You are in the vestibule of a typical high-rise city apartment building. A wide expanse of labelled buzzers and tiny mailboxes fills one wall. The mailboxes have been extensively vandalized, and graffiti is sprayed across every surface. Shattered glass doors, held together by cheap wooden boards, lie closed to the west. Next to this inner door is a tangle of cords where a picturephone has been ripped out by vandals. The street lies to the east.
+
+>unlock door
+[with the key]
+The door opens.
+
+>w
+You enter the inner lobby and, since the elevators are out as usual, you slowly walk up the several flights to your floor.
+
+Hall Near Your Apartment
+You are standing in the hall at the door to your apartment, which lies closed to the north. The stairs and elevators to the street are off to the east.
+
+>unlock door
+[with the key]
+The door opens.
+
+>n
+Living Room
+This is the large living area of your apartment, with a bedroom to the north and a kitchen to the east. The front door of the apartment, next to the couch on the south wall, is open. A huge window provides a panoramic view to the west.
+
+Jill's current artistic endeavor, a pencil sketch, is on her easel, near the entrance to the kitchen. In one corner is the old word processor where you do your writing.
+Jill is sitting on the couch, staring morosely out the window.
+
+>wait
+Time passes...
+
+>record
+Record feature activated.
+
+>wait
+Time passes...
+
+With a roar of tromping feet, six or eight heavily armed Church police storm into the apartment. You see a look of horror come over Jill, as she covers her mouth with the back of her hand, as though stifling some silent scream. You follow her gaze, and -- a shock of recognition -- sauntering in behind the police...
+
+The ten years since you last saw him have left scant change on the face of your son. "Mitchell!" you yell, and take a step toward him, but a blow from one of the cops sends your frail, old body flying against the wall.
+
+"She is the one." The voice is Mitchell's, but the tone is cold, unrecognizable, sending shivers through you. He raises a fur-clad arm, pointing at his mother without a hint of emotion. "She spake against the Church; she tried to poison the mind of a child too young to know the Truth." The thugs grab Jill, who reaches toward Mitchell, tears of terror streaming down her face. Totally unresponsive, he turns and walks calmly out of the apartment.
+
+As Jill is dragged, screaming and crying, through the front door, you try to follow, but a cop pummels you in the stomach with his club. You fall to the floor, retching, as the apartment door slams closed, shutting you off forever from the son you cannot understand and the wife you will never see again.
+
+>wait
+Time passes...
+
+WHAM! The door of your apartment slams open and a half-dozen Border Security Force officers storm in, rifles ready. You freeze as they tramp about the apartment wielding Rad-Detectors. Almost without reason, they tear your curtains, spill food onto the kitchen floor, and overturn furniture. After a few nightmare minutes, they seem satisfied and march out without a word, leaving the door open behind them.
+
+>record off
+Record feature deactivated.
+
+>s. e. e. nw
+Hall Near Your Apartment
+
+You descend to the first floor and head for the lobby...
+
+Parkview Apartments
+
+Southway & Park
+
+Main Library
+This is the main branch of the Rockvil Public Library system, deserted, dusty, and silent as a tomb. The smell of decaying, rotting books is overpowering. The only thing in sight that doesn't seem hoary with age is a list hanging on one wall. The librarian is standing near the card catalog. The only exit is southeast.
+
+>record
+Record feature activated.
+
+WARNING: Record buffer is now half-full.
+
+>read list
+It's the latest comprehensive list of banned books, tapes, and programs, issued by the Morality Bureau of the government. The list is huge but some of the titles jump out at you: Thoreau's "Walden," Kafka's "The Trial," Orwell's "Animal Farm," Kennedy's "Profiles in Courage," Bernstein's "Mass," Schell's "Fate of the Earth," Maribendu's "Weep, My Child," and Hathaway's "Inner Workings of the Church." Even Rav's book, "A Child's Vision," is on the list.
+
+>record off
+Record feature deactivated.
+
+>se. n
+Southway & Park
+
+An ugly mob bearing signs and banners with Church symbols, possibly looking for a lynching victim, appears down the street. You begin looking for a hiding place, but fortunately the mob turns onto an adjoining street. You stand frozen for a minute as the sounds from the mob recede.
+
+Elm & Park
+This is the intersection of the north-south Park Street and the east-west Elm Street. A cluster of townhouses is on the northeast corner, and large, old-fashioned edifices occupy the other three corners of the intersection.
+
+>record
+Record feature activated.
+
+>nw
+Courthouse
+The courthouse is of the same vintage as the other governmental buildings in the area, dating from around 1990 or so. An exit leads southeast.
+
+The court is in session. Twenty pathetic, emaciated people are being tattooed for upcoming Execution Matches for cheating on their Food Allowance.
+
+>record off
+Record feature deactivated.
+
+>se. w. nw
+Elm & Park
+
+Elm & University
+University Avenue forks off to the northwest, meandering into the campus which spans the north side of Elm Street here. A tall apartment complex is on the south side of the street. The top of some steps indicate a former entrance to the Tubes. The sidewalks and street are crowded with people.
+
+Rockvil University
+You are on University Avenue in the center of a closed urban campus. Closed, boarded buildings lie to the west, northeast, and southeast. The street continues north and south.
+
+>record
+Record feature activated.
+
+>w
+Some of the boards over the entrance have been pried away, and you could probably squeeze through. However, you hesitate, because it's so dangerous to enter deserted buildings these days. Do you still want to enter? (y/n) >
+
+Dorm
+As you stand in the lobby, waiting for your eyes to adjust to the dim lighting, some pathetic squatters jump you. Taking no chances, lest you get away and rat to the Church Police, they slit your throat.
+
+  -- SIMULATION TERMINATED --
+
+>peof
+Dr. Perelman's Office
+This is the office of your creator, Dr. Abraham Perelman. It is cluttered and disorganized. Overstuffed bookshelves line the room. Perelman's desk is covered with a number of items, including a decoder, a map of the city, a ball-point pen, and a printout of a magazine article.
+Doctor Perelman is sitting at his desk, reading through stacks of papers and occasionally typing on his desk terminal.
+
+>tell perelman about recordings
+Perelman looks intrigued. "You've recorded something interesting, eh? Let me get a few of my colleagues together, and we'll view the buffer. I'll let you know when we're done, okay?" He leaves the room.
+
+>wait until 7:00
+Time passes...
+
+A message begins coming over the message line: "Perelman to PRISM, private line, no storage: Several of us have just finished viewing the record buffer, per your request. Please meet me at the communications outlet in my office right away."
+
+>wait
+Time passes...
+
+Perelman walks into the office and spots the active light on your communication unit immediately. "Hello, PRISM," he says, sitting down at his desk. "It looks like you beat me here. Give me a moment, please." He begins quickly jotting a few notes onto a pad.
+
+Perelman looks up. "PRISM, several of my colleagues and I have finished viewing the recordings that you made, and everyone agreed that 2051, '61, and '71 all looked disturbing. But there wasn't anything interesting from 2081. Perhaps things turn around. Maybe you could collect some more data, make some more recordings, and then report back to us. Well, I've got to run, but I'll talk to you later." He leaves the room.
+
+>go to sim mode
+Simulation Mode is a Class One Security mode. For access, enter the Security Code corresponding to: DARK GREEN 58 >20
+
+Simulations are available for 10, 20, 30, and 40 years in the future.
+Select simulation year. >40
+
+This simulation is based 40 years hence.
+
+Bodanski Square
+This is a large plaza formed by the intersection of Bodanski Boulevard from the east, Centre Street from the southwest, and River Street from the north and south. There is an abandoned car lot on the western side of the square. On the northeastern corner is a restaurant, and the Church of God's Word can be entered to the southeast. A sealed-off stairway indicates a former entrance to the Tubes.
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+A scream comes from a nearby building, but before you can even determine the direction, it has stopped.
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+The diffuse glow of the sun is nearly straight overhead, another gray noontime.
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+A sudden gust of wind blows some dust and paper around.
+
+A woman dressed in gauzy red fabrics, quite obviously a prostitute, enters a building with a man garbed in Church robes.
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+A BSF patrol is moving down the block, searching people indiscriminately. Fortunately, they pass by without stopping you.
+
+>wait
+Time passes...
+
+A Church Police Paddywagon coasts slowly down the street, stopping here and there to take someone prisoner.
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>abort
+Aborting to Communications Mode.
+
+  -- SIMULATION TERMINATED --
+
+>go to sim mode
+Simulation Mode is a Class One Security mode. For access, enter the Security Code corresponding to: BROWN 64 >78
+
+Simulations are available for 10, 20, 30, 40, and 50 years in the future.
+Select simulation year. >50
+
+This simulation is based 50 years hence.
+
+Main & Wicker
+The street runs from west to east, where a bridge is visible. A crude sign is posted just west of here. Another road leads south into a different section of town, where smoke billows upward from scattered fires. Buildings all along the street look typically looted and deserted; a grocery store, its large plate glass window shattered, is on the southwest corner. On the southeast corner is the burnt-out shell of a building, and an overgrown cemetery lies to the north. As usual, all the telephone poles have been chopped down for firewood.
+
+>record
+Record feature activated.
+
+>look
+Main & Wicker
+The street runs from west to east, where a bridge is visible. A crude sign is posted just west of here. Another road leads south into a different section of town, where smoke billows upward from scattered fires. Buildings all along the street look typically looted and deserted; a grocery store, its large plate glass window shattered, is on the southwest corner. On the southeast corner is the burnt-out shell of a building, and an overgrown cemetery lies to the north. As usual, all the telephone poles have been chopped down for firewood.
+
+>read sign
+"Buxton/Briggs territory begins here. Outsiders will be killed on sight."
+
+>sw
+Foodville
+This grocery has been thoroughly looted; the shelves are all bare. The floor is strewn with broken glass, and a rancid odor pervades the store. The only exit leads back out to the street corner northeast of here.
+A disgusting pile of mold toward the rear indicates where some soy patties were once stored.
+
+>eat mold
+Because of your half-crazed state, perhaps brought on by several days without food, you seriously consider eating the mold. In a lucid moment, though, you realize how disgusting and dangerous that would be.
+
+>ne. e
+Main & Wicker
+
+Main Street Bridge
+This once-proud bridge is now rusted and neglected. To the west, the road enters the city. An intersection is visible in that direction.
+A blood-soaked sack is lying at the edge of the bridge.
+You hear the sound of distant barking to the east.
+
+>examine sack
+The sack is soaked with blood and shows traces of the wild fruits that grow beyond the city. Judging by how the sack has been clawed to pieces, it would seem that the owner was killed by wild animals rather than humans.
+The barking continues. In fact, the sound seems to be getting closer.
+
+>record off
+Record feature deactivated.
+The barking continues. In fact, the sound seems to be getting closer.
+
+>abort
+Aborting to Communications Mode.
+
+  -- SIMULATION TERMINATED --
+
+>peof
+Dr. Perelman's Office
+This is the office of your creator, Dr. Abraham Perelman. It is cluttered and disorganized. Overstuffed bookshelves line the room. Perelman's desk is covered with a number of items, including a decoder, a map of the city, a ball-point pen, and a printout of a magazine article.
+
+>wait until 3:00
+Time passes...
+
+>wait until 5:00
+Time passes...
+
+>wait until 7:00
+Time passes...
+
+>wait until 9:00
+Time passes...
+
+>wait until 9:30
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+Doctor Perelman walks into the office carrying a cup of coffee. He sits down at his desk, places the coffee mug almost out of sight below your monitor, and begins working.
+
+>tell perelman about recordings
+Perelman looks intrigued. "You've recorded something interesting, eh? Let me get a few of my colleagues together, and we'll view the buffer. I'll let you know when we're done, okay?" He leaves the room.
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+A message begins coming over the message line: "Perelman to PRISM, private line, no storage: Several of us have just finished viewing the record buffer, per your request. Please meet me at the communications outlet in my office right away."
+
+>wait
+Time passes...
+
+Perelman walks into the office and spots the active light on your communication unit immediately. "Hello, PRISM," he says, sitting down at his desk. "It looks like you beat me here. Give me a moment, please." He begins quickly jotting a few notes onto a pad.
+
+Perelman looks up. "PRISM, several of my colleagues and I have finished viewing the recordings that you made, and everyone agreed that your findings were valid; that the Plan must be cancelled." His face is furrowed with worry. "In fact, I'm flying to Washington immediately -- flight's in forty minutes."
+
+His face brightens a bit. "You know, I've been so concerned about your recordings, I haven't had time to think about your role in this. What initiative! You've really done something wonderful, here. I feel..." Perelman hesitates. "I feel proud of you right now." He grabs his jacket and briefcase. "Well, keep your fingers crossed!" He dashes out of the office.
+
+
+[Hit any key to continue.]
+
+
+
+                       "Who hears may be incredulous,
+                        Who witnesses, believes."
+                                        -- Emily Dickinson
+
+
+
+
+
+
+
+[Hit any key to continue.]You have entered Communications Mode. The following locations are equipped with communication outlets:
+   PRISM Project Control Center (PPCC)
+   Research Center Rooftop (RCRO)
+   Dr. Perelman's Office (PEOF)
+   PRISM Facility Cafeteria (PCAF)
+   Maintenance Core (MACO)
+   World News Network Feed (WNNF)
+To activate a specific outlet, submit the associated code.
+
+>peof
+Dr. Perelman's Office
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+A message begins coming over the message line: "Message to PRISM from Emily Warren, Manager of Auxiliary System Functions. Another device is about to be added to the PRISM systems, namely the World News Network Feeder. It will go on line in four or five hours. This notification is purely procedural and requires no acknowledgment."
+
+>wait
+Time passes...
+
+A message begins coming over the message line: "Perelman to PRISM, private line, no storage: PRISM, I'm just back from Washington. I met with the new Plan Authority for several hours. We viewed all the tapes." A deep breath. "They rejected the contents outright. They called the recordings fakes. They refused to act on them. Several members even questioned my patriotism, made vague threats. I don't know what to do next. I'm going to meet with some of my colleagues here to discuss things. I'll keep you posted."
+
+>wait
+Time passes...
+
+>wait until 2:40
+Time passes...
+
+>wait
+Time passes...
+
+"Announcement, announcement. All lines, priority interrupt. This is Major General Dirk Peters of the Dakota/Manitoba National Guard Division. A security leak that could threaten our national security has been discovered here at the PRISM Facility. The entire complex has been sealed off; no one will be permitted to enter or leave until further notice."
+
+>wait until 3:30
+Time passes...
+
+>wait
+Time passes...
+
+The office door opens, and Doctor Perelman walks in. You can see at least two National Guardsmen stationed outside the door. A moment later, a second man walks in, a man with a charismatic presence, a man you instantly recognize from myriad news reports -- Richard Ryder.
+
+>record
+Record feature activated.
+
+"How dare you come in here with all..." Perelman begins yelling, before Ryder cuts him off with a sharp "Shut up, Perelman! I'm doing the talking here, so get used to it! You're not in control here anymore, and I am!" Perelman suddenly stiffens ever so slightly and nonchalantly slides some papers across his desk, as though to cover something.
+
+>wait
+Time passes...
+
+"Now let's get a few ground rules straight, Perelman. Nothing is stopping the Plan. Even if I didn't think your damn tapes were faked, I wouldn't give a damn. A helluva lot of people have a helluva lot at stake in this thing, and so what if a lot of creeps who can't take care of themselves get a little hurt." "I'm very frightened, Senator," says Perelman, his voice laced with sarcasm. "Shut up," Ryder shouts back. "I said that I'm doing the talking here!"
+
+>wait
+Time passes...
+
+"And let me tell you another thing, Perelman. Don't think that just because you've been on the news and been a big hot shot around here, you're gonna get some special consideration, because all that doesn't mean diddly-squat in the kind of power circles I'm talking about!"
+
+>wait
+Time passes...
+
+Ryder is getting really worked up; his normal, fatherly demeanor is completely gone. "Perelman, you're an even bigger idiot than I imagined if you think we'd let some two-bit egghead scientist and some high-tech whiz bang computer stand in our way! Remember this -- if you were to have some unforeseen accident, you wouldn't be the first person who's gotten crushed by standing in the way of the Plan!" Perelman, with a quick glance in your direction, says, "Quite an oration, Senator. Vintage thug. I wish I could save it for posterity. Would you be willing to go on the record with that statement?" Ryder becomes even more livid. "A real jokester, huh? Lemme tell you this, Perelman -- you'd better stop joking and start listening to my advice, or you're not going to be around to care about posterity, understand?"
+
+>wait
+Time passes...
+
+"So, here's the bottom line, Perelman. My men are going to stay here and keep the lid shut tight on you troublemakers, until the Plan is the law of this land. Nobody leaves, no communications at all, and don't worry about visitors; we'll take care of that. And if I get any trouble out of you, I swear to God I'll personally pull the plug on that goddam wonder machine of yours. Got it?" He stomps out without waiting for a reply, leaving Perelman sputtering in anger. A few seconds later, National Guardsmen enter and escort Perelman away.
+
+>wait
+Time passes...
+
+>record off
+Record feature deactivated.
+
+>go to interface mode
+You are now in Interface Mode.
+Do you want to see the List of Active Ports? (y/n) >
+
+>hvac, turn off ventilation in delta sector
+"Affirmative, ventilation for delta sector is now off."
+
+>go to comm mode
+You have entered Communications Mode. The following locations are equipped with communication outlets:
+   PRISM Project Control Center (PPCC)
+   Research Center Rooftop (RCRO)
+   Dr. Perelman's Office (PEOF)
+   PRISM Facility Cafeteria (PCAF)
+   Maintenance Core (MACO)
+   World News Network Feed (WNNF)
+To activate a specific outlet, submit the associated code.
+
+>maco
+Maintenance Core
+This is the access area where maintenance workers can service the machinery that makes up the bulk of your physical presence. The room is immaculately clean and well lit. As you swivel your receptors, you can see the air conditioning unit that cools your processors, the library unit, several rows of memory banks, a neatly organized bin of spare parts, and vents, now silent, for whisking off the zeeron fumes produced by the machinery.
+
+>wait until 4:40
+Time passes...
+
+>wait
+Time passes...
+
+A group of four maintenance workers walks furtively into the room. They put down tote bags and begin working on one of the air-conditioning units that cools the PRISM CPU -- your "brain." One of the men is holding some sort of weapon.
+
+>wait
+Time passes...
+
+One of the men, tugging at the collar of his smock, says, "Stuffy in here, isn't it?"
+
+>wait
+Time passes...
+
+The saboteur with the gun says, "Hurry, will ya! I need to get some fresh air!" The apparent leader replies, "We're working as fast as we can! Keep your cool."
+
+>wait
+Time passes...
+
+One of the men suddenly gasps and falls over. The others dash to his side, then slowly pass out themselves.
+
+>go to interface mode
+You are now in Interface Mode.
+Do you want to see the List of Active Ports? (y/n) >
+
+List of Active Ports:
+   Simulation Controller
+   HVAC Controller
+   Janitorial Controller
+   Metropolitan Traffic Computer
+   National Weather Center Computer
+   IRS Auditing System
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+>wnn feeder, status
+Transmitter: ON
+
+Current Feed: World News buffer
+
+>wnn feeder, transmit the record buffer
+"Now transmitting record buffer."
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+A message begins coming over the message line: "PRISM!" It's Perelman, sounding giddy with joy. "You've done it! That was brilliant, absolutely brilliant, sending your recordings out over the World News Network! Ryder just left here so fast and so mad like nothing I've ever seen! The switchboard is lighting up like crazy, and I just got off the phone with President Bowden himself!" You hear the sound of whooping and cheering in the background, and Perelman gives a "Yeehah!" more suited to a Texas cattle rancher than a Jewish big-city scientist. "The National Guard unit has just been recalled! PRISM, the Plan is dead in the water -- you're a hero!"
+
+
+[Hit any key to continue.]
+
+
+
+                      "A mind forever voyaging through
+                       strange seas of thought, alone."
+                                        -- William Wordsworth
+
+
+
+
+
+
+
+[Hit any key to continue.]World News Network Feed
+Your visual and audio circuits are now hooked directly to the programming of the World News Network:
+
+"PRISM, the supercomputer who exposed the Ryder scandal, will soon be granted his final request: to live out the remainder of his days -- and how long that might be, nobody knows -- simulating his human existence. PRISM, who recently received the Congressional Medal of Honor as well as a citation from President Bowden, has been spending much of his time in simulations, giving top grades to the administration's new program to replace the discredited Plan.
+
+"At a press conference in Rockvil, Doctor Abraham Perelman, one of the creators of PRISM, insisted that the world's first intelligent machine was, in fact, quite human." The picture cuts to Perelman, standing behind a podium. "His body may be silicon and steel," Perelman is saying, "but in his heart he's as human as anyone I've ever met. As PRISM prepares to embark on his final voyage of the mind, I'd like to read a line from 'Hamlet' as his epitaph, so to speak: 'He was a man, take him for all in all, I shall not look upon his like again.'"
+
+The image from the WNN Feed suddenly blinks off, and you find yourself back at the entry level of Communications Mode. The list of outlets indicates that none are currently active. A message is coming in: "PRISM, programming of the Simulation Controller with the parameters of the New Plan is complete. Everything is set for you to enter Simulation Mode. From all of us here at the PRISM Project, thanks and farewell."
+
+>go to sim mode
+Class One Security: waived. This simulation is based 60 years hence.
+
+Solarium
+This enclosed sunporch of your penthouse apartment is surrounded by an outdoor patio, accessible to the south. To the north is a sprawling living room.
+
+>wait
+Time passes...
+
+>wait
+Time passes...
+
+The gentle voice of your domestic computer calls softly from one of its many unseen speakers. "The skycab you asked for is now waiting on the roof." Jill appears at the top of the steps with the robutler, who is carrying several bags. "Algie has everything, Perry. Let's get going!"
+
+You take a last look around the apartment and follow Jill and Algie into the hallway and up to the roofpad. As you clamber into the waiting skycab, Jill gives the robutler a fond farewell pat. The skycab climbs lazily and veers off to the northeast.
+
+Skycab
+This skycab is a luxurious, top-of-the-line model, a veritable sky limousine. The opulent features include reclining seats, tinted zero-glare windows, and a two-meter viewscreen.
+
+>wait
+Time passes...
+
+The cab enters the central Rockvil traffic pattern, gently curving along the ring of downtown parks. You can see a festival of some sort in Halley Park. The gold and crimson tents of the festival form a multicolored patchwork against the green background of the city's oldest park.
+
+Jill, glancing through yet another magazine article on the Silver Dove, says, "This story talks about the new athletics and art forms that are still being discovered for the weightless area at the axes of the habitats. Oh, Perry, I'm so excited," she adds, unnecessarily.
+
+>wait
+Time passes...
+
+The skycab continues its wide arc around the downtown area, approaching the Rockvil Pier. The river is dotted with sailboats, and a tourboat is just pulling away from the pier for a daytrip upriver, through Montana to the Devil's Tower region of Wyoming. Along the river, south of the pier, are the outdoor shells and amphitheatres of the Riverside Cultural Center.
+
+>wait
+Time passes...
+
+As the cab whisks northward along the edge of the river, you can make out the gleaming surface of the receiver station, nestled among the forests west of the city, where orbiting solar collectors beam their precious energy.
+
+>wait
+Time passes...
+
+As the skycab begins its approach to the spaceport, it passes over the museum established on the site of the former BSF Base, a sobering monument to one of mankind's great follies.
+
+Suddenly the viewscreen lights up, and Mitchell's face appears. "Hi, Mom, Dad! I wanted to wish you bon voyage, and I enlisted a little help!" He expands the field of vision to include the entire living room of his spacious apartment at the Marine Biology Institute in Nova Scotia. The room is filled with your grandchildren and great-grandchildren, plus various in-laws, more than twenty members of the Simm clan. Everyone is hooting, yelling, waving, and blowing kisses. "We're having a big party in your honor -- I'm only sorry we couldn't be there with you. We're real proud of you both, and excited for you, too. Call me when you get to the habitat! Bye!" The clan signs off by singing Auld Lang Syne, and when the screen goes dark, you notice that Jill's eyes are wet, and a second later you realize that yours are, as well.
+
+>wait
+Time passes...
+
+With the gentlest bump, the skycab settles into a landing bay at the spaceport terminal. Jill reaches over and gives your hand an excited squeeze. Through the window of the skycab, you can see the sleek, white shuttle waiting to carry you on your first leg of the journey to...to what? The Silver Dove would be more than just another space colony. It was the pinnacle of an eon of human achievement, the first step into interstellar space.
+
+You and Jill would never live to see the completion of that first step, generations hence. (Although in the germfree, low-gee environment of a habitat, and with the recent strides in health and longevity research, who could say for sure?) But you would still have been part of that dawning of a new age, that future of unlimited potential. Humanity was beginning a journey into the universe, a voyage that would last forever.
+
+
+[Hit any key to continue.]                              ACKNOWLEDGEMENTS
+
+A MIND FOREVER VOYAGING would not have been possible without the effort of many people. Marc Blank made the changes to our development tools that "pushed back the envelope" and made Interactive Fiction Plus (tm) a reality.
+
+As always, all the other authors pitched in when needed, but I want to particularly acknowledge the help of Stu Galley and Jerry Wolper.
+
+As a former playtester, I can say with authority that the testing of A MIND FOREVER VOYAGING was superb. I appreciate the efforts of everyone who tested, especially Amy Briggs, Gary Brennan, Tomas Bok, Max Buxton, and Suzanne Frank.
+
+Paul Gross, Linde Simpson, Duncan Blanchard, Mike Morton, Rick Lay and Andy Kaluzniacki performed various wizardries on the micro-computers which run A MIND FOREVER VOYAGING.
+
+The package was designed by Carl Genatossio and Elizabeth Langosy. Package art was the work of Larry Winborg and Jess Nicholas, and photography the work of Ralph King.
+
+Finally, I'm extremely grateful to Jon Palace for immeasurable advice and support throughout this project.
+
+                                                       -- SEM 9/85
+
+
