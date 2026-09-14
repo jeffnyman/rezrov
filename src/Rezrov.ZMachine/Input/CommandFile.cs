@@ -10,7 +10,9 @@ namespace Rezrov.ZMachine.Input;
 /// [zm 10.2] and [zm 10.2.1] The second input stream is a file whose
 /// format is the one output stream 4 records in. [zm 7.1.2.3] That
 /// stream holds the player's whole commands and the keypresses read by
-/// read_char, one per line, and the remarks on section 7 suggest a style
+/// read_char, one per line (though a line of several keys is read out
+/// one at a time, see <see cref="ReadKey"/>), and the remarks on section
+/// 7 suggest a style
 /// for the parts plain text cannot carry, which Frotz adopted and this
 /// follows so that the two can exchange files:
 ///
@@ -35,6 +37,11 @@ public sealed class CommandFile
 {
     private readonly TextReader _reader;
     private readonly UnicodeTranslationTable _extraCharacters;
+
+    // The keys of the line being handed out one read_char at a time,
+    // and how many of them have gone.
+    private List<ushort>? _keys;
+    private int _keyIndex;
 
     /// <summary>
     /// [zm 10.3.2] The position of the last click read, from the two
@@ -64,6 +71,9 @@ public sealed class CommandFile
     {
         ArgumentNullException.ThrowIfNull(request);
 
+        // Whatever a line of keys still held is left behind: a command
+        // starts on a line of its own.
+        _keys = null;
         var codes = ReadCodes();
         if (codes is null)
         {
@@ -92,17 +102,39 @@ public sealed class CommandFile
 
     /// <summary>
     /// Reads the next keypress, or returns null when the file has ended.
-    /// A line with nothing on it is the return key.
+    /// A line with nothing on it is the return key, and a line with more
+    /// than one code on it gives them to the reads that follow, one each,
+    /// before the next line is looked at.
     /// </summary>
+    /// <remarks>
+    /// The format has one key per line, so a longer line is not something
+    /// a recording writes. It is what a person writes for a game that
+    /// takes its whole command through read_char, as Bureaucracy and
+    /// Custard do: the command on one line, then a line with nothing on
+    /// it for the return that ends it.
+    /// </remarks>
     public ushort? ReadKey()
     {
+        if (_keys is not null && _keyIndex < _keys.Count)
+        {
+            return _keys[_keyIndex++];
+        }
+
+        _keys = null;
         var codes = ReadCodes();
         if (codes is null)
         {
             return null;
         }
 
-        return codes.Count > 0 ? codes[0] : Zscii.Newline;
+        if (codes.Count == 0)
+        {
+            return Zscii.Newline;
+        }
+
+        _keys = codes;
+        _keyIndex = 1;
+        return codes[0];
     }
 
     /// <summary>

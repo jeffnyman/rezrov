@@ -1,0 +1,756 @@
+
+
+
+What is your first name? Jeff
+
+Pick a gender for your character: 
+m - male
+f - female
+* - Random
+ Bakery                                              Time:  4:48 pm
+
+
+
+
+
+It's Friday.  After finishing a phone call at 4:30, you found everyone had gone
+home early, leaving you to clean up the mess generated over the day.  Broom
+wielded, you started to sweep only to have the electricity go out.
+
+
+Custard
+An interactive dessert
+By Evin Robertson
+Release 1 / Serial number 000314 / Inform v6.15 Library 6/7
+
+Bakery
+A dark room.  The moon shines in through the window onto a table where it
+illuminates a phospherescent pie.  The circuit breaker is in a closet to the
+north.
+
+
+>
+
+ Bakery                                              Time:  4:51 pm
+It's Friday.  After finishing a phone call at 4:30, you found everyone had gone
+home early, leaving you to clean up the mess generated over the day.  Broom
+wielded, you started to sweep only to have the electricity go out.
+
+
+Custard
+An interactive dessert
+By Evin Robertson
+Release 1 / Serial number 000314 / Inform v6.15 Library 6/7
+
+Bakery
+A dark room.  The moon shines in through the window onto a table where it
+illuminates a phospherescent pie.  The circuit breaker is in a closet to the
+north.
+
+
+>i
+You are carrying:
+  your broom (weapon in hand)
+  a uniform (being worn)
+
+
+>
+
+ Bakery                                              Time:  4:54 pm
+Custard
+An interactive dessert
+By Evin Robertson
+Release 1 / Serial number 000314 / Inform v6.15 Library 6/7
+
+Bakery
+A dark room.  The moon shines in through the window onto a table where it
+illuminates a phospherescent pie.  The circuit breaker is in a closet to the
+north.
+
+
+>i
+You are carrying:
+  your broom (weapon in hand)
+  a uniform (being worn)
+
+
+>examine uniform
+A column of drab buttons down pale yellow polyester.  A name tag has been
+stitched onto the left side.
+
+
+>
+
+ Bakery                                              Time:  4:57 pm
+
+Bakery
+A dark room.  The moon shines in through the window onto a table where it
+illuminates a phospherescent pie.  The circuit breaker is in a closet to the
+north.
+
+
+>i
+You are carrying:
+  your broom (weapon in hand)
+  a uniform (being worn)
+
+
+>examine uniform
+A column of drab buttons down pale yellow polyester.  A name tag has been
+stitched onto the left side.
+
+
+>examine tag
+It reads "jennifer"; you borrowed it from her when yours caught fire.
+
+
+>
+
+ Bakery                                              Time:  5:00 pm
+north.
+
+
+>i
+You are carrying:
+  your broom (weapon in hand)
+  a uniform (being worn)
+
+
+>examine uniform
+A column of drab buttons down pale yellow polyester.  A name tag has been
+stitched onto the left side.
+
+
+>examine tag
+It reads "jennifer"; you borrowed it from her when yours caught fire.
+
+
+>examine broom
+Four feet of wood bound to straw at one end and your hands at the other.
+
+
+>
+
+ Bakery                                              Time:  5:03 pm
+You are carrying:
+  your broom (weapon in hand)
+  a uniform (being worn)
+
+
+>examine uniform
+A column of drab buttons down pale yellow polyester.  A name tag has been
+stitched onto the left side.
+
+
+>examine tag
+It reads "jennifer"; you borrowed it from her when yours caught fire.
+
+
+>examine broom
+Four feet of wood bound to straw at one end and your hands at the other.
+
+
+>examine pie
+A coconut custard pie.  There is a golden clockwork nestled in the custard.
+
+
+>
+
+ Bakery                                              Time:  5:06 pm
+
+>examine uniform
+A column of drab buttons down pale yellow polyester.  A name tag has been
+stitched onto the left side.
+
+
+>examine tag
+It reads "jennifer"; you borrowed it from her when yours caught fire.
+
+
+>examine broom
+Four feet of wood bound to straw at one end and your hands at the other.
+
+
+>examine pie
+A coconut custard pie.  There is a golden clockwork nestled in the custard.
+
+
+>examine clockwork
+It seems to have eaten a bad custard.
+
+
+>
+
+ Bakery                                              Time:  5:09 pm
+
+
+>examine tag
+It reads "jennifer"; you borrowed it from her when yours caught fire.
+
+
+>examine broom
+Four feet of wood bound to straw at one end and your hands at the other.
+
+
+>examine pie
+A coconut custard pie.  There is a golden clockwork nestled in the custard.
+
+
+>examine clockwork
+It seems to have eaten a bad custard.
+
+
+>take pie
+Taken.
+
+
+>
+
+ Bakery                                              Time:  5:12 pm
+
+
+>examine broom
+Four feet of wood bound to straw at one end and your hands at the other.
+
+
+>examine pie
+A coconut custard pie.  There is a golden clockwork nestled in the custard.
+
+
+>examine clockwork
+It seems to have eaten a bad custard.
+
+
+>take pie
+Taken.
+
+
+>eat pie
+If you ate it in the dark, you'd probably make a mess all over yourself.
+
+
+>
+
+ Bakery                                              Time:  5:15 pm
+
+
+>examine pie
+A coconut custard pie.  There is a golden clockwork nestled in the custard.
+
+
+>examine clockwork
+It seems to have eaten a bad custard.
+
+
+>take pie
+Taken.
+
+
+>eat pie
+If you ate it in the dark, you'd probably make a mess all over yourself.
+
+
+>examine table
+A standard wooden table for customers to eat at.
+
+
+>
+
+ Bakery                                              Time:  5:18 pm
+
+
+>examine clockwork
+It seems to have eaten a bad custard.
+
+
+>take pie
+Taken.
+
+
+>eat pie
+If you ate it in the dark, you'd probably make a mess all over yourself.
+
+
+>examine table
+A standard wooden table for customers to eat at.
+
+
+>examine moon
+It's nearly full and its craters form their familiar pattern.
+
+
+>
+
+ Closet                                              Time:  5:21 pm
+Taken.
+
+
+>eat pie
+If you ate it in the dark, you'd probably make a mess all over yourself.
+
+
+>examine table
+A standard wooden table for customers to eat at.
+
+
+>examine moon
+It's nearly full and its craters form their familiar pattern.
+
+
+>n
+
+Closet
+A small utility closet with a circuit breaker on the wall.  You can leave to the
+south.
+
+
+>
+
+ Closet                                              Time:  5:24 pm
+
+
+>examine table
+A standard wooden table for customers to eat at.
+
+
+>examine moon
+It's nearly full and its craters form their familiar pattern.
+
+
+>n
+
+Closet
+A small utility closet with a circuit breaker on the wall.  You can leave to the
+south.
+
+
+>examine breaker
+Your standard circuit breaker, with two columns of labeled switches. Currently,
+the switch marked "lights" is off.
+
+
+>
+
+ Closet                                              Time:  5:27 pm
+
+
+>examine moon
+It's nearly full and its craters form their familiar pattern.
+
+
+>n
+
+Closet
+A small utility closet with a circuit breaker on the wall.  You can leave to the
+south.
+
+
+>examine breaker
+Your standard circuit breaker, with two columns of labeled switches. Currently,
+the switch marked "lights" is off.
+
+
+>turn on breaker
+You flip the switch and the overhead lights fill with an odd flickering glow.
+
+
+>
+
+ Inside Clockwork                                    Time:  5:30 pm
+A small utility closet with a circuit breaker on the wall.  You can leave to the
+south.
+
+
+>examine breaker
+Your standard circuit breaker, with two columns of labeled switches. Currently,
+the switch marked "lights" is off.
+
+
+>turn on breaker
+You flip the switch and the overhead lights fill with an odd flickering glow.
+
+
+>eat pie
+Oh wow!  Everything seems so cosmic!
+
+Inside Clockwork
+You're walking up the teeth of a rotating gear to maintain your position.  Below
+you it meshes with another gear.  Flickers of light bounce off the golden
+spinning discs surrounding you in every direction.
+
+
+>
+
+ Inside Clockwork                                    Time:  5:33 pm
+the switch marked "lights" is off.
+
+
+>turn on breaker
+You flip the switch and the overhead lights fill with an odd flickering glow.
+
+
+>eat pie
+Oh wow!  Everything seems so cosmic!
+
+Inside Clockwork
+You're walking up the teeth of a rotating gear to maintain your position.  Below
+you it meshes with another gear.  Flickers of light bounce off the golden
+spinning discs surrounding you in every direction.
+
+
+>examine gear
+The gears each appear to be about 5 meters in diameter, with large teeth that
+serve as a steep staircase.  They're made of a shiny yellow metal, presumeably
+the same substance that's in golden candy wrappers.
+
+
+>
+
+ Inside Clockwork                                    Time:  5:36 pm
+You flip the switch and the overhead lights fill with an odd flickering glow.
+
+
+>eat pie
+Oh wow!  Everything seems so cosmic!
+
+Inside Clockwork
+You're walking up the teeth of a rotating gear to maintain your position.  Below
+you it meshes with another gear.  Flickers of light bounce off the golden
+spinning discs surrounding you in every direction.
+
+
+>examine gear
+The gears each appear to be about 5 meters in diameter, with large teeth that
+serve as a steep staircase.  They're made of a shiny yellow metal, presumeably
+the same substance that's in golden candy wrappers.
+
+
+>u
+You're already climbing the gear as fast as you can.
+
+
+>
+
+ Last Custard Stand                                  Time:  5:39 pm
+you it meshes with another gear.  Flickers of light bounce off the golden
+spinning discs surrounding you in every direction.
+
+
+>examine gear
+The gears each appear to be about 5 meters in diameter, with large teeth that
+serve as a steep staircase.  They're made of a shiny yellow metal, presumeably
+the same substance that's in golden candy wrappers.
+
+
+>u
+You're already climbing the gear as fast as you can.
+
+
+>put broom in gear
+You wedge the broom between the teeth of the gears and they grind to a halt.
+
+Last Custard Stand
+There is a a roadside pie stand here.  A cardboard man holds up a sign
+advertising custards for one dollars a piece.  He doesn't look too happy.
+
+
+>
+
+ Last Custard Stand                                  Time:  5:42 pm
+>examine gear
+The gears each appear to be about 5 meters in diameter, with large teeth that
+serve as a steep staircase.  They're made of a shiny yellow metal, presumeably
+the same substance that's in golden candy wrappers.
+
+
+>u
+You're already climbing the gear as fast as you can.
+
+
+>put broom in gear
+You wedge the broom between the teeth of the gears and they grind to a halt.
+
+Last Custard Stand
+There is a a roadside pie stand here.  A cardboard man holds up a sign
+advertising custards for one dollars a piece.  He doesn't look too happy.
+
+
+>examine me
+You are wearing your bakery uniform and feel fine.
+
+
+>
+
+ Last Custard Stand                                  Time:  5:45 pm
+>u
+You're already climbing the gear as fast as you can.
+
+
+>put broom in gear
+You wedge the broom between the teeth of the gears and they grind to a halt.
+
+Last Custard Stand
+There is a a roadside pie stand here.  A cardboard man holds up a sign
+advertising custards for one dollars a piece.  He doesn't look too happy.
+
+
+>examine me
+You are wearing your bakery uniform and feel fine.
+
+
+>i
+You are carrying:
+  a dollar
+  a uniform (being worn)
+
+
+>
+
+ Last Custard Stand                                  Time:  5:48 pm
+>put broom in gear
+You wedge the broom between the teeth of the gears and they grind to a halt.
+
+Last Custard Stand
+There is a a roadside pie stand here.  A cardboard man holds up a sign
+advertising custards for one dollars a piece.  He doesn't look too happy.
+
+
+>examine me
+You are wearing your bakery uniform and feel fine.
+
+
+>i
+You are carrying:
+  a dollar
+  a uniform (being worn)
+
+
+>examine dollar
+In God we trust, for God always has another custard up his sleeve.
+
+
+>
+
+ Last Custard Stand                                  Time:  5:51 pm
+
+
+>examine me
+You are wearing your bakery uniform and feel fine.
+
+
+>i
+You are carrying:
+  a dollar
+  a uniform (being worn)
+
+
+>examine dollar
+In God we trust, for God always has another custard up his sleeve.
+
+
+>examine man
+Standard corrugated cardboard man with a stick functioning as a spine running
+down the other side.  He's painted mostly in faded primary colors, though his
+smile seems especially fake.  Why is he so sad?
+
+
+>
+
+ Last Custard Stand                                  Time:  5:54 pm
+
+
+>i
+You are carrying:
+  a dollar
+  a uniform (being worn)
+
+
+>examine dollar
+In God we trust, for God always has another custard up his sleeve.
+
+
+>examine man
+Standard corrugated cardboard man with a stick functioning as a spine running
+down the other side.  He's painted mostly in faded primary colors, though his
+smile seems especially fake.  Why is he so sad?
+
+
+>ask man about custard
+"Only one dollar a piece."
+
+
+>
+
+ Last Custard Stand                                  Time:  5:57 pm
+  a uniform (being worn)
+
+
+>examine dollar
+In God we trust, for God always has another custard up his sleeve.
+
+
+>examine man
+Standard corrugated cardboard man with a stick functioning as a spine running
+down the other side.  He's painted mostly in faded primary colors, though his
+smile seems especially fake.  Why is he so sad?
+
+
+>ask man about custard
+"Only one dollar a piece."
+
+
+>ask man about me
+"If you don't think you're cardboard too, maybe you should try peeling off some
+of that fancy skin you've got on."
+
+
+>
+
+ Bakery                                              Time:  6:00 pm
+
+>ask man about custard
+"Only one dollar a piece."
+
+
+>ask man about me
+"If you don't think you're cardboard too, maybe you should try peeling off some
+of that fancy skin you've got on."
+
+
+>buy custard
+The cardboard salesman accepts your money and gives you the custard.  "Here you
+go."
+
+
+Bakery
+The fluorescent ceiling lights shine onto a table.
+
+Hm. It would probably be best to just leave the new custard on the table in
+place of the one you ate and head home.
+
+
+>
+
+ Bakery                                              Time:  6:03 pm
+
+>ask man about me
+"If you don't think you're cardboard too, maybe you should try peeling off some
+of that fancy skin you've got on."
+
+
+>buy custard
+The cardboard salesman accepts your money and gives you the custard.  "Here you
+go."
+
+
+Bakery
+The fluorescent ceiling lights shine onto a table.
+
+Hm. It would probably be best to just leave the new custard on the table in
+place of the one you ate and head home.
+
+
+>examine pie
+A coconut custard pie.
+
+
+>
+
+ Closet                                              Time:  6:06 pm
+The cardboard salesman accepts your money and gives you the custard.  "Here you
+go."
+
+
+Bakery
+The fluorescent ceiling lights shine onto a table.
+
+Hm. It would probably be best to just leave the new custard on the table in
+place of the one you ate and head home.
+
+
+>examine pie
+A coconut custard pie.
+
+
+>n
+
+Closet
+A small utility closet with a circuit breaker on the wall.  You can leave to the
+south.
+
+
+>
+
+ Closet                                              Time:  6:09 pm
+Bakery
+The fluorescent ceiling lights shine onto a table.
+
+Hm. It would probably be best to just leave the new custard on the table in
+place of the one you ate and head home.
+
+
+>examine pie
+A coconut custard pie.
+
+
+>n
+
+Closet
+A small utility closet with a circuit breaker on the wall.  You can leave to the
+south.
+
+
+>turn off lights
+You flip the switch off and the overhead lights die down.
+
+
+>
+
+ Bakery                                              Time:  6:12 pm
+>examine pie
+A coconut custard pie.
+
+
+>n
+
+Closet
+A small utility closet with a circuit breaker on the wall.  You can leave to the
+south.
+
+
+>turn off lights
+You flip the switch off and the overhead lights die down.
+
+
+>s
+
+Bakery
+A dark room.  The moon shines in through the window onto a table.  The circuit
+breaker is in a closet to the north.
+
+
+>
+
+ Bakery                                              Time:  6:12 pm
+
+Closet
+A small utility closet with a circuit breaker on the wall.  You can leave to the
+south.
+
+
+>turn off lights
+You flip the switch off and the overhead lights die down.
+
+
+>s
+
+Bakery
+A dark room.  The moon shines in through the window onto a table.  The circuit
+breaker is in a closet to the north.
+
+
+>put pie on table
+You put the custard on the table and go home. When you go into work the next
+morning, you see your boss with custard on his face, yelling "You pie switching
+bastard!"
+

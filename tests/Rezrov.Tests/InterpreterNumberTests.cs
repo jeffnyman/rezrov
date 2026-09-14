@@ -65,6 +65,17 @@ public class InterpreterNumberTests
         Assert.Equal(expected, script.Tandy);
     }
 
+    [Theory]
+    [InlineData("yes", true)]
+    [InlineData("no", false)]
+    public void AScriptCanAskForTheUpperWindow(string value, bool expected)
+    {
+        var script = AcceptanceScript.Parse($"! SEED=1\n! GAME=zork1.z3\n! UPPER={value}\nlook\n", Path.Combine(Path.GetTempPath(), "t.accept"));
+
+        Assert.Equal(expected, script.Upper);
+        Assert.Throws<InvalidDataException>(() => AcceptanceScript.Parse("! SEED=1\n! GAME=zork1.z3\n! UPPER=sometimes\nlook\n", Path.Combine(Path.GetTempPath(), "t.accept")));
+    }
+
     [Fact]
     public void ATandyDirectiveMustBeYesOrNo()
     {

@@ -524,6 +524,68 @@ public class ScreenModelTests
         Assert.Equal(2, screen.LowerErasures);
     }
 
+    [Fact]
+    public void ATextScreenCanWriteOutTheUpperWindowWhenItRepaints()
+    {
+        // Custard draws all of its text in the upper window, so a play
+        // recorded from the lower window alone has nothing in it. Asked
+        // to, the text screen writes the window's rows out whenever the
+        // game pauses for input and has repainted them.
+        var (writer, model) = MakeText(20, 6);
+        model.SplitWindow(3);
+        model.SetWindow(ScreenModel.Upper);
+        model.SetCursor(1, 1);
+        Print(model, "Bakery");
+        model.SetCursor(2, 1);
+        Print(model, "A dark room.");
+        model.PrepareForInput(false);
+
+        Assert.Equal("Bakery\nA dark room.\n\n", writer.ToString());
+
+        // The keys of a command echoed onto one row are typing, not a
+        // repaint, and are not written out on their own.
+        model.SetCursor(2, 13);
+        Print(model, ">");
+        model.PrepareForInput(false);
+        model.SetCursor(2, 14);
+        Print(model, "i");
+        model.PrepareForInput(false);
+
+        Assert.Equal("Bakery\nA dark room.\n\n", writer.ToString());
+
+        // A change on another row is a repaint, written out without the
+        // blank rows below it; a window with nothing on it is not.
+        model.SetCursor(3, 1);
+        Print(model, "You are carrying:");
+        model.PrepareForInput(false);
+        model.EraseWindow(ScreenModel.Upper);
+        model.PrepareForInput(false);
+
+        Assert.Equal("Bakery\nA dark room.\n\nBakery\nA dark room.>i\nYou are carrying:\n\n", writer.ToString());
+    }
+
+    [Fact]
+    public void ATextScreenKeepsTheUpperWindowToItselfUnlessAsked()
+    {
+        var (_, _, memory) = MakeWithMemory(20, 6);
+        var writer = new StringWriter();
+        var model = new ScreenModel(new TextWriterScreen(writer, 20, 6), new StoryHeader(memory), memory);
+        model.SplitWindow(2);
+        model.SetWindow(ScreenModel.Upper);
+        Print(model, "Bakery");
+        model.PrepareForInput(false);
+
+        Assert.Equal("", writer.ToString());
+    }
+
+    private static (StringWriter Writer, ScreenModel Model) MakeText(int width, int height)
+    {
+        var (_, _, memory) = MakeWithMemory(width, height);
+        var writer = new StringWriter();
+        var screen = new TextWriterScreen(writer, width, height, showUpperWindow: true);
+        return (writer, new ScreenModel(screen, new StoryHeader(memory), memory));
+    }
+
     private static (RecordingScreen Screen, ScreenModel Model) Make(
         int width = 80, int height = 24, ZMachineVersion version = ZMachineVersion.V5, ScreenCapabilities? capabilities = null)
     {

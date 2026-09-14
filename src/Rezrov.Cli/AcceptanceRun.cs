@@ -171,7 +171,7 @@ public static class AcceptanceRun
         // player carries on from there and is told so.
         var interpreter = new Interpreter(
             memory,
-            new TextWriterScreen((TextWriter?)screenWriter ?? output),
+            new TextWriterScreen((TextWriter?)screenWriter ?? output, showUpperWindow: script.Upper),
             resume
                 ? new AnnouncedInput(new ConsoleInput(header, memory), errors)
                 : new TextReaderInput(TextReader.Null, header, memory),

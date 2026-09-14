@@ -1,0 +1,169 @@
+! SEED=10
+! GAME=../entharion/glulx-code/swigian-r2-s231214.gblorb
+
+take axe
+s
+cut log
+s
+e
+take flint
+w
+n
+n
+burn firewood
+sleep
+
+e
+take basket
+w
+w
+w
+take meal
+e
+e
+eat meal
+n
+
+n
+take old spear
+e
+e
+take old shield
+w
+w
+n
+n
+attack opponent
+
+d
+s
+take shroud
+s
+put basket on hook
+put shield in basket
+take coin
+e
+cut vines
+open door
+e
+
+rub crypt
+read names
+take chisel
+cut crypt
+open wooden crypt
+open wooden crypt
+wear shroud
+put coin in mouth
+enter wooden crypt
+close wooden crypt
+d
+
+e
+take jar
+e
+take mail
+e
+take bust
+drop jar
+w
+drop bust
+w
+drop mail
+w
+
+s
+clean armor
+close cabinet
+take snack
+eat snack
+push pile
+n
+
+w
+w
+w
+w
+take crown
+put crown on king
+e
+e
+e
+e
+
+n
+take sharp iron
+w
+take jagged rock
+e
+e
+take thornbush
+w
+n
+drop all
+
+d
+enter boat
+e
+n
+e
+attack shark
+attack shark
+enter boat
+e
+out
+
+n
+e
+e
+e
+eat snack
+w
+w
+w
+u
+
+e
+u
+push boulders
+d
+w
+n
+d
+w
+e
+d
+
+d
+n
+n
+n
+n
+n
+n
+n
+n
+n
+
+n
+attack serpent
+ask serpent about them
+ask serpent about fire
+ask serpent about hrothgar
+ask serpent about help
+ask serpent about beowulf
+n
+n
+
+d
+d
+n
+e
+eat last snack
+w
+w
+drink mead
+e
+n
+
+quit
