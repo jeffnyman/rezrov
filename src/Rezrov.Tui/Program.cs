@@ -32,6 +32,7 @@ internal static class Program
         string? save = null;
         int? seed = null;
         InterpreterNumber? machine = null;
+        var tandy = false;
         var usage = args.Length < 1;
 
         for (var i = 1; i < args.Length && !usage; i++)
@@ -61,6 +62,9 @@ internal static class Program
                     machine = number;
                     i++;
                     break;
+                case "--tandy":
+                    tandy = true;
+                    break;
                 default:
                     usage = true;
                     break;
@@ -69,7 +73,7 @@ internal static class Program
 
         if (usage)
         {
-            Console.Error.WriteLine("usage: rezrov-tui <story-file> [--blorb <file>] [--commands <file>] [--transcript <file>] [--record <file>] [--save <file>] [--seed <number>] [--interpreter <machine>]");
+            Console.Error.WriteLine("usage: rezrov-tui <story-file> [--blorb <file>] [--commands <file>] [--transcript <file>] [--record <file>] [--save <file>] [--seed <number>] [--interpreter <machine>] [--tandy]");
             Console.Error.WriteLine($"       machines: {string.Join(", ", InterpreterNumbers.AllNames)}, or a number from 1 to 11");
             return 2;
         }
@@ -129,10 +133,10 @@ internal static class Program
             return 1;
         }
 
-        return Play(memory, header, resources, Path.GetFileName(path), new TerminalFiles.Presets(transcript, record, save, commands), seed, machine);
+        return Play(memory, header, resources, Path.GetFileName(path), new TerminalFiles.Presets(transcript, record, save, commands), seed, machine, tandy);
     }
 
-    private static int Play(ZMemory memory, StoryHeader header, BlorbFile? resources, string title, TerminalFiles.Presets presets, int? seed, InterpreterNumber? machine)
+    private static int Play(ZMemory memory, StoryHeader header, BlorbFile? resources, string title, TerminalFiles.Presets presets, int? seed, InterpreterNumber? machine, bool tandy)
     {
         using var app = Application.Create().Init();
 
@@ -187,7 +191,8 @@ internal static class Program
                 seed is { } s ? new RandomGenerator(s) : null,
                 files: new TerminalFiles(app, presets),
                 sound: new TerminalSound(),
-                interpreterNumber: machine);
+                interpreterNumber: machine,
+                tandy: tandy);
 
             if (resources is not null)
             {

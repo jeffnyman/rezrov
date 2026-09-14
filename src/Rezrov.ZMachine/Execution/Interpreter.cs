@@ -36,9 +36,11 @@ public sealed class Interpreter
         RandomGenerator? random = null,
         IFileChooser? files = null,
         ISound? sound = null,
-        InterpreterNumber? interpreterNumber = null)
+        InterpreterNumber? interpreterNumber = null,
+        bool tandy = false)
     {
         _interpreterNumber = interpreterNumber;
+        _tandy = tandy;
         ArgumentNullException.ThrowIfNull(memory);
         ArgumentNullException.ThrowIfNull(screen);
         ArgumentNullException.ThrowIfNull(input);
@@ -228,6 +230,7 @@ public sealed class Interpreter
     private readonly List<string> _runtimeErrors = [];
     private readonly HashSet<string> _reportedKinds = [];
     private readonly InterpreterNumber? _interpreterNumber;
+    private readonly bool _tandy;
     private CommandFile? _commandFile;
     private int _interruptDepth;
     private int _mouseWindow;
@@ -2265,6 +2268,12 @@ public sealed class Interpreter
             flags = Set(flags, Flags1Versions1To3.StatusLineUnavailable, !can.HasFlag(ScreenCapabilities.StatusLine));
             flags = Set(flags, Flags1Versions1To3.ScreenSplittingAvailable, can.HasFlag(ScreenCapabilities.UpperWindow));
             flags = Set(flags, Flags1Versions1To3.VariablePitchFontDefault, can.HasFlag(ScreenCapabilities.ProportionalFont));
+
+            // [zm 11.1] Bit 3 is the Tandy bit, which is nothing the
+            // interpreter knows about itself: a few early games read it
+            // to change their banner or tone down their prose, and it
+            // is set only when the player asks for that.
+            flags = Set(flags, Flags1Versions1To3.Tandy, _tandy);
             Header.Flags1Versions1To3 = flags;
         }
         else

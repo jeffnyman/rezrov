@@ -45,6 +45,7 @@ internal static class Program
 
         var run = false;
         var trace = false;
+        var tandy = false;
         string? commands = null;
         string? transcript = null;
         string? record = null;
@@ -63,6 +64,9 @@ internal static class Program
                     break;
                 case "--trace":
                     trace = true;
+                    break;
+                case "--tandy":
+                    tandy = true;
                     break;
                 case "--commands" when i + 1 < args.Length:
                     run = true;
@@ -126,11 +130,16 @@ internal static class Program
                     Console.Error.WriteLine("rezrov: the interpreter option does not apply to Glulx");
                 }
 
+                if (tandy)
+                {
+                    Console.Error.WriteLine("rezrov: the tandy option does not apply to Glulx");
+                }
+
                 var directory = Path.GetDirectoryName(Path.GetFullPath(path)) ?? Directory.GetCurrentDirectory();
                 return RunGlulx(story.Bytes, story.Resources, directory, trace, commands, transcript, record, save, seed);
             }
 
-            return RunZMachine(story.Bytes, trace, commands, transcript, record, save, story.Resources, seed, machine);
+            return RunZMachine(story.Bytes, trace, commands, transcript, record, save, story.Resources, seed, machine, tandy);
         }
 
         if (!File.Exists(path))
@@ -155,7 +164,7 @@ internal static class Program
 
     private static int Usage()
     {
-        Console.Error.WriteLine("usage: rezrov <story-file> [--run] [--trace] [--commands <file>] [--transcript <file>] [--record <file>] [--save <file>] [--blorb <file>] [--seed <number>] [--interpreter <machine>]");
+        Console.Error.WriteLine("usage: rezrov <story-file> [--run] [--trace] [--commands <file>] [--transcript <file>] [--record <file>] [--save <file>] [--blorb <file>] [--seed <number>] [--interpreter <machine>] [--tandy]");
         Console.Error.WriteLine($"       machines: {string.Join(", ", InterpreterNumbers.AllNames)}, or a number from 1 to 11");
         Console.Error.WriteLine("       rezrov --accept <script> [--update | --resume]");
         Console.Error.WriteLine("       rezrov --version");
@@ -288,7 +297,7 @@ internal static class Program
     /// go without asking either. Resources, if there are any, give the
     /// game its sounds, though the console can only ring its bell.
     /// </summary>
-    private static int RunZMachine(byte[] bytes, bool trace, string? commands, string? transcript, string? record, string? save, BlorbFile? resources, int? seed, InterpreterNumber? machine)
+    private static int RunZMachine(byte[] bytes, bool trace, string? commands, string? transcript, string? record, string? save, BlorbFile? resources, int? seed, InterpreterNumber? machine, bool tandy)
     {
         var memory = new ZMemory(bytes);
         var header = new StoryHeader(memory);
@@ -306,7 +315,8 @@ internal static class Program
             seed is { } s ? new RandomGenerator(s) : null,
             files: new ConsoleFiles(transcript, record, save),
             sound: new ConsoleSound(),
-            interpreterNumber: machine);
+            interpreterNumber: machine,
+            tandy: tandy);
 
         if (resources is not null)
         {
