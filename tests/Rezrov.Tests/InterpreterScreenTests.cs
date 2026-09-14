@@ -293,6 +293,24 @@ public partial class InterpreterTests
     }
 
     [Fact]
+    public void AStreamOfTextIsInfinitelyTall()
+    {
+        var story = new Story(ZMachineVersion.V5);
+        var memory = new ZMemory(story.Bytes);
+        var screen = new TextWriterScreen(new StringWriter());
+
+        var interpreter = new Interpreter(memory, screen, new ScriptedInput());
+        var header = interpreter.Header;
+
+        // [zm 8.4.1] 255 lines means infinite, which a stream is, and
+        // [zm 8.4.1 deviates] is said so despite the standard's advice,
+        // since a game that sizes its work by the height must see the
+        // number that other interpreters' plain frontends give it.
+        Assert.Equal((80, 255), (header.ScreenWidthCharacters, header.ScreenHeightLines));
+        Assert.Equal((80, 255), (header.ScreenWidthUnits, header.ScreenHeightUnits));
+    }
+
+    [Fact]
     public void TheHeaderDescribesTheScreen()
     {
         var story = new Story(ZMachineVersion.V5);

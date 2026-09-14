@@ -2313,8 +2313,17 @@ public sealed class Interpreter
             Header.InterpreterNumber = InterpreterNumber;
             Header.InterpreterVersion = (byte)'R';
 
-            // [zm 8.4] The screen's height and width.
-            Header.ScreenHeightLines = (byte)Math.Min(screen.Height, 254);
+            // [zm 8.4] The screen's height and width. [zm 8.4.1] A height
+            // of 255 means infinite, which the standard says to avoid
+            // because some games send the cursor to line 255 and beyond.
+            // [zm 8.4.1 deviates] A screen that is a stream of text says
+            // 255 all the same: it has no bottom for a cursor to fall
+            // off, and a game that sizes its work by the height (Blue
+            // Chairs scatters its title art over the whole of it) rolls
+            // its dice the same way as on the other interpreters whose
+            // plain frontends say 255, so a script made on one of those
+            // plays here unchanged. A real screen reports its own height.
+            Header.ScreenHeightLines = (byte)Math.Min(screen.Height, 255);
             Header.ScreenWidthCharacters = (byte)Math.Min(screen.Width, 255);
         }
 
@@ -2337,7 +2346,7 @@ public sealed class Interpreter
             // section 8 recommend, so [zm 8.4.3] the size in units is
             // the size in characters and [zm 8.1.1] a font is 1 by 1.
             Header.ScreenWidthUnits = (ushort)Math.Min(screen.Width, 255);
-            Header.ScreenHeightUnits = (ushort)Math.Min(screen.Height, 254);
+            Header.ScreenHeightUnits = (ushort)Math.Min(screen.Height, 255);
             Header.FontWidthUnits = 1;
             Header.FontHeightUnits = 1;
 

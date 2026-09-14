@@ -1,0 +1,147 @@
+
+
+Well, this is more of a mess than you expected.
+
+Dr. Letterman, the diabolical mad genius who vanished from the Institute For Really Dangerous Studies, has reappeared and is holding the world for ransom. Nobody's quite sure how he's going to do it, but the world governments are positive he has the means to destroy life as we know it. Which is where you come in. They've traced him as far as the tiny Polynesian island of Puyo Puyo, and they've airdropped you, Agent Orange, in to stop him at all costs.
+
+The Road to Destruction (featuring Bob Hope)
+A SpeedIF by D. Jacob Wildstrom
+Release 1 / Serial number 021214 / Inform v6.21 Library 6/10 
+
+Complex entrance
+You're at the back end of a cave which conceals the entrance to Dr. Letterman's hideout. A little natural light seeps in through the cave entrance to the west, exposing a ladder leading down into a shadowy, red-lit complex.
+
+>i
+You are carrying:
+  a ballpoint pen
+  a wrapped package
+  a three-piece suit (being worn)
+  a buttonniere (being worn)
+  a map of Puyo Puyo
+
+>examine pen
+This pen's a nifty gimmick given to you by the good people of the Institute for Really Dangerous Studies, who feel partially responsible for the mess you're in now. All you need to do is write "BLAMF" with it, and 20 seconds later, whatever you've written on will explode violently.
+
+>examine package
+It's an oblong bundle of cloth, a bit larger than your palm.
+
+>examine suit
+You always wear a three-piece suit when you're saving the world. It's just one of those things you do.
+
+>examine buttonniere
+A buttonniere's one of those incredibly useful things which every secret agent needs. Yours is doubly useful, as you have a squeeze-bulb in your left cufflink which will cause it to spray acid in a 30-degree arc in front of you.
+
+>examine map
+Not much is known about Dr. Letterman's fortifications, so the Free World held a bake sale to buy some time on a surveillance satellite. They've only really got a map of the upper sections of the complex, but it's enough to show that the only way to get through the entry maze and survive is to go north, then west, then south, then north, then down.
+
+>open package
+It's not yet time.
+
+>squeeze bulb
+Don't play with your toys. You'll need them later.
+
+>examine bob
+Fine, you win. Bob Hope isn't really anywhere in this game.
+
+>d. n. w. s
+
+Entry maze
+This room is hellishly lit with red light from an unclear source. Identical, perfectly circular corridors lead off to the north, south, east, and west, and a ladder leads through identically shaped circles in the ceiling and floor.
+
+Entry maze
+This room is hellishly lit with red light from an unclear source. Identical, perfectly circular corridors lead off to the north, south, east, and west, and a ladder leads through identically shaped circles in the ceiling and floor.
+
+Entry maze
+This room is hellishly lit with red light from an unclear source. Identical, perfectly circular corridors lead off to the north, south, east, and west, and a ladder leads through identically shaped circles in the ceiling and floor.
+You step confidently through the door, hoping to soon be on past this tedious phase of your mission --- and immediately fall through darkness into a deep, narrow pit. You seem to have been misdirected.
+
+You have little time to contemplate the inadequacy of the Free World's directions, however, as a needle jabs out from the wall. Suddenly it's very hard to concentrate...
+
+
+Hours later, you awake, stripped of your possessions and dignity, and apparently imprisoned.
+
+Easily-escaped prison cell
+Like everything else in the complex, this cell is sleek, metal, and polished. A roughly human-sized slab of metal in the corner is presumably a bed. No sanitary facilities are present; Dr. Letterman seems not to have learned the niceties of hospitality. There does not, in fact, even seem to be a door to this room.
+
+A ventilation grille hangs loosely on the east wall.
+
+>examine me
+You're naked! Someone will pay for this! Agent Orange is never naked, except when he's converting evil henchwomen!
+
+>examine bed
+The bed, such as it is, appears to be an integral component of the wall. It is most certainly not movable.
+
+>examine grille
+Ick. You HATE crawling through ventilation shafts.
+
+>open grille
+You open the ventilation grille.
+
+>enter grille
+
+Ventilation shaft
+You're at a three-way intersection of dark vent corridors. To the west the path gets lighter, while to the east and north the path slopes sharply downwards in darkness. To the north you hear a loud and ominous whirring.
+
+>e. u
+You tumble hands-over-feet down the corridor, to at last smash through a grating at the end. Blinking, you stand up, summon what's left of your dignity, and look about you.
+
+Dr. Letterman's coffee bar
+Supergeniuses always rely on stimulants to keep the diabolical ideas flowing, and Dr. Letterman is no exception. Done up in questionable taste in faux Jugendstil, this coffeehouse boasts considerable effort put into maintaining the delusion that only one person actually lives and works here: far more tables and chairs than are truly necessary are set up. A swinging door leads to the north, and dust trickles out of a jagged hole in the ceiling.
+
+Oh dear. Some vandal seems to have torn a grating off the ceiling.
+
+A waitress is chained to the espresso machine. She doesn't look like she's slept in days.
+There's no way you could get back up there.
+
+>examine waitress
+You see nothing special about the waitress.
+
+>ask waitress about anything
+The waitress stares at you and blinks.
+
+>hit waitress
+For shame! You're supposed to beat up the supervillains and shag the supervillainesses! Get your priorities straight!
+
+>kiss waitress
+You reserve your hot tongue action and related assets for evil henchwomen. While the waitress is clearly a henchwoman, you are not sufficiently certain of her evilness to make her lustworthy.
+
+>waitress, any-order
+She ignores you, in a manner which would no doubt have pleased her professors at Starbucks Vocational College.
+
+>examine grating
+You can't imagine these bits and pieces of broken grating would actually be good for anything.
+
+>take grating
+Taken.
+
+>n
+
+Spacecraft hangar
+A ramp to the north, terminating at a pair of sealed doors is clearly the launch path for the small craft which sits in the center of this well-lit hangar. Incongruously, a replica of a central European coffeehouse sits along the south wall of the hangar, and through a manhole in the ground, you can hear the noises of heavy machinery at work.
+
+You can see a spacecraft here.
+
+>enter ship
+You get into the spacecraft.
+
+>look
+
+Spacecraft hangar (in the spacecraft)
+A ramp to the north, terminating at a pair of sealed doors is clearly the launch path for the small craft which sits in the center of this well-lit hangar. Incongruously, a replica of a central European coffeehouse sits along the south wall of the hangar, and through a manhole in the ground, you can hear the noises of heavy machinery at work.
+
+A big red button is the only control apparent for this vehicle.
+
+>examine button
+Big. Red. Button. Says it all, really.
+
+>push it
+The craft's door seals, the hangar doors open, and the ship slides down the runway and out into space. Shortly thereafter, you see the Earth explode through a porthole. So you've failed in your mission, but you've saved your own ass -- and that's really what's important, isn't it? There are lots of races out there who need a world-saver like you.
+
+
+    *** The galaxy is your oyster ***
+
+
+In that game you scored 0 out of a possible 0, in 32 turns.
+
+Would you like to RESTART, RESTORE a saved game or QUIT?
+> quit
