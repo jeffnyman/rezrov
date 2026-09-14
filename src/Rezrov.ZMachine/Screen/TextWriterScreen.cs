@@ -17,14 +17,29 @@ namespace Rezrov.ZMachine.Screen;
 public sealed class TextWriterScreen : IScreen
 {
     private readonly TextWriter _writer;
+    private readonly bool _showUpperWindow;
 
-    public TextWriterScreen(TextWriter writer, int width = 80, int height = 24)
+    // The upper window as last shown and as last seen, one string per
+    // row, for telling a repaint from a keystroke's echo.
+    private string[] _shown = [];
+    private string[] _seen = [];
+    private bool _atLineStart = true;
+
+    /// <param name="showUpperWindow">
+    /// Whether to write the upper window's rows into the stream whenever
+    /// the game pauses for input and has changed them, for a game that
+    /// draws its text there, such as Custard. A change of a single cell
+    /// on the row the last one was on is the echo of a key being typed
+    /// and is not written, nor is a window with nothing on it.
+    /// </param>
+    public TextWriterScreen(TextWriter writer, int width = 80, int height = 24, bool showUpperWindow = false)
     {
         ArgumentNullException.ThrowIfNull(writer);
         ArgumentOutOfRangeException.ThrowIfLessThan(width, 1);
         ArgumentOutOfRangeException.ThrowIfLessThan(height, 1);
 
         _writer = writer;
+        _showUpperWindow = showUpperWindow;
         Width = width;
         Height = height;
     }
@@ -59,6 +74,11 @@ public sealed class TextWriterScreen : IScreen
     {
         ArgumentNullException.ThrowIfNull(text);
 
+        if (text.Length > 0)
+        {
+            _atLineStart = false;
+        }
+
         if (attributes.Font != TextAttributes.CharacterGraphicsFont)
         {
             _writer.Write(text);
@@ -71,7 +91,11 @@ public sealed class TextWriterScreen : IScreen
         }
     }
 
-    public void NewLine() => _writer.Write((char)0x0A);
+    public void NewLine()
+    {
+        _writer.Write((char)0x0A);
+        _atLineStart = true;
+    }
 
     public void EraseLowerWindow(ScreenColor background)
     {
@@ -87,5 +111,94 @@ public sealed class TextWriterScreen : IScreen
 
     public void UpdateUpperWindow(ScreenModel model)
     {
+        ArgumentNullException.ThrowIfNull(model);
+
+        if (!_showUpperWindow)
+        {
+            return;
+        }
+
+        var rows = new string[model.UpperWindow.Lines];
+        for (var row = 0; row < rows.Length; row++)
+        {
+            rows[row] = model.UpperWindow.RowText(row + 1);
+        }
+
+        var sinceSeen = Difference(_seen, rows);
+        var sinceShown = Difference(_shown, rows);
+        _seen = rows;
+
+        if (sinceShown.Cells == 0)
+        {
+            return;
+        }
+
+        // A key typed into the window changes one cell, and the keys of
+        // a command stay on one row, so that is not a repaint yet.
+        if (sinceSeen.Cells <= 1 && sinceShown.Rows <= 1)
+        {
+            return;
+        }
+
+        _shown = rows;
+        var last = rows.Length;
+        while (last > 0 && string.IsNullOrWhiteSpace(rows[last - 1]))
+        {
+            last--;
+        }
+
+        if (last == 0)
+        {
+            return;
+        }
+
+        if (!_atLineStart)
+        {
+            NewLine();
+        }
+
+        for (var row = 0; row < last; row++)
+        {
+            _writer.Write(rows[row].TrimEnd());
+            _writer.Write((char)0x0A);
+        }
+
+        _writer.Write((char)0x0A);
+        _atLineStart = true;
+    }
+
+    // How many cells differ between two sets of rows, and how many rows
+    // hold a difference. Rows one has and the other does not count as
+    // wholly different.
+    private static (int Cells, int Rows) Difference(string[] before, string[] after)
+    {
+        var cells = 0;
+        var rows = 0;
+        for (var row = 0; row < Math.Max(before.Length, after.Length); row++)
+        {
+            var changed = 0;
+            if (row >= before.Length || row >= after.Length)
+            {
+                changed = Math.Max(before.Length > row ? before[row].Length : 0, after.Length > row ? after[row].Length : 0);
+            }
+            else
+            {
+                for (var column = 0; column < before[row].Length; column++)
+                {
+                    if (before[row][column] != after[row][column])
+                    {
+                        changed++;
+                    }
+                }
+            }
+
+            if (changed > 0)
+            {
+                cells += changed;
+                rows++;
+            }
+        }
+
+        return (cells, rows);
     }
 }

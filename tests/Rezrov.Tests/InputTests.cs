@@ -126,6 +126,24 @@ public class InputTests
     }
 
     [Fact]
+    public void CommandFileHandsOutALineOfKeysOneAtATime()
+    {
+        // A game that reads its command through read_char, as Custard
+        // does, takes the line a key at a time and the return from the
+        // empty line after it. A line read starts on a fresh line, so
+        // what a key line still held is dropped.
+        var file = new CommandFile(new StringReader("go[132]\n\nx\nlook\n"), UnicodeTranslationTable.Default);
+
+        Assert.Equal('g', file.ReadKey());
+        Assert.Equal('o', file.ReadKey());
+        Assert.Equal((ushort?)132, file.ReadKey());
+        Assert.Equal(Zscii.Newline, file.ReadKey());
+        Assert.Equal('x', file.ReadKey());
+        Assert.Equal("look", Text(file.ReadLine(Request())!));
+        Assert.Null(file.ReadKey());
+    }
+
+    [Fact]
     public void CommandFileContinuesFromLeftoverTextAndHonorsTheMaximum()
     {
         var file = new CommandFile(new StringReader("nder the rock\n"), UnicodeTranslationTable.Default);
@@ -163,13 +181,17 @@ public class InputTests
     }
 
     [Fact]
-    public void TextReaderInputReadsTheFirstCharacterOfALineAsAKey()
+    public void TextReaderInputReadsALineAsKeysOneAtATime()
     {
         var (memory, header) = Story(ZMachineVersion.V5);
-        var input = new TextReaderInput(new StringReader("yes\n\n"), header, memory);
+        var input = new TextReaderInput(new StringReader("yes\n\nno\nlook\n"), header, memory);
 
         Assert.Equal('y', input.ReadKey(null));
+        Assert.Equal('e', input.ReadKey(null));
+        Assert.Equal('s', input.ReadKey(null));
         Assert.Equal(Zscii.Newline, input.ReadKey(null));
+        Assert.Equal('n', input.ReadKey(null));
+        Assert.Equal("look", Text(input.ReadLine(Request())));
     }
 
     [Fact]

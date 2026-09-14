@@ -1,0 +1,1159 @@
+
+
+
+I don't like talking. Let's build a fire.
+
+Swigian
+An Interactive Fiction by Rainbus North
+Release 2 / Serial number 231214 / Inform 7 build 6M62 (I6/v6.33 lib 6/12N) 
+
+Lake
+You are by a lake. The lake is still.
+
+You can see an axe here.
+
+Looking south, you see the Forest.
+
+>take axe
+take axe
+Taken.
+
+Now you can cut things.
+
+>s
+s
+
+Forest
+You are in a forest. It is night.
+
+You can see a log here.
+
+Looking north, you see the Lake; looking south, you see the Mountain.
+
+>cut log
+cut log
+You cut the log up into firewood and take it. You could burn it, if you had flint with your steel.
+
+>s
+s
+
+Mountain
+You are on a mountainside. Everything is dry.
+
+Looking north, you see the Forest; looking east, you see the Gravel Pit.
+
+>e
+e
+
+Gravel Pit
+You are in an empty gravel pit.
+
+You can see a flint here.
+
+Looking west, you see the Mountain.
+
+>take flint
+take flint
+Taken.
+
+Now you can burn something small.
+
+>w
+w
+
+Mountain
+You are on a mountainside. Everything is dry.
+
+Looking north, you see the Forest; looking east, you see the Gravel Pit.
+
+>n
+n
+
+Forest
+You are in a forest. It is night.
+
+Looking north, you see the Lake; looking south, you see the Mountain.
+
+>n
+n
+
+Lake
+You are by a lake. The lake is still.
+
+Looking south, you see the Forest.
+
+>burn firewood
+burn firewood
+You made a fire. Let's sleep.
+
+>sleep
+sleep
+Standing Stones
+You are surrounded by standing stones.
+
+Looking east, you see the Spring; looking west, you see the Moor.
+
+They came while you were asleep. You're not where you should be. You are hungry. You are cold.
+
+[Your score has just gone up by one point.]
+
+>e
+e
+
+Spring
+Water wells up from below. You are safe here.
+
+You can see a basket (empty) here.
+
+Looking west, you see the Standing Stones.
+
+>take basket
+take basket
+Taken.
+
+>w
+w
+
+Standing Stones
+You are surrounded by standing stones.
+
+Looking east, you see the Spring; looking west, you see the Moor.
+
+>w
+w
+
+Moor
+The moor is silent. Keep moving.
+
+Looking east, you see the Standing Stones; looking west, you see the Aftermath.
+
+They will see you. Go now.
+
+>w
+w
+
+Aftermath
+There was a battle here. Almost everything is trampled.
+
+You can see a meal here.
+
+Looking east, you see the Moor.
+
+>take meal
+take meal
+You lift the meal into the basket.
+
+>e
+e
+
+Moor
+The moor is silent. Keep moving.
+
+Looking east, you see the Standing Stones; looking west, you see the Aftermath.
+
+They will see you. Go now.
+
+>e
+e
+
+Standing Stones
+You are surrounded by standing stones.
+
+Looking east, you see the Spring; looking west, you see the Moor.
+
+>eat meal
+eat meal
+You eat the food carefully. You feel much better now.
+
+You hear music from the north.
+
+[Your score has just gone up by one point.]
+
+>n
+n
+
+Bog
+Small lights dance behind trees far away. You hear music.
+
+Looking north, you see the Sea Side.
+
+>n
+n
+
+Sea Side
+You are at the sea side. You hear music from the west.
+
+You can see an old spear here.
+
+Looking north, you see the Outside of the Mead-Hall; looking south, you see the Bog; looking east, you see the Cove.
+
+>take old spear
+take old spear
+Taken.
+
+>e
+e
+
+Cove
+You are in a cove. You are safe.
+
+Looking east, you see the Burial Mound; looking west, you see the Sea Side.
+
+>e
+e
+
+Burial Mound
+You are on a small mound with white flowers.
+
+You can see an old shield here.
+
+Looking west, you see the Cove.
+
+>take old shield
+take old shield
+Taken.
+
+>w
+w
+
+Cove
+You are in a cove. You are safe.
+
+Looking east, you see the Burial Mound; looking west, you see the Sea Side.
+
+>w
+w
+
+Sea Side
+You are at the sea side. You hear music from the west.
+
+Looking north, you see the Outside of the Mead-Hall; looking south, you see the Bog; looking east, you see the Cove.
+
+>n
+n
+
+Outside of the Mead-Hall
+You are outside the mead-hall. They are dancing inside. They have not heard you yet.
+
+Looking north, you see the Inside of the Mead-Hall; looking south, you see the Sea Side.
+
+>n
+n
+
+Inside of the Mead-Hall
+The mead-hall is dark and dusty.
+
+You can see an opponent here.
+
+Looking south, you see the Outside of the Mead-Hall.
+
+>attack opponent
+attack opponent
+You attack the opponent. He vanishes through a hole in the ground.
+
+[Your score has just gone up by one point.]
+
+>d
+d
+
+Burrow
+You are in a burrow. The walls are made of packed dirt.
+
+Looking south, you see the Tunnel.
+
+>s
+s
+
+Tunnel
+You are in a tunnel.
+
+You can see a shroud here.
+
+Looking north, you see the Burrow; looking south, you see the Cave Pool.
+
+>take shroud
+take shroud
+Taken.
+
+>s
+s
+
+Cave Pool
+Water drips into a pool. A deep hole is here.
+
+A chain goes into the hole. It has a hook. You can put something on it.
+
+Looking north, you see the Tunnel; looking east, you see the Limestone Cave.
+
+>put basket on hook
+put basket on hook
+You put the basket on the hook.
+
+The basket is too light to sink down.
+
+>put shield in basket
+put shield in basket
+You put the old shield into the basket.
+
+The basket goes into the hole. A bucket comes up. It has a worn coin in it. Your shield has been accepted.
+
+>take coin
+take coin
+Taken.
+
+>e
+e
+
+Limestone Cave
+You are in a limestone cave. The floor is covered in frost.
+
+There is a frozen door covered in vines.
+
+Looking east, you see the Inside Burial Mound; looking west, you see the Cave Pool.
+
+>cut vines
+cut vines
+You cut off all the vines. Your spear freezes and breaks.
+
+[Your score has just gone up by one point.]
+
+>open door
+open door
+You open the frozen door.
+
+>e
+e
+
+Inside Burial Mound
+You are inside the burial mound.
+
+There is a frozen door.
+
+There is a crypt here, covered in dust.
+
+You can also see a chisel here.
+
+Looking west, you see the Limestone Cave.
+
+>rub crypt
+rub crypt
+The dust comes off. There is a list of name runes on the crypt.
+
+>read names
+read names
+The last name rune is Ingeld.
+
+>take chisel
+take chisel
+The chisel is small. You can cut the crypt to write your name.
+
+Taken.
+
+>cut crypt
+cut crypt
+You write your name rune on the crypt.
+
+>open wooden crypt
+open wooden crypt
+You open it a crack. Try again.
+
+>open wooden crypt
+open wooden crypt
+Your opponent is here. He is wearing a shroud. He has a coin in his mouth. He fades away.
+
+>wear shroud
+wear shroud
+You put on the shroud.
+
+>put coin in mouth
+put coin in mouth
+You put the worn coin into your mouth.
+
+>enter wooden crypt
+enter wooden crypt
+You get into the wooden crypt. It is small. You can close it now.
+
+>close wooden crypt
+close wooden crypt
+You close the wooden crypt. They cannot follow you here. You have been this way before.
+
+Darkness
+It is almost pitch dark. You can see almost nothing.
+
+Looking down, you see the Lair.
+
+[Your score has just gone up by one point.]
+
+>d
+d
+Lair
+You are in the lair. The room stinks. You are safe. He will protect you.
+
+Looking north, you see the Entrance; looking south, you see the Armory; looking east, you see the New Treasures; looking west, you see the Boneyard.
+
+>e
+e
+
+New Treasures
+This treasure room is full of tapestries, musical instruments, and iron. His treasures are wrong. Put them right. 
+
+You can see a canopic jar here.
+
+Looking east, you see the Old Treasures; looking west, you see the Lair.
+
+>take jar
+take jar
+Put it in its place.
+
+Taken.
+
+>e
+e
+
+Old Treasures
+This treasure room is full of pottery, statues and silver. His treasures are wrong. Put them right. 
+
+You can see a ring mail here.
+
+Looking east, you see the Ancient Treasures; looking west, you see the New Treasures.
+
+>take mail
+take mail
+Put it in its place.
+
+Taken.
+
+>e
+e
+
+Ancient Treasures
+This room is full of sarcophagi, rotten spices and gold. His treasures are wrong. Put them right. 
+
+You can see a marble bust here.
+
+Looking west, you see the Old Treasures.
+
+>take bust
+take bust
+Put it in its place.
+
+Taken.
+
+>drop jar
+drop jar
+It is in its place.
+
+Dropped.
+
+>w
+w
+
+Old Treasures
+This treasure room is full of pottery, statues and silver. His treasures are wrong. Put them right. 
+
+Looking east, you see the Ancient Treasures; looking west, you see the New Treasures.
+
+>drop bust
+drop bust
+It is in its place.
+
+Dropped.
+
+>w
+w
+
+New Treasures
+This treasure room is full of tapestries, musical instruments, and iron. His treasures are wrong. Put them right. 
+
+Looking east, you see the Old Treasures; looking west, you see the Lair.
+
+>drop mail
+drop mail
+It is in its place.
+
+Dropped.
+
+[Your score has just gone up by one point.]
+
+>w
+w
+
+Lair
+You are in the lair. The room stinks. You are safe. He will protect you.
+
+Looking north, you see the Entrance; looking south, you see the Armory; looking east, you see the New Treasures; looking west, you see the Boneyard.
+
+>s
+s
+
+Armory
+You are in his armory. It needs to be cleaned.
+
+You can see a dusty armor, an open cabinet, a dry snack and a leaning pile here.
+
+Looking north, you see the Lair.
+
+>clean armor
+clean armor
+You clean the armor.
+
+>close cabinet
+close cabinet
+You close the cabinet.
+
+>take snack
+take snack
+You eat it.
+
+>eat snack
+eat snack
+I didn't understand the thing you were talking about.
+
+>push pile
+push pile
+Now it's not leaning.
+
+Now it's not messy.
+
+[Your score has just gone up by one point.]
+
+>n
+n
+
+Lair
+You are in the lair. The room stinks. You are safe. He will protect you.
+
+Looking north, you see the Entrance; looking south, you see the Armory; looking east, you see the New Treasures; looking west, you see the Boneyard.
+
+>w
+w
+
+Boneyard
+The bones of the common are piled here.
+
+Looking east, you see the Lair; looking west, you see the Home of the Valiant.
+
+>w
+w
+
+Home of the Valiant
+The bones of the valiant are here, each with spear and helmet.
+
+Looking east, you see the Boneyard; looking west, you see the Nobles' End.
+
+>w
+w
+
+Nobles' End
+The bones of the nobles are laid here in gold.
+
+Looking east, you see the Home of the Valiant; looking west, you see the Hall of Kings.
+
+>w
+w
+
+Hall of Kings
+Three thrones are here, with three kings.
+
+A crown is cast down here.
+
+Looking east, you see the Nobles' End.
+
+>take crown
+take crown
+The oldest king is crownless.
+
+Taken.
+
+>put crown on king
+put crown on king
+The king bows his head. You put the crown on him. You may leave.
+
+[Your score has just gone up by one point.]
+
+>e
+e
+
+Nobles' End
+The bones of the nobles are laid here in gold.
+
+Looking east, you see the Home of the Valiant; looking west, you see the Hall of Kings.
+
+>e
+e
+
+Home of the Valiant
+The bones of the valiant are here, each with spear and helmet.
+
+Looking east, you see the Boneyard; looking west, you see the Nobles' End.
+
+>e
+e
+
+Boneyard
+The bones of the common are piled here.
+
+Looking east, you see the Lair; looking west, you see the Home of the Valiant.
+
+>e
+e
+
+Lair
+You are in the lair. The room stinks. You are safe. He will protect you.
+
+Looking north, you see the Entrance; looking south, you see the Armory; looking east, you see the New Treasures; looking west, you see the Boneyard.
+
+>n
+n
+Entrance
+You are by a barrow. The ground is on fire. They are trying to stop him; clear his way.
+
+You can see a sharp iron here.
+
+Looking north, you see the Cliff; looking south, you see the Lair; looking east, you see the Scrub; looking west, you see the Rocky Tumble.
+
+>take sharp iron
+take sharp iron
+At the cliff, you can throw this.
+
+Taken.
+
+>w
+w
+
+Rocky Tumble
+You can see a jagged rock here.
+
+Looking east, you see the Entrance.
+
+>take jagged rock
+take jagged rock
+At the cliff, you can throw this.
+
+Taken.
+
+>e
+e
+
+Entrance
+You are by a barrow. The ground is on fire. They are trying to stop him; clear his way.
+
+Looking north, you see the Cliff; looking east, you see the Scrub; looking west, you see the Rocky Tumble.
+
+>e
+e
+
+Scrub
+You can see a thornbush here.
+
+Looking west, you see the Entrance.
+
+>take thornbush
+take thornbush
+At the cliff, you can throw this.
+
+Taken.
+
+>w
+w
+
+Entrance
+You are by a barrow. The ground is on fire. They are trying to stop him; clear his way.
+
+Looking north, you see the Cliff; looking east, you see the Scrub; looking west, you see the Rocky Tumble.
+
+>n
+n
+
+Cliff
+The fire stops by the cliff. The water is inviting. You can throw something
+
+Looking south, you see the Entrance; looking down, you see the Shallow Waters.
+
+>drop all
+drop all
+thornbush: You throw the thornbush in the water.
+jagged rock: You throw the jagged rock in the water.
+sharp iron: You throw the sharp iron in the water.
+You can go now.
+
+[Your score has just gone up by one point.]
+
+>d
+d
+You hear him come home. You fall.
+
+Shallow Waters
+You can see a boat (empty) here.
+
+Looking east, you see the Coastline; looking up, you see the Cliff.
+
+>enter boat
+enter boat
+You get into the boat.
+
+>e
+e
+
+Coastline (in the boat)
+You are following the coastline; you are close to home.
+
+Looking north, you see the Deeper Waters; looking west, you see the Shallow Waters.
+
+>n
+n
+
+Deeper Waters (in the boat)
+You are in deep waters. Something is under the water.
+
+Looking south, you see the Coastline; looking east, you see the Choppy Waters.
+
+>e
+e
+Choppy Waters
+The water is choppy here.
+
+You can see a boat (empty) and a shark here.
+
+Looking east, you see the Beach; looking west, you see the Deeper Waters.
+
+A shark has tipped the boat. You are in the water.
+
+>attack shark
+attack shark
+The shark fights back.
+
+>attack shark
+attack shark
+Choppy Waters
+The water is choppy here.
+
+You can see a boat (empty) and a shark here.
+
+Looking east, you see the Beach.
+
+You punch the shark away.
+
+>enter boat
+enter boat
+You get into the boat.
+
+>e
+e
+
+Beach (in the boat)
+You are at the beach. You don't need the boat.
+
+Looking north, you see the Foothill; looking west, you see the Choppy Waters.
+
+>out
+out
+You are hungry again.
+
+You get out of the boat.
+
+Beach
+You are at the beach. You don't need the boat.
+
+You can see a boat (empty) here.
+
+Looking north, you see the Foothill; looking west, you see the Choppy Waters.
+
+[Your score has just gone up by one point.]
+
+>n
+n
+
+Foothill
+They don't like it here. The mountains are between you and home.
+
+Looking south, you see the Beach; looking east, you see the Footpath; looking up, you see the Peak.
+
+>e
+e
+
+Footpath
+This path was made by them. Be careful.
+
+Looking east, you see the Outside House; looking west, you see the Foothill.
+
+>e
+e
+
+Outside House
+You are outside one of their houses. It is very small.
+
+Looking east, you see the Inside House; looking west, you see the Footpath.
+
+>e
+e
+
+Inside House
+You are in the small house.
+
+You can see a fresh snack here.
+
+Looking west, you see the Outside House.
+
+>eat snack
+eat snack
+You eat it.
+
+[Your score has just gone up by one point.]
+
+>w
+w
+
+Outside House
+You are outside one of their houses. It is very small.
+
+Looking east, you see the Inside House; looking west, you see the Footpath.
+
+>w
+w
+
+Footpath
+This path was made by them. Be careful.
+
+Looking east, you see the Outside House; looking west, you see the Foothill.
+
+>w
+w
+
+Foothill
+They don't like it here. The mountains are between you and home.
+
+Looking south, you see the Beach; looking east, you see the Footpath; looking up, you see the Peak.
+
+>u
+u
+
+Peak
+You are close to home. A pool of water is here. A waterfall comes out of it.
+
+Looking north, you see the Slick Drop; looking east, you see the Slope; looking down, you see the Foothill.
+
+>e
+e
+
+Slope
+The ground slopes up here.
+
+Looking west, you see the Peak; looking up, you see the Rocky Summit.
+
+>u
+u
+
+Rocky Summit
+You are on a rocky summit. There is a cliff to the west.
+
+You can see some boulders here.
+
+Looking down, you see the Slope.
+
+>push boulders
+push boulders
+You push the boulders down the cliff.
+
+>d
+d
+
+Slope
+The ground slopes up here.
+
+Looking west, you see the Peak; looking up, you see the Rocky Summit.
+
+>w
+w
+
+Peak
+You are close to home. A pool of water is here. The boulders are blocking it.
+
+You can see some boulders here.
+
+Looking north, you see the Slick Drop; looking east, you see the Slope; looking down, you see the Foothill.
+
+>n
+n
+
+Slick Drop
+The ground here is slick.  It goes straight down.
+
+Looking south, you see the Peak; looking down, you see the Eastern Ledge.
+
+>d
+d
+The boulders are coming loose. One is falling above you.
+
+>w
+w
+
+Western Ledge
+Looking east, you see the Eastern Ledge.
+
+A boulder smashes on the other side. You hear another boulder above you.
+
+>e
+e
+
+Eastern Ledge
+Looking west, you see the Western Ledge.
+
+ A boulder smashes on the other side. You hear two boulders above you.
+
+>d
+d
+Not that way.
+
+The boulders miss you. They opened a path.
+
+[Your score has just gone up by one point.]
+
+>d
+d
+
+Soggy Ground
+The ground is marshy here.
+
+Looking north, you see the Fen.
+
+>n
+n
+
+Fen
+You are in a fen. You hear wolves.
+
+Looking north, you see the Mist; looking south, you see the Soggy Ground.
+
+>n
+n
+
+Mist
+You are in the mist. You are safe. You are not lost.
+
+Looking north, you see the Mist; looking south, you see the Mist; looking east, you see the Mist; looking west, you see the Mist.
+
+>n
+n
+Mist
+You are in the mist. You are safe. You are not lost.
+
+Looking north, you see the Mist; looking south, you see the Mist; looking east, you see the Mist; looking west, you see the Mist.
+
+Now you are closer.
+
+You'll be home soon.
+
+>n
+n
+Mist
+You are in the mist. You are safe. You are not lost.
+
+Looking north, you see the Mist; looking south, you see the Mist; looking east, you see the Mist; looking west, you see the Mist.
+
+Now you are closer.
+
+There is some blood in the water. Now it's gone.
+
+>n
+n
+Mist
+You are in the mist. You are safe. You are not lost.
+
+Looking north, you see the Mist; looking south, you see the Mist; looking east, you see the Mist; looking west, you see the Mist.
+
+Now you are closer.
+
+You hear the wolves.
+
+>n
+n
+Mist
+You are in the mist. You are safe. You are not lost.
+
+Looking north, you see the Mist; looking south, you see the Mist; looking east, you see the Mist; looking west, you see the Mist.
+
+Now you are closer.
+
+It feels chilly.
+
+>n
+n
+Mist
+You are in the mist. You are safe. You are not lost.
+
+Looking north, you see the Mist; looking south, you see the Mist; looking east, you see the Mist; looking west, you see the Mist.
+
+Now you are closer.
+
+The ground is getting firmer.
+
+>n
+n
+Mist
+You are in the mist. You are safe. You are not lost.
+
+Looking north, you see the Mist; looking south, you see the Mist; looking east, you see the Mist; looking west, you see the Mist.
+
+Now you are closer.
+
+You see out of the mist.
+
+>n
+n
+Frozen Trees
+You are in a forest. The trees are covered by snow.
+
+Looking north, you see the Mereside.
+
+[Your score has just gone up by one point.]
+
+>n
+n
+
+Mereside
+You are by the mere. It is glowing.
+
+You can see a serpent here.
+
+Looking south, you see the Frozen Trees.
+
+>attack serpent
+attack serpent
+The serpent is not your enemy. You are almost home. You can ask the serpent about them.
+
+>ask serpent about them
+ask serpent about them
+The serpent says "They stay away. They hate the fire."
+
+You can ask the serpent about fire.
+
+>ask serpent about fire
+ask serpent about fire
+The serpent says "The fen-fire frightens them. I have seen Hrothgar."
+
+You can ask about Hrothgar.
+
+>ask serpent about hrothgar
+ask serpent about hrothgar
+The serpent says "Hrothgar is calling for help."
+
+You can ask about help.
+
+>ask serpent about help
+ask serpent about help
+The serpent says "He is calling for Beowulf."
+
+You can ask about Beowulf.
+
+>ask serpent about beowulf
+ask serpent about beowulf
+The serpent says "Beware of Beowulf."
+
+The serpent swims away. Come home. You are almost there.
+
+[Your score has just gone up by one point.]
+
+>n
+n
+
+In Mere
+You are swimming in the fen-fire.
+
+Looking north, you see the Center of Mere.
+
+>n
+n
+
+Center of Mere
+You are in the center of the mere.
+
+Looking south, you see the In Mere; looking down, you see the Descent.
+
+>d
+d
+
+Descent
+It takes them all day to reach the bottom.
+
+Looking up, you see the Center of Mere; looking down, you see the Bottom.
+
+>d
+d
+Bottom
+You are faster than them.
+
+Looking north, you see the Cavern; looking up, you see the Descent.
+
+>n
+n
+
+Cavern
+You are in a cavern. You are home. You are safe.
+
+You are thirsty, hungry, and tired.
+
+Looking north, you see the Mother; looking south, you see the Bottom; looking east, you see the Larder; looking west, you see the Mead Room.
+
+>e
+e
+
+Larder
+You are in your larder.
+
+You can see a last snack here.
+
+Looking west, you see the Cavern.
+
+>eat last snack
+eat last snack
+They try to get away, but you eat them.
+
+>w
+w
+
+Cavern
+You are in a cavern. You are home. You are safe.
+
+Looking north, you see the Mother; looking south, you see the Bottom; looking east, you see the Larder; looking west, you see the Mead Room.
+
+>w
+w
+
+Mead Room
+The mead you have taken is stored here.
+
+You can see a pale mead here.
+
+Looking east, you see the Cavern.
+
+>drink mead
+drink mead
+You drink the mead. You are not thirsty.
+
+>e
+e
+
+Cavern
+You are in a cavern. You are home. You are safe.
+
+Looking north, you see the Mother; looking south, you see the Bottom; looking east, you see the Larder; looking west, you see the Mead Room.
+
+>n
+n
+Mother
+Mother is here.
+
+Looking south, you see the Cavern.
+
+
+
+    *** You are with mother. ***
+
+
+In that game you scored 15 out of a possible 15, in 149 turns.
+
+
+Would you like to RESTART, RESTORE a saved game, QUIT or UNDO the last command?
+> quit
+quit

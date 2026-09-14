@@ -11,9 +11,9 @@ namespace Rezrov.ZMachine.Input;
 /// as plain. It has no clock, so it never runs a timer and reports that
 /// [zm 10.5.3] timed input is unavailable, and it has no notion of a
 /// cursor or an input line, so a game that wants a character at a time
-/// gets the first character of the next line instead. Both are what a
-/// terminal that reads a line at a time can honestly offer, and a screen
-/// model will do better.
+/// gets the characters of the next line one by one, and the return for
+/// a line with nothing on it. Both are what a terminal that reads a line
+/// at a time can honestly offer, and a screen model will do better.
 ///
 /// When the reader runs out, reading throws an
 /// <see cref="EndOfStreamException"/> rather than inventing a command,
@@ -24,6 +24,9 @@ public sealed class TextReaderInput : IInput
 {
     private readonly TextReader _reader;
     private readonly UnicodeTranslationTable _extraCharacters;
+
+    // The rest of a line whose first character went to a read_char.
+    private readonly Queue<ushort> _keys = new();
 
     public TextReaderInput(TextReader reader, StoryHeader header, ZMemory memory)
     {
@@ -40,6 +43,7 @@ public sealed class TextReaderInput : IInput
     {
         ArgumentNullException.ThrowIfNull(request);
 
+        _keys.Clear();
         var line = _reader.ReadLine() ?? throw new EndOfStreamException("The input has ended.");
         var text = new List<ushort>(request.Initial);
 
@@ -64,19 +68,26 @@ public sealed class TextReaderInput : IInput
 
     public ushort ReadKey(InputTimer? timer)
     {
-        // The first character of the next line, or the return itself when
-        // the line is empty, which is the best a line-at-a-time reader can
-        // do and is what a console gives anyway.
+        // The characters of the next line, one per read, or the return
+        // itself when the line is empty, which is the best a
+        // line-at-a-time reader can do. A game that takes its whole
+        // command through read_char, as Custard does, is then typed a
+        // line at a time and given the return with an empty line.
+        if (_keys.Count > 0)
+        {
+            return _keys.Dequeue();
+        }
+
         var line = _reader.ReadLine() ?? throw new EndOfStreamException("The input has ended.");
 
         foreach (var character in line)
         {
             if (Zscii.FromUnicode(character, _extraCharacters) is { } zscii)
             {
-                return zscii;
+                _keys.Enqueue(zscii);
             }
         }
 
-        return Zscii.Newline;
+        return _keys.Count > 0 ? _keys.Dequeue() : Zscii.Newline;
     }
 }
