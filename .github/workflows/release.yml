@@ -90,7 +90,7 @@ jobs:
           else
             cp out/${{ matrix.rid }}/rezrov out/${{ matrix.rid }}/rezrov-tui "dist/${package}/"
           fi
-          cp README.md LICENSE "dist/${package}/"
+          cp release/README.md LICENSE "dist/${package}/"
           cd dist
           if [ "${{ runner.os }}" = "Windows" ]; then
             7z a -tzip "${package}.zip" "${package}" > /dev/null

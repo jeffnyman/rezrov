@@ -8,7 +8,9 @@ Rezrov is an interpreter for interactive fiction written in C#. The most common 
 
 Each release on the [releases page](https://github.com/jeffnyman/rezrov/releases) carries one archive per platform, named for the version and the platform: `rezrov-0.1.0-win-x64.zip`, `rezrov-0.1.0-linux-x64.tar.gz`, `rezrov-0.1.0-linux-arm64.tar.gz`, and `rezrov-0.1.0-osx-universal.tar.gz`, the last a universal binary that runs natively on both Intel and Apple silicon Macs. Inside are the two programs, `rezrov` and `rezrov-tui`, as native executables that need nothing installed beside them, not even .NET. Unpack the archive somewhere on your path and they are ready; `rezrov --version` says which release you have. A `SHA256SUMS` file beside the archives lets you check a download.
 
-Two platform notes. On macOS the executables are not signed, so the first run is refused with a message about an unidentified developer; allow it in System Settings under Privacy and Security, or clear the quarantine mark with `xattr -d com.apple.quarantine rezrov rezrov-tui`. On Linux, `tar` keeps the executable permission, but if a download loses it, `chmod +x rezrov rezrov-tui` restores it.
+Two platform notes. The macOS executables are not signed. Unpacked with `tar` they run as they are, on Intel and Apple silicon alike; if an archive unpacked through the Finder is refused as being from an unidentified developer, clear the quarantine mark with `xattr -d com.apple.quarantine rezrov rezrov-tui`, or allow it in System Settings under Privacy and Security. On Linux, `tar` keeps the executable permission, but if a download loses it, `chmod +x rezrov rezrov-tui` restores it.
+
+The archives carry a short readme of their own, kept in the repository's `release` directory, with just what someone who has downloaded the programs needs.
 
 ## Using
 
