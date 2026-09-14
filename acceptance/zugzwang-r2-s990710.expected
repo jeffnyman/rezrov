@@ -1,0 +1,118 @@
+
+
+
+
+
+
+
+
+
+
+
+It has been a fierce battle, full of bold moves, daring attacks, surprising gambits and heroic sacrifices. Throughout this, you've remained at your starting point, patiently waiting for orders. But now that the metaphorical dust has settled and most pieces have been exchanged, it finally looks as if it is your turn. The White King and one of your Pawn colleagues have managed to nail the Black King with his back to the edge of the board, but they can't finish him off without help.
+
+The White King calls you to action. It is time to make your move.
+
+Zugzwang
+The Interactive Life of a Chess Piece
+DEMO version for the TextFire 12-PACK
+(Type "about" for more information)
+Copyright (c) 1998-99 by Magnus Olsson. All rights reserved.
+Release 2 / Serial number 990710 / Inform v6.14 Library 6/7
+
+Chessboard (on f2)
+The chessboard is almost empty, now that most pieces have been exchanged. Its surface is perfectly smooth, its 64 squares alternatingly deep black and pearly white.
+
+>examine board
+The chessboard is almost empty, now that most pieces have been exchanged. Its surface is perfectly smooth, its 64 squares alternatingly deep black and pearly white.
+
+>n
+On your first move, you may choose to move two steps forwards instead of just one. Would you like to do that? no
+
+Chessboard (on f3)
+
+The Black King scratches his head. "Hmmm. A difficult position - I might have to sacrifice my last pawn. Let's see..."
+
+[Your score has just gone up by five points.]
+
+>wait
+Time passes.
+
+The Black King sighs. "It looks like we don't have much choice. Pawn, one step forward!" His sole remaining subject moves one square to the south, to g4.
+
+>ne
+With a faint popping sound the Black Pawn vanishes from the board.
+
+Chessboard (on g4)
+
+The White King cries out in frustration: "You fool! You weren't supposed to do that!"
+
+The Black King, however, can't hide his pleasure. "I haven't got any legal moves left. It's a stalemate!" He pats the White King on the shoulder. "Seems like you don't win after all, old chap."
+
+
+    *** You have thrown away the victory ***
+
+
+In that game you scored 5 out of a possible 450, in 5 turns, earning you the rank of Pawn
+
+Would you like to RESTART, RESTORE a saved game, UNDO your last move or QUIT?
+> undo
+Chessboard (on f3)
+[Previous turn undone.]
+
+>n
+
+Chessboard (on f4)
+
+The Black Pawn looks a bit surprised, and more than a little relieved, that you didn't capture it. The White King nods his approval, however: "Well done! Just continue north, and don't get distracted!"
+
+[Your score has just gone up by five points.]
+
+>wait
+Time passes.
+
+The Black King smiles grimly. "So you didn't fall for my little trap? In that case, we'll have to see whose pawn is the fastest!" He gestures to his Pawn, which takes a step towards the south, to g3. The White King waves at you to continue your march.
+
+>n
+
+Chessboard (on f5)
+
+You take another step forwards. The Black King rather nervously orders his pawn to continue.
+
+>wait
+Time passes.
+
+The Black Pawn continues south. It is now dangerously close to becoming a Queen, and you can't help throwing some nervous glances in its direction. The White King, however, encourages you: "Don't worry, they won't have the time to do anything."
+
+>n
+
+Chessboard (on f6)
+
+The Black King gives you a worried look, but then turns to his own Pawn. "Just one more step and you'll be promoted!"
+
+>wait
+Time passes.
+
+As the Black Pawn set foot on the first rank, it is surrounded by a golden glow. With a fanfare from invisible trumpets, the Pawn is transformed into a Queen! The White King looks at her, and snorts. "Impressive - but it will not help a bit. Finish them off, Pawn!"
+
+>n
+
+Chessboard (on f7)
+
+You boldly advance and threaten the Black King. "Check!" you cry, and the White King fills in: "...and mate!"
+
+The Black King desperately looks around for an escape, but can't find any. He extends his hand to his White colleague. "It looks like you win again. But just wait - I'll get my revenge next time!"
+
+The White King pats your back. "Well done! I think there's a vacancy as a Knight - I'll see if I can get you promoted in time for the next game."
+
+
+    *** You have completed the demo ***
+
+
+In that game you scored 20 out of a possible 450, in 11 turns, earning you the rank of Knight
+
+Would you like to RESTART, RESTORE a saved game, UNDO your last move or QUIT?
+> quit
+
+Thank you for playing the demo version of Zugzwang, a TextFire release. On-line registration for TextFire products will be available at http://www.TextFire.com on or before June 30, 1998. Thanks for your patience!
+

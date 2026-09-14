@@ -1,0 +1,859 @@
+
+ZORK I: Das Große Unterweltreich
+Infocom dialogfähig Prose - eine Phantasiegeschichte
+Copyright (c) 1981, 1982, 1983, 1984, 1985, 1986 Infocom, Inc.
+Alle Rechte vorbehalten. ZORK ist ein eingetragenes Markenzeichen
+der Infocom, Inc.
+BETA RELEASE # 1
+Veröffentlichung 3 / Seriennummer 880113 / Interpreter 6 Version R
+
+Westlich vom Haus
+Du stehst auf freiem Feld westlich von einem weißen Haus, dessen Haustür mit Brettern vernagelt ist.
+Hier ist ein kleiner Briefkasten.
+
+>öffne briefkasten
+Der kleine Briefkasten, der geöffnet ist, enthält ein Zettel.
+
+>lies zettel
+(Den Zettel erst nehmen)
+"Willkommen in Zork!
+
+Zork ist ein Spiel voller Abenteuer, Gefahren und gemeiner Schlauheit Beim Spielen wirst du einige der wundersamsten Welten entdecken, die irgend ein Sterblicher gesehen hat. Kein Heimcomputer sollte ohne dieses Spiel sein."
+
+>norden
+Nördlich vom Haus
+Du stehst vor der Nordseite eines weißen Hauses. Es gibt hier keine Tür, und alle Fenster sind mit Brettern vernagelt. Nach Norden windet sich ein schmaler Pfad durch die Bäume.
+
+>osten
+Hinter dem Haus
+Du bist hinter dem weißen Haus. Nach Osten führt in Pfad in den Wald. An einem Ende der Hauswand befindet sich ein kleines Fenster, das einen Spalt offen steht.
+
+>öffne fenster
+Mit großer Anstrengung öffnest du das Fenster weit genug, um einzusteigen.
+
+>westen
+Küche
+Du bist in der Küche des weißen Hauses. Ein Tisch muß vor Kurzem zur Bereitung einer Mahlzeit benutzt worden sein. Ein Durchgang führt nach Westen, und man kann eine dunkle Treppe sehen, die nach oben führt. Ein dunkler Kamin führt nach unten. Nach Osten ist ein kleines Fenster, das offen ist.
+Auf dem Tisch steht eine Flasche.
+Die Flasche scheint das Folgende zu enthalten:
+  Eine Wassermenge
+Auf dem Tisch ist ein länglicher brauner Sack. Er riecht nach scharfen Pepperoni.
+
+>nimm sack
+Genommen.
+
+>öffne sack
+Der braune Sack, der geöffnet ist, enthält eine Knoblauchzehe, und ein Pepperoni-Brot.
+
+>nimm alles
+Flasche: Genommen.
+
+>nimm brot
+Genommen.
+
+>nimm knoblauch
+Genommen.
+
+>westen
+Wohnzimmer
+Du bist im Wohnzimmer. Da sind eine Tür nach Osten, eine vernagelte Holztür mit fremden Runen, ein Trophäenschrank, und ein Perserteppich in der Mitte.
+Über dem Trophäenschrank hängt ein Elfenschwert aus dem Altertum.
+Eine batteriengespeiste Messingleuchte ist auf dem Trophäenschrank.
+
+>lass alles fallen
+Knoblauchzehe: Fallen gelassen.
+Pepperoni-Brot: Fallen gelassen.
+Flasche: Fallen gelassen.
+brauner Sack: Fallen gelassen.
+Zettel: Fallen gelassen.
+
+>nimm schwert
+Genommen.
+
+>nimm leuchte
+Genommen.
+
+>bewege teppich
+Mit größter Anstrengung ist der Teppich aus dem Weg gezerrt. Die staubige Oberfläche einer geschlossenen Falltüre kommt zum Vorschein.
+
+>öffne falltür
+Die Tür öffnet sich mühsam, und bringt eine baufällige Treppe zum Vorschein, die nach unten in die Dunkelheit führt.
+
+>öffne trophäenschrank
+Geöffnet.
+
+>osten
+Küche
+
+>rauf
+Du bist in einem dunklen Ort gelandet.
+Es ist stockdunkel. Es besteht die Möglichkeit, daß du von einem Greuel gefressen wirst.
+
+>mach leuchte an
+Die batteriengespeiste Messingleuchte ist nun an.
+
+Speicher
+Dies ist der Speicher. Der einzige Ausgang ist ein Treppenhaus nach unten.
+Ein dickes aufgerolltes Seil liegt in der Ecke.
+Auf einem Tisch liegt ein gefährlich außehendes Messer.
+
+>nimm alles
+Seil: Genommen.
+außenhendes Messer: Genommen.
+
+>runter
+Küche
+
+>westen
+Wohnzimmer
+Ein kleine Zettel liegt auf der Erde.
+Hier ist ein brauner Sack.
+Hier ist eine Flasche.
+Die Flasche scheint das Folgende zu enthalten:
+  Eine Wassermenge
+Ein Pepperoni-Brot liegt hier.
+Hier ist eine Knoblauchzehe.
+
+>lass messer fallen
+Fallen gelassen.
+
+>runter
+Die Falltür kracht zu, und du hörst, daß jemand sie verriegelt.
+
+Keller
+Du bist in einem dunklen und muffigen Keller mit einem schmalen Durchgang nach Norden und einem niedrigen Tunnel nach Süden. Im Westen ist das Ende einer steilen Metallrampe, die nicht erklimmbar ist.
+Dein Schwert leuchtet mit einem schwachen blauen Schimmer.
+
+>süden
+Ost von der Spalte
+Du bist am östlichen Rand einer Spalte, deren Grund nicht zu sehen ist. Ein enger Durchgang geht nach Norden, und der Pfad, auf dem du bist, führt nach Osten weiter.
+Dein Schwert leuchtet nicht mehr.
+
+>osten
+Galerie
+Dies ist eine Kunstgalerie. Die meisten Gemälde sind von Gangstern mit außergewöhnlich gutem Geschmack gestohlen worden. Die Gangster sind entweder durch den Nord -oder den Westausgang abgehauen.
+Glücklicherweise bleibt dir noch eine Chance auch ein Gangster zu werden, denn an der anderen Wand hängt ein Gemälde von einmaliger Schönheit.
+
+>nimm gemälde
+Genommen.
+
+>westen
+Ost von der Spalte
+
+>norden
+Keller
+Dein Schwert leuchtet mit einem schwachen blauen Schimmer.
+
+>norden
+Trollzimmer
+Dies ist ein kleines Zimmer mit Durchgängen nach Osten und Süden und einem furchterregenden Loch nach Westen. Blutspuren und tiefe Kratzer (vielleicht von einer Axt) verschandeln die Wände.
+Ein widerlicher Troll, der eine blutige Axt schwingt, blockiert alle Ausgänge aus dem Zimmer.
+Dein Schwert hat hell zu leuchten begonen.
+
+>töte troll
+(mit dem Elfenschwert)
+
+Der Troll ist durch ein kluges Täuschungsmanöver entwaffnet.
+Der Troll holt sich seine Waffe zurück. Er ist böse und beschämt. Er scheint sich mit dir an binden zu wollen.
+
+>töte troll
+(mit dem Elfenschwert)
+
+Die Geschwindigkeit deines Stoßes schlägt den Troll zurück.
+Der Troll gewinnt langsam die Kontrolle über seine Füße.
+
+>töte troll
+(mit dem Elfenschwert)
+
+Der Troll ist bewußtlos geschlagen.
+
+>töte troll
+(mit dem Elfenschwert)
+
+Der Troll, wer bewußtlos ist, kann sich nicht wehren. Er stirbt.
+Fast gleichzeitig mit dem letzten Atemzug des Trolls verhüllt ihn eine Wolke aus gespenstigem schwarzem Nebel, und wenn der Nebel sich hebt, ist die Leiche verschwunden.
+Dein Schwert leuchtet nicht mehr.
+
+>osten
+Ost-Westdurchgang
+Dies ist ein enger Ost-Westdurchgang. Es gibt hier eine enge Treppe, die nach am Ende des Zimmers nach unten führt.
+
+>osten
+Rundes Zimmer
+Dies ist ein rundes turmartiges Zimmer mit Durchgängen in alleRichtungen. Einige sind leider durch Einsturz blockiert.
+
+>südosten
+Höhle mit Einmeißelungen
+Du bist in eine Höhle getreten, die Durchgänge nach Norwesten und Osten hat.
+Dort gibt es alte Einmeißelungen an den Wänden.
+
+>osten
+Kuppelzimmer
+Du bist am Rand einer großen Kuppel, die die Decke der Raumes darunter formt. Ein hölzernes Geländer, das die Kuppel umgibt, beschützt dich vor dem Absturz in einen steilen Abgrund.
+
+>binde seil an geländer
+Das Seil fällt über die Seite und reicht bis zu 3 Metern über dem Boden.
+
+>runter
+Fackelzimmer
+Dies ist ein großer Raum, in dessen Mitte sich ein kleiner Schacht befindet, der durch den Fußboden in die Dunkelheit verschwindet. Nach Westen und Norden gibt es Ausgänge von diesem Zimmer. Über dem Schacht hat man ein Metallgehäuse gebaut, an dem eine schwere, eiserne Kette befestigt ist. An dem anderen Ende der Kette hängt ein Korb.
+Ein Seil hängt von dem Geländer runter und endet 3 Meter über deinem Kopf. 
+Auf dem Podest ist eine brennende Fackel aus Elfenbein.
+
+>süden
+Tempel
+Dies ist das Nordende eines großen Tempels. Auf der Ostwand siehst du eine antike Inschrift, die wahrscheinlich ein Gebet in einer längst vergessenen Sprache ist. Unter dem Gebet führt ein Treppenhaus nach unten. Die Westwand ist aus Granit. Der Ausgang im Norden des Raumes führt durch riesige Marmorsäulen. Es befindet sich hier eine Messingglocke.
+Hier ist eine Messingglocke.
+
+>osten
+Egyptian Room
+Dieser Raum sieht aus wie ein ägyptisches Grab. Im Westen ist eine Treppe nach oben.
+Der reingoldene Sarg, den man für das Begräbnis von Ramses II. benutzt hat, ist hier.
+
+>lass gemälde fallen
+Fallen gelassen.
+
+>lass schwert fallen
+Fallen gelassen.
+
+>nimm sarg
+Genommen.
+
+>westen
+Tempel
+Hier ist eine Messingglocke.
+
+>süden
+Altar
+Dies ist das Südende eines großen Tempels. Vor dir ist eine Art Altar. In einer Ecke ist ein kleines Loch im Boden, das in absolute Dunkelheit führt.  Es sieht nicht so aus, als ob du da je wieder rauskämst. Auf beiden Seiten des Altars stehen brennende Kerzen. Auf dem Altar liegt ein großes schwarzes Buch. Es ist bei Seite 569 aufgeschlagen.
+Auf dem Altar steht ein Kerzenpaar.
+Auf dem Altar liegt ein großes schwarzes Buch. Es ist bei Seite 569 aufgeschlagen.
+
+>bete
+Wald
+Dies ist ein Wald. Überall sind Bäume. Die Sonne steht scheinbar im Osten.
+
+>süden
+Wald
+Der Wald lichtet sich und unüberwindliche Berge kommen zum Vorschein.
+
+>norden
+Lichtung
+Du stehst auf einer kleinen Lichtung auf einem wohlmarkierten Waldpfad, der sich nach Osten und Westen erstreckt.
+
+>westen
+Hinter dem Haus
+
+>westen
+Küche
+
+>westen
+Wohnzimmer
+Hier ist ein außenhendes Messer.
+Ein kleine Zettel liegt auf der Erde.
+Hier ist ein brauner Sack.
+Hier ist eine Flasche.
+Die Flasche scheint das Folgende zu enthalten:
+  Eine Wassermenge
+Ein Pepperoni-Brot liegt hier.
+Hier ist eine Knoblauchzehe.
+
+>öffne sarg
+Der reingoldene Sarg läßt sich öffnen.
+Ein Zepter, das womöglich direkt aus Ägypten stammt, ist in dem Sarg. Das Zepter ist mit farbigem Emaille verziert und läuft zu einer scharfen Spitze aus.
+
+>nimm zepter
+Genommen.
+
+>lege sarg in trophäenschrank
+Geschafft.
+
+>öffne falltür
+Die Tür öffnet sich mühsam, und bringt eine baufällige Treppe zum Vorschein, die nach unten in die Dunkelheit führt.
+
+>runter
+Keller
+
+>norden
+Trollzimmer
+Hier ist eine blutigen Axt.
+
+>osten
+Ost-Westdurchgang
+
+>osten
+Rundes Zimmer
+
+>südosten
+Höhle mit Einmeißelungen
+Dort gibt es alte Einmeißelungen an den Wänden.
+
+>osten
+Kuppelzimmer
+
+>runter
+Fackelzimmer
+Auf dem Podest ist eine brennende Fackel aus Elfenbein.
+
+>süden
+Tempel
+Hier ist eine Messingglocke.
+
+>osten
+Egyptian Room
+Hier ist ein Elfenschwert.
+
+>nimm schwert
+Genommen.
+
+>westen
+Tempel
+Hier ist eine Messingglocke.
+
+>süden
+Altar
+Auf dem Altar steht ein Kerzenpaar.
+Auf dem Altar liegt ein großes schwarzes Buch. Es ist bei Seite 569 aufgeschlagen.
+
+>bete
+Wald
+
+>süden
+Wald
+
+>norden
+Lichtung
+
+>westen
+Hinter dem Haus
+
+>westen
+Küche
+
+>westen
+Wohnzimmer
+Hier ist ein außenhendes Messer.
+Ein kleine Zettel liegt auf der Erde.
+Hier ist ein brauner Sack.
+Hier ist eine Flasche.
+Die Flasche scheint das Folgende zu enthalten:
+  Eine Wassermenge
+Ein Pepperoni-Brot liegt hier.
+Hier ist eine Knoblauchzehe.
+Deine Schatzsammlung besteht aus:
+    Ein reingoldener Sarg
+
+>osten
+Küche
+
+>osten
+Hinter dem Haus
+
+>osten
+Lichtung
+
+>osten
+Blick auf Schlucht
+Du bist am oberen Rand der Groß-Schlucht, auf dem Gipfel der Westwand. Von hier hat man einen wunderbaren Blick auf die Schlucht und flußaufwärts auf den Fluß Gletsch. Gegenüber der Schlucht schließen die Weißen Felsen dem Gipfel der Hohlkopfberge nach Osten hin an. Verfolgt man die Schlucht flußaufwärts nach Norden, dann kann man die Wiedermal Fälle, aus denen ein Regenbogen heraufsteigt, sehen. Der mächtige Fluß Gletsch fließt aus einer großen dunklen Höhle. Nach Westen und Süden kann man einen enormen Wald sehen, der sich auf Kilometer hinzieht. Ein Pfad führt nach Nordwesten. Es ist möglich, von hier in die Schlucht hinunterzuklettern.
+
+>runter
+Felsvorsprung
+Du bist auf einem Vorsprung, der ungefähr auf halber Höhe auf der Wand der Flußchlucht liegt. Du kannst von hier sehen, daß der größte Teil der Wiedermal Fälle sich durch einen Durchgang windet, den du nicht passieren kannst. Unter dir ist der Abgrund Über dir gibt es weitereFelsen, die erklimmbar scheinen.
+
+>runter
+Auf dem Grund der Schlucht
+Du bist unter den Wänden der Flußchlucht, die hier eher zu erklettern sind. Der geringere Teil des Ablaufs der Wiedermal Fälle fließt unter dir vorbei. Nach Norden führt ein schmaler Pfad.
+
+>norden
+Am Ende des Regenbogens
+Du bist am unteren Gletsch hinter den Wasserfällen an einem schmalen steinigen Ufer. Das Ufer ist wegen der Weißen Felsen schmal. Die Flußchlucht öffnet sich hier, und Sonnenstrahlen fallen von oben herein. Ein Regenbogen weist über die Fälle nach Osten, und ein schmaller Pfad führt weiter nach Südwesten.
+
+>winke zepter
+Plötzlich wird der Regenbogen zu einer Art Straße und erscheint begehbar (Treppen mit Geländer erwecken diesen Eindruck).
+Ein glitzernder goldener Topf erscheint am Ende des Regenbogens.
+
+>osten
+Auf dem Regenbogen
+Du bist auf dem Regenbogen (sicherlich hast du dir nie träumen lassen, daß du jemals auf einem Regenbogen laufen würdest). Du hast einen tollen Blick auf die Fälle. Der Regenbogen verläuft von Osten nach Westen.
+
+>osten
+Wiedermal Fälle
+Du bist oben auf den Wiedermal Fällen. Ein gigantischer Wasserfall mit einem Abgrund von 15 Metern. Der einzige Pfad hier ist am Nordende.
+Ein voller Regenbogen steht über den Fällen.
+
+>norden
+Ufer
+Du bist an dem Ostufer des Flußes. Das Wasser ist hier etwas gefährlich. Ein Pfad führt von Norden nach Süden, das Südende biegt schnell um eine scharfe Kurve.
+
+>norden
+Sandiger Strand
+Du bist an einem großen Sandstrand am Ostufer des Flußes. Dieser fließt schnell vorbei. Ein Pfad verläuft den Fluß entlang nach Süden hier und ein Durchgang ist halb im Sand nach Nordosten vergraben.
+Hier ist eine Schaufel.
+
+>nimm schaufel
+Genommen.
+
+>nordosten
+Sandige Höhle
+Dies ist eine sandgefüllte Höhle, deren Ausgang nach Südwesten geht.
+
+>grabe sand
+(mit der Schaufel)
+
+Du scheinst hier ein Loch zu graben.
+
+>wieder
+(mit der Schaufel)
+
+Das Loch wird immer tiefer, aber sonst nichts.
+
+>wieder
+(mit der Schaufel)
+
+Du bist auf allen Seiten von Sand umgeben.
+
+>wieder
+(mit der Schaufel)
+
+Du siehst hier einen Skarabäus im Sand.
+
+>lass schaufel fallen
+Fallen gelassen.
+
+>nimm skarabaeus
+Genommen.
+
+>sw
+Sandiger Strand
+
+>süden
+Ufer
+
+>süden
+Wiedermal Fälle
+
+>westen
+Auf dem Regenbogen
+
+>westen
+Am Ende des Regenbogens
+Am Ende des Regenbogens steht ein Topf voll Gold.
+
+>nimm topf
+Genommen.
+
+>sw
+Auf dem Grund der Schlucht
+
+>rauf
+Felsvorsprung
+
+>rauf
+Blick auf Schlucht
+
+>nw
+Lichtung
+
+>westen
+Hinter dem Haus
+
+>westen
+Küche
+
+>westen
+Wohnzimmer
+Hier ist ein außenhendes Messer.
+Ein kleine Zettel liegt auf der Erde.
+Hier ist ein brauner Sack.
+Hier ist eine Flasche.
+Die Flasche scheint das Folgende zu enthalten:
+  Eine Wassermenge
+Ein Pepperoni-Brot liegt hier.
+Hier ist eine Knoblauchzehe.
+Deine Schatzsammlung besteht aus:
+    Ein reingoldener Sarg
+
+>lege topf in trophäenschrank
+Geschafft.
+
+>lege skarabaeus in trophäenschrank
+Geschafft.
+
+>lege zepter in trophäenschrank
+Geschafft.
+
+>nimm messer
+Genommen.
+
+>osten
+Küche
+
+>osten
+Hinter dem Haus
+
+>norden
+Nördlich vom Haus
+
+>norden
+Waldpfad
+Dieser Pfad windet sich durch den düsteren Wald. Er verläuft von Norden nach Süden. Ein besonders großer Baum mit einigen niederen Ästen steht am Rande des Pfades.
+
+>rauf
+Up a Tree
+Du bist ungefähr 3 Meter über dem Boden umgeben von großen Ästen. Du kannst den nächsten Zweig über dir unmöglich erreichen.
+Neben dir auf dem Ast ist ein kleines Vogelnest.
+In dem Vogelnest ist ein großes mit kostbaren Juwelen besetztes Ei, das scheinbar von einem kinderlosen Singvogel geraubt wurde. Das Ei ist von einer feinen Goldschicht überzogen und mit Lapislazuli und Perlmutter geschmückt. Im Gegensatz zu einem gewöhnlichen Ei, hat dieses ein Scharnier und ist mit einem eleganten Verschluß versehen. Das Ei sieht sehr zerbrechlich aus.
+
+>nimm ei
+Genommen.
+
+>runter
+Waldpfad
+
+>süden
+Nördlich vom Haus
+
+>osten
+Hinter dem Haus
+
+>westen
+Küche
+
+>westen
+Wohnzimmer
+Ein kleine Zettel liegt auf der Erde.
+Hier ist ein brauner Sack.
+Hier ist eine Flasche.
+Die Flasche scheint das Folgende zu enthalten:
+  Eine Wassermenge
+Ein Pepperoni-Brot liegt hier.
+Hier ist eine Knoblauchzehe.
+Deine Schatzsammlung besteht aus:
+    Ein Zepter
+    beautiful jeweled scaraben Skarabäus
+    Ein Topf voll Gold
+    Ein reingoldener Sarg
+
+>nimm brot
+Genommen.
+
+>nimm alles
+Zettel: Genommen.
+brauner Sack: Genommen.
+Flasche: Genommen.
+Knoblauchzehe: Du hast deine Hände schon zu voll!
+Teppich: Der Teppich ist äußerst schwer und man kann ihn nicht tragen.
+Trophäenschrank: Der Trophäenschrank ist unverrückbar an der Wand befestigt.
+
+>lass sack fallen
+Fallen gelassen.
+
+>lass zettel fallen
+Fallen gelassen.
+
+>inventar
+Du trägst:
+  Eine Flasche
+  Die Flasche scheint das Folgende zu enthalten:
+    Eine Wassermenge
+  Ein Pepperoni-Brot
+  Ein juwelenbesetztes Ei
+  Ein außenhendes Messer
+  Ein Elfenschwert
+  Eine batteriengespeisten Messingleuchte (beleuchtet)
+
+>öffne falltür
+Dazu ist es zu spät.
+
+>runter
+Keller
+
+>norden
+Trollzimmer
+Hier ist eine blutigen Axt.
+
+>westen
+Irrgarten
+Dies ein Teil eines Irrgartens. Kleine verwirrende Durchgangsmöglichkeiten, die sich alle ähnlich sehen.
+
+>süden
+Irrgarten
+Dies ein Teil eines Irrgartens. Kleine verwirrende Durchgangsmöglichkeiten, die sich alle ähnlich sehen.
+
+>osten
+Irrgarten
+Dies ein Teil eines Irrgartens. Kleine verwirrende Durchgangsmöglichkeiten, die sich alle ähnlich sehen.
+
+>rauf
+Irrgarten
+Dies ist ein Teil eines Irrgartens: kleine, verwirrende Gänge, die sich alle ähnlich sehen. In einer Ecke liegt ein Skelett. Vermutlich die sterblichen Überreste eines glücklosen Abenteurers.
+Der Abenteurer war nicht nur glücklos, er war auch verschlossen. Neben dem Skelett liegt ein Schlüssel.
+Neben dem Knochengerüst liegt ein rostiges Messer.
+Die nutzlose Lanterne des toten Abenteurers liegt hier.
+Ein schäbiger Ledersack vollgepfropft mit Goldmünzen ist hier.
+
+>nimm sack
+Genommen.
+
+>nimm schluessel
+Last ist zu schwer.
+
+>sw
+Irrgarten
+Dies ein Teil eines Irrgartens. Kleine verwirrende Durchgangsmöglichkeiten, die sich alle ähnlich sehen.
+
+>osten
+Irrgarten
+Dies ein Teil eines Irrgartens. Kleine verwirrende Durchgangsmöglichkeiten, die sich alle ähnlich sehen.
+
+>süden
+Irrgarten
+Dies ein Teil eines Irrgartens. Kleine verwirrende Durchgangsmöglichkeiten, die sich alle ähnlich sehen.
+Dein Schwert leuchtet mit einem schwachen blauen Schimmer.
+
+>südosten
+Zyklopenzimmer
+Dieser Raum hat einen Ausgang nach Nordwesten, und eine Treppe führt nach oben.
+Ein Zyklop, der aussieht, als wäre er bereit, Gäule zu verschlingen (viel eher als nur Abenteurer), blockiert die Treppe. Von seinem Gesundheitszustand und den Blutspuren an den Wänden, kannst du schließen, daß er nicht sehr freundlich ist, obwohle er Menschen liebt.
+Dein Schwert hat hell zu leuchten begonen.
+
+>gib brot zu zyklop
+Der Zyklop sagt: "Ei, ei. Ich liebe scharfe Pepperoni! Aber, oooh, ich könnte erst mal was zu Trinken brauchen. Vielleicht könnte ich das Blut von 'diesem Ding' trinken". Aus dem listigen Aufleuchten seiner Augen kannst du schließen, daß du gemeint bist.
+Der Zyklop scheint immer ärgerlicher zu werden.
+
+>gib wasser zu zyklop
+Der Zyklop nimmt die Flasche, prüft ihren Inhalt und trinkt das Wasser. Einen Augenblick später öffnet er seinen Mund zu einem Gähnen, mit dem er dich beinahe verschluckt, dann schläft er fest ein. (Was hast du ihm denn bloß in das Wasser geschmuggelt?)
+
+>rauf
+Du hörst einen Schreckensschrei, als du in das Versteck des Räubers einbrichst. Als du einen Durchgang benutzt, der dir unbekannt ist, verteidigt er sich sofort.
+Der Dieb führt einige mysteriöse Gesten aus, und die Schätze im Zimmer verschwinden.
+
+Schatzzimmer
+Dies ist ein großer Raum, dessen Ostwaand aus Granit ist. Eine Menge weggeworfener Tüten, die bei der kleinsten Berührung zerfallen, sind auf dem Fußboden verstreut.
+Da steht ein verdächtig aussehender Kerl, der eine Tüte hält, gegen die Wand gelehnt. Er ist mit einem tödlichen Stilett bewaffnet.
+Es gibt hier einen Silberkelch, der sehr fein graviert ist.
+Du parierst einen blitzartigen Stoß, und der Dieb bedient dich mit einem grimmigen Kopfnicken.
+
+>gib ei zu dieb
+Der Dieb ist erstaunt über deine Großzügigkeit, die er nicht erwartetet hat, aber er nimmt das juwelenbesetzte Ei an, und nimmt sich Zeit, seine Schönheit zu bewundern.
+
+>töte dieb mit schwert
+Der Dieb ist verwirrt und kann nicht zurückschlagen.
+Das Dieb gewinnt langsam die Kontrolle über seine Füße.
+
+>töte dieb mit schwert
+Ein grausiger Schlag in den Schenkel! Der Dieb ist momentan wie festgenagelt, aber er kann weiterkämpfen!
+Der Dieb greift dich an, und du fällst verzweifelt zurück.
+
+>töte dieb mit schwert
+Du erholst dich immer noch von dem letzten Hieb, so daß dein Angriff keine Wirkung hat.
+Du vermeidest das Stilett, als der Dieb tief sticht.
+
+>töte dieb mit schwert
+Ein schneller Schlag, aber der Dieb ist auf der Hut.
+Der Dieb versucht, deine Abwehrstellung heimtückisch zu durchbrechen, aber du windest dich aus seiner Richtung.
+
+>töte dieb mit schwert
+Dein Elfenschwert verpaßt den Dieb um 2cm.
+Ein schneller Hieb streift deinen linken Arm, und Blut rinnt deinen Arm herunter.
+
+>runter
+Zyklopenzimmer
+Hier ist eine Flasche.
+
+>diagnose
+Du hast eine leichte Verletzung, die nach 29 Zügen geheilt sein werden.
+Du kannst eine schwere Verletzung überleben
+Jemand, der einen großen Sack trägt, lehnt hier gegen eine Wand. Er spricht kein Wort, aber es besteht kein Zweifel, daß er sich nur über seine eigene Leiche von dem Sack trennen wird.
+
+>warte
+Zeit vergeht...
+Der Dieb ist gerade abgehauen, natürlich trug er immer noch seinen großen Sack. Du hast es vielleicht nicht bemerkt, aber er hat dich restlos ausgeraubt.
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>warte
+Zeit vergeht...
+
+>diagnose
+Du bist kerngesund.
+Du kannst mehrere Verletzungen überleben.
+
+>rauf
+Du hörst einen Schreckensschrei, als du in das Versteck des Räubers einbrichst. Als du einen Durchgang benutzt, der dir unbekannt ist, verteidigt er sich sofort.
+Der Dieb führt einige mysteriöse Gesten aus, und die Schätze im Zimmer verschwinden.
+
+Schatzzimmer
+Da steht ein verdächtig aussehender Kerl, der eine Tüte hält, gegen die Wand gelehnt. Er ist mit einem tödlichen Stilett bewaffnet.
+Es gibt hier einen Silberkelch, der sehr fein graviert ist.
+Der Dieb versucht, deine Abwehrstellung heimtückisch zu durchbrechen, aber du windest dich aus seiner Richtung.
+
+>töte dieb mit messer
+Ein schneller Schlag, aber der Dieb ist auf der Hut.
+Der Dieb versucht, deine Abwehrstellung heimtückisch zu durchbrechen, aber du windest dich aus seiner Richtung.
+
+>töte dieb mit messer
+Dein außenhendes Messer verpaßt den Dieb um 2cm.
+Du parierst einen Tiefschlag und deine außenhendes Messer schlüpft dir aus der Hand.
+
+>schau
+Schatzzimmer
+Dies ist ein großer Raum, dessen Ostwaand aus Granit ist. Eine Menge weggeworfener Tüten, die bei der kleinsten Berührung zerfallen, sind auf dem Fußboden verstreut.
+Hier ist ein außenhendes Messer.
+Da steht ein verdächtig aussehender Kerl, der eine Tüte hält, gegen die Wand gelehnt. Er ist mit einem tödlichen Stilett bewaffnet.
+Es gibt hier einen Silberkelch, der sehr fein graviert ist.
+Du vermeidest das Stilett, als der Dieb tief sticht.
+
+>nimm messer
+Genommen.
+Der Dieb sticht elegant mit dem Stilett und trifft nicht.
+
+>töte dieb mit messer
+Der Dieb erleidet einen tödlichen Schlag und fällt tot zur Erde.
+Fast gleichzeitig mit dem letzten Atemzug des Diebes verhüllt ihn eine Wolke aus gespenstigem schwarzem Nebel, und wenn der Nebel sich hebt, ist die Leiche verschwunden.
+Als der Dieb stirbt, schwindet seine Zauberkraft, und seine Schätze werden wieder sichtbar:
+ Ein Ledersack voll Münzen
+ Ein Elfenschwert
+ Ein Stilett
+ Ein juwelenbesetztes Ei, mit ein goldener Kanarienvogel
+ Ein shönes Gemälde
+Jetzt kannst du dir den Kelch ohne Gefahr nehmen.
+
+>nimm alles
+Ledersack voll Münzen: Genommen.
+Elfenschwert: Genommen.
+Stilett: Genommen.
+juwelenbesetztes Ei: Genommen.
+shönes Gemälde: Last ist zu schwer.
+Silberkelch: Genommen.
+Dein Schwert leuchtet mit einem schwachen blauen Schimmer.
+
+>inventar
+Du trägst:
+  Ein Silberkelch
+  Ein juwelenbesetztes Ei
+  Das juwelenbesetzte Ei scheint das Folgende zu enthalten:
+    Ein goldener Kanarienvogel
+  Ein Stilett
+  Ein Elfenschwert
+  Ein Ledersack voll Münzen
+  Ein außenhendes Messer
+  Eine batteriengespeisten Messingleuchte (beleuchtet)
+
+>lass stilett fallen
+Fallen gelassen.
+
+>lass außenhendes messer fallen
+Das Wort "außenhendes" kann nicht von dem Spielvokabular verstanden werden.
+
+>nimm gemälde
+Last ist zu schwer.
+
+>inventar
+Du trägst:
+  Ein Silberkelch
+  Ein juwelenbesetztes Ei
+  Das juwelenbesetzte Ei scheint das Folgende zu enthalten:
+    Ein goldener Kanarienvogel
+  Ein Elfenschwert
+  Ein Ledersack voll Münzen
+  Ein außenhendes Messer
+  Eine batteriengespeisten Messingleuchte (beleuchtet)
+
+>lass messer fallen
+Fallen gelassen.
+
+>nimm gemälde
+Genommen.
+
+>inventar
+Du trägst:
+  Ein shönes Gemälde
+  Ein Silberkelch
+  Ein juwelenbesetztes Ei
+  Das juwelenbesetzte Ei scheint das Folgende zu enthalten:
+    Ein goldener Kanarienvogel
+  Ein Elfenschwert
+  Ein Ledersack voll Münzen
+  Eine batteriengespeisten Messingleuchte (beleuchtet)
+
+>

@@ -1,4 +1,5 @@
 using System.Text;
+
 using Rezrov.Core.Blorb;
 using Rezrov.ZMachine.Input;
 using Rezrov.ZMachine.Text;
@@ -445,13 +446,13 @@ public sealed class WindowedScreenModel : IScreenModel
                 _streamRow = -1;
                 break;
             case >= 0 and < WindowCount:
-            {
-                var target = _windows[window];
-                var (top, left, rows, columns) = CellRect(target);
-                FillCells(top, left, rows, columns, Cell.Blank(BlankFor(target)));
-                ResetCursor(target);
-                break;
-            }
+                {
+                    var target = _windows[window];
+                    var (top, left, rows, columns) = CellRect(target);
+                    FillCells(top, left, rows, columns, Cell.Blank(BlankFor(target)));
+                    ResetCursor(target);
+                    break;
+                }
 
             default:
                 return false;
@@ -1091,6 +1092,27 @@ public sealed class WindowedScreenModel : IScreenModel
     private void Place(char character, TextAttributes attributes)
     {
         var window = Current;
+
+        // Window 0 is the story's own voice: whatever else has gone
+        // wrong, the game must still be able to talk. Zork Zero, right
+        // after a Double Fanucci win, resizes window 0 to a size or
+        // position it can never recover from. This is a picture-position
+        // calculation gone wrong in that rarely-reached path, since
+        // nothing else ever move_windows or window_sizes it back before
+        // printing its congratulations. Rescuing it to the full screen
+        // only when it is truly unusable (never during the normal,
+        // fleeting zero-or-negative sizes other windows pass through
+        // mid-resize, since by the time those are ever printed to they
+        // have already been corrected) costs nothing when the game is
+        // behaving and saves the one case where it is not.
+        if (window.Number == 0 && (window.Width <= 0 || window.Height <= 0))
+        {
+            window.X = 1;
+            window.Y = 1;
+            window.Width = UnitsWide;
+            window.Height = UnitsHigh;
+            ResetCursor(window);
+        }
 
         if (!Fits(window, FontWidth))
         {

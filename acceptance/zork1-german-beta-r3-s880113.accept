@@ -1,0 +1,539 @@
+! SEED=92
+! GAME=../entharion/zcode-infocom/zork1-german-beta-r3-s880113.z5
+
+# Zork I in German, beta release 3 / serial 880113 is a rare
+# translated Infocom build, and the only story in this corpus whose
+# vocabulary needs characters the ASCII table does not have.
+#
+# THIS BUILD WAS NEVER FINISHED
+#
+# Infocom started a German translation of Zork I in the late 1980s
+# and abandoned it before release. What eventually leaked into public
+# circulation decades later, and ended up in this corpus, is that
+# unfinished beta -- dated January 13, 1988 -- not a shelved-but-
+# complete product. That history explains what's found below far
+# better than "just a different build" does: the translation itself
+# is non-native and carries real spelling and grammar mistakes, the
+# Z-machine's parser was built around English syntax and was never
+# fully reworked for German noun cases and compound words, and by
+# most accounts the deeper reaches of the game were left without
+# working code at all -- reputedly close to unwinnable as a result.
+# The English bleeding through in a few places here -- an
+# unromanized "beautiful jeweled scaraben" describing the scarab, a
+# room plainly named "Egyptian Room" while everything around it is in
+# German, "The lamp appears a bit dimmer" appearing verbatim -- isn't
+# a ZSCII table problem on this interpreter's end; it's the
+# translation itself never having been finished.
+#
+# WHY THIS EXISTS (Standard 3.8.5)
+#
+# ZSCII is not ASCII. Codes 155 to 251 are the "extra characters",
+# and what each one means is the story's own business: a story may
+# carry a Unicode translation table saying so, and one that does not
+# falls back to the default table the Standard prints. A German
+# story leans on that table for every umlaut and every sharp s.
+#
+# So "öffne" (open) is not a decorative flourish here. To match
+# it against the dictionary the interpreter must turn that o-umlaut
+# into its extra-character code, look the word up in that encoding,
+# and hand the parser something the story recognizes. Get the table
+# wrong, or fall back to ASCII, and the story answers that it does
+# not know the word.
+#
+# THIS IS A FULL PLAYTHROUGH, NOT A TRANSLATED COPY OF ANOTHER SCRIPT
+#
+# This uses the same SEED=92 as the English zork1-r88-s840726.accept,
+# but that does not make the two runs match. Release 3 beta is a
+# different compiled story file from release 88 -- different code,
+# not just different strings -- so the two builds make their RANDOM
+# calls at different points even from an identical command sequence,
+# and combat outcomes (the troll, the thief) diverge from the first
+# swing on. There is also no ZIL source for this beta in the corpus
+# to check mechanics against, unlike zork0's entharion sources. So
+# every command below was found live, one at a time, against this
+# build specifically -- not copied from the English script and not
+# assumed to carry over.
+#
+# A few vocabulary quirks turned up along the way, worth flagging
+# for whoever extends this further:
+#
+# - Some nouns whose printed text carries an umlaut are not in the
+#   dictionary under that spelling: "Skarabäus" needs "skarabaeus",
+#   "Schlüssel" needs "schluessel". The accented form fails with
+#   "kann nicht von dem Spielvokabular verstanden werden"; the
+#   ASCII-digraph fallback is what the parser actually indexed.
+#   "Flasche" (bottle) as a direct object fails outright either way
+#   -- it only comes along via "nimm alles".
+# - DROP is "lass X fallen", not "leg X hin" or "leg X ab" (both
+#   unrecognized sentences) and not "wirf X" -- "wirf" is THROW, a
+#   different verb that answers "Man kann mehrere Akkusitiv nicht
+#   mit 'wirf' gebrauchen" the moment ALL is attempted. "lass alles
+#   fallen" is the multi-object drop.
+# - UP and DOWN are "rauf" and "runter", not "oben" ("oben" gets
+#   "In diesem Satz fehlt das Verb!") and not "unten".
+# - Turn on is "mach X an", not "schalte X an" (unrecognized word).
+# - AGAIN is "wieder", not "nochmal" or "wiederhole".
+# - WAVE is "winke X" ("schwenke" is unrecognized; "schwinge" and
+#   "schüttle" both parse but do the wrong thing).
+# - PRAY is "bete"; at the Altar it teleports outdoors to the
+#   Forest, same as English -- the routes below rely on that.
+# - GIVE reads as "gib X zu Y", not "gib Y X" as in English.
+# - HEALTH is "diagnose", same as English, and worth checking after
+#   any exchange with the thief -- but it costs a turn like anything
+#   else, so checking it doesn't pause whatever's already attacking.
+# - ATTACK takes a named weapon: "töte X mit Y" -- worth being
+#   explicit about, since without one the parser sometimes guesses a
+#   weapon the player isn't even carrying and fails outright with
+#   "Du hast das Stilett nicht" (that guess was always the thief's
+#   own weapon, not the player's, in every case this came up).
+#
+# One design note that isn't a vocabulary quirk: this build's carry
+# limit is tight -- tight enough that the golden coffin can only be
+# carried alongside the lamp, nothing else, not even the sword. That
+# collides with wanting the sword in hand for the thief. The fix
+# below sets the sword and the painting down together in the
+# Egyptian Room just long enough to fetch the coffin out and bank it,
+# then comes straight back through the Troll Room and the Temple
+# complex for them -- the sword is still there when we return, but
+# the thief finds the painting first. That's an acceptable trade:
+# the painting is an ordinary treasure with no downside to losing it
+# to theft, whereas the egg (handled separately, later, with its own
+# minimal-exposure trip) is not -- a stolen, unopened egg can't be
+# safely opened by the player and its canary is lost for good, while
+# a *given* egg gets opened safely by the thief himself, and its
+# canary does turn out intact once he's finally beaten (see below).
+# So the egg never leaves the player's hands until it's handed over
+# on purpose, while the painting is allowed to become collateral --
+# and does get reclaimed anyway, once the thief is dead and every
+# last thing he ever stole falls out of his sack at once.
+#
+# THE THIEF FIGHT, AND WHAT ACTUALLY WON IT
+#
+# A plain sword did not do it. Two separate sword attempts each cost
+# the weapon within a swing or two -- once knocked to the floor and
+# recovered, once seemingly lifted clean out of the player's hand,
+# gone from both the inventory and the room afterward (a straight
+# theft, not a drop, confirmed later when it turned up among the
+# thief's own hoard). A third attempt, unarmed entirely because nowhere
+# safe to fetch another weapon was known yet, was never risked -- the
+# game's own line for it is blunt enough to take at face value: "Ein
+# Dieb mit den nackten Händen anzugreifen ist Selbstmord" (attacking a
+# thief with bare hands is suicide).
+#
+# The rusty knife lying by the skeleton in the maze was tried once,
+# out of curiosity, and it is not a weapon at all -- it is a trap.
+# Wielding it against the thief reads the mind of whoever draws it
+# and turns their own hand against their own throat: "Als das Messer
+# sich seinem Opfer nähert, wird dein Gehirn von einem Willen
+# überwältigt, den du nicht meisterst... Das Messer scheint zu
+# singen, als es auf brutalste Weise deinen Hals durchschneidet." An
+# instant, unsurvivable death, and presumably the actual explanation
+# for the skeleton it was found next to. Never pick this one up to
+# fight with, in German or in English -- it is cursed by design, not
+# a bug in this build.
+#
+# What finally won the fight was the ordinary "dangerous-looking"
+# knife from the Attic table (dropped there early, in the house-prep
+# stretch below, then fetched again just before this trip) -- a
+# perfectly normal, uncursed weapon, just a plain second option to
+# the sword rather than an upgrade. It got knocked from the player's
+# hand once too (recovered off the floor immediately, no worse than
+# that), and then connected for a clean kill a couple of exchanges
+# later. Whether the knife is actually more reliable than the sword
+# here, or this was just where the dice landed on this attempt, isn't
+# something a single playthrough can tell; having a spare weapon on
+# hand for exactly this situation is the real lesson.
+#
+# The retreat-and-heal loop used between attempts is worth noting
+# too, and worth its own caution: "runter" from the Treasure Room to
+# the Cyclops Room is always safe regardless of how the visit upstairs
+# went, and waiting there heals an injury with no risk of being struck
+# again. But it isn't risk-free in every sense -- the thief roams even
+# while the player is just standing still healing, and during one
+# stretch of waiting he wandered through the Cyclops Room and robbed
+# the sword right out of the player's inventory without any distinct
+# message calling it out, only the generic "hat dich restlos
+# ausgeraubt" a few turns later made it clear it was gone. Anyone
+# retreating to heal should check the weapon is still in hand before
+# heading back up, not just assume it survived the wait.
+#
+# Once the thief is actually dead, he drops absolutely everything he
+# was ever carrying or had stolen -- from this run, that was the coin
+# sack, the sword, the stiletto, the painting, and the egg itself
+# (opened, its canary confirmed present and undamaged, since it was
+# given rather than stolen), plus the room's own silver chalice,
+# which the game explicitly notes is now safe to take. This carry
+# limit only allows so much of that at once, so the two spare weapons
+# (the stiletto and the attic knife, no longer needed once he's dead)
+# get left behind to make room for the painting.
+#
+# WHERE THIS SCRIPT STOPS, AND WHY THAT'S A DELIBERATE STOPPING POINT
+#
+# The route down to the thief -- trapdoor, Troll Room, a short known
+# stretch of the maze to the skeleton, then on to the Cyclops Room and
+# up -- is the only part of this maze mapped out below, and it does
+# not reverse. Multiple attempts to find a way back out from the
+# Cyclops Room side, with the thief alive and after his death, ran
+# into the maze's deliberately identical room text and its explicitly
+# one-way passages ("wenn dieser Tunnel das nächste Zimmer erreicht,
+# kannst du ihn nicht mehr als Rückweg benutzen") without turning up
+# a route back to the Living Room.
+#
+# The grating *was* found, though, and this is worth recording since
+# it settles a question raised while looking for it: from the
+# Treasure Room, "runter, nw, süden, westen, rauf, runter, nordosten"
+# reaches a "Gitterzimmer" whose description ("Über dir ist ein
+# Gitter, das mit einem Schloß, das aus einem Totenkopf und Gebeinen
+# gemacht ist, verschlossen ist") is unmistakably the grating room --
+# and that route is exactly the English walkthrough's own "d. nw. s.
+# w. u. d. ne" from the same starting point, translated word for
+# word. So the map itself is identical between this beta and the
+# English release, same as the troll-to-skeleton and skeleton-to-
+# cyclops routes earlier already suggested. Only the code behind the
+# map -- combat, carrying capacity, scoring -- differs. A further
+# check even found a one-way link from near the grating back to the
+# skeleton (sw, sw, runter lands on the skeleton's lantern and key),
+# but no return trip from there back to the grating turned up in the
+# time spent looking, so reaching the grating WITH the key in hand
+# remains unsolved.
+#
+# The reason it's hard to just go back for the key is not maze
+# navigation, though -- it's scoring. This game computes the player's
+# combat strength live from the current score:
+#
+#     FIGHT-STRENGTH = 2 + SCORE / 70
+#
+# (STRENGTH-MIN 2, STRENGTH-MAX 7, SCORE-MAX 350, integer division.)
+# The leather coin sack sitting next to the key is worth 10 points
+# the instant it's picked up; the key itself is worth nothing. Taking
+# the key instead of the sack at that carry-weight crunch -- the two
+# don't fit together -- costs exactly the points needed to cross a
+# /70 bracket, and the thief fight (already close) goes from winnable
+# to fatal. This was confirmed by testing: reordering nothing but
+# which of the two gets picked up first, with the exact same later
+# commands, was the difference between the run below and a corpse at
+# the gates of Hades. It is not RNG flakiness -- it's a deterministic
+# formula this build happens to sit right on the edge of. Recovering
+# both the key and a winnable fight either means finding ten-plus
+# points from some other treasure on the way down (nothing cheap
+# enough turned up nearby) or fighting the weaker, key-carrying
+# version far more cautiously than the sequence below does -- neither
+# was completed in the time spent on this script.
+#
+# So this script stops with the thief dead, his entire hoard (coins,
+# sword, stiletto, painting, and the egg -- opened, canary intact)
+# recovered, and the chalice taken -- a full, clean win of the
+# hardest fight this stretch of the game has to offer. It does not
+# reach the Living Room or the trophy case. Given how much building
+# and testing this took -- a cursed weapon that has to be discovered
+# the hard way, a carry limit tight enough to force real inventory
+# triage no English walkthrough needs, and a combat formula fragile
+# enough that picking up a bag of coins in the wrong order is fatal
+# -- this already stands as a real answer to whether a German-
+# language Infocom beta plays like its English counterpart: the map
+# does, the ruleset underneath very much does not.
+
+öffne briefkasten
+lies zettel
+norden
+osten
+öffne fenster
+westen
+
+# The house: bottle and sack from the kitchen table, garlic and
+# lunch out of the sack, then everything gets set down in the Living
+# Room except the sword and lamp -- the attic (rope, knife) and the
+# cellar both want empty hands more than they want a packed lunch
+# this early. Rope, knife, and the gallery's painting all still fit
+# fine alongside the sword and lamp; it's only the coffin, later,
+# that the carry limit really objects to.
+
+nimm sack
+öffne sack
+nimm alles
+nimm brot
+nimm knoblauch
+westen
+lass alles fallen
+nimm schwert
+nimm leuchte
+bewege teppich
+öffne falltür
+öffne trophäenschrank
+osten
+rauf
+mach leuchte an
+nimm alles
+runter
+westen
+lass messer fallen
+runter
+süden
+osten
+nimm gemälde
+westen
+norden
+norden
+
+# The troll fight is random and has to be fought out to the kill;
+# unlike the English seed's comment, this build's code makes its own
+# RANDOM calls at different points even from the identical command
+# sequence, so the number of hits it takes isn't the English script's
+# three -- here it took four. Anything beyond the kill just wastes a
+# turn standing in an empty room, and once (during an early, since
+# corrected, version of this run) that wasted turn was exactly when
+# the thief wandered in and robbed the room blind. So this stops
+# dead the instant the death message prints, no padding.
+
+töte troll
+töte troll
+töte troll
+töte troll
+
+# Rope tied off at the Dome Room, then down to the Temple complex
+# for the coffin. Sword and painting both get set down here in the
+# Egyptian Room -- the coffin alone, with the lamp, is exactly what
+# this build's carry limit allows.
+
+osten
+osten
+südosten
+osten
+binde seil an geländer
+runter
+süden
+osten
+lass gemälde fallen
+lass schwert fallen
+nimm sarg
+westen
+süden
+
+# Praying at the Altar teleports straight outdoors to the Forest --
+# this is how the coffin gets out of the underworld at all, since
+# the maze it would otherwise have to pass back through doesn't
+# take kindly to something this heavy either.
+
+bete
+süden
+norden
+westen
+westen
+westen
+öffne sarg
+nimm zepter
+lege sarg in trophäenschrank
+
+# Straight back down for the sword -- the same route, in reverse,
+# with no detour -- while it's still exactly where it was left.
+
+öffne falltür
+runter
+norden
+osten
+osten
+südosten
+osten
+runter
+süden
+osten
+nimm schwert
+westen
+süden
+bete
+süden
+norden
+westen
+westen
+westen
+
+# The sceptre solidifies the rainbow into a walkable stair and
+# conjures the pot of gold at its far end; the scarab comes from
+# digging in the sand nearby.
+
+osten
+osten
+osten
+osten
+runter
+runter
+norden
+winke zepter
+osten
+osten
+norden
+norden
+nimm schaufel
+nordosten
+grabe sand
+wieder
+wieder
+wieder
+lass schaufel fallen
+nimm skarabaeus
+sw
+süden
+süden
+westen
+westen
+nimm topf
+sw
+rauf
+rauf
+nw
+westen
+westen
+westen
+lege topf in trophäenschrank
+lege skarabaeus in trophäenschrank
+lege zepter in trophäenschrank
+
+# Everything from the coffin arc is banked, hands are empty but for
+# the sword and the lamp, and there's a stop back at the Attic table
+# for the dangerous-looking knife before heading out -- carried as a
+# spare weapon, which turns out to matter. Only then does the egg
+# come off the tree, straight down to the thief from there.
+
+nimm messer
+osten
+osten
+norden
+norden
+rauf
+nimm ei
+runter
+süden
+osten
+westen
+westen
+nimm brot
+nimm alles
+lass sack fallen
+lass zettel fallen
+inventar
+
+# Down through the trapdoor again (it reopens fine from the Living
+# Room side even after the first descent locked it from below), then
+# the thief's maze: north out of the Cellar into the Troll Room,
+# west into the maze proper, and this exact west/south/east/up run
+# is the one path through it to the room with the skeleton, key, and
+# bag of gold -- the maze's layout doesn't care what language is
+# asking, so the English walkthrough's own maze directions carry
+# over unchanged. The thief gets one free stab in passing through
+# the Cellar on the way down; that's ordinary for this stretch of
+# the game, not a sign anything went wrong.
+
+öffne falltür
+runter
+norden
+westen
+süden
+osten
+rauf
+nimm sack
+nimm schluessel
+sw
+osten
+süden
+südosten
+
+# The Cyclops wants the lunch first and the water second, in that
+# order and without much delay in between -- give him only the food
+# and he starts eyeing the player as an alternative drink. Water
+# right after settles him, and he falls asleep and clears the stairs.
+
+gib brot zu zyklop
+gib wasser zu zyklop
+rauf
+
+# Bursting in on the thief's lair through the stairs (an entrance he
+# doesn't expect) draws an immediate knife hit -- expected, not a
+# sign of a misstep. Handing over the egg right away is what matters:
+# he's disarmed by the gift and stops to admire it rather than press
+# the attack, which is the whole point of carrying it this far
+# instead of just letting him steal it -- a stolen egg stays shut
+# and unopenable; a given one, he opens for you.
+
+gib ei zu dieb
+
+# First attempt, with the sword. Costs nothing for a few exchanges,
+# lands one real hit, then the sword goes flying and doesn't come
+# back -- stolen outright rather than dropped, it turns out.
+
+töte dieb mit schwert
+töte dieb mit schwert
+töte dieb mit schwert
+töte dieb mit schwert
+töte dieb mit schwert
+
+# Retreating immediately, before trading another blow, and healing at
+# the Cyclops Room. It isn't perfectly safe -- the thief wanders
+# through while waiting and, this time, silently robs the sword right
+# out of the player's hands, only noticed afterward. Twenty-two waits
+# is still enough to go from a serious injury to perfectly healthy.
+
+runter
+diagnose
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+warte
+diagnose
+
+# Second attempt, with the spare knife from the Attic since the sword
+# is gone with the thief now. It gets knocked from the player's hand
+# once, but lands on the floor this time rather than vanishing, and
+# picking it straight back up costs nothing -- the very next swing is
+# the kill.
+
+rauf
+töte dieb mit messer
+töte dieb mit messer
+schau
+nimm messer
+töte dieb mit messer
+
+# Everything he was ever carrying or had stolen falls out at once --
+# coins, the sword, his own stiletto, the painting, and the egg,
+# opened, its canary confirmed intact. The room's own chalice is now
+# safe to take too, and "nimm alles" gets all of it in one go except
+# the painting, which the carry limit only makes room for once the
+# two spare weapons (no longer needed) go back down. Dropping the
+# attic knife by its full description fails -- "außenhendes" alone
+# isn't in the dictionary the same way the noun is -- so "messer" on
+# its own is what actually works.
+
+nimm alles
+inventar
+lass stilett fallen
+lass außenhendes messer fallen
+nimm gemälde
+inventar
+lass messer fallen
+nimm gemälde
+inventar
