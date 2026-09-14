@@ -173,7 +173,8 @@ public static class AcceptanceRun
             random,
             files,
             new SilentSound(),
-            machine);
+            machine,
+            tandy: script.Tandy);
 
         if (story.Resources is not null)
         {

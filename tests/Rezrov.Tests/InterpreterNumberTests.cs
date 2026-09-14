@@ -49,6 +49,49 @@ public class InterpreterNumberTests
         var script = AcceptanceScript.Parse("! SEED=1\n! GAME=zork1.z3\n! INTERPRETER=amiga\nlook\n", Path.Combine(Path.GetTempPath(), "t.accept"));
 
         Assert.Equal("amiga", script.Interpreter);
+        Assert.False(script.Tandy);
+    }
+
+    [Theory]
+    [InlineData("yes", true)]
+    [InlineData("ON", true)]
+    [InlineData("1", true)]
+    [InlineData("no", false)]
+    [InlineData("false", false)]
+    public void AScriptCanAskForTheTandyBit(string value, bool expected)
+    {
+        var script = AcceptanceScript.Parse($"! SEED=1\n! GAME=zork1.z3\n! TANDY={value}\nlook\n", Path.Combine(Path.GetTempPath(), "t.accept"));
+
+        Assert.Equal(expected, script.Tandy);
+    }
+
+    [Fact]
+    public void ATandyDirectiveMustBeYesOrNo()
+    {
+        var e = Assert.Throws<InvalidDataException>(() => AcceptanceScript.Parse("! SEED=1\n! GAME=zork1.z3\n! TANDY=maybe\nlook\n", Path.Combine(Path.GetTempPath(), "t.accept")));
+
+        Assert.Contains("line 3: TANDY must be yes or no", e.Message, StringComparison.Ordinal);
+    }
+}
+
+public partial class InterpreterTests
+{
+    [Fact]
+    public void TheTandyBitIsSetOnlyWhenAskedAndOnlyBeforeVersion4()
+    {
+        var plain = Execute(new Assembler().Quit(), version: ZMachineVersion.V3);
+        var tandy = Execute(new Assembler().Quit(), version: ZMachineVersion.V3, tandy: true);
+
+        // [zm 11.1] Bit 3 of Flags 1 in Versions 1 to 3 is the Tandy
+        // bit, set at the player's request and otherwise cleared.
+        Assert.False(plain.Interpreter.Header.Flags1Versions1To3.HasFlag(Flags1Versions1To3.Tandy));
+        Assert.True(tandy.Interpreter.Header.Flags1Versions1To3.HasFlag(Flags1Versions1To3.Tandy));
+
+        // From Version 4 the bit means something else, and the request
+        // changes nothing.
+        var later = Execute(new Assembler().Quit(), version: ZMachineVersion.V5);
+        var laterTandy = Execute(new Assembler().Quit(), version: ZMachineVersion.V5, tandy: true);
+        Assert.Equal(later.Interpreter.Header.Flags1FromVersion4, laterTandy.Interpreter.Header.Flags1FromVersion4);
     }
 }
 

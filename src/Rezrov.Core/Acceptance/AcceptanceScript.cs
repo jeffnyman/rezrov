@@ -6,17 +6,18 @@ namespace Rezrov.Core.Acceptance;
 /// </summary>
 /// <remarks>
 /// The file is plain text. A line beginning with <c>!</c> is a
-/// directive, written <c>! NAME=value</c>, and four are known: GAME
+/// directive, written <c>! NAME=value</c>, and five are known: GAME
 /// names the story file, SEED gives the session seed that makes the
-/// game's dice repeat, BLORB names a resource file, and INTERPRETER
-/// names the machine the game should take itself to be on, since some
-/// games behave differently by it. Paths are relative to the script, not to
-/// wherever the interpreter happens to be run from, so a script can sit
-/// beside the games it plays and still work from anywhere. A SEED line
-/// after some commands is a change of seed that takes effect when the
-/// play reaches it, so that each stretch of a long script can have the
-/// seed that makes it go the way it should, and settling one stretch
-/// never disturbs the ones before it. A line
+/// game's dice repeat, BLORB names a resource file, INTERPRETER names
+/// the machine the game should take itself to be on, since some games
+/// behave differently by it, and TANDY set to yes gives the game the
+/// Tandy bit, which a few early ones read. Paths are relative to the
+/// script, not to wherever the interpreter happens to be run from, so a
+/// script can sit beside the games it plays and still work from
+/// anywhere. A SEED line after some commands is a change of seed that
+/// takes effect when the play reaches it, so that each stretch of a
+/// long script can have the seed that makes it go the way it should,
+/// and settling one stretch never disturbs the ones before it. A line
 /// beginning with <c>#</c> is a comment and a blank line is nothing.
 /// A line of three backticks opens a fenced section, with a label after
 /// the backticks if one helps, and nothing inside it is read until a
@@ -35,12 +36,13 @@ namespace Rezrov.Core.Acceptance;
 /// </remarks>
 public sealed class AcceptanceScript
 {
-    private AcceptanceScript(string scriptPath, string gamePath, string? blorbPath, string? interpreter, int seed, IReadOnlyList<string> commands, IReadOnlyList<int> commandLines, IReadOnlyDictionary<int, int> seedChanges)
+    private AcceptanceScript(string scriptPath, string gamePath, string? blorbPath, string? interpreter, bool tandy, int seed, IReadOnlyList<string> commands, IReadOnlyList<int> commandLines, IReadOnlyDictionary<int, int> seedChanges)
     {
         ScriptPath = scriptPath;
         GamePath = gamePath;
         BlorbPath = blorbPath;
         Interpreter = interpreter;
+        Tandy = tandy;
         Seed = seed;
         Commands = commands;
         CommandLines = commandLines;
@@ -62,6 +64,12 @@ public sealed class AcceptanceScript
     /// since which names exist is the story format's business.
     /// </summary>
     public string? Interpreter { get; }
+
+    /// <summary>
+    /// Whether the game is told the Tandy bit is set, as
+    /// <c>--tandy</c> does.
+    /// </summary>
+    public bool Tandy { get; }
 
     /// <summary>The seed for the game's random numbers at the start.</summary>
     public int Seed { get; }
@@ -118,6 +126,7 @@ public sealed class AcceptanceScript
         string? game = null;
         string? blorb = null;
         string? interpreter = null;
+        var tandy = false;
         int? seed = null;
         var commands = new List<string>();
         var commandLines = new List<int>();
@@ -190,6 +199,14 @@ public sealed class AcceptanceScript
                 case "INTERPRETER":
                     interpreter = value;
                     break;
+                case "TANDY":
+                    tandy = value.ToUpperInvariant() switch
+                    {
+                        "1" or "YES" or "ON" or "TRUE" => true,
+                        "0" or "NO" or "OFF" or "FALSE" => false,
+                        _ => throw new InvalidDataException($"{name}, line {i + 1}: TANDY must be yes or no"),
+                    };
+                    break;
                 case "SEED":
                     if (!int.TryParse(value, out var parsed) || parsed < 1)
                     {
@@ -211,7 +228,7 @@ public sealed class AcceptanceScript
 
                     break;
                 default:
-                    throw new InvalidDataException($"{name}, line {i + 1}: there is no {key} directive; the directives are GAME, SEED, BLORB, and INTERPRETER");
+                    throw new InvalidDataException($"{name}, line {i + 1}: there is no {key} directive; the directives are GAME, SEED, BLORB, INTERPRETER, and TANDY");
             }
         }
 
@@ -225,6 +242,6 @@ public sealed class AcceptanceScript
             throw new InvalidDataException($"{name}: no SEED directive gives the random number seed");
         }
 
-        return new AcceptanceScript(fullPath, game, blorb, interpreter, seed.Value, commands, commandLines, seedChanges);
+        return new AcceptanceScript(fullPath, game, blorb, interpreter, tandy, seed.Value, commands, commandLines, seedChanges);
     }
 }
