@@ -31,6 +31,17 @@ internal sealed class RecordingGlkDisplay : IGlkDisplay
     /// <summary>The styles seen with each character, in order.</summary>
     public List<GlkStyle> Styles { get; } = [];
 
+    /// <summary>
+    /// The link value seen with each character, in order.
+    /// </summary>
+    public List<uint> Links { get; } = [];
+
+    /// <summary>
+    /// Whether this display claims to have a pointer, which the mouse
+    /// and hyperlink gestalt answers follow.
+    /// </summary>
+    public bool Pointer { get; init; }
+
     public List<GlkWindow> Cleared { get; } = [];
 
     public int ArrangedCount { get; private set; }
@@ -60,11 +71,16 @@ internal sealed class RecordingGlkDisplay : IGlkDisplay
     /// <summary>What was printed to one window.</summary>
     public string Text(GlkWindow window) => _texts.TryGetValue(window.Id, out var text) ? text.ToString() : "";
 
-    public void Print(GlkWindow window, uint character, GlkStyle style)
+    public void Print(GlkWindow window, uint character, GlkStyle style, uint link)
     {
         Append(window, GlkText.ToString(character));
         Styles.Add(style);
+        Links.Add(link);
     }
+
+    public bool CanReportMouse(WindowType type) => Pointer && type == WindowType.TextGrid;
+
+    public bool CanReportHyperlinks(WindowType type) => Pointer && type is WindowType.TextBuffer or WindowType.TextGrid;
 
     public void Clear(GlkWindow window) => Cleared.Add(window);
 
@@ -106,12 +122,37 @@ internal sealed class RecordingGlkDisplay : IGlkDisplay
             case GlkInputKind.Key when charRequests.Count > 0:
                 return GlkInput.KeyPress(charRequests[0], input.Key);
 
+            case GlkInputKind.Mouse when input.Window is null:
+                // [glk #mouse_events] A click with no window named goes
+                // to whichever window is waiting for one, as a display
+                // works out for itself where the pointer landed.
+                return Listening(window => window.MouseRequest) is { } clicked
+                    ? GlkInput.MouseClick(clicked, input.Column, input.Row)
+                    : input;
+
+            case GlkInputKind.Hyperlink when input.Window is null:
+                return Listening(window => window.HyperlinkRequest) is { } selected
+                    ? GlkInput.LinkSelected(selected, input.Link)
+                    : input;
+
             default:
                 return input;
         }
     }
 
     public void Wake() => Wakes++;
+
+    /// <summary>
+    /// The first window of the tree last laid out that matches, or null.
+    /// </summary>
+    private GlkWindow? Listening(Func<GlkWindow, bool> wanted) => Leaves(LastRoot).FirstOrDefault(wanted);
+
+    private static IEnumerable<GlkWindow> Leaves(GlkWindow? window) => window switch
+    {
+        null => [],
+        PairWindow pair => Leaves(pair.First).Concat(Leaves(pair.Second)),
+        _ => [window],
+    };
 
     private void Append(GlkWindow window, string text)
     {

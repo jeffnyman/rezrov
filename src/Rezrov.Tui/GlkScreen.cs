@@ -24,6 +24,7 @@ public sealed class GlkScreen
     private readonly HashSet<GlkWindow> _leaves = [];
     private readonly TextAttributes _normal;
     private Cell[][] _rows;
+    private uint[][] _links;
     private GlkWindow? _root;
 
     /// <param name="width">The terminal's width in cells.</param>
@@ -41,7 +42,11 @@ public sealed class GlkScreen
         Height = height;
         _normal = normal;
         _rows = MakeRows(width, height, normal);
+        _links = MakeLinks(width, height);
     }
+
+    /// <summary>The color link text is shown in.</summary>
+    public const ScreenColor LinkColor = ScreenColor.Cyan;
 
     public int Width { get; private set; }
 
@@ -61,6 +66,32 @@ public sealed class GlkScreen
     /// The cell at a row and column, both from 0, as last painted.
     /// </summary>
     public Cell this[int row, int column] => _rows[row][column];
+
+    /// <summary>
+    /// [glk #link_creating] The link the character at a screen cell
+    /// belongs to, zero where the text is not a link. Painted with the
+    /// cells, so it is what the player sees at that spot.
+    /// </summary>
+    public uint LinkAt(int row, int column) =>
+        row >= 0 && row < Height && column >= 0 && column < Width ? _links[row][column] : 0;
+
+    /// <summary>
+    /// [glk #window_arrangement] The window whose rectangle covers a
+    /// screen cell, or null where no window does.
+    /// </summary>
+    public GlkWindow? WindowAt(int row, int column)
+    {
+        foreach (var window in Leaves(_root))
+        {
+            if (row >= window.Top && row < window.Top + window.Height &&
+                column >= window.Left && column < window.Left + window.Width)
+            {
+                return window;
+            }
+        }
+
+        return null;
+    }
 
     /// <summary>
     /// A row's characters as a string, for tests and display.
@@ -105,13 +136,13 @@ public sealed class GlkScreen
     /// window, in a style. Text grid windows keep their own cells, so
     /// nothing arrives here for them.
     /// </summary>
-    public void Print(GlkWindow window, uint character, GlkStyle style)
+    public void Print(GlkWindow window, uint character, GlkStyle style, uint link = 0)
     {
         ArgumentNullException.ThrowIfNull(window);
 
         if (_panes.TryGetValue(window, out var pane))
         {
-            pane.Put(ToChar(character), Attributes(style, _normal));
+            pane.Put(ToChar(character), Attributes(style, _normal), link);
         }
     }
 
@@ -164,6 +195,7 @@ public sealed class GlkScreen
         Width = width;
         Height = height;
         _rows = MakeRows(width, height, _normal);
+        _links = MakeLinks(width, height);
     }
 
     /// <summary>
@@ -223,6 +255,11 @@ public sealed class GlkScreen
             Array.Fill(row, Cell.Blank(_normal));
         }
 
+        foreach (var row in _links)
+        {
+            Array.Clear(row);
+        }
+
         foreach (var window in Leaves(_root))
         {
             switch (window)
@@ -253,7 +290,7 @@ public sealed class GlkScreen
         {
             for (var x = 0; x < grid.Width; x++)
             {
-                Paint(grid.Top + y, grid.Left + x, new Cell(ToChar(grid.CharacterAt(x, y)), Attributes(grid.StyleAt(x, y), _normal)));
+                Paint(grid.Top + y, grid.Left + x, new Cell(ToChar(grid.CharacterAt(x, y)), Attributes(grid.StyleAt(x, y), _normal)), grid.LinkAt(x, y));
             }
         }
     }
@@ -266,7 +303,7 @@ public sealed class GlkScreen
             var line = lines[y];
             for (var x = 0; x < Math.Min(line.Count, window.Width); x++)
             {
-                Paint(window.Top + y, window.Left + x, line[x]);
+                Paint(window.Top + y, window.Left + x, line[x].Cell, line[x].Link);
             }
         }
     }
@@ -275,12 +312,21 @@ public sealed class GlkScreen
     /// Sets a cell, or nothing when the layout put it off the screen,
     /// which can happen between a resize and the next arrangement.
     /// </summary>
-    private void Paint(int row, int column, Cell cell)
+    private void Paint(int row, int column, Cell cell, uint link = 0)
     {
-        if (row >= 0 && row < Height && column >= 0 && column < Width)
+        if (row < 0 || row >= Height || column < 0 || column >= Width)
         {
-            _rows[row][column] = cell;
+            return;
         }
+
+        // [glk #link_creating] "The library will attempt to display
+        // links in some distinctive way." A terminal cell has no
+        // underline to give it, so a link takes a color of its own,
+        // which is the other half of the convention.
+        _rows[row][column] = link == 0
+            ? cell
+            : cell with { Attributes = cell.Attributes with { Foreground = LinkColor } };
+        _links[row][column] = link;
     }
 
     /// <summary>
@@ -318,6 +364,17 @@ public sealed class GlkScreen
     /// </summary>
     private static char ToChar(uint character) =>
         character <= 0xFFFF && character is < 0xD800 or > 0xDFFF ? (char)character : '?';
+
+    private static uint[][] MakeLinks(int width, int height)
+    {
+        var links = new uint[height][];
+        for (var row = 0; row < height; row++)
+        {
+            links[row] = new uint[width];
+        }
+
+        return links;
+    }
 
     private static Cell[][] MakeRows(int width, int height, TextAttributes normal)
     {

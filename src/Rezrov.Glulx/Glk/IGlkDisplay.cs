@@ -31,9 +31,23 @@ public interface IGlkDisplay
 
     /// <summary>
     /// [glk #window_textbuf] A character printed to a text buffer
-    /// window, in the stream's current style.
+    /// window, in the stream's current style, and [glk #link_creating]
+    /// as part of the link of that value, or of no link for zero.
     /// </summary>
-    void Print(GlkWindow window, uint character, GlkStyle style);
+    void Print(GlkWindow window, uint character, GlkStyle style, uint link);
+
+    /// <summary>
+    /// [glk #mouse_events] Whether a click in a window of this kind can
+    /// be reported, which the gestalt answer passes to the game. A
+    /// display with no pointer, and the default here, says no.
+    /// </summary>
+    bool CanReportMouse(WindowType type) => false;
+
+    /// <summary>
+    /// [glk #link_testing] Whether a link selected in a window of this
+    /// kind can be reported, on the same terms.
+    /// </summary>
+    bool CanReportHyperlinks(WindowType type) => false;
 
     /// <summary>[glk op:window_clear] A window was cleared.</summary>
     void Clear(GlkWindow window);
@@ -96,12 +110,14 @@ public sealed class TextWriterGlkDisplay : IGlkDisplay
 
     public int Height { get; }
 
-    public void Print(GlkWindow window, uint character, GlkStyle style)
+    public void Print(GlkWindow window, uint character, GlkStyle style, uint link)
     {
         ArgumentNullException.ThrowIfNull(window);
 
         if (window.Type == WindowType.TextBuffer)
         {
+            // [glk #link_creating] A stream of text has no way to show
+            // that a run of it is a link, and no way to select one.
             _writer.Write(GlkText.ToString(character));
         }
     }

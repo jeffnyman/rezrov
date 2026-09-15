@@ -35,6 +35,12 @@ public abstract class GlkStream : GlkObject
     public GlkStyle Style { get; private set; }
 
     /// <summary>
+    /// [glk #link_creating] The link value everything written from here
+    /// on belongs to, zero for text that is not a link.
+    /// </summary>
+    public uint Link { get; private set; }
+
+    /// <summary>
     /// [glk #stream_positions] The read and write mark, in characters.
     /// A window stream has none and answers zero.
     /// </summary>
@@ -63,6 +69,12 @@ public abstract class GlkStream : GlkObject
 
     /// <summary>[glk op:set_style_stream] Changes the style.</summary>
     public virtual void SetStyle(GlkStyle style) => Style = style;
+
+    /// <summary>
+    /// [glk op:set_hyperlink_stream] Starts, changes, or with zero ends
+    /// the link that output belongs to.
+    /// </summary>
+    public virtual void SetLink(uint value) => Link = value;
 
     /// <summary>[glk op:stream_set_position] Moves the mark.</summary>
     public virtual void SetPosition(int position, SeekMode mode)
@@ -105,9 +117,18 @@ public sealed class WindowStream : GlkStream
         Window.EchoStream?.SetStyle(style);
     }
 
+    public override void SetLink(uint value)
+    {
+        base.SetLink(value);
+
+        // [glk #echo_streams] And so is the link value, so that a
+        // transcript of a window keeps its links.
+        Window.EchoStream?.SetLink(value);
+    }
+
     protected override void Write(uint character)
     {
-        Window.Put(character, Style);
+        Window.Put(character, Style, Link);
         Window.EchoStream?.PutChar(character);
     }
 }

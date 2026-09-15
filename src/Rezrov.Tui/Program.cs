@@ -321,6 +321,11 @@ internal static class Program
                 return true;
             };
 
+            // [glk #mouse_events] and [glk #link_events] A click is
+            // input too: the display works out which window and which
+            // cell it lands on.
+            view.Clicked = (column, row, _, _) => display.EnqueueClick(column, row);
+
             // [glk op:fileref_create_by_prompt] The player is asked
             // through the same dialogs the Z-machine uses, with the
             // usage as the title; files named up front are never asked

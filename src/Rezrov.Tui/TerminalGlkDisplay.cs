@@ -25,11 +25,7 @@ namespace Rezrov.Tui;
 /// </remarks>
 public sealed class TerminalGlkDisplay : IGlkDisplay, ITerminalPicture
 {
-    // Put on the key queue by Wake, to end a wait with no key: a value
-    // that is neither a character nor one of Glk's special keys.
-    private const uint WakeKey = 0x80000000;
-
-    private readonly BlockingCollection<uint> _keys = [];
+    private readonly BlockingCollection<Press> _presses = [];
     private readonly Dictionary<GlkWindow, int> _marks = [];
     private readonly Dictionary<GlkWindow, StringBuilder> _partialLines = [];
     private readonly Action _repaint;
@@ -70,22 +66,36 @@ public sealed class TerminalGlkDisplay : IGlkDisplay, ITerminalPicture
     public int MorePrompts { get; private set; }
 
     /// <summary>A key from the player, as a Glk key code.</summary>
-    public void Enqueue(uint key) => _keys.Add(key);
+    public void Enqueue(uint key) => _presses.Add(new Press(PressKind.Key, key, 0, 0));
 
-    /// <summary>Waits for any key at all.</summary>
+    /// <summary>
+    /// [glk #mouse_events] A click from the player, at a column and a
+    /// row of the whole terminal.
+    /// </summary>
+    public void EnqueueClick(int column, int row) => _presses.Add(new Press(PressKind.Click, 0, column, row));
+
+    /// <summary>Waits for any key at all, ignoring clicks.</summary>
     public uint WaitForAnyKey()
     {
         while (true)
         {
-            var key = _keys.Take();
-            if (key != WakeKey)
+            var press = _presses.Take();
+            if (press.Kind == PressKind.Key)
             {
-                return key;
+                return press.Key;
             }
         }
     }
 
-    public void Wake() => _keys.Add(WakeKey);
+    public void Wake() => _presses.Add(new Press(PressKind.Wake, 0, 0, 0));
+
+    // [glk #mouse_events] A terminal has a pointer, and a text grid is
+    // where a game may ask about it; [glk #link_testing] links can be
+    // selected in either kind of text window, since both are painted
+    // cell by cell and every cell knows the link it belongs to.
+    public bool CanReportMouse(GlkWindowType type) => type == GlkWindowType.TextGrid;
+
+    public bool CanReportHyperlinks(GlkWindowType type) => type is GlkWindowType.TextBuffer or GlkWindowType.TextGrid;
 
     public void Repaint() => Screen.Repaint();
 
@@ -100,13 +110,13 @@ public sealed class TerminalGlkDisplay : IGlkDisplay, ITerminalPicture
         _repaint();
     }
 
-    public void Print(GlkWindow window, uint character, GlkStyle style)
+    public void Print(GlkWindow window, uint character, GlkStyle style, uint link)
     {
         ArgumentNullException.ThrowIfNull(window);
 
         lock (Sync)
         {
-            Screen.Print(window, character, style);
+            Screen.Print(window, character, style, link);
         }
 
         // A text buffer that has shown a window's worth of new lines
@@ -177,28 +187,108 @@ public sealed class TerminalGlkDisplay : IGlkDisplay, ITerminalPicture
         if (charRequests.Count > 0)
         {
             ShowCursor(charRequests[0]);
-            return TryTake(timeout, out var key) ? GlkInput.KeyPress(charRequests[0], key) : NoKey(key);
-        }
-
-        // [glk #timer_events] Nothing to type into: keys pressed now mean
-        // nothing, and only the timer, or a wake, can end the wait.
-        Cursor = null;
-        _repaint();
-        if (timeout is { } wait)
-        {
-            var deadline = DateTime.UtcNow + wait;
-            while (_keys.TryTake(out var pressed, deadline - DateTime.UtcNow))
+            var waiting = new Deadline(timeout);
+            while (true)
             {
-                if (pressed == WakeKey)
+                if (!TryTake(waiting, out var press))
                 {
-                    return GlkInput.Woken;
+                    return GlkInput.Timer;
+                }
+
+                switch (press.Kind)
+                {
+                    case PressKind.Wake:
+                        return GlkInput.Woken;
+                    case PressKind.Click when Resolve(press) is { } pointed:
+                        return pointed;
+                    case PressKind.Click:
+                        continue;
+                    default:
+                        return GlkInput.KeyPress(charRequests[0], press.Key);
                 }
             }
-
-            return GlkInput.Timer;
         }
 
-        return GlkInput.Ended;
+        // Nothing to type into: a key now means nothing, but a click may
+        // still be a mouse or link event a window is waiting for, and
+        // [glk #timer_events] the timer or a wake can end the wait.
+        Cursor = null;
+        _repaint();
+        if (timeout is null && !AnyPointerRequest())
+        {
+            return GlkInput.Ended;
+        }
+
+        var idle = new Deadline(timeout);
+        while (true)
+        {
+            if (!TryTake(idle, out var press))
+            {
+                return GlkInput.Timer;
+            }
+
+            if (press.Kind == PressKind.Wake)
+            {
+                return GlkInput.Woken;
+            }
+
+            if (press.Kind == PressKind.Click && Resolve(press) is { } pointed)
+            {
+                return pointed;
+            }
+        }
+    }
+
+    /// <summary>
+    /// [glk #mouse_events] and [glk #link_events] Whether any window is
+    /// waiting to hear about the pointer, which is reason to go on
+    /// waiting even when there is nothing to type into.
+    /// </summary>
+    private bool AnyPointerRequest()
+    {
+        lock (Sync)
+        {
+            return Leaves(Screen.Root).Any(window => window.MouseRequest || window.HyperlinkRequest);
+        }
+    }
+
+    private static IEnumerable<GlkWindow> Leaves(GlkWindow? window) => window switch
+    {
+        null => [],
+        PairWindow pair => Leaves(pair.First).Concat(Leaves(pair.Second)),
+        _ => [window],
+    };
+
+    /// <summary>
+    /// [glk #mouse_events] and [glk #link_events] What a click at a cell
+    /// of the terminal means to the game: the link painted there if the
+    /// window is listening for links, else the cell itself if it is
+    /// listening for clicks, else nothing at all.
+    /// </summary>
+    private GlkInput? Resolve(Press press)
+    {
+        lock (Sync)
+        {
+            // What is painted is what the player aimed at, so the paint
+            // is brought up to date before the cell is read.
+            Screen.Repaint();
+
+            if (Screen.WindowAt(press.Row, press.Column) is not { } window)
+            {
+                return null;
+            }
+
+            if (window.HyperlinkRequest && Screen.LinkAt(press.Row, press.Column) is var link && link != 0)
+            {
+                return GlkInput.LinkSelected(window, link);
+            }
+
+            // [glk #mouse_events] The column and the row are counted
+            // from the window's own top left corner.
+            return window.MouseRequest
+                ? GlkInput.MouseClick(window, (uint)(press.Column - window.Left), (uint)(press.Row - window.Top))
+                : null;
+        }
     }
 
     /// <summary>
@@ -247,14 +337,35 @@ public sealed class TerminalGlkDisplay : IGlkDisplay, ITerminalPicture
             return Finish(window, text, 0);
         }
 
+        var waiting = new Deadline(timeout);
         while (true)
         {
             ShowCursor(window, text.ToString());
-            if (!TryTake(timeout, out var key))
+            if (!TryTake(waiting, out var press))
             {
-                return NoKey(key);
+                return GlkInput.Timer;
             }
 
+            if (press.Kind == PressKind.Wake)
+            {
+                return GlkInput.Woken;
+            }
+
+            if (press.Kind == PressKind.Click)
+            {
+                // [glk #link_events] A window may be taking a line and
+                // watching the pointer at once. The line typed so far
+                // is kept, so the game can ask for it again after it
+                // has dealt with the click.
+                if (Resolve(press) is { } pointed)
+                {
+                    return pointed;
+                }
+
+                continue;
+            }
+
+            var key = press.Key;
             if (key == GlkKeyCode.Return)
             {
                 return Finish(window, text, 0);
@@ -385,27 +496,50 @@ public sealed class TerminalGlkDisplay : IGlkDisplay, ITerminalPicture
         }
     }
 
-    // A key within the timeout, or false with the key telling why not:
-    // WakeKey for a wake, zero for the timeout.
-    private bool TryTake(TimeSpan? timeout, out uint key)
+    // The next thing the player did, or false when the wait ran out.
+    private bool TryTake(Deadline deadline, out Press press)
     {
-        if (timeout is { } wait)
+        if (deadline.Remaining is { } left)
         {
-            if (!_keys.TryTake(out key, wait))
-            {
-                key = 0;
-                return false;
-            }
-        }
-        else
-        {
-            key = _keys.Take();
+            return _presses.TryTake(out press, left);
         }
 
-        return key != WakeKey;
+        press = _presses.Take();
+        return true;
     }
 
-    private static GlkInput NoKey(uint key) => key == WakeKey ? GlkInput.Woken : GlkInput.Timer;
+    /// <summary>What the view puts on the queue.</summary>
+    private enum PressKind
+    {
+        /// <summary>A key, as a Glk key code.</summary>
+        Key,
+
+        /// <summary>A click, at a column and row of the terminal.</summary>
+        Click,
+
+        /// <summary>
+        /// The library asking for the wait to end, since an event became
+        /// ready elsewhere.
+        /// </summary>
+        Wake,
+    }
+
+    /// <summary>Something the player did, or a wake.</summary>
+    private readonly record struct Press(PressKind Kind, uint Key, int Column, int Row);
+
+    /// <summary>
+    /// When a wait must give up. The time left shrinks as the wait is
+    /// taken up again, so a click that turns out to mean nothing does
+    /// not start the timer over.
+    /// </summary>
+    private readonly struct Deadline(TimeSpan? timeout)
+    {
+        private readonly DateTime? _end = timeout is { } wait ? DateTime.UtcNow + wait : null;
+
+        /// <summary>How long is left, or null for no end at all.</summary>
+        public TimeSpan? Remaining =>
+            _end is { } end && end - DateTime.UtcNow is var left ? (left > TimeSpan.Zero ? left : TimeSpan.Zero) : null;
+    }
 
     private static Cell[] Cells(string text, TextAttributes attributes) =>
         [.. text.Select(c => new Cell(c, attributes))];

@@ -24,7 +24,7 @@ public class GlkScreenTests
 
         public int Height => screen.Height;
 
-        public void Print(GlkWindow window, uint character, GlkStyle style) => screen.Print(window, character, style);
+        public void Print(GlkWindow window, uint character, GlkStyle style, uint link) => screen.Print(window, character, style, link);
 
         public void Clear(GlkWindow window) => screen.Clear(window);
 
