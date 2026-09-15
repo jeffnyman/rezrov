@@ -18,8 +18,13 @@ namespace Rezrov.ZMachine.Screen;
 /// that sizes its work by the height then rolls its dice as it does on
 /// the other interpreters whose plain frontends say 255, so a script
 /// made on one of those plays here unchanged. [zm 16] The character
-/// graphics font is offered, as the
-/// nearest Unicode characters, since a text stream can carry those.
+/// graphics font is offered, as the nearest Unicode characters, since
+/// a text stream can carry those; and so is the fixed-pitch font,
+/// which a stream of text is in anyway. A game that has switched to
+/// the graphics font for a border needs the fixed-pitch font said yes
+/// to before it can switch back, since [zm op:set_font] a refused font
+/// leaves the current one in force: Journey prints its command menu
+/// that way, and would print it in runes otherwise.
 /// </remarks>
 public sealed class TextWriterScreen : IScreen
 {
@@ -65,7 +70,7 @@ public sealed class TextWriterScreen : IScreen
 
     public int FontHeight => 1;
 
-    public ScreenCapabilities Capabilities => ScreenCapabilities.CharacterGraphicsFont;
+    public ScreenCapabilities Capabilities => ScreenCapabilities.CharacterGraphicsFont | ScreenCapabilities.FixedPitch;
 
     public ScreenColor DefaultForeground => ScreenColor.White;
 
