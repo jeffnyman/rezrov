@@ -1,0 +1,9 @@
+! SEED=1
+! GAME=../entharion/zcode-checkers/zil-test.z3
+
+# A ZILF test file: a look around the testing lab and out.
+
+look
+inventory
+quit
+y

@@ -1,0 +1,9 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/startsavetest-empty-r1-s120721.gblorb
+
+# The same game without the autorestore chunk.
+
+look
+examine sign
+quit
+y

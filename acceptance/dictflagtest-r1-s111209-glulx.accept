@@ -1,0 +1,6 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/dictflagtest-r1-s111209.ulx
+
+# Dictionary flags read through the dictionary table. The test runs on
+# its own and reports.
+

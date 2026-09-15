@@ -1,0 +1,7 @@
+! SEED=1
+! GAME=../entharion/zcode-checkers/smileys.z5
+
+# Surrogate pair test: emoticons beyond the Basic Multilingual Plane,
+# printed and then read until escape.
+
+<escape>

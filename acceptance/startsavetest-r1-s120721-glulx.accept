@@ -1,0 +1,10 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/startsavetest-r1-s120721.gblorb
+
+# A game whose Blorb carries an autorestore chunk: the restored state
+# says its setup work was done.
+
+look
+examine sign
+quit
+y

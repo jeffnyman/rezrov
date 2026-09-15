@@ -1,0 +1,5 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/resizememstreamtest-r1-s121018.ulx
+
+# A memory stream whose array is resized under it, the old Glulxe
+# pointer bug. The test runs on its own and reports.

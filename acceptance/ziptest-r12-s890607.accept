@@ -1,0 +1,17 @@
+! SEED=1
+! GAME=../entharion/zcode-checkers/ziptest-r12-s890607.z6
+
+# Infocom's own ZIP test for Version 6: the character sets, the
+# verify test, colored text, and the window tests. Pictures and
+# margins want a graphics screen.
+
+Z
+>
+B
+>
+U
+>
+V
+>
+K
+>

@@ -122,12 +122,21 @@ public sealed class WindowStream : GlkStream
 /// is thrown away while still being counted. A buffer at address zero
 /// or of length zero takes nothing and gives back the end of the
 /// stream at once.
+///
+/// [glk #stream_positions] The end of the stream, which a seek from the
+/// end measures from and which reading stops at, is the whole buffer
+/// for a stream opened to read, but for one opened only to write it is
+/// the furthest point written so far, as the reference library has it:
+/// a game that writes a line, seeks one back from the end, and writes
+/// on expects to land after what it wrote, not at the buffer's last
+/// byte (the memory stream checker's position test).
 /// </remarks>
 [SuppressMessage("Naming", "CA1711:Identifiers should not have incorrect suffix", Justification = "Stream is the name Glk gives the object, and it is not a System.IO stream.")]
 public sealed class GlkMemoryStream : GlkStream
 {
     private readonly GlulxMemory _memory;
     private uint _position;
+    private uint _end;
 
     internal GlkMemoryStream(GlulxMemory memory, uint address, uint length, bool unicode, FileMode mode, uint rock)
         : base(rock, mode is FileMode.Read or FileMode.ReadWrite, mode is FileMode.Write or FileMode.ReadWrite or FileMode.WriteAppend)
@@ -136,6 +145,7 @@ public sealed class GlkMemoryStream : GlkStream
         Address = address;
         Length = address == 0 ? 0 : length;
         IsUnicode = unicode;
+        _end = mode == FileMode.Write ? 0 : Length;
     }
 
     /// <summary>Where the buffer is in the game's memory.</summary>
@@ -154,15 +164,15 @@ public sealed class GlkMemoryStream : GlkStream
     public override void SetPosition(int position, SeekMode mode)
     {
         // [glk #stream_positions] Relative to the start, the mark, or
-        // the end, and never outside the buffer.
+        // the end, and never past the end of the stream.
         long target = mode switch
         {
             SeekMode.Current => _position + (long)position,
-            SeekMode.End => Length + (long)position,
+            SeekMode.End => _end + (long)position,
             _ => position,
         };
 
-        _position = (uint)Math.Clamp(target, 0, Length);
+        _position = (uint)Math.Clamp(target, 0, _end);
     }
 
     protected override void Write(uint character)
@@ -184,11 +194,12 @@ public sealed class GlkMemoryStream : GlkStream
         }
 
         _position++;
+        _end = Math.Max(_end, _position);
     }
 
     protected override int Read()
     {
-        if (_position >= Length)
+        if (_position >= _end)
         {
             return -1;
         }

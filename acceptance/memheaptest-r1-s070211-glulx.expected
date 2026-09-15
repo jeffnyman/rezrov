@@ -1,0 +1,36 @@
+
+MemHeapTest
+Not a game.
+Release 1 / Serial number 070211 / Inform v6.30 Library 6/11 S
+
+Heap Room
+A voice booooms out: Try "status", "alloc LEN", and "free ADDR", where LEN and ADDR are numbers.
+
+>status
+Heap inactive.
+
+>alloc 100
+Allocating 100 bytes...
+Allocated block at 114432.
+
+>alloc 50
+Allocating 50 bytes...
+Allocated block at 114532.
+
+>status
+Heap exists from 114432 to 114688.
+
+>free 114432
+Freeing block at 114432...
+
+>status
+Heap exists from 114432 to 114688.
+
+>free 114532
+Freeing block at 114532...
+
+>status
+Heap inactive.
+
+>quit
+Are you sure you want to quit? y

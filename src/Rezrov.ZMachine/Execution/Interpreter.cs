@@ -547,8 +547,10 @@ public sealed class Interpreter
                 break;
             case Opcode.Verify:
                 // [zm op:verify] Branch if the checksum agrees. A file with
-                // no length recorded has nothing to agree with.
-                Branch(instruction, Header.HasFileLength && Header.VerifyChecksum());
+                // no length recorded has nothing to agree with. The sum is
+                // of the file, so dynamic memory is taken as it was loaded,
+                // not as the game has since written it.
+                Branch(instruction, Header.HasFileLength && Header.VerifyChecksum(State.OriginalDynamicMemory));
                 break;
             case Opcode.Piracy:
                 // [zm op:piracy] Interpreters are asked to be gullible.

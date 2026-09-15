@@ -1,0 +1,26 @@
+
+(The autorestore chunk is empty, which is the signal to create a new autorestore file on disk.)
+(We now perform the slow, tedious set-up stage.)
+(The autorestore file has been created successfully.)
+
+StartSaveTest
+Not a game.
+Release 1 / Serial number 120721 / Inform v6.32 Library 6/11 S
+
+Kitchen
+This kitchen is boring. A sign on the wall reads "SlowSetUpWork has been run correctly."
+
+You can see a table (on which is an apple) here.
+
+>look
+
+Kitchen
+This kitchen is boring. A sign on the wall reads "SlowSetUpWork has been run correctly."
+
+You can see a table (on which is an apple) here.
+
+>examine sign
+You can't see any such thing.
+
+>quit
+Are you sure you want to quit? y

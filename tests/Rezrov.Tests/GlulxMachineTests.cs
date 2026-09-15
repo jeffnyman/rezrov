@@ -489,6 +489,11 @@ public class GlulxMachineTests
         Assert.NotEqual((first.Ram(0), first.Ram(4)), (other.Ram(0), other.Ram(4)));
         Assert.Equal(new GlulxRandom(77).InRange(100), first.Ram(8));
         Assert.True(first.Ram(0) < 1000 && first.Ram(4) < 1000);
+
+        // [glulx op:setrandom deviates] Asking for unpredictable numbers
+        // in a seeded session reseeds from the stream, so the two runs
+        // still agree after it.
+        Assert.Equal(first.Ram(12), second.Ram(12));
     }
 
     [Fact]

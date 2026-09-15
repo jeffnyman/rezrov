@@ -1,0 +1,8 @@
+! SEED=1
+! GAME=../entharion/zcode-checkers/czech/czech.z3
+
+# Czech, Amir Karger's Z-machine checker, runs its whole battery on
+# its own and quits: 425 opcode tests in the Version 5 build, fewer
+# in the older ones, and the tally at the end is the point. The
+# screen it describes is the text stream's own.
+

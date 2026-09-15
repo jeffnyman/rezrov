@@ -1,0 +1,14 @@
+! SEED=1
+! GAME=../entharion/zcode-checkers/random.z5
+! UPPER=yes
+
+# A histogram of the random opcode: a bell curve and a spread, drawn
+# from the session seed.
+
+1
+5
+>
+2
+5
+>
+q

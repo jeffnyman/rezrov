@@ -1,0 +1,9 @@
+! SEED=1
+! GAME=../entharion/zcode-checkers/praxix.z5
+
+# Praxix, Andrew Plotkin's Z-machine unit test. "all" runs every
+# test it has, and the last line before quitting is the tally. It
+# stops short of its 1.2 tests because the header says 1.1.
+
+all
+quit

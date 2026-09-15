@@ -1,0 +1,6 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/floatconsttest-r1-s100815.ulx
+
+# Floating-point constants, stored and loaded. The test runs on
+# its own and reports.
+

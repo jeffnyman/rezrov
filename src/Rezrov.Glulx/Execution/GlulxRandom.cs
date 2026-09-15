@@ -11,9 +11,18 @@ namespace Rezrov.Glulx.Execution;
 /// mixed seed, chosen for being short enough to read in one sitting;
 /// the specification asks nothing of the sequence but determinism.
 /// [glulx #saveformat] Its state is not part of a saved game.
+///
+/// [glulx op:setrandom deviates] In a session with a seed, the one the
+/// interpreter's <c>--seed</c> option and an acceptance script give, a
+/// game that asks for unpredictable numbers is reseeded from the stream
+/// instead, so that the whole session stays a function of that seed:
+/// glulxercise's random test does exactly that, and its recording has
+/// to play the same way twice. A session with no seed gets the entropy
+/// the specification has in mind.
 /// </remarks>
 public sealed class GlulxRandom
 {
+    private readonly bool _sessionSeeded;
     private uint _state;
 
     /// <summary>
@@ -24,6 +33,7 @@ public sealed class GlulxRandom
     {
         if (seed is { } given && given != 0)
         {
+            _sessionSeeded = true;
             Seed(given);
         }
         else
@@ -52,9 +62,10 @@ public sealed class GlulxRandom
 
     /// <summary>
     /// [glulx op:setrandom] Leaves determinism behind: the sequence from
-    /// here on depends on the clock.
+    /// here on depends on the clock, or in a seeded session on the next
+    /// point of the seeded stream.
     /// </summary>
-    public void SeedRandomly() => Seed((uint)Random.Shared.NextInt64(1, uint.MaxValue));
+    public void SeedRandomly() => Seed(_sessionSeeded ? Next() : (uint)Random.Shared.NextInt64(1, uint.MaxValue));
 
     /// <summary>The next 32 bits of the sequence.</summary>
     public uint Next()

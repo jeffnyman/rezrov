@@ -1,0 +1,6 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/resstreamtest-r2-s130310.gblorb
+
+# Resource streams read from the Blorb's data chunks. The test runs
+# on its own and reports.
+

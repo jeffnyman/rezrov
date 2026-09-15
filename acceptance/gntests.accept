@@ -1,0 +1,16 @@
+! SEED=1
+! GAME=../entharion/zcode-checkers/gntests.z5
+
+# Graham Nelson's six programs from Standard 0.99: fonts, accents,
+# colours, and the header, then exit. Input codes and timed input
+# need a keyboard.
+
+1
+<space>
+2
+<space>
+4
+<space>
+5
+<space>
+0

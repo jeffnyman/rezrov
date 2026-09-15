@@ -1,0 +1,10 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/chinesedicttest-r2-s111219.ulx
+
+# A Chinese dictionary: the words, the tablet, and a line of them to
+# tokenize.
+
+dict
+tablet
+帮助
+quit

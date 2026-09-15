@@ -185,6 +185,14 @@ public sealed class OutputStreams : IOutput
     /// </remarks>
     public void Print(ushort zscii)
     {
+        // [zm 3.8.2.1] The null character prints nothing, and that holds
+        // for a memory stream too: praxix writes one into stream 3 and
+        // counts on the table not growing by it.
+        if (zscii == Zscii.Null)
+        {
+            return;
+        }
+
         if (_memory.Count > 0)
         {
             // [zm 7.1.2.2.1] Newlines are written to stream 3 as ZSCII

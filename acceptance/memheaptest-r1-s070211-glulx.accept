@@ -1,0 +1,15 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/memheaptest-r1-s070211.ulx
+
+# The memory heap: allocate, free, and report.
+
+status
+alloc 100
+alloc 50
+status
+free 114432
+status
+free 114532
+status
+quit
+y

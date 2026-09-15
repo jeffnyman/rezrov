@@ -1,0 +1,12 @@
+! SEED=1
+! GAME=../entharion/zcode-checkers/cloak.z3
+
+# Cloak of Darkness, the ZIL port: hang the cloak on the hook, go to
+# the bar in the light, and read the message.
+
+w
+hang cloak on hook
+e
+s
+read message
+y

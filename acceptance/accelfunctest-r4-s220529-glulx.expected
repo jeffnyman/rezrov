@@ -1,0 +1,95 @@
+
+AccelFuncTest
+Not a game.
+Release 4 / Serial number 220529 / Inform v6.40 Library 6/11 S
+
+Acceleration Room
+A voice booooms out: Try "slow test" or "fast test", to run a sequence with the standard or accelerated function. The results should be identical. Type "which" to list the functions that your interpreter can accelerate.
+
+NUM_ATTR_BYTES is 7 (the default). The old and new accel functions should behave identically.
+
+You can see a core test, a ZRegion test, a CPTab (old) test, a RAPr (old) test, a RLPr (old) test, an OCCl (old) test, a RVPr (old) test, an OPPr (old) test, a CPTab (new) test, a RAPr (new) test, a RLPr (new) test, an OCCl (new) test, a RVPr (new) test, an OPPr (new) test and an errmsg test here.
+
+>which
+This interpreter supports acceleration of Z__Region, CP__Tab (old), RA__Pr (old), RL__Pr (old), OC__Cl (old), RV__Pr (old), OP__Pr (old), CP__Tab (new), RA__Pr (new), RL__Pr (new), OC__Cl (new), RV__Pr (new), OP__Pr (new) and errmsg.
+
+>slow core test
+Unaccelerated test of core opcode funtionality, using Z__Region (function 1)
+
+Too few arguments: 0
+Too many arguments: 1
+So many arguments that they go on the stack: 2
+To local: 1
+To global: 2
+To stack: 1
+In tailcall: 2
+
+>fast core test
+ACCELERATED test of core opcode funtionality, using Z__Region (function 1)
+
+Too few arguments: 0
+Too many arguments: 1
+So many arguments that they go on the stack: 2
+To local: 1
+To global: 2
+To stack: 1
+In tailcall: 2
+
+>slow ZRegion test
+Unaccelerated test of Z__Region (function 1)
+
+(Note: objects return 1, functions return 2, strings return 3)
+Kitchen: 1; test_zregion(): 2; "foo": 3
+Various zeroes: 0 0 0 0 0 0
+Z__Region itself: 2
+
+>fast ZRegion test
+ACCELERATED test of Z__Region (function 1)
+
+(Note: objects return 1, functions return 2, strings return 3)
+Kitchen: 1; test_zregion(): 2; "foo": 3
+Various zeroes: 0 0 0 0 0 0
+Z__Region itself: 2
+
+>slow CPTab (new) test
+You can't see any such thing.
+
+>fast CPTab (new) test
+You can't see any such thing.
+
+>slow errmsg test
+Unaccelerated test of errmsg (function 8)
+
+This tests the error messages in accelerated functions to make sure they go through iosys properly.
+
+Should print an error: 'Tried to find the "." of...'
+
+[** Programming error: tried to find the "." of nothing **]
+
+Should print an error message with <> around each char:
+(But in ACCELERATED mode, will probably print nothing):
+<
+><[><*><*>< ><P><r><o><g><r><a><m><m><i><n><g>< ><e><r><r><o><r><:>< ><t><r><i><e><d>< ><t><o>< ><f><i><n><d>< ><t><h><e>< ><"><.><">< ><o><f>< ><n><o><t><h><i><n><g>< ><*><*><]><
+>
+Should print nothing (iosys is null):
+
+Done.
+
+>fast errmsg test
+ACCELERATED test of errmsg (function 8)
+
+This tests the error messages in accelerated functions to make sure they go through iosys properly.
+
+Should print an error: 'Tried to find the "." of...'
+
+[** Programming error: tried to find the "." of (something) **]
+
+Should print an error message with <> around each char:
+(But in ACCELERATED mode, will probably print nothing):
+
+Should print nothing (iosys is null):
+
+Done.
+
+>quit
+Are you sure you want to quit? y

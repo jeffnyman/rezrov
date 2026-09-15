@@ -1,0 +1,7 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/unicasetest-r3-s110124.ulx
+
+# Unicode case changes: upper, lower, title, decompose, normalize.
+
+all
+quit

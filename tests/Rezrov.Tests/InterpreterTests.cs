@@ -996,6 +996,37 @@ public partial class InterpreterTests
     }
 
     [Fact]
+    public void VerifySumsTheFileAsLoadedNotMemoryAsWritten()
+    {
+        // [zm op:verify] The checksum is of the story file. A game that
+        // has stored into a global, as Czech has by the time it verifies,
+        // must still be found sound.
+        var run = Execute(
+            new Assembler()
+                .Long(Op.Store, Small(G0), Small(77))
+                .Short0(Op.Verify).Branch(false, SkipStore)
+                .Long(Op.Store, Small(G1), Small(1))
+                .Quit(),
+            story =>
+            {
+                // A length of $800 bytes, in Version 5's units of four,
+                // and the sum of the bytes from $40 up to it.
+                const int length = 0x800;
+                story.PutWord(0x1A, length / 4);
+                var sum = 0;
+                for (var address = 0x40; address < length; address++)
+                {
+                    sum += story.Bytes[address];
+                }
+
+                story.PutWord(0x1C, sum & 0xFFFF);
+            });
+
+        Assert.Equal(77, run.Global(G0));
+        Assert.Equal(1, run.Global(G1));
+    }
+
+    [Fact]
     public void RestartBeginsAgainWithFreshMemoryExceptFlags2()
     {
         // [zm 6.1.3] Nothing survives a restart except Flags 2, so that is

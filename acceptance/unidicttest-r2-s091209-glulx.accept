@@ -1,0 +1,8 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/unidicttest-r2-s091209.ulx
+
+# A Unicode dictionary: the words, and lines tokenized against it.
+
+dict
+grape umlaut
+quit

@@ -1,0 +1,5 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/glulx-test-r1-s260804.ulx
+
+# The smallest Glulx file: it prints that it works and quits.
+
