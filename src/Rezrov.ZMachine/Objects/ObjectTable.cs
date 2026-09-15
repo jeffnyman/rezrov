@@ -133,7 +133,15 @@ public sealed class ObjectTable
     {
         RequireObject(obj);
 
-        return FirstObjectAddress + ((obj - 1) * _entrySize);
+        // [zm 1.2.1] An entry's address is a byte address, 16 bits wide,
+        // so a number past the end of the table wraps around, as it does
+        // on the interpreters the games were written against, which
+        // keep object addresses in 16 bits. Beyond Zork depends on that:
+        // when the circlet's film is used up it hands a dictionary word
+        // to a routine that wants an object, and whatever the word's
+        // address lands on, 16 bits around, is read as that object's
+        // entry and found to have no synonyms to replace.
+        return (FirstObjectAddress + ((obj - 1) * _entrySize)) & 0xFFFF;
     }
 
     /// <summary>The object's parent, or 0 for none.</summary>

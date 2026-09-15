@@ -38,6 +38,24 @@ public class RandomGeneratorTests
     }
 
     [Fact]
+    public void AScriptPinIsASessionSeedNotThePredictableState()
+    {
+        // A script pinning a stretch with a small number wants that
+        // number's stream, the same one a session started with it would
+        // roll, and not a rising sequence: a game that rolls until it
+        // gets a different room would never get one.
+        var pinned = new RandomGenerator(20);
+        pinned.Seed(3);
+        pinned.Reseed(1);
+        var fresh = new RandomGenerator(1);
+
+        Assert.False(pinned.IsPredictable);
+        var rolls = Enumerable.Range(0, 6).Select(_ => (int)pinned.Next(100)).ToList();
+        Assert.Equal(Enumerable.Range(0, 6).Select(_ => (int)fresh.Next(100)), rolls);
+        Assert.True(rolls.Distinct().Count() > 1);
+    }
+
+    [Fact]
     public void ReseedingRandomlyInASeededSessionStaysRepeatable()
     {
         // [zm 2.4 deviates] A game that asks for fresh randomness in a

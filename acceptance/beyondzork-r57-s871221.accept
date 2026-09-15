@@ -1,0 +1,1156 @@
+! SEED=999
+! GAME=../entharion/zcode-infocom/beyondzork-r57-s871221.z5
+! UPPER=yes
+
+# The first seeded, replayable Beyond Zork line anywhere, from the
+# hilltop to the Coconut of Quendor. The map and the gauges live in
+# the upper window, which the recording keeps. The hero is built by
+# hand on the arrow-driven Character Setup screen -- the .accept
+# <key> tokens pressing the same §3.8.4 codes a keyboard would -- to
+# the walkthrough's recipe: 9 points into Intelligence (enough for
+# the first scroll), the rest split evenly. Base attributes start
+# at 1, so the gauges land on 18/18/18/10.
+
+# Two enters page the intro; three downs walk the menu from
+# "Begin using a preset character" to "Create your own character".
+b
+>
+>
+<down>
+<down>
+<down>
+>
+
+# Seventeen rights into Endurance, then down a row each for
+# Strength, Dexterity, and nine for Intelligence: sixty points.
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<down>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<down>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<down>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+<right>
+
+# RETURN finishes; the game asks its questions -- the attributes,
+# the sex, the name, the name again, the whole character, and a
+# save offer -- and one final any-key begins the story. She is
+# Rezrov, Level 0 Female Peasant.
+>
+yes
+female
+Rezrov
+yes
+yes
+no
+>
+
+# Grubbo-by-the-Sea. The billboard advertises the Fields of
+# Frotzen; the spenseweed heals; the driftwood is a "genu-ine
+# shillelagh". The sailor's painting shows the galleon to come.
+nw
+read billboard
+examine weeds
+get weed
+se
+e
+e
+examine water
+get driftwood
+examine painting
+
+
+# Into the pub: the rusty lantern by the stairs, the thrown dagger
+# in the kitchen wall, the great onion by the cellar door.
+w
+s
+get rusty lantern
+open door
+w
+w
+get dagger
+wield dagger
+w
+examine onion
+open cellar door
+turn on lantern
+
+# The Wine Cellar, seed 999's first random map:
+#
+#   Wine Cellar --sw-> Throne Room --w-> Reeking Room --w-> Musty Corridor
+#        (up: locked)      (nest)             \--nw-> Bottom of Stack
+#
+# The crinkly scroll (always Refreshment) lies at the stairway
+# bottom; its word on this seed is Squirp, and saying it
+# refreshes the lantern and dagger. The rat-ant scurries in as the
+# scroll is taken.
+d
+get scroll
+read scroll
+squirp
+
+# Each fight and each random map from here on is pinned to the seed
+# that was tried and found to go well: the pin reseeds the stream
+# where it stands, so the game keeps rolling ordinary dice, only
+# the same ones every time. Seed 4 fells the rat-ant with one blow.
+! SEED=4
+attack rat-ant
+wait
+
+# Seed 3 for the rest of the cellar. Three blows for the crab, whose
+# crown drops with a PLINK; the doubloon is in the nest of seashells;
+# the staff is Levitation; the moss of Mareilon is squeezed for
+# dexterity. The skeleton strangles whoever reaches for the amulet
+# and a kick crumbles it. Read through the wine bottle, the amulet
+# says Stella on this seed, and the word gives the strength to
+# shatter the cellar door. The cook has been after that bottle for
+# years.
+! SEED=3
+sw
+attack crab
+attack crab
+attack crab
+get crown
+search nest
+get doubloon
+w
+get staff
+w
+squeeze moss
+nw
+take amulet
+kick skeleton
+take amulet
+wear amulet
+se
+n
+u
+get wine bottle
+d
+se
+e
+ne
+u
+read amulet through bottle
+stella
+break cellar door
+u
+turn off lantern
+give bottle to cook
+put all in pack
+
+# The onion rolls out of the pub and up to the cliff, and the
+# bearskin rug is picked up on the way. The riddle on the cliff is
+# answered with "lightning", which blasts the hero to the brink of
+# the ledge and back; the bit of salt is in the brine to the
+# northwest. Then the onion is rolled on west to the lighthouse.
+roll onion east
+get bearskin rug
+roll onion east
+roll onion north
+roll onion northeast
+read cliff
+lightning
+nw
+get salt
+se
+roll onion west
+
+# The lighthouse, the second random map. Seed 4 for the giant
+# spider, three dagger blows; the cane (Annihilation) is south.
+! SEED=4
+u
+attack spider
+attack spider
+attack spider
+s
+get cane
+put cane in pack
+sw
+ne
+e
+
+# Seed 1 for the rest of the tower. The salt sends the slug
+# shrieking off; the card and a scroll are picked up on the way. A
+# walk across the bearskin rug and a touch of the dust bunny raise
+# a spark, and the ring is picked up. The onion is rolled up the
+# stairs to the top, where the sextant is in the debris; the onion
+# is slashed open and the sea chest carried down. The chest says
+# "Do Not Open This Chest"; opened anyway, it gates the hero to the
+# Plane of TransInfinite Splendor, where the unicorns' memory of
+# their servitude plays out and ends on the ledge, and then it
+# gives up the vague outline and the palimpsest (Gating). Back in
+# Gurth, the armorer buys the loot and sells the longsword.
+! SEED=1
+u
+throw salt at slug
+n
+get card
+put card in pack
+e
+w
+se
+u
+s
+get scroll
+put scroll in pack
+drop rug
+walk across rug
+touch dust bunny
+get ring
+wear ring
+ne
+e
+w
+w
+d
+w
+d
+w
+n
+d
+roll onion up
+roll onion s
+roll onion e
+roll onion up
+roll onion e
+roll onion up
+roll onion e
+roll onion e
+roll onion up
+search debris
+get sextant
+put all in pack
+get chest
+cut onion
+get chest
+d
+w
+w
+d
+w
+d
+w
+n
+d
+e
+drop chest
+open chest
+open chest
+wait
+wait
+get outline
+get palimpsest
+put outline in pack
+put palimpsest in pack
+close chest
+get chest
+nw
+ne
+open door
+w
+examine case
+ask woman about scabbard
+ask woman about axe
+ask woman about sword
+unwield dagger
+sell dagger
+get crown
+sell crown
+get sextant
+sell sextant
+get card
+sell card
+get doubloon
+sell doubloon
+get shillelagh
+sell shillelagh
+buy sword
+get sword
+wield sword
+
+# Accardi-by-the-Sea. Outside the Guild Hall three turns of
+# waiting let the eldritch vapor gather in the street. The monkey
+# grinder takes the chest and leaves the hurdy-gurdy, and the rod
+# of Dispel is in the Guild Hall lobby. The chest is dropped at the
+# edge of the moors.
+! SEED=1
+e
+e
+n
+wait
+wait
+wait
+w
+e
+n
+give chest to monkey grinder
+get hurdy-gurdy
+put hurdy-gurdy in pack
+close chest
+get chest
+n
+drop chest
+get rod
+put rod in pack
+get chest
+s
+w
+sw
+se
+sw
+s
+s
+drop chest
+
+# The eldritch vapor falls to one blow of the new sword.
+! SEED=1
+s
+attack vapor
+sw
+
+# The moors, the third random map, on seed 4. The guttersnipe goes
+# down at once and leaves the wand (Sayonara); a scroll and a
+# potion lie further in. The hurdy-gurdy's ear setting soothes the
+# wounded pterodactyl so the arrow can be drawn and the spenseweed
+# pressed to the wing; five turns later the whistle is the hero's.
+# The chest is fetched back and given to the unicorn in her stall,
+# whose horn is kissed for luck; Stella's strength breaks the stall
+# for the saddle. The fish cake in the market is eaten for
+# intelligence.
+! SEED=4
+attack guttersnipe
+get wand
+put wand in pack
+n
+s
+se
+n
+get scroll
+put scroll in pack
+w
+sw
+get potion
+put potion in pack
+get hurdy-gurdy
+get weed
+turn dial to ear
+turn crank right
+get arrow
+rub weed on wound
+drop arrow
+wait
+wait
+wait
+wait
+wait
+take whistle
+wear whistle
+put hurdy-gurdy in pack
+ne
+ne
+n
+get chest
+s
+sw
+sw
+sw
+w
+ne
+n
+kiss horn
+give chest to unicorn
+get horseshoe
+stella
+break stall
+enter stall
+get saddle
+out
+s
+sw
+nw
+n
+n
+get fish cake
+eat fish cake
+
+# The Magick Shoppe identifies everything. The cane and the wand
+# and the vellum scroll (Fireworks) are sold; the gilt-edged scroll
+# is Honing, whose word Prosser sharpens the longsword; the dark
+# potion (Death) is sold; the rabbit's foot is bought and rubbed
+# for luck, and the clear potion (Healing) is kept. The
+# palimpsest's word, Macuga, gates to the vague outline, and the
+# phase blade slashes a path through it to the Implementors.
+n
+open door
+w
+show cane to woman
+sell cane
+show staff to woman
+put staff in pack
+show rod to woman
+put rod in pack
+show wand to woman
+sell wand
+show vellum scroll to woman
+sell vellum scroll
+show gilt-edged scroll to woman
+read gilt-edged scroll
+prosser
+get palimpsest
+show palimpsest to woman
+put palimpsest in pack
+get dark potion
+show dark potion to woman
+sell dark potion
+buy rabbit's foot
+get rabbit's foot
+rub rabbit's foot
+put rabbit's foot in pack
+buy clear potion
+get clear potion
+put clear potion in pack
+cash
+e
+get palimpsest
+read palimpsest
+macuga
+se
+get phase blade
+cut outline with phase blade
+put phase blade in pack
+put horseshoe in pack
+
+# The Implementors toss the Coconut about until the ur-grue's
+# vortex takes it; the quest is the hero's by acclamation, and one
+# of them hands over his goblet, whose coating is tasted for luck.
+# The four-leaf clover and a scroll are picked up on the way to the
+# Fields of Frotzen.
+se
+wait
+wait
+wait
+get coconut
+wait
+wait
+wait
+take goblet
+taste coating
+w
+nw
+get clover
+put clover in pack
+nw
+sw
+get scroll
+put scroll in pack
+se
+
+# The fields. The hurdy-gurdy's eye shows the scarecrow's mauve
+# rags. Inside the farm house with the door shut, a tornado lifts
+# the house while the goblet goes into the hurdy-gurdy and the
+# clock setting is cranked left, which turns the butterfly on its
+# rim back into the caterpillar; the house comes down on the
+# Heeled One's boot. The little folk of Froon emerge from the
+# flowers, and the Mayor's jewel box offers three keys; the mauve
+# one is taken. The compass rose is plucked from the rosebush, and
+# the key is dropped.
+get hurdy-gurdy
+turn dial to eye
+turn crank right
+look
+examine scarecrow
+put hurdy-gurdy in pack
+ne
+se
+sw
+s
+close door
+get hurdy-gurdy
+open hurdy-gurdy
+put goblet in hurdy-gurdy
+close hurdy-gurdy
+turn dial to clock
+turn crank left
+open hurdy-gurdy
+get goblet
+examine goblet
+put hurdy-gurdy in pack
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+open door
+n
+look under house
+look at flowers
+wait
+wait
+wait
+wait
+wait
+wait
+examine keys
+take mauve key
+ne
+nw
+nw
+n
+examine rosebush
+take compass rose
+put compass rose in pack
+s
+sw
+w
+drop mauve key
+
+# Back at the shop: the rumpled scroll is Mischief, the outline and
+# the hurdy-gurdy are sold, and the milky potion (Might) is bought
+# and drunk for strength.
+n
+n
+w
+get rumpled scroll
+show rumpled scroll to woman
+get outline
+sell outline
+get hurdy-gurdy
+sell hurdy-gurdy
+cash
+buy milky potion
+get milky potion
+read milky potion
+shake milky potion
+drink milky potion
+cash
+e
+ne
+
+# The forest, the fourth random map. Seed 1 for the cruel puppet,
+# one blow.
+! SEED=1
+n
+attack puppet
+n
+
+# Seed 2 for the rest of the forest. The hellhound goes down at
+# once and leaves the stave. The boulder's inscription is answered
+# with "youth", which calls up the Pool of Eternal Youth in the
+# clearing; a scroll is picked up nearby. The saddle is left at the
+# chasm for the pterodactyl later. The stave is sold, the smooth
+# scroll (Protection) kept, and the cloudy potion (Enlightenment)
+# bought and drunk for intelligence. Then the gondola: "enter
+# gondola" on the turn the passengers surge aboard, and a jump to
+# the support tower three turns out.
+! SEED=2
+attack hellhound
+get stave
+put stave in pack
+ne
+n
+s
+e
+nw
+se
+sw
+ne
+se
+look
+read boulder
+youth
+look
+get scroll
+put scroll in pack
+nw
+nw
+ne
+drop saddle
+sw
+s
+sw
+s
+s
+sw
+w
+show stave to woman
+show smooth scroll to woman
+sell stave
+put smooth scroll in pack
+buy cloudy potion
+get cloudy potion
+read cloudy potion
+shake cloudy potion
+drink cloudy potion
+cash
+e
+s
+s
+se
+w
+wait
+wait
+enter gondola
+wait
+wait
+wait
+jump to tower
+
+# The jungle, the fifth random map, on seed 1 as far as the
+# crocodile, which charges as the tusk is taken and falls to one
+# blow.
+! SEED=1
+d
+look
+se
+e
+get tusk
+put tusk in pack
+se
+
+! SEED=1
+attack crocodile
+se
+
+# Seed 2 for the rest of the jungle. The bloodworm goes down at
+# once; the stick (Eversion) and the parchment (Recall) are picked
+# up. The mother hungus charges whoever strikes her baby and
+# follows the hero to the idol; the jewel pops off its face and
+# rolls to her feet, and she eats it. Inside the idol, by lantern
+# light, the moss is squeezed and the stick turns the idol inside
+# out. The stick then everts the mother, who gives the jewel back
+# up, and the staff levitates the baby out of the quicksand, for
+# compassion. Macuga gates back to Mizniaport; the trader behind
+# the curtain gives the hourglass for the jewel and buys the rest.
+# The armorer's prices are asked, and the gondola is ridden again
+# to the tower.
+! SEED=2
+n
+attack bloodworm
+n
+get stick
+put stick in pack
+s
+s
+get parchment
+put parchment in pack
+n
+nw
+w
+hit baby hungus
+e
+wait
+se
+wait
+e
+wait
+s
+wait
+enter maw
+wait
+get jewel
+get lantern
+turn on lantern
+look
+squeeze moss
+get stick
+point stick at idol
+look
+turn off lantern
+put lantern in pack
+out
+look
+n
+w
+nw
+w
+get staff
+point stick at mother hungus
+point staff at baby hungus
+wait
+wait
+wait
+wait
+wait
+wait
+look
+get jewel
+put all in pack
+get scroll of gating
+macuga
+ne
+n
+w
+enter curtain
+show stick to woman
+show parchment to woman
+get tusk
+sell tusk
+get jewel
+trade jewel for hourglass
+get hourglass
+get scroll of mischief
+sell scroll of mischief
+sell stick
+sell parchment
+put hourglass in pack
+cash
+e
+s
+s
+se
+open door
+n
+examine case
+ask woman about scale mail
+ask woman about cloak
+s
+w
+enter gondola
+wait
+wait
+wait
+jump to tower
+
+# Thriff and the mountain. The minx's footprints are erased before
+# the hunters arrive, for compassion, and she comes along once they
+# have gone. The vial of holy water is under the pew in the chapel.
+# At the Snowy Clearing the caterpillar halts the Christmas tree
+# monsters and the silver ornament is taken; the leaflet in the
+# mailbox turns into a parcel holding the burin, and the black
+# hemisphere is on the laboratory bench.
+d
+se
+e
+se
+s
+s
+sw
+nw
+w
+look
+e
+erase footprints
+wait
+wait
+wait
+wait
+wait
+wait
+get minx
+pet minx
+se
+w
+sit in pew
+look under pew
+get vial
+stand up
+e
+s
+examine glyph
+w
+get caterpillar
+show caterpillar to trees
+get ornament
+w
+open mailbox
+get leaflet
+read leaflet
+open parcel
+s
+read book
+search bench
+get black hemisphere
+n
+w
+
+# Seed 2 for the snow wight, which one blow sends over the cliff;
+# the snowflake it drops is a diamond. The rod dispels the dome,
+# the glyph is written in the lava with the burin, and the grateful
+# Cardinal surrenders the reliquary with the white hemisphere. The
+# two halves click together into the gray sphere. The minx is
+# carried up the tower and into a passing gondola, which is ridden
+# back to Mizniaport.
+! SEED=2
+attack wight
+get snowflake
+put diamond in pack
+put ornament in pack
+put vial in pack
+put caterpillar in pack
+put burin in pack
+w
+get rod
+point rod at dome
+e
+e
+n
+get burin
+s
+write glyph in lava
+n
+put rod in pack
+ask cardinal for reliquary
+open reliquary
+get white hemisphere
+examine hemispheres
+put peg in hole
+put burin in pack
+put sphere in pack
+ne
+ne
+n
+sw
+look
+get minx
+u
+wait
+wait
+wait
+enter gondola
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+e
+
+# Macuga twice: to the seaport and to the forest. Under the oak the
+# minx digs up a truffle, which is carried into the pool of
+# radiance and then stowed in the pack out of her reach. At the
+# chasm the whistle calls the pterodactyl, the saddle goes on, and
+# with the rose pointing the wind southwest the flight goes
+# northeast to the ruins.
+get scroll of gating
+get minx
+macuga
+nw
+n
+n
+macuga
+s
+wait
+wait
+wait
+get truffle
+n
+ne
+e
+se
+enter pool
+put truffle in pack
+out
+wait
+nw
+nw
+ne
+blow whistle
+wait
+get saddle
+put saddle on pterodactyl
+get minx
+mount pterodactyl
+u
+get rose
+point rose sw
+ne
+ne
+land
+dismount
+
+# The ruins of Pheebor, the sixth random map, on seed 2. The ghoul
+# falls to one blow; the vial of holy water burns the undead
+# warrior; the gray potion is picked up. Under the arch the
+# hourglass turns back the years: Prince Foo's stallion falls into
+# the trench, the truffle is put there, and after the sand runs out
+# in Desolation the minx digs it up again along with the helmet,
+# which is worn for intelligence.
+! SEED=2
+attack ghoul
+e
+e
+nw
+get vial
+throw vial at warrior
+se
+e
+nw
+w
+se
+w
+nw
+look
+get potion
+put potion in pack
+get hourglass
+enter arch
+turn hourglass
+s
+s
+examine trench
+wait
+turn hourglass
+wait
+get truffle
+put truffle in trench
+n
+turn hourglass
+n
+n
+n
+n
+turn hourglass
+n
+wait
+wait
+wait
+wait
+wait
+wait
+get helmet
+wear helmet
+turn hourglass
+s
+s
+s
+s
+out
+
+# Off the bridge under the umbrella into the river, and everything
+# dropped is picked up again downstream. Back at the armorer's the
+# treasures go for cash, the scale mail is traded up to plate mail
+# and the cloak, and Yabba, the word of Protection, hardens the
+# armor. The gray potion turns out to be Forgetfulness.
+se
+sw
+s
+put goblet in pack
+get umbrella
+open umbrella
+jump
+look
+get all
+put all in pack
+drop umbrella
+wield sword
+se
+se
+sw
+s
+s
+s
+s
+sw
+sw
+sw
+w
+n
+get hourglass
+sell hourglass
+get ornament
+sell ornament
+get diamond
+sell diamond
+get burin
+sell burin
+get caterpillar
+sell caterpillar
+get goblet
+sell goblet
+get rod
+sell rod
+remove scale mail
+sell scale mail
+cash
+buy plate mail
+get plate mail
+wear plate mail
+buy cloak
+get cloak
+wear cloak
+get scroll of protection
+read scroll of protection
+yabba
+s
+nw
+n
+n
+w
+get gray potion
+show gray potion to woman
+cash
+e
+s
+s
+
+# The castle. With the wind from the northeast the pterodactyl
+# flies southwest to the Royal Garden. Behind the morgia bush, a
+# root is eaten for strength while the platypus consults her
+# mirror and leaves; the statue's compartment holds the crystal
+# jar. The whistle's last call takes the hero over the mountainside
+# to Thriff.
+blow whistle
+wait
+mount pterodactyl
+u
+get rose
+point rose ne
+sw
+land
+dismount
+drop gray potion
+hide behind morgia bush
+get root
+eat root
+drop root
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+out
+examine statue
+open compartment
+take jar
+blow whistle
+wait
+mount pterodactyl
+u
+point rose nw
+se
+land
+dismount
+
+# At the Rock Wall the gray sphere shows a warlock opening the
+# stone with a word, Blarn on this seed. The hands are cleared to
+# the sword, the circlet, and the three luck charms; the word opens
+# the door.
+nw
+w
+get sphere
+look into sphere
+put rose in pack
+put reliquary in pack
+put scroll in pack
+get clover
+get rabbit's foot
+open jar
+take circlet
+blarn
+open door
+in
+
+# The caverns, the last random map, laid out on the dice as they
+# fall after the last pin. A bubble from the circlet becomes a
+# mirror that turns a sunbeam through a right angle: with the beam
+# coming in from one exit, a mirror facing one point round from
+# that exit sends it out two points round. The daylight from the
+# southeast is turned southwest into the mossy chamber, then
+# northwest along the passage, where it runs straight through the
+# rooms in its way. A mirror in the dripping room is swung both
+# ways to sound the side passages, and popped so the beam runs on.
+blow bubble
+turn mirror to south
+sw
+blow bubble
+turn mirror to north
+nw
+blow bubble
+turn mirror to south
+turn mirror to east
+hit mirror
+nw
+
+# The three lucksuckers come one at a time and each is blasted
+# with a luck charm, which it consumes. Any that survive would pop
+# the mirrors behind the hero and leave her in the dark.
+hit lucksucker with rabbit's foot
+wait
+hit lucksucker with clover
+wait
+hit lucksucker with horseshoe
+look
+
+# From the clammy chamber the beam is turned southwest into the
+# Treasure Chamber, where the shadow waits in the southeast corner.
+# A mirror there, faced east, turns the beam southeast into it. The
+# Coconut of Quendor is in the mound, and lifting it brings the
+# caverns down four turns later, which is the end of the story. The
+# ending pauses for a key before the final tally; a bare enter
+# takes it, and the script ends there, at the game's own
+# UNDO/RESTORE/RESTART/QUIT prompt, rather than choosing one for it.
+nw
+blow bubble
+turn mirror to south
+sw
+blow bubble
+turn mirror to east
+search treasure
+take coconut
+wait
+wait
+wait
+wait
+>

@@ -30,7 +30,7 @@ public sealed class TextWriterScreen : IScreen
     // row, for telling a repaint from a keystroke's echo.
     private string[] _shown = [];
     private string[] _seen = [];
-    private bool _atLineStart = true;
+    private readonly System.Text.StringBuilder _line = new();
 
     /// <param name="showUpperWindow">
     /// Whether to write the upper window's rows into the stream whenever
@@ -81,27 +81,32 @@ public sealed class TextWriterScreen : IScreen
     {
         ArgumentNullException.ThrowIfNull(text);
 
-        if (text.Length > 0)
-        {
-            _atLineStart = false;
-        }
-
         if (attributes.Font != TextAttributes.CharacterGraphicsFont)
         {
-            _writer.Write(text);
+            Write(text);
             return;
         }
 
         foreach (var character in text)
         {
-            _writer.Write(CharacterGraphics.ToUnicode(character));
+            Write(CharacterGraphics.ToUnicode(character).ToString());
         }
     }
 
     public void NewLine()
     {
         _writer.Write((char)0x0A);
-        _atLineStart = true;
+        _line.Clear();
+    }
+
+    // Writes text and remembers it as part of the line in progress, so
+    // that an upper window written out in the middle of a line, which
+    // is where a prompt leaves the stream, can be followed by that line
+    // begun again and the command echoed after it stays on it.
+    private void Write(string text)
+    {
+        _writer.Write(text);
+        _line.Append(text);
     }
 
     public void EraseLowerWindow(ScreenColor background)
@@ -120,15 +125,30 @@ public sealed class TextWriterScreen : IScreen
     {
         ArgumentNullException.ThrowIfNull(model);
 
-        if (!_showUpperWindow)
+        // Only a pause, for input or to quit, is a moment to show the
+        // window; a game redraws it several times in a turn (Beyond
+        // Zork paints the title, then the map, then the text) and a
+        // stream wants the finished picture once.
+        if (!_showUpperWindow || !model.IsPausing)
         {
             return;
         }
 
+        // [zm 16] Cells in the character graphics font are written as
+        // the same Unicode characters the lower window gets, so a map
+        // drawn in it (Beyond Zork's) reads as a map.
         var rows = new string[model.UpperWindow.Lines];
+        var builder = new System.Text.StringBuilder(model.UpperWindow.Width);
         for (var row = 0; row < rows.Length; row++)
         {
-            rows[row] = model.UpperWindow.RowText(row + 1);
+            builder.Clear();
+            for (var column = 1; column <= model.UpperWindow.Width; column++)
+            {
+                var cell = model.UpperWindow[row + 1, column];
+                builder.Append(cell.Attributes.Font == TextAttributes.CharacterGraphicsFont ? CharacterGraphics.ToUnicode(cell.Character) : cell.Character);
+            }
+
+            rows[row] = builder.ToString();
         }
 
         var sinceSeen = Difference(_seen, rows);
@@ -159,9 +179,13 @@ public sealed class TextWriterScreen : IScreen
             return;
         }
 
-        if (!_atLineStart)
+        // A line in progress, a prompt as a rule, is ended, the window
+        // written, and the line begun again, so that what the player
+        // types next still follows the prompt.
+        var interrupted = _line.ToString();
+        if (interrupted.Length > 0)
         {
-            NewLine();
+            _writer.Write((char)0x0A);
         }
 
         for (var row = 0; row < last; row++)
@@ -171,7 +195,7 @@ public sealed class TextWriterScreen : IScreen
         }
 
         _writer.Write((char)0x0A);
-        _atLineStart = true;
+        _writer.Write(interrupted);
     }
 
     // How many cells differ between two sets of rows, and how many rows

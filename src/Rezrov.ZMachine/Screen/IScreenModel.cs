@@ -114,4 +114,10 @@ public interface IScreenModel : IOutput
     /// Sends out whatever is buffered and lets the frontend repaint.
     /// </summary>
     void Flush();
+
+    /// <summary>
+    /// The game is quitting: whatever is buffered comes out, and the
+    /// frontend gets a last look at the screen as the game leaves it.
+    /// </summary>
+    void Finish();
 }

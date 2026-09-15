@@ -400,12 +400,13 @@ public static class AcceptanceRun
 
         public override string? ReadLine()
         {
-            // [zm 2.4.2] Reseeding as the next command is read means the
-            // game's rolls for that command onward come from the new
-            // sequence, and nothing before it is touched.
+            // Reseeding as the next command is read means the game's
+            // rolls for that command onward come from the new stream,
+            // and nothing before it is touched. It is the session's kind
+            // of seed, not [zm 2.4.2] the predictable state.
             if (_next <= script.Commands.Count && script.SeedChanges.TryGetValue(_next, out var seed))
             {
-                random.Seed(seed);
+                random.Reseed(seed);
             }
 
             if (_next >= script.Commands.Count)

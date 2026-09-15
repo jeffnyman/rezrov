@@ -86,6 +86,21 @@ public sealed class RandomGenerator
     }
 
     /// <summary>
+    /// Seeds the stream afresh, as the constructor does, for a script
+    /// that pins a stretch of play: the game goes on seeing ordinary
+    /// dice, only the same dice from here on every time. This is not
+    /// [zm 2.4.2] the predictable state the game itself can ask for,
+    /// where a seed under 1000 is a rising sequence, since a game that
+    /// rolls until it gets a different number would then roll forever.
+    /// </summary>
+    public void Reseed(int seed)
+    {
+        _sequenceLength = 0;
+        IsPredictable = false;
+        _state = Mixed(unchecked((uint)seed));
+    }
+
+    /// <summary>
     /// [zm 2.4.2] Switches to the predictable state with a seed.
     /// </summary>
     public void Seed(int seed)

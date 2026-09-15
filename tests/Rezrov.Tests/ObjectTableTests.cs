@@ -598,4 +598,22 @@ public class ObjectTableTests
         Assert.Equal(0, table.Parent(2));
         Assert.Throws<ArgumentOutOfRangeException>(() => table.SetParent(2, table.MaxObjects + 1));
     }
+
+    [Fact]
+    public void AnObjectPastTheTableWrapsAroundTheBottomOf64K()
+    {
+        // [zm 1.2.1] Entry addresses are byte addresses, so an object
+        // number whose entry would lie past 64K lands back at the start
+        // of memory instead of past its end. Beyond Zork names such an
+        // object, a dictionary word's address, and gets away with it.
+        var table = World(ZMachineVersion.V5).Table();
+
+        // 4685 entries of 14 bytes is 65590, which is 54 past 64K: the
+        // entry lands 54 bytes after the first, inside object 4's.
+        var wrapped = table.FirstObjectAddress + 54;
+
+        Assert.Equal(wrapped, table.ObjectAddress(4686));
+        Assert.Equal(table.ObjectAddress(4) + 12, wrapped);
+        _ = table.Parent(4686);
+    }
 }
