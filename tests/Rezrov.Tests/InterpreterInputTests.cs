@@ -579,13 +579,14 @@ public partial class InterpreterTests
         var interpreter = new Interpreter(memory, output, new ScriptedInput { SupportsTimedInput = false });
 
         // [zm 10.5.3] Bit 7 is cleared, [zm 10.3.1.1] bit 5 of Flags 2 is
-        // cleared, and [zm 10.4.1.1] so is bit 8.
-        Assert.Equal(Flags1FromVersion4.None, interpreter.Header.Flags1FromVersion4);
+        // cleared, and [zm 10.4.1.1] so is bit 8. A stream of text has
+        // the fixed-pitch font, and says so.
+        Assert.Equal(Flags1FromVersion4.FixedSpaceAvailable, interpreter.Header.Flags1FromVersion4);
         Assert.Equal(Flags2.None, interpreter.Header.Flags2);
 
         interpreter = new Interpreter(memory, output, new ScriptedInput { SupportsTimedInput = true });
 
-        Assert.Equal(Flags1FromVersion4.TimedInputAvailable, interpreter.Header.Flags1FromVersion4);
+        Assert.Equal(Flags1FromVersion4.TimedInputAvailable | Flags1FromVersion4.FixedSpaceAvailable, interpreter.Header.Flags1FromVersion4);
     }
 
     [Fact]

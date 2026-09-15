@@ -1,0 +1,803 @@
+! SEED=24
+! GAME=../entharion/zcode-infocom/journey-r83-s890706.z6
+
+# Journey has no command line: the whole interface is read_char
+# (§15), driven from ZIL's PARTY-INPUT loop. The vocabulary below:
+# a letter presses the first letter of a visible command (that is
+# the COMMAND-CHR every command carries), a bare > presses return
+# to activate the bolded default, <space> cycles the highlight
+# between the party column and the character grid -- the gateway
+# key, since letters only reach the commands of the mode the
+# highlight is in -- and the arrows walk the grid when two
+# characters offer the same first letter.
+
+# The boot questions: no saved game, two title pages.
+n
+>
+>
+
+# Start, from the opening menu.
+>
+
+# Webba's shop: enter, and Tag buys the map.
+e
+<space>
+b
+m
+
+# Praxix examines the map -- two spaces walk the highlight from
+# Buy through Exit to his Examine.
+<space>
+<space>
+>
+m
+
+# Webba asks about the Outlands; Reply is the bolded default.
+>
+
+# Exit the shop, down the road, into the Lands End tavern.
+e
+p
+e
+
+# Esher slips off to mingle.
+<space>
+l
+
+# Tag buys a round of drinks.
+<space>
+<space>
+b
+d
+
+# Exit -- and Minar makes his offer at the door. Accept.
+<space>
+>
+>
+
+# South out of Lavos, to the fork.
+<space>
+>
+
+# Minar scouts the left path and finds the bandits' leavings;
+# we take the right.
+<space>
+s
+<space>
+r
+
+# Camp; Minar's scouting turns up the rock cairn, and Praxix
+# examines the bodies of Garlimon's party: fire and water essence.
+<space>
+s
+e
+b
+
+# Over the mountains to the high plain and the smoke.
+<space>
+p
+<space>
+s
+<space>
+f
+
+# Garlimon's hut: knock, tell the truth, and let Minar look
+# around -- Bergon's sword trick unmasks the hermit.
+k
+>
+l
+
+# Leave with the thrown bag ("the water that heals, the fire
+# reveals"), and on to the stream.
+<space>
+>
+p
+
+# Esher examines the stream -- his Examine, not Praxix's, so the
+# arrows pick the row.
+<space>
+<down>
+>
+s
+
+# Find gold twice; the second try meets the flash flood.
+<space>
+f
+>
+
+# Praxix casts elevation at Tag, over the torrent.
+<space>
+c
+e
+t
+
+# Along the shore -- past the lake that took Minar -- to the
+# warm-spring cave.
+p
+<space>
+s
+
+# Glow on the staff, and in we go.
+c
+g
+s
+<space>
+e
+
+# Two things the walkthrough leaves out shape the route below. Air
+# essence is scarce: the ending needs both an elevation and a wind
+# at the mist, so the second wind at the mill's pits is skipped (the
+# rune there shows without it). And the good ending needs all five
+# of the party alive, so in Zan the rooms at the inn are taken before
+# camping out; the inn burns, the party is jailed for it, and the
+# gray reagent buys the way out with everyone.
+
+# Proceed to the warm pool; Tag dives, leaves the tube, and surfaces
+# alone in the halls of the Nymphs, where Minar lies bound.
+p
+e
+l
+
+# Hide from the keeper, then free Minar. Tag alone: his commands
+# stand where the party's would, so a letter reaches them at once;
+# a space still moves between his column and the paths.
+h
+<space>
+e
+m
+
+# The narrow path: the stone cover, a dive that goes nowhere. Back,
+# and the wide path: the torch on the left, the treasury on the
+# right, and the blue amulet, the Nymph Stone. The second cover, the
+# amulet dropped into the pool, and fished out again from the smelly
+# pool by the junction. Then back to the cave with Minar.
+<space>
+n
+<space>
+p
+c
+<space>
+d
+b
+w
+l
+<space>
+p
+t
+<space>
+b
+r
+<space>
+p
+>
+<space>
+p
+<space>
+p
+c
+d
+>
+<space>
+j
+s
+d
+<space>
+p
+>
+<space>
+s
+b
+t
+
+# The river: upstream, build the raft, launch, and four strokes of
+# Cross, the last of them just short of the falls.
+p
+u
+b
+l
+c
+c
+c
+c
+
+# Praxix studies the map and is no wiser. The forks up Sunrise
+# Mountain, found by trying all sixty-four ways: the wrong ones cost
+# a life. Astrix's tale of the Seven Stones, and five days' march to
+# the Dwarves' gate.
+<space>
+e
+m
+<space>
+r
+r
+l
+l
+r
+l
+
+# Minar scouts and does not come back; Tag looks around, finds the
+# runes, and returns. Bern i-Lav opens. Three steps in, the Dwarves:
+# parley, the truth, and Agrith's offer, which brings Hurth.
+s
+l
+r
+<space>
+e
+p
+p
+p
+p
+t
+a
+
+# Five steps to the cold; back, and Praxix alone casts tremor on
+# the evil presence, finding water essence in the fall. Camp.
+<space>
+p
+p
+p
+p
+p
+b
+c
+t
+
+# Back to the runes. Praxix's six legends (his elevation lesson
+# leaves a coarse green residue: air and earth), then a down and a
+# left to Hurth's Tell Story for his five, then a right to his
+# Examine: the runes name a door, and its word is "prison".
+p
+<space>
+t
+>
+>
+g
+>
+e
+>
+n
+>
+w
+>
+m
+<down>
+<left>
+>
+>
+>
+g
+>
+c
+>
+e
+>
+o
+<right>
+>
+r
+
+# Through the door. Praxix counts his essences, and a flare (medium
+# violet: fire and air) draws a fireball and shows the ledge above.
+# Elevation lifts Bergon to it; the right-hand path glows.
+<space>
+e
+<space>
+e
+b
+c
+f
+c
+e
+b
+r
+
+# Nine orcs and Minar bound. Hurth counts them (three downs reach
+# his Examine), then Fight: mud at the orcs (medium green: water and
+# earth), Bergon flanks, and three rounds win it. Hurth dies in the
+# ambush after; Agrith leaves the brown amulet, the Dwarf Stone.
+<space>
+<down>
+<down>
+<down>
+>
+o
+<space>
+f
+<space>
+c
+m
+o
+f
+c
+c
+c
+
+# Return, back, up the stairs, left to the chasm. Elevation and
+# wind carry Bergon over; Esher is left behind (two rights along
+# Bergon's row). Up to the Sunset Tower, where Minar finds the
+# spyglass and Tag pockets it. Down, right, and out of the Mountain
+# Gate; at the next day's lunch the Nightfang bites Minar.
+r
+b
+u
+l
+<space>
+c
+e
+b
+c
+w
+<right>
+<right>
+>
+<space>
+u
+<space>
+l
+p
+>
+<space>
+d
+r
+e
+
+# Comb the area, then split up. Bergon turns straight back. Praxix
+# proceeds, splits the stump with tremor, goes down, and heads back
+# under the camp: westflake in the walls.
+c
+s
+r
+p
+<space>
+c
+t
+<space>
+d
+b
+
+# Tag: the stream path, the Elf approached twice, talk, and Elvish
+# typed as a line with the return after it: "Tag la", then, after
+# Speak Elvish again, "b'ran Agrith". V'ren offers the Elf Home;
+# Praxix's route first.
+s
+a
+a
+t
+s
+Tag la
+>
+s
+b'ran Agrith
+>
+p
+
+# Down and back under the stump, then the walls: Praxix, and Esher
+# (a left to Praxix's Cast, a down to Esher's Examine), who finds
+# the hawkbane. Into the maze, four lefts until the staff goes out
+# in the damp, and up into daylight by the pool.
+d
+b
+<space>
+e
+w
+<left>
+<down>
+>
+w
+<space>
+p
+l
+l
+l
+l
+u
+
+# The Elf Home, the fire, and rain: the Elf Stone. Back at the
+# Sunrise Tower Astrix adds the Wizard Stone, Minar goes home, and
+# Garlimon's powder is named a reagent. The north route to Bern
+# i-Fen; inside, the shadow is Hurth, given back his life.
+e
+f
+<space>
+c
+r
+n
+e
+c
+
+# Hurth's stories of Agrith and Cedrith. Down, this level, and the
+# orcs at the junction. Hurth scouts the slit; around them, right to
+# the barred gate, and Praxix reads the runes: the word, typed as a
+# line, is "lorem". The storeroom's essences.
+<space>
+t
+a
+>
+c
+<space>
+d
+t
+p
+<space>
+s
+<space>
+a
+r
+<space>
+e
+r
+s
+lorem
+>
+
+# Back to try past the orcs: tremor draws them, elevation lifts
+# Praxix, two steps, a second tremor, and two rounds in the chamber
+# before the floor gives way into the flume. Bergon is hurt.
+b
+p
+<space>
+c
+t
+c
+e
+>
+p
+p
+<space>
+c
+t
+<space>
+c
+c
+
+# Reagent with water heals Bergon. Along the river, the tunnel,
+# left, and the old mine, where Praxix finds more reagent in the
+# walls. The new mine and its cleft: Hurth examines the walls, back
+# out, in again, and again, until the miner shows himself.
+<space>
+m
+r
+w
+>
+b
+<space>
+p
+e
+l
+o
+<space>
+e
+w
+<space>
+b
+n
+e
+<space>
+<down>
+>
+w
+<space>
+b
+e
+<space>
+<down>
+>
+w
+
+# Bergon asks him about the orcs and the mine; Tag takes the red
+# rocks he spills. Back twice, right to the vestibule, the crude
+# path: Hurth is lowered, jumps, and looks around, finding the iron
+# key beside a skull. Up, back, and the ornate path's door.
+a
+o
+a
+m
+p
+r
+<space>
+b
+b
+r
+c
+d
+h
+j
+<space>
+l
+>
+<space>
+b
+o
+o
+
+# Hurth examines the vault (two downs and a right to his Examine),
+# Esher the runes (a left and an up to his). Reagent with fire
+# dissolves the vault into Cedrith's coffin; the white stone on him
+# is the Spirit Stone.
+<space>
+<down>
+<down>
+<right>
+>
+v
+<left>
+<up>
+>
+r
+m
+r
+f
+>
+v
+<down>
+>
+c
+>
+w
+
+# Back twice, out to the old forest, and three steps into the
+# choking trees. A flare clears the path; the rabbit stew; and a
+# foggy morning that Praxix wakes to alone, with a talking tree.
+<space>
+b
+b
+p
+p
+p
+<space>
+c
+f
+p
+
+# Praxix examines the tree and asks about the paths and where he
+# is, then takes the Milky Way to the old mill. The machinery hides
+# a way down, too dark until glow is on the staff. The stairs fall
+# in behind him; left to a pit with a window, back to the control
+# room, and its device: two dials with six runes and a button.
+<space>
+e
+t
+a
+p
+a
+l
+<space>
+m
+<space>
+e
+m
+<space>
+d
+<space>
+c
+g
+s
+<space>
+d
+l
+b
+<space>
+e
+d
+
+# Back to the pits. Wind uncovers the bottom rune by the first pit;
+# the top rune by the second is in plain sight, so no second wind.
+<space>
+b
+<space>
+c
+w
+<space>
+p
+
+# Control room: left dial to the top rune, right dial to the
+# bottom, push. Down the first pit: the pick-axe appears; take it,
+# mine the essences, up. Left dial to the bottom rune, and the right
+# dial to the rune the walkthrough leaves to chance, which on this
+# seed is the upper left (a down from the top). Push, back, and
+# down: the shaft of light leads out.
+c
+l
+t
+r
+b
+p
+b
+d
+<space>
+p
+>
+<space>
+m
+u
+c
+l
+b
+r
+<down>
+>
+p
+b
+d
+f
+
+# The moated castle: over the bridge, the tower, up, and Umber's
+# company accepted. Down twice to the chest of stones; reagent with
+# fire on them reveals the Earth Stone. Back up, and rain for the
+# others to see.
+c
+p
+t
+u
+a
+d
+d
+<space>
+m
+r
+f
+>
+>
+<space>
+b
+u
+<space>
+c
+r
+
+# The party comes: Esher's hawkbane saves Hurth from the pollen.
+# Then Bergon in the net; the orcs take him. Follow them to the
+# camp, and in Tag's pack the red rock has rubbed off: invisible,
+# Tag frees him, and everyone runs. Astrix names the Misty Isle.
+<space>
+p
+<space>
+e
+h
+<space>
+p
+f
+f
+t
+<space>
+i
+u
+>
+<space>
+r
+
+# Toward Zan: Hurth makes out the black bird and its rider. Hide,
+# and Praxix mixes air with water for fog. The cave, Umber again:
+# stay, ask about the mudwargs, take his advice, and when he sleeps
+# examine his sack for the black reagent. Black with fire on the
+# staff makes a darkness the mudwargs will not touch.
+p
+<space>
+<down>
+>
+s
+<space>
+h
+m
+a
+w
+p
+s
+<space>
+a
+m
+g
+e
+s
+m
+>
+f
+>
+>
+<space>
+l
+
+# Zan. The curio shop: Hurth looks around, Praxix replies, and the
+# gray stone comes out; examine it, fail to buy it, and trade the
+# spyglass (the s picks it in the list). On to the tavern.
+c
+<space>
+l
+r
+<space>
+e
+g
+b
+>
+>
+s
+p
+t
+
+# Hurth examines the other table (two downs), dinner is ordered, and
+# a red rock makes Tag invisible to eavesdrop three times: the
+# captains have been paid off, all but the drunkard Bendor. Out to
+# the wharf, yes to the harbormaster, and his name typed as a line.
+# The Zephyr: the truth, and Bendor's offer to Estril.
+<space>
+<down>
+<down>
+>
+o
+<space>
+o
+<space>
+c
+i
+e
+e
+e
+<space>
+e
+w
+y
+Bendor
+>
+z
+t
+a
+
+# The inn: check in and accept the two rooms, then leave with the
+# keys and camp out. The inn is burned in the night, the town blames
+# the strangers, and the sheriff locks all five in his cell.
+i
+c
+a
+<space>
+e
+c
+
+# With the sheriff asleep, gray reagent mixed with fire; tremor
+# brings him, and the mix bends his will to unlock the door. To the
+# Zephyr with the whole party.
+<space>
+m
+>
+f
+c
+t
+u
+>
+
+# Relax into the storm that takes Bendor and the crew. In the mist,
+# the mast is no use; elevation shows Tag the island and wind
+# carries the boat toward it. The Dread Lord lands and strikes
+# Praxix down; Tag picks up the pouch.
+r
+c
+c
+e
+t
+c
+w
+p
+>
+
+# Lightning from the residues: air was coarse blue, earth coarse
+# yellow, fire fine red, water fine blue. Fine blue with fine red
+# (fifth in each list), a pinch of coarse yellow (fourth), and cast.
+# The locket holds the Anvil; the script ends at the game's closing
+# menu without choosing from it.
+m
+<down>
+<down>
+<down>
+<down>
+>
+<down>
+<down>
+<down>
+<down>
+>
+a
+<down>
+<down>
+<down>
+>
+c
+>
