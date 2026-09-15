@@ -1,0 +1,682 @@
+
+
+You remember darkness. And the cold. Cold and darkness. And silence. Those memories are all that you have. That, and a feeling that something you never knew you possessed has been lost.
+
+Suddenly, oblivion is split by a blinding light and a crash of sound. You awaken to the roar of a storm and a deluge of rain and mud.
+
+The Awakening
+Copyright (c) 1998 by Dennis Matheson
+(For more information type "HELP", for hints type "HINTS")
+
+Release 1 / Serial number 980726 / Inform v6.15 Library 6/7
+
+In the Mud
+Rain and muddy water are pouring down on you, making it difficult to see or even breathe. Sodden earth and mud surrounds you on all sides except overhead, where flashes of lightning illuminate a storm tossed sky.
+
+>examine me
+You find you cannot look down at yourself. It is almost as if you know what you might find and are afraid to have your fears confirmed.
+
+>i
+You are carrying nothing.
+
+>examine rain
+The rain pours downward, pelting you painfully and almost blinding you with its intensity.
+
+>examine mud
+The sides of the hole are made of dark, rich earth, now soaked through by the torrential downpour.  As you watch, more and more mud is washed away and into the hole with you.
+
+>u
+As you scramble out of the hole the mud collapses downward, filling in the hole behind you.
+
+Graveyard
+Dozens of stone markers stand here, oblivious to the wind and the rain. Huge, twisted oaks, their limbs tossed by the wind, draw an unmentionable sustenance from the moss-covered, moldy ground. An odor of decay, which even the storm cannot dissipate, hangs over everything. An iron barred fence surrounds the graveyard, an ivy-covered barrier separating it from the world of the living. The only exit is through the gate to the east.
+
+A church rises to the east, its boarded up windows giving the impression that it is covering its eyes from the sight of the graveyard.
+
+A large branch has been broken from one of the trees and has crushed the grave marker below it.
+
+>examine branch
+This large branch has broken off from one of the trees and fallen on one of the graves, shattering it's marker.
+
+>take branch
+The branch is too large to move, but a smaller limb has broken off and is lying nearby.
+
+>take limb
+Taken.
+
+>examine marker
+The marker for this grave has been shattered by the fall of a large branch from the overhanging tree. The grave itself has been disturbed; the soil has fallen in to form a shallow pit.
+
+Lightning arcs overhead, followed instantly by a blast of thunder.
+
+>read marker
+The inscription is no longer legible.
+
+>examine oaks
+These ancient, twisted trees surround and even invade the graveyard. Now tossed wildly by the storm, their branches reach skyward while their roots suck unholy nourishment from between the broken slabs.
+
+>examine markers
+Dozens of stone slabs mark the final resting places of those who have departed. All are old, the inscriptions worn away and covered with moss and mold, they tilt at odd angles. Many have fallen and are now half buried in the mud.
+
+>examine moss
+Mosses and molds cover the ground and the grave markers. There is something sickly looking about them, as if they are the physical manifestations of some kind of poisons in the soil. At any rate, they are alone in the graveyard, as no grasses or weeds grow within its boundaries.
+
+>examine ivy
+The ivy is thick and luxuriant and somehow disturbing. The shapes of the leaves are not quite wholesome and you wonder what strange sustenance it is drawing from beneath the moldering ground.
+
+>examine church
+The old church has seen better days. Formerly painted white, the boards are now faded, peeling and rotted. Most of the windows are boarded up, and those that aren't have long since been broken out. The shingles have fallen from the roof, which sags alarmingly. A broken-tipped steeple rises from one end of the building, and a faint miasma of decay seems to rise from the structure.
+
+>examine windows
+Once, the windows were probably told stories of hope and redemption in brightly colored stained glass. Now, they are boarded up as if the church has closed it's eyes to the world outside.
+
+>examine steeple
+Pointing heavenward like some broken, accusing finger, the steeple rises from the front of the church. The steeple ends in a ragged, blunt tip; whatever decoration may have once surmounted it is long gone.
+
+>e
+
+West Side of the Church
+This side of the church is untended and grasses and weeds have run rampant. A muddy trail leads back to the graveyard to the west and on to the southeast and a faint path continues around the church to the northeast.
+
+To the east, the wall of the church breaks some of the force of the wind.
+
+>examine trail
+Simply a worn trail through the grass, it leads around the church to the northeast and southeast and west to the graveyard.
+
+For a brief moment, hail pounds against you then subsides.
+
+>examine grass
+Diseased looking grasses and weeds surround the church.  In clumps it rises to your knees, while in other places it has been beaten to the ground by the force of the storm.
+
+>n
+
+North Side of the Church
+The trees close in here, their storm-tossed branches seeming to reach clawing limbs towards the back of the church. The weeds have run wild here and ivy climbs its way up the back of the building.  A faint path continues around the church to the southeast and the southwest.
+
+The south wall of the church looms blankly overhead.
+
+Lightning arcs overhead, followed instantly by a blast of thunder.
+
+>examine trees
+The trees wave wildly in the wind, their twisted limbs seeming to reach out to claw at the side of the church. No birds or forest animals inhabit their branches; a repellent air surrounds them that seems inimical to any such invasion.
+
+>examine ivy
+The ivy is sick and yellowed looking but somehow clings to the side of the church as if it is trying to distance itself from the rocky soil.
+
+A blast of thunder rattles the ground.
+
+>e
+
+East Side of the Church
+This wide, graveled clearing may have once been where the worshippers at the church left their vehicles while attending services inside. If so, it seems that the last service was held long ago. Weeds and grasses grow up through the gravel, which is littered with debris. Dark, looming trees surround the clearing except for the driveway, which leads to the southwest, and for a narrow opening to the northwest.
+
+To the west, the church stares out over the clearing.
+
+>examine gravel
+Dirty chunks of rock mix with mud to create a more or less level surface.
+
+>take gravel
+You pick up a handful of gravel.
+
+>examine debris
+Scattered sticks, leaves and bits of trash cover the gravel clearing.
+
+>s
+
+Front of the Church
+Two massive oak trees which flank the cracked sidewalk dominate the front of the church. The facade of the church itself rises beyond them, its steeple silhouetted against the sky. The storm lashes at its faded white facade, almost as if the storm is trying to wash the church clean; something you somehow realize will take more than mere water to accomplish. To the north, a sidewalk leads to the front of the church. A weed-choked driveway runs to the northeast and down a hill to the south, and a muddy path leads around the church to the northwest.
+
+The church and steeple loom to the north, the open window frames seeming to stare with judgment upon anyone standing before it.
+A formidable looking guard dog stands here.
+
+The dog growls at you threateningly.
+
+>examine dog
+This large, solid black dog is chained to one of the oak trees. There is something disturbing about the shape of it's head; it seems to be too large and slightly misshapen and an unnatural intelligence can be seen behind its red eyes.
+
+The dog growls at you threateningly.
+
+For a brief moment, hail pounds against you then subsides.
+
+>examine chain
+A heavy steel chain.  It has rusted slightly but is still more than sturdy enough to hold the dog.
+
+The dog growls at you threateningly.
+
+>hit dog
+
+Angered at your attack, the dog charges at you!
+
+The dog growls and snarls angrily, snapping at your legs.
+
+>nw. ne. se. sw
+
+West Side of the Church
+
+To the east, the wall of the church breaks some of the force of the wind.
+
+The dog chases madly after you!
+
+For a brief moment, hail pounds against you then subsides.
+
+North Side of the Church
+
+The south wall of the church looms blankly overhead.
+
+The dog chases madly after you!
+
+East Side of the Church
+
+To the west, the church stares out over the clearing.
+
+The dog chases madly after you!
+
+Momentarily, the wind and rain slacken then return with renewed force.
+
+Front of the Church
+
+The church and steeple loom to the north, the open window frames seeming to stare with judgment upon anyone standing before it.
+
+The dog lunges after you, but is suddenly jerked to a stop with a yelp.  The dog has been brought up short by it's chain, which is now completely wrapped around the church.  It barks wildly but ineffectually at you as you continue on around the corner.
+
+>examine oak
+These massive trees are easily hundreds of years old. They tower over the front of the church, climbing almost as high as the steeple. Unlike the forest surrounding other parts of the grounds they are almost unnaturally healthy, their branches clean and straight and their leaves a deep rich green.
+
+>examine sidewalk
+A wide flagstone path leads between the two oak trees to the front of the church. The earth has shifted, causing the stones to tilt at odd angles, and weeds and grass grow in the cracks between the flagstones.
+
+>n
+
+Church Porch
+This wide, covered porch spans the width of the church front. A white picket railing surrounds the porch on three sides, except to the south where a short flight of steps leads down to the sidewalk. Two large windows have been boarded up but the main doors stand slightly ajar.
+
+[Your score has just gone up by ten points.]
+
+>examine railing
+The railing consists of two parallel lengths of wood about an arm's span apart connected by wooden pickets.  One section of the railing seems fairly unsteady.
+
+>take railing
+With a jerk, you tear free the loose section of railing.
+
+>examine section
+The railing consists of two parallel lengths of wood about an arm's span apart connected by wooden pickets. If stood on end, the rail would be about twice your height.
+
+>examine ladder
+The railing consists of two parallel lengths of wood about an arm's span apart connected by wooden pickets. If stood on end, the rail would be about twice your height.
+
+>n
+
+Vestibule
+This small room is the entryway for the church. The years of neglect are obvious; the floorboards are rotten and warped and what were probably once stained glass windows are shattered and boarded up. Dirt and debris covers the floor. A set of double doors leads south back to the outside while a large archway leads north into the sanctuary. Overhead, there is an open trap door in the ceiling at about twice your height.
+
+>examine windows
+Once these frames may have contained magnificent stained glass windows, each showing in imagery some tale of religious significance. Now, only fragments of colored glass remain. The frames are boarded up and the wind whistles mournfully through the cracks.
+
+>examine debris
+Sticks, leaves, unidentifiable trash and scraps of paper litter the floor.  Some of it looks as if it has been here for years and none of it appears useful.
+
+>examine trap
+The opening in the ceiling seems to lead to another room overhead, but there doesn't seem to be any way to get to it.
+
+>put ladder under trap
+You carefully place the length of railing under the trap door in the ceiling.
+
+>n
+
+Sanctuary
+Once the heart of the church this room is now cold, dark and empty. Debris is scattered among the sagging pews and only shards of broken glass remain of the stained glass windows. Most of the interior fixtures have been removed, but a large portrait of Christ stares down at you from above the archway to the south. The pulpit still stands to the north.
+
+>examine portrait
+As you look at the painting, a memory seems to float to the surface of your mind.  You remember standing in this church and looking at that painting. And you remember it staring back at you, with malevolent, vivid green eyes...
+
+>examine eyes
+There is something unusual about the eyes of the painting, but it is too far away to see clearly.
+
+>examine pews
+Once, these rows would have been filled with worshippers. Now, they only contain dust and debris.
+
+>examine glass
+Once these frames may have contained magnificent stained glass windows, each showing in imagery some tale of religious significance. Now, only fragments of colored glass remain. The frames are boarded up and the wind whistles mournfully through the cracks.
+
+>take board
+The boards are nailed firmly in place.
+
+>n
+
+Pulpit
+From this raised platform you can see the entire inside of the church. The pulpit is empty except for the podium which rises from the center. A small door is visible behind the podium to the north.
+
+>exmaine podium
+That's not a verb I recognise.
+
+>examine black book
+At first you thought this book was a Bible, but now you realize that you were mistaken. The large, black, leather-bound tome contains passages you find disturbing, and uncomfortably familiar.
+
+>read book
+Much of the book has been damaged by moisture and rats, but some of the passages are still legible. One in particular sticks in your mind... "The way to understand another is through their eyes, because the eyes are the windows of the soul.  Through the eyes the soul may seen by those who are sensitive, and through the eyes the soul my be taken by those who have pledged themselves to the ones who wait beyond."
+
+>take book
+Taken.
+
+There is a brief rattle of hail on the roof.
+
+>n
+
+Small Office
+This small office has the same run-down appearance of the rest of the church. Debris covers the floor and a trickle of water comes in around the boards covering a broken window. A desk stands in the middle of the room and an empty bookshelf sits against one wall. A pile of ashes marks where a fire once burned in the middle of the floor. A door to the south leads back to the sanctuary.
+
+On the desk is a journal.
+
+A richly embroidered robe hangs beside the door.
+
+>examine desk
+An old wooden desk. Scarred and water-damaged, it has been here for some time.
+
+>take journal
+Taken.
+
+>examine journal
+A book of blank pages, the kind that would be used to keep a ledger or a journal. Unfortunately, someone has torn out most of the pages and only blank sheets remain.
+
+>read journal
+But, the pages are all blank!
+
+>examine robe
+Richly embroidered red robes, such as might be worn for ceremonial purposes.
+
+You hear a loud crash and see a flash of light through the cracks in the boards covering the windows.
+
+>take robe
+Taken.
+
+>examine bookshelf
+A warped, wooden bookshelf.
+
+A blast of thunder rattles the building.
+
+>move bookshelf
+You push the bookshelf to one side, revealing an old book bound in a strange reddish cover.
+
+>take red book
+Taken.
+
+>examine red book
+A very old volume, bound in some strange reddish material. At first you thought it was leather but it seems to be more closely akin to snakeskin. The book seems to be a weird grimoire or spellbook and mostly concerns the soul or spirit.
+
+>read red book
+The book contains several rituals and procedures all involving the soul or spirit.  The first describes a ritual through which the soul can be removed from a person's body and placed in a specially prepared container. The soul remains in the container even if the person's body dies.
+
+A second ritual can be employed to use the stored soul as a receptacle for the sin of another person.  This allows the possessor of another's soul to perform any acts they wish without having to answer for those acts in the next world.
+
+>xyzzy
+A word comes to you, and you shout it out...  "XYXXY!". The storm responds with a roar and a crash of thunder. It is a word of power. Once, you feel, you knew many such words. Now, only this one remains.
+
+>examine ashes
+It seems as if a good sized fire once burned here; it is amazing that the entire room did not catch fire. From the occasional bit of unburned material it seems as if whoever built the fire was burning books, probably from the now empty bookcase. Mixed in with the ashes you find a number of jagged shards of glass.
+
+>examine glass
+A number of shards of broken glass lies mixed in with the ashes. From the look of the fragments, it was some kind of thick walled bottle that was smashed into the floor. A curious object lies in with the shards of glass. It looks like a heavy rubber stopper with a chain hanging from it.
+
+>examine stopper
+A heavy rubber stopper, such as would be used to close a bottle. Bits of wax still cling to the edge showing where the bottle was sealed with the stopper in place. A fine chain hangs from the stopper and ends in an oddly carved lead weight.
+
+>take stopper
+Taken.
+
+>take ashes
+You pick up a handful of ashes.
+
+>search journal
+Looking carefully at the book you notice that the last entry must have been made with great force. The entry has left indentations on the first blank page in the book.
+
+>put ashes on journal
+(the handful of ashes on the journal)
+As you rub the ashes against the page, the indentations fill in and the last entry becomes visible.
+
+>read journal
+You read the last entry from the journal... "I cannot continue. The more I come to know her the more I realize that I cannot continue to corrupt her.  She was pure and innocent before I took her, and that innocence allows her to continue to trust me even after what I have done.  I only hope that the taint of that which I have done has not stained her irrevocably and that she will go to her proper place after I release her... and that I shall go to mine."
+
+[Your score has just gone up by five points.]
+
+>s. s. s
+
+Pulpit
+
+Sanctuary
+
+Vestibule
+
+The broken length of railing is propped up under the trap door
+
+>take ladder
+Taken.
+
+>n
+
+Sanctuary
+
+>put ladder under portrait
+You lean the length of railing against the wall near the painting.
+
+>u
+
+Near Painting
+You are standing on top of the railing section near the large painting of Christ. From this location, you notice that the eyes in the painting are cut out and there are holes behind them.
+
+You are precariously balanced on the top of the broken section of railing.
+
+>examine eyes
+The eyes of the painting are cutouts. There are holes and an open space behind the eyes.
+
+>look through eyes
+You find yourself looking into a small enclosed space covered with a faded purple curtain.
+
+>d
+
+Sanctuary
+
+The broken length of railing is propped against the wall near the painting.
+
+A flash of lightning can be seen through the cracks between the boards, followed by a sudden blast of thunder.
+
+>take ladder
+Taken.
+
+>s
+
+Vestibule
+
+>put ladder under trap
+You carefully place the length of railing under the trap door in the ceiling.
+
+>u
+
+Steeple Chamber
+This small chamber is about halfway up the steeple of the church. Rain and wind from the storm outside blows in through an open window frame and water collects in puddles on the warped floor, mixing with the droppings of the birds, or perhaps bats, which can be heard fluttering around overhead. Looking up, you can see a maze of beams and supports that form the interior of the steeple. Rain pours in from an opening higher in the steeple and trickles out through a trap door in the floor.
+
+A frayed but heavy rope hangs from somewhere overhead.
+
+The heavy wooden door to the north is closed.
+
+The top of the broken section of railing is visible sticking up through the trap door in the floor.
+
+[Your score has just gone up by five points.]
+
+>examine rope
+A frayed but heavy section of rope.
+
+>examine door
+This heavy wooden door looks to be newer and of more sturdy construction than the rest of the church. A large, heavy handle is set into the door.
+
+A flash of lightning can be seen through the cracks between the boards, followed by a sudden blast of thunder.
+
+>open door
+It seems to be locked.
+
+>pull rope
+You hear a metallic <CLANK> from somewhere overhead.
+
+>climb rope
+
+Belfry
+The belfry of the church, high up inside the steeple. You are hanging from a maze of support beams and trusses with the nearest solid floor far below you. Large open frames give a view of the surrounding forest and of the town at the base of the hill. They also allow the fury of the storm to pass in unimpeded. You can see the branch of an oak tree just outside the southern frame.
+
+A massive bell hangs here, from a damaged mount.
+A heavy rope is attached to the bell and hangs through the beams to the room below.
+
+>examine bell
+This massive bell once summoned worshippers to the church. Now, it only serves as the home for birds and rodents. The mount for the bell has broken on one side, and the other is barely holding on. You are surprised that it has not broken free and plummeted from the steeple before this.
+
+>examine beams
+Rough hewn from wood, the beams and trusses are dirty and covered with bird and animal droppings which make footing treacherous.
+
+>examine branch
+The tree branch sways alarmingly in the wind but seems quite sturdy. It passes very close to the open window frame in the steeple.
+
+>s
+
+Top of Oak Tree
+The limbs of the tree are swaying violently from the storm, but near the trunk it is a little more stable. You have an excellent view from here of the church grounds and surrounding area. The church seems to be in a clearing on a hill surrounded by a forest. At the base of the hill a small town can be seen, its lights glimmering faintly through the storm. 
+
+One of the branches of the tree reaches out to the north towards the steeple of the church. An open frame can be seen in the steeple near where the branch ends.
+
+The steeple of the church looms to the north.
+
+>examine forest
+The trees wave wildly in the wind, their twisted limbs seeming to reach out to claw at the side of the church. No birds or forest animals inhabit their branches; a repellent air surrounds them that seems inimical to any such invasion.
+
+>examine town
+The small town huddles at the base of the hill. A few lights shine defiantly against the storm but for the most part it seems quiet, as if its inhabitants are waiting inside their homes for the fury to pass them by.
+
+>d. n. d
+The drop to the ground below is too far for you to jump safely, and the trunk of the tree is too slick to climb.
+
+Momentarily, the wind and rain slacken then return with renewed force.
+
+Belfry
+
+A massive bell hangs here, from a damaged mount.
+A heavy rope is attached to the bell and hangs through the beams to the room below.
+
+Steeple Chamber
+
+A frayed but heavy rope hangs from somewhere overhead.
+
+The heavy wooden door to the north is closed.
+
+The top of the broken section of railing is visible sticking up through the trap door in the floor.
+
+>tie rope to handle
+You tie the rope securely to the heavy wooden door.
+
+>take ladder
+You attempt to pull the railing up after you, but you cannot get enough leverage to do so.
+
+A flash of lightning can be seen through the cracks between the boards, followed by a sudden blast of thunder.
+
+>d
+
+Vestibule
+
+The broken length of railing is propped up under the trap door
+
+>take ladder
+Taken.
+
+>s. s
+
+Church Porch
+
+Front of the Church
+
+The church and steeple loom to the north, the open window frames seeming to stare with judgment upon anyone standing before it.
+
+The heavy chain stretches from one of the oak trees and around the corner of the church to the northwest.
+
+>put ladder against oak
+You lean the length of railing against the side of the oak tree.
+
+Lightning arcs overhead, followed instantly by a blast of thunder.
+
+>u. n
+
+Top of Oak Tree
+
+The steeple of the church looms to the north.
+
+The broken length of railing is propped up against a nearby branch.
+
+Belfry
+
+A massive bell hangs here, from a damaged mount.
+A heavy rope is attached to the bell and hangs through the beams to the room below.
+
+>push bell
+You shove against the bell. For a few seconds, the support takes the strain. Then, with a loud cracking noise, the bell tears loose from the beam and falls from the steeple. You hear the sound of splintering wood from below and then duck aside as the splintered remains of the door are pulled past you and out the open window. A metallic crash is heard from the ground outside.
+
+[Your score has just gone up by ten points.]
+
+>s. d
+
+Top of Oak Tree
+
+The steeple of the church looms to the north.
+
+The broken length of railing is propped up against a nearby branch.
+
+Front of the Church
+
+The church and steeple loom to the north, the open window frames seeming to stare with judgment upon anyone standing before it.
+
+The heavy chain stretches from one of the oak trees and around the corner of the church to the northwest.
+
+A broken bell lies half-buried in the mud.
+
+The broken length of railing is propped up against the side of the oak tree.
+
+>examine bell
+The bell lies half buried in the mud. The fall has cracked and dented it to the point where it will obviously never ring again.
+
+>take ladder
+Taken.
+
+>n. n
+
+Church Porch
+
+Vestibule
+
+>Vestibule
+That's not a verb I recognise.
+
+>put ladder under trap
+You carefully place the length of railing under the trap door in the ceiling.
+
+>u. n
+
+Steeple Chamber
+
+A gaping splintered opening lies to the north.
+
+The top of the broken section of railing is visible sticking up through the trap door in the floor.
+
+You hear a loud crash and see a flash of light through the cracks in the boards covering the windows.
+
+Inner Chamber
+Even with the door open and the wind from the storm blowing in this room is rank with a fetid odor. The floor is piled high with trash and half eaten scraps of food. There are no windows, only the broken door frame to the south. An old sofa is pushed against one wall and a heavy table sits in the middle of the room. A curtained archway is to the north.
+
+A gaping splintered opening lies to the south.
+
+A curtain of purple cloth hangs in the archway.
+
+On the old sofa is an old man.
+
+You can also see a heavy wooden table (on which are an oil lantern and a pair of glass bottles) here.
+
+A blast of thunder rattles the building.
+
+[Your score has just gone up by five points.]
+
+>examine man
+An old, extremely gaunt man. The old man is drawn and pale, his hair long and wild and his clothing filthy, torn and unkempt. But, an active intelligence burns behind the vivid green eyes with which he watches you; eyes which also contain a taint of madness.
+
+>examine sofa
+An old sofa, so patched, faded and stained that its original color can no longer be determined. An unidentifiable odor rises from it.
+
+>examine lantern
+A old oil-burning lantern. Possibly brass, but very tarnished.  The glass chimney is almost opaque with soot and grime.
+
+>examine bottles
+The bottles are made of a heavy, leaded glass and closed with a cork stopper sealed with wax. Inside the bottles, an oddly shaped lead weight hangs like a pendulum from a string. The bottles glow faintly.
+
+>examine table
+A heavy table of rough cut wooden planks.  Curious symbols are carved into the wood and the top is oddly stained.
+
+>examine curtain
+The curtain is an old and faded purple. It looks as if it may have been a tablecloth initially.
+
+>ask man about man
+What?  You've forgotten me? How could you forget Silas? Your servant... your colleague... your... teacher...?
+
+A flash of lightning can be seen through the cracks between the boards, followed by a sudden blast of thunder.
+
+>ask Silas about me
+Silas laughs. "What did you expect? After you saw what happened to *her* and realized that *you* were the one responsible you went, shall we say, mad? You always were weak. There was only one thing to be done, wasn't there?"
+
+>ask Silas about her
+"I still don't know what your fascination with her was. Certainly the other villagers never approved of your 'relationship'."
+
+>ask Silas about villagers
+"Fools!  Pathetic weaklings! They cannot understand. *Will* not understand.  They would rather stay with their pathetic, safe god than open their eyes to the true masters of the universe. You understood. You saw. Then, they caused you to doubt yourself. Caused you to doubt your decision."
+
+>ask Silas about decision
+"Why, to become immortal, of course! But, you changed your mind. You freed her; freed her soul. But she had already absorbed too much of your sin, hadn't she? She went to eternal punishment, for *your* sins. And so, you tried to to kill yourself. But, you forgot about this, didn't you? You forgot where *your* soul was.
+
+>ask Silas about bottles
+"Beautiful, aren't they? That's what *you* used to say. I remember how you used to stare at them for hours. How you used to try to understand them...
+
+>ask Silas about soul
+Safe, I promise you. They are safe.
+
+>ask Silas about church
+Silas looks around. "Yes.. I knew you would return here. This is your home... only one you have left. The villagers would not have welcomed you before; they certainly will not now. And besides, the bottle will keep you here. *I* will keep you here."
+
+>take bottles
+The blue bottle is warm to your touch as you pick it up. The warmth seems to travel up your arm and into the center of your being. It is almost as if you have found a missing part of yourself.
+The green bottle has a sickly feel which matches its color. It feels like ice, cold and burning at the same time. It is all you can do to keep from throwing it down.
+That isn't available.
+
+>take lantern
+Taken.
+
+>n
+You push the curtain aside and pause. On the other side of the curtain is a room much like the one you are in. A figure stands in the archway, apparently about to enter your room, and it is the sight of this figure which has brought you up short. It is, or was, human... once. Now, it is a withered mass of decaying flesh. It's clothing hangs in tatters and it is caked in mud and grave mold. Patches of hair hang from it's scalp and bones are visible in places through it's skin. The only thing that remains intact are it's eyes; pale blue and now wide open and staring.
+
+The creature raises its hand to you, and you find yourself doing the same. You reach out your arm and touch... 
+
+
+
+...a cold unyielding surface of polished glass.
+
+
+
+Suddenly, the realization of what you are seeing comes home to you, and you step back from the mirror with a cry.
+
+A blast of thunder rattles the building.
+
+[Your score has just gone up by five points.]
+
+>examine mirror
+A highly polished mirror in a plain wooden frame. The mirror reflects the contents of the room you are in and you find yourself averting your gaze from what you see there. You note that the mirror frame is hinged on one side.
+
+>open mirror
+You swing the mirror away from the wall, revealing a pair of holes cut in the wall behind it.
+
+A blast of thunder rattles the building.
+
+>examine holes
+The holes are small, about the size of your thumb, and are at about eye level.
+
+>look through holes
+You look through the holes and find yourself looking down into the sanctuary of the church with a clear view of the pulpit. From the angle, you realize that you are looking down through the eyes of the painting of Christ.
+
+>break green bottle
+You shatter the green bottle.  Silas suddenly realizes what you are doing.  With a scream of "Noooo!", he throws himself towards you knocking the lantern from your hands in the process. As he collapses at your feet, a glowing green mist rises from the bottle and hangs before him. "No!", he whispers.
+
+Then, the mist starts moving slowly downward as he doubles over and screams in agony. As the mist soaks into the ground, he looks up at you and screams, "I'll get my revenge"  I'll see you in hell.  I'LL SEE YOU IN HELL! Ia! Ia! Fthagn...  Aaaaagh...!"
+
+His body collapses to the ground.  As you watch the body blackens and decays until, within only a few moments, what is left appears to be a many-months old corpse.
+
+You hear a sudden *Whumph!* and look around. The spilled oil from the broken lantern has ignited.  Clutching the second bottle to you, you race outside.  You watch for a moment as flames consume the church. With a crackling roar, the steeple collapses inward and a plume of flame shoots skyward.
+
+Clutching the bottle to you, you make your way down the hill.
+
+
+    *** You have won ***
+
+
+In that game you scored 50 out of a possible 50, in 147 turns.
+
+Would you like to RESTART, RESTORE a saved game, UNDO your last move, give the FULL score for that game or QUIT?
+> quit
+[rezrov: At E1BE, jin sp G14 ?~19: object 0 is not an object]

@@ -1,0 +1,2121 @@
+
+Sherlock: The Riddle of the Crown Jewels
+Copyright 1987 Infocom, Inc.
+Sherlock: The Riddle of the Crown Jewels is a trademark of Infocom, Inc.
+Release 26 Interpreter 6 Version R Serial Number 880127
+
+[Press any key.]
+221-B Baker Street
+
+You are standing in the spill of a gas streetlight outside Holmes's house. The street disappears into the fog to the north and south. The door to the house is to the west.
+
+You have come in response to an urgent summons from your old landlady, Mrs Hudson. As the fog swirls around you, you huddle into your coat and shiver in the predawn chill.
+
+>knock on door
+You hear a bolt sliding back and the door opens to reveal a worried Mrs Hudson.
+
+"Oh Doctor Watson, I'm so glad to see you. It's Mr Holmes, sir. Three days have come and gone since he's been out of his rooms. He won't eat and I know he hasn't slept. Now there's a visitor who says he's here about some important government business. I tried to send him away, but he insisted on waiting in the parlour. That's when I sent for you. Thank God you've come."
+
+You step inside and Mrs Hudson closes the door behind you. The entry hall is just as you remember it - small, underheated, and lit by a feeble gas light. The door to the parlour is to the north, and a flight of well-worn stairs leads up to the first floor.
+
+>u
+Vestibule
+
+You climb the stairs and pause outside the door to Holmes's study, nervous about what you might find inside. 
+
+Holmes's study is to the north.
+
+>n
+Holmes's Study
+
+You step back through time to your bachelor days, when you shared these cluttered digs with the world's only consulting detective. Despite the mess, you can see that the room is unchanged. The fireplace to the north has a pile of letters transfixed to its mantelpiece by a jackknife. Next to them lies Holmes's six-shot revolver, the tobacco slipper, and Holmes's favorite pipe. The violin has been carelessly tossed onto a stack of obviously unread newspapers.
+
+Holmes is slouched on the sofa, lost in a black mood of despair. He is pale and emaciated, and his sharp eyes burn with fever. He is staring at a phial that he holds in one hand. His free hand rests near a hypodermic syringe in a neat morocco case at his side. You realize that he is fighting a depression brought on by what he calls "the dull routine of existence."
+
+The bedroom door to the west is closed. The only other exit is the door to the south.
+
+>get newspaper
+You take the newspaper.
+
+[Your score just went up by 1 point. The total is now 1 out of 100.]
+
+>show newspaper to holmes
+Holmes glances at the paper and his eye falls on the notice about the Tower of London. He immediately leaps to his feet and hurls the phial and the case into the fireplace. The phial and the syringe shatter, and the liquid evaporates instantly, but the detective does not even notice. "They've closed the Tower?" he exclaims. "Most singular."
+
+[Your score just went up by 5 points. The total is now 6 out of 100.]
+
+Holmes strides to the door and calls down to Mrs Hudson to bring up a tray of food. Then he plops back down on the sofa, makes a steeple of his fingertips and focuses his intense gaze upon you.
+
+>get pipe
+You take the pipe off of the mantelpiece.
+
+[Your score just went up by 1 point. The total is now 7 out of 100.]
+
+>get slipper
+You take the persian slipper off of the mantelpiece.
+
+>wait
+Time passes...
+
+Mrs Hudson appears at the door, accompanied by a worried-looking gentleman.
+
+Holmes jumps up and ushers the gentleman to the armchair, dismissing Mrs Hudson at the same time. "Watson," he says, "I am sure you recognize our distinguished visitor. I presume, sir, that you have come about the Jewels."
+
+The visitor half rises from his chair in protest and sputters, "But...but, how...?"
+
+Holmes calms him with a glance. "Come, sir. What else could it be? The Tower is suddenly closed, and within hours I receive a call from the highest official of Her Majesty's government. A simple deduction. Now then, tell me about the theft."
+
+The visitor settles back into his chair and says, "We know very little. Only that the Crown Jewels were stolen from the Tower sometime Thursday night. The theft was discovered Friday morning, and we immediately closed and searched the Tower. All we found was this verse which was left behind in the empty jewel case."
+
+The visitor removes a folded piece of paper from his pocket and gives it to Holmes, who glances at it and passes it on to you.
+
+Do you want to continue waiting?
+Please press Y or N > n
+
+>read paper
+[The clue paper]
+     Mortality, behold and fear!
+     What a change of flesh is here!
+     Think how many royal bones
+     Sleep within this heap of stones:
+     Here they lie, had realms and lands,
+     Who now want strength to stir their hands.
+
+              **********
+
+     For two-score years I reigned alone,
+     A virgin queen on England's throne.
+     My navy caused Armada's shame,
+     And with me died the Tudor name.
+
+              **********
+
+     The apple sorely tempted Eve,
+     And Tell another aimed to cleave.
+     But when one fell, it showed to me,
+     The mighty pull of gravity.
+
+              **********
+
+     My father, it was said, would die,
+     Beneath the Holy City's sky.
+     Jerusalem his body claimed,
+     And it is after him I'm named.
+
+              **********
+
+              **********
+
+     O stately Holmes of England,
+     In Baker Street abide.
+     For even you must surely fail,
+     To save your country's pride.
+
+>take knife
+You take the knife off of the mantelpiece.
+
+>take gun
+You take the pistol off of the mantelpiece.
+
+The visitor looks at his pocket watch and stands up. "Thank you, gentlemen. I must go now. Remember, this calamity can only be hidden from the public until Monday morning at nine o'clock. If the Regalia is not at Buckingham Palace in time for the Coronation Day festivities, then all is lost."
+
+The gentleman leaves, and Holmes unlocks the door to the bedroom, goes in, and reappears moments later wearing his Inverness cape and deerstalker hat.
+
+"Come when you're ready, Watson. I'll wait for you outside."
+
+>open bag
+You open the black bag.
+Inside you see a brown bottle and a blue bottle.
+
+>put all in bag
+The pistol: Done.
+The knife: Done.
+The clue paper: Done.
+The persian slipper: Done.
+The pipe: Done.
+The newspaper: Done.
+
+>w
+Holmes's Bedroom
+
+This is a sparsely furnished room, whose walls are adorned only by scores of pictures of famous criminals. On a disorderly workbench in the corner, a jumble of laboratory equipment suggests that Holmes is in the middle of one of his chemical experiments. Set off to one side is a single ampoule with a neatly lettered label affixed to it. The room's only exit is to the east.
+
+Next to the bed there is a table, on which you see a lamp and Holmes's favorite magnifying glass. 
+
+>get ampoule
+You take the ampoule of etherium off of the workbench.
+
+>read ampoule
+The label on the ampoule reads, "Etherium. Extremely volatile. Do not open in the presence of fire."
+
+>take lamp
+You take the lamp off of the bedside table.
+
+[Your score just went up by 3 points. The total is now 10 out of 100.]
+
+>take glass
+You take the magnifying glass off of the bedside table.
+
+[Your score just went up by 1 point. The total is now 11 out of 100.]
+
+>put ampoule in bag
+You put the ampoule of etherium in the black bag.
+
+>put glass in bag
+You put the magnifying glass in the black bag.
+
+>e
+Holmes's Study
+
+You return to Holmes's study, which is in its usual disarray.
+
+The bedroom door to the west is open. The only other exit is the door to the south.
+
+You see a violin. You see some mail on the mantelpiece.
+
+>s
+Vestibule
+
+You leave the study and pause outside the door. You are on a landing at the top of the stairs.
+
+Holmes's study is to the north.
+
+>d
+Entry Hall
+
+You descend the stairs into the entry hall. The parlour door is to the north. The front door is closed.
+
+>n
+Parlour
+
+You walk into a dreary, late Victorian Era parlour.
+
+You see a matchbook.
+
+>get matchbook
+You take the matchbook.
+
+[Your score just went up by 1 point. The total is now 12 out of 100.]
+
+>s
+Entry Hall
+
+You walk out into the entry hall. The front door is closed.
+
+>open door
+[The front door]
+
+You open the front door.
+
+>out
+221-B Baker Street
+
+You emerge from the house into Baker Street.
+
+You are standing in the spill of a gas streetlight outside Holmes's house. The street disappears into the fog to the north and south. The door to the house is to the west.
+
+Holmes says, "Ah, there you are Watson. While you were inside I gave our little problem some thought. Obviously the person who stole the Crown Jewels wanted the authorities to turn to me for help, and it is equally obvious that the thief has laid down a trail for me to follow, in hopes of somehow entrapping me.
+
+"So let's play his game, Doctor. But let's play it by our rules. The thief will have tried to anticipate the sequence of my actions, and I'm sure he has laid his trap accordingly. But if you were to guide the course of our investigations, he will certainly be thrown off the scent.
+
+"Therefore, let us take surprise onto our side and rely on your instincts as the man of action I know you to be - despite your frequent modest assertions to the contrary." He steps to one side and says, "Lead on, good Doctor. I will follow." Holmes gestures for you to lead the way.
+
+>light lamp
+You turn up the wick. The lamp emits a warm glow that lights up the area around you.
+
+>s
+Orchard Street
+
+Orchard Street is the southern extension of Baker Street. From here you can see Oxford Street off to the east, Baker Street to the north, and Audley Street fading into the mists to the south.
+
+The fog swirls around you.
+
+Your friend walks alongside you.
+
+>s
+Audley Street
+
+This is a pleasant street that winds through Mayfair, a fashionable district which takes its name from an ancient fair held there in May of each year.
+
+To the south is Hyde Park Corner, and to the north is Orchard Street.
+
+You can barely see through the thick fog.
+
+The detective trails along after you.
+
+>s
+Hyde Park Corner
+
+Hyde Park Corner is dominated by the Wellington Arch, a soaring monument to the "Iron Duke," who defeated Napoleon at the Battle of Waterloo.
+
+The arch is enshrouded in fog.
+
+Roads lead off in many directions.
+
+Your companion follows you and begins pacing back and forth nervously.
+
+>se
+Grosvenor Place
+
+This is a pleasant but out-of-the-way street that runs northwest to southeast. Few tourists ever visit here. The fog turns everything into an indistinct blur.
+
+Holmes joins you and starts looking around with interest.
+
+>se
+Victoria Square
+
+You come upon Victoria Square. Streets go off in many directions.
+
+You see a hansom cab.
+
+Your friend follows you.
+
+>e
+Victoria Street
+
+You enter Victoria Street, which runs east and west between Victoria Square and Broad Sanctuary.
+
+You see a sign outside one of the shops.
+
+The detective drifts along after you, apparently lost in thought.
+
+>e
+
+In the distance, you hear Big Ben strike the hour.
+
+[Use $SOUND to toggle sound usage on and off.]
+[Press any key to continue.]
+Broad Sanctuary
+
+You are standing in front of the west door of Westminster Abbey. The towers of the Abbey loom in the fog above you, and you marvel at this perfect example of Gothic architecture, as generations have done before you.
+
+The Abbey door is closed.
+
+On the wall next to the door is a small, discreet sign.
+
+Your companion walks alongside you.
+
+>wait until 7:00
+Time passes...
+
+Visibility increases in the gathering light of the new day. Tourists are beginning to crowd into the streets.
+
+Do you want to continue waiting?
+Please press Y or N > y
+
+While you were waiting, the sun rose... as much as it ever does here.
+
+A verger appears, unlocks the huge door, and pushes it open.
+
+The sun comes up, as much as it ever comes up in England.
+
+In the distance, you hear Big Ben strike the hour.
+
+>turn off lamp
+You turn down the wick. The lamp goes dark.
+
+>in
+Nave
+
+You enter the Abbey and pause in the Nave, struck by the sheer magnificence of the building. Massive Purbeck columns march the length of the Nave, and they rise in perfect proportion to meet each other in a series of pointed arches that are the hallmark of the Gothic style.
+
+The interior of the Abbey is dark, cold, and gloomy - but after a few moments your eyes adjust and you can make out a tomb at the far end of the room.
+
+Holmes trails along after you.
+
+>s
+South Aisle
+
+You enter the South Aisle of the Nave. In the gloom, you bump into one of the tombs. There is an exit to the southeast and a door set into the south wall.
+
+Your friend walks into the room alongside you.
+
+>se
+North Cloister
+
+You enter the North Cloister, which is the brass-rubbing centre of the abbey. On the walls are completed rubbings that others have made. Someone has left a pacquet of paper and a rubbing crayon here.
+
+The detective enters and begins pacing back and forth nervously.
+
+>get packet
+You take the pacquet of paper.
+
+[Your score just went up by 1 point. The total is now 13 out of 100.]
+
+>get crayon
+You take the crayon.
+
+[Your score just went up by 1 point. The total is now 14 out of 100.]
+
+>open packet
+You open the pacquet of paper.
+Inside you see a brown piece of paper, a yellow piece of paper, an orange piece of paper, a blue piece of paper, a white piece of paper and a green piece of paper.
+
+>nw
+South Aisle
+
+You enter the South Aisle of the Nave. In the gloom, you bump into one of the tombs. There is an exit to the southeast and a door set into the south wall.
+
+Your companion follows you.
+
+>n
+Nave
+
+You return to the Nave. Amidst the massive columns, one tomb in particular catches your attention.
+
+Holmes joins you and starts looking around with interest.
+
+>examine tomb
+It's a white marble sarcophagus with "ISAACVS NEWTON   Eques Auratus" written on the front. Above it is a marble statue of Newton, and a carving of two cherubs who are holding a diagram of the solar system.
+
+>get yellow paper
+You take the yellow piece of paper out of the pacquet of paper.
+
+>put yellow paper on tomb
+You put the yellow piece of paper on Newton's tomb.
+
+>rub paper with crayon
+[The yellow piece of paper]
+After a few moments, the tomb's inscription comes through onto the piece of paper.
+
+>get paper
+[The yellow piece of paper]
+You pick at the paper for a few seconds, but it seems to be stuck to the inscription. After a few seconds you manage to peel it off.
+
+>e
+Sanctuary
+
+You walk into the Sanctuary. This is where the actual Coronation Ceremony takes place whenever a new monarch is crowned. A modest tomb is near the south wall.
+
+Your friend drifts in after you, apparently lost in thought.
+
+>n
+North Ambulatory
+
+This is a narrow corridor lined with tombs.
+
+The detective trails along after you.
+
+>e
+North Chapel Aisle
+
+You enter the North Chapel Aisle. There is a very large tomb here.
+
+Your companion walks into the room alongside you.
+
+>examine tomb
+The tomb is that of Elizabeth and her half-sister, Mary Tudor. It is surrounded by twelve black marble pillars, and on the base is an inscription.
+
+>get brown paper
+You take the brown piece of paper out of the pacquet of paper.
+
+>put brown paper on tomb
+You put the brown piece of paper on Elizabeth's tomb.
+
+>rub brown paper with crayon
+After a few moments, the tomb's inscription comes through onto the piece of paper.
+
+>get brown paper
+You pick at the paper for a few seconds, but it seems to be stuck to the inscription. After a few seconds you manage to peel it off.
+
+>s
+Henry VII Chapel
+
+You enter Henry VII's chapel, which is one of the most beautiful chapels in the world. The ceiling is a masterpiece of delicate fan vaulting, and the Renaissance gilt-bronze tomb is obviously the work of one of the Italian masters.
+
+Holmes enters and begins pacing back and forth nervously.
+
+>w
+Confessor Chapel
+
+The Confessor Chapel is dominated by the tomb of the founder of the Abbey, although there are several other tombs here. It is this chapel that first gave Westminster the name "Burial place of kings."
+
+Your friend follows you.
+
+>get blue paper
+You take the blue piece of paper out of the pacquet of paper.
+
+>put blue paper on henry's tomb
+You put the blue piece of paper on Henry V's tomb.
+
+>rub blue paper with crayon
+After a few moments, the tomb's inscription comes through onto the piece of paper.
+
+>get blue paper
+You pick at the paper for a few seconds, but it seems to be stuck to the inscription. After a few seconds you manage to peel it off.
+
+>e
+Henry VII Chapel
+
+You enter Henry VII's chapel, which is one of the most beautiful chapels in the world. The ceiling is a masterpiece of delicate fan vaulting, and the Renaissance gilt-bronze tomb is obviously the work of one of the Italian masters.
+
+The detective joins you and starts looking around with interest.
+
+>n
+North Chapel Aisle
+
+You enter the North Chapel Aisle. There is a very large tomb here.
+
+Your companion drifts in after you, apparently lost in thought.
+
+>w
+North Ambulatory
+
+This is a narrow corridor lined with tombs.
+
+Holmes trails along after you.
+
+>n
+Evangelist Chapel
+
+You enter the Evangelist Chapel and wonder what it is about this room that makes you feel it is somehow different from the rest of the Abbey.
+
+Your friend walks into the room alongside you.
+
+>hold blue paper over flame
+The paper is heated by the bank of candles. Something seems to be gradually appearing on the back of the blue piece of paper.
+
+>turn blue paper over
+You turn the blue piece of paper over.
+
+     Twinkle, twinkle, son of Mars,
+     Fought at sea, midst masts and spars.
+     Now above the world so high,
+     Looking down with watchful eye.
+     Twinkle, twinkle, son of Mars,
+     England's hero, prince of tars.
+
+              **********
+
+     Pussycat, pussycat, where have you been?
+     I've been to the Tower to look at the Queen.
+     Pussycat, pussycat, what did you there?
+     I left something for you. Go back, if you dare.
+
+[Your score just went up by 5 points. The total is now 19 out of 100.]
+
+>hold brown paper over flame
+The paper is heated by the bank of candles. Something seems to be gradually appearing on the back of the brown piece of paper.
+
+>turn brown paper over
+You turn the brown piece of paper over.
+
+     Hickory Dickory Dock.
+     Your enemy is the clock.
+     When it strikes nine,
+     The victory's mine.
+     Hickory Dickory Dock.
+
+              **********
+
+     Here comes a candle to light you to bed.
+     Here comes a chopper to chop off your head.
+
+>hold yellow paper over flame
+The paper is heated by the bank of candles. Something seems to be gradually appearing on the back of the yellow piece of paper.
+
+>turn yellow paper over
+You turn the yellow piece of paper over.
+
+     London Bridge is falling down.
+     All that's under it will drown.
+     With it falls Victoria's reign.
+     Britannia ne'er to rule again.
+
+              **********
+
+     When a number you require,
+     And you're banking all thereon.
+     Subtract the conquest from the fire,
+     Half a league, half a league. Half a league on.
+
+Holmes leans forward with an excited expression upon his hawk-like features and says, "There is only one man in all London clever enough to plan this, Watson - Professor Moriarty. See how boldly he hides clues in public places, knowing all the while that they will remain hidden from the casual eye. Onward, Doctor. Let us solve these riddles and see what the good Professor has in mind for us."
+
+>drop packet
+You drop the pacquet of paper.
+
+>drop crayon
+You drop the crayon.
+
+>s
+North Ambulatory
+
+This is a narrow corridor lined with tombs.
+
+The detective enters and begins pacing back and forth nervously.
+
+>s
+Sanctuary
+
+You walk into the Sanctuary. This is where the actual Coronation Ceremony takes place whenever a new monarch is crowned. A modest tomb is near the south wall.
+
+Your companion follows you.
+
+>w
+Nave
+
+You return to the Nave. Amidst the massive columns, one tomb in particular catches your attention.
+
+Holmes joins you and starts looking around with interest.
+
+>w
+Broad Sanctuary
+
+You are standing in the midst of a crowd of tourists in front of the west door of Westminster Abbey. The towers of the Abbey soar high above you, and you marvel at this perfect example of Gothic architecture, as generations have done before you.
+
+The Abbey door is open.
+
+On the wall next to the door is a small, discreet sign.
+
+Your friend trails along after you.
+
+>ne
+Parliament Square
+
+This is an attractive square at the foot of Whitehall. Large crowds mill around the entrance to the Houses of Parliament to the southeast. To the west is Birdcage Walk. Broad Sanctuary goes off to the southwest, and Whitehall is to the north.
+
+The detective follows you and begins pacing back and forth nervously.
+
+>n
+Whitehall
+
+Impressive government buildings line the street on either side. The street continues north and south, and the entrance to Scotland Yard is to the east.
+
+Your companion joins you and starts looking around with interest.
+
+>e
+Scotland Yard
+
+You walk up the steps and into the building. Inside, it looks just like any other government building - drab and worn. The door to the street is to the west, and you see some steps leading down.
+
+Holmes drifts in after you, apparently lost in thought.
+
+>light lamp
+You turn up the wick. The lamp emits a warm glow that lights up the area around you.
+
+>d
+The Black Museum
+
+This is the Black Museum, where the Yard keeps relics and mementos of famous crimes.
+
+Along one wall is a full-size rowboat with a small sign attached to it.
+
+Your friend trails along after you.
+
+>take oar
+You take Captain Bligh's oar out of Captain Bligh's boat.
+
+[Your score just went up by 1 point. The total is now 20 out of 100.]
+
+>u
+Scotland Yard
+
+You return to the ground floor. It looks just like any other government building - drab and worn. The door to the street is to the west, and you see some steps leading down.
+
+The detective walks into the room alongside you.
+
+>turn off lamp
+You turn down the wick. The lamp goes dark.
+
+In the distance, you hear Big Ben strike the hour.
+
+>w
+Whitehall
+
+Impressive government buildings line the street on either side. The street continues north and south, and the entrance to Scotland Yard is to the east.
+
+Your companion follows you.
+
+>n
+Trafalgar Square
+
+Pigeons, pigeons, everywhere. You are standing in one of the great open spaces of London, named for Nelson's naval victory over Napoleon in 1805. Streets come in and go out at all angles, and everywhere you look there are people feeding pigeons.
+
+The square is dominated by Nelson's Column, a 167 foot tall Corinthian column with a statue of Nelson on the top and a bronze relief on the pedestal at the bottom.
+
+The entrance to the Diogenes Club is to the west.
+
+Holmes drifts along after you, apparently lost in thought.
+
+>ne
+The Strand
+
+You enter the Strand, which is the heart of London's theatre district.
+
+Crowds are gathering in front of the theatres, trying to select a show to see later in the day. Streets lead off to the north, east, and southwest.
+
+Your friend walks alongside you.
+
+>e
+Fleet Street
+
+Fleet Street is the centre of London's thriving newspaper industry, and it is crowded with the thousands of people who put out the nation's newspapers.
+
+A street leads off to the west, and there is a passage south to the Embankment.
+
+The detective trails along after you.
+
+>s
+The Embankment
+
+You arrive at the Victoria Embankment, on the left bank of the Thames. The river is crowded with pleasure boats here for the Jubilee.
+
+There is an incredibly old rowboat here. It's got one empty oarlock, and it probably leaks, but it looks as if it might float.
+
+Your companion follows you and begins pacing back and forth nervously.
+
+>put oar in oarlock
+You put Captain Bligh's oar in the oarlock.
+
+>get in boat
+You and Holmes get into the boat.
+
+>raise anchor
+You raise the anchor and drop it into the boat.
+
+>launch boat
+The boat slips away from the Embankment. You are now in the middle of the Thames.
+
+>row east
+You row down the river. Downstream you see the London Bridge.
+
+>row east
+You row down the river. You pass under the London Bridge.
+
+>drop anchor
+You lower the anchor into the water.
+
+>look at bridge
+You see nothing of interest, other than a clump of moss lodged among the supports overhead.
+
+>examine moss
+The clump of moss is a slightly different colour than the other lichen that surrounds it.
+
+>get oar
+[Captain Bligh's oar]
+
+You take Captain Bligh's oar out of the oarlock.
+
+>remove hat
+You take off your hat. Inside you see a stethoscope.
+
+>knock moss with oar
+As soon as you touch the clump of moss, it crumbles. You are left holding a beautiful opal.
+
+Holmes claps you on the shoulder and says, "Capital, Watson. Capital!"
+
+[Your score just went up by 5 points. The total is now 25 out of 100.]
+
+>wear hat
+You put on your hat.
+
+>put oar in oarlock
+You put Captain Bligh's oar in the oarlock.
+
+>raise anchor
+You raise the anchor and drop it into the boat.
+
+>row west
+Fighting against the current, you row upstream. 
+
+>row west
+Fighting against the current, you row upstream. To the north you see the Embankment.
+
+>land
+You land the boat on the Embankment.
+
+>drop anchor
+You lower the anchor into the water.
+
+>get out
+As you and Holmes get out of the boat, a man storms up to you and says, "What in bloody 'ell are you doing with my boat?" Without waiting for a reply he jumps into the boat and rows off, muttering to himself that he'll have to find a safer place to keep it.
+
+>get glass from bag
+You take the magnifying glass out of the black bag.
+
+>examine opal with glass
+You see "Password: Swordfish" scratched into the surface of the opal.
+
+Holmes says, "It's obviously not one of the Crown Jewels, Watson. In fact, this gem belongs to the Agra treasure, which was stolen in India many years ago and has never been recovered."
+
+"The case grows more complex, Watson. We are in more danger than I had at first suspected." He removes a ring from one of his long, slender fingers and hands it to you. "Here, Watson. Take this signet ring of mine. If anything should happen to me, take it to my brother Mycroft at the Diogenes Club. He'll tell you what to do."
+
+[Your score just went up by 1 point. The total is now 26 out of 100.]
+
+>n
+Fleet Street
+
+Fleet Street is the centre of London's thriving newspaper industry, and it is crowded with the thousands of people who put out the nation's newspapers.
+
+A street leads off to the west, and there is a passage south to the Embankment.
+
+Holmes joins you and starts looking around with interest.
+
+>w
+The Strand
+
+You enter the Strand, which is the heart of London's theatre district.
+
+Crowds are gathering in front of the theatres, trying to select a show to see later in the day. Streets lead off to the north, east, and southwest.
+
+Your friend follows you.
+
+>sw
+Trafalgar Square
+
+Pigeons, pigeons, everywhere. You are standing in one of the great open spaces of London, named for Nelson's naval victory over Napoleon in 1805. Streets come in and go out at all angles, and everywhere you look there are people feeding pigeons.
+
+The square is dominated by Nelson's Column, a 167 foot tall Corinthian column with a statue of Nelson on the top and a bronze relief on the pedestal at the bottom.
+
+The entrance to the Diogenes Club is to the west.
+
+The detective drifts along after you, apparently lost in thought.
+
+>examine statue
+The statue of Admiral Lord Nelson is perched high above you, on top of the column.
+
+>s
+
+In the distance, you hear Big Ben strike the hour.
+Whitehall
+
+Impressive government buildings line the street on either side. The street continues north and south, and the entrance to Scotland Yard is to the east.
+
+Your companion walks alongside you.
+
+>s
+Parliament Square
+
+This is an attractive square at the foot of Whitehall. Large crowds mill around the entrance to the Houses of Parliament to the southeast. To the west is Birdcage Walk. Broad Sanctuary goes off to the southwest, and Whitehall is to the north.
+
+Holmes trails along after you.
+
+>se
+Houses Of Parliament
+
+You push your way into the jam-packed entrance hall of the House of Commons.
+
+There are hundreds of people lined up to get in. But off to one side you see a flight of old stone steps leading up into the darkness.
+
+Your friend enters and begins pacing back and forth nervously.
+
+>u
+Clock Tower
+
+The stairs seem to wind up forever. Finally, you emerge into the interior of the clock tower, high above the Houses of Parliament.
+
+The immense bell known as Big Ben is hanging from the ceiling, suspended over a hollow shaft that is so deep it might as well be bottomless. A wooden railing runs around the shaft for safety.
+
+Inside the bell, you see an enormous clapper, to which is glued a beautiful, deep-blue sapphire.
+
+The detective follows you.
+
+>get blue bottle from bag
+You take the blue bottle out of the black bag.
+
+>open blue bottle
+You open the blue bottle.
+Inside you see an orange pill and some cotton balls.
+
+>get cotton
+[the cotton balls]
+
+You take the cotton balls out of the blue bottle.
+
+>put cotton in ears
+[the cotton balls]
+
+You put the cotton balls in your ears.
+
+>wait until 10:00
+Time passes...
+
+The bell swings towards you, ringing loudly, but the cotton protects your ears. Holmes claps his hands to his ears in an attempt to protect them. The clapper swings up within reach.
+
+>get sapphire
+You tug at the sapphire, but you can't quite grab it before it swings out of reach again.
+
+The bell swings away from you.
+
+>get sapphire
+The sapphire is not within reach.
+
+The bell swings towards you, ringing loudly, but the cotton protects your ears. The clapper swings up within reach.
+
+>get sapphire
+You remove the sapphire from the clapper.
+
+Holmes beams at you and says, "Good show, old fellow."
+
+[Your score just went up by 5 points. The total is now 31 out of 100.]
+
+The bell swings away from you.
+
+>examine sapphire with glass
+You see "2:00 a.m." scratched into the surface of the sapphire.
+
+The bell swings towards you, ringing loudly, but the cotton protects your ears. The clapper swings up within reach.
+
+>d
+Houses Of Parliament
+
+You descend the stairs into the jam-packed entrance hall of the House of Commons.
+
+There are hundreds of people lined up to get in. But off to one side you see a flight of old stone steps leading up into the darkness.
+
+Your companion joins you and starts looking around with interest.
+
+>remove cotton
+[the cotton balls]
+
+You take the cotton balls out of your ears.
+
+>out
+Parliament Square
+
+This is an attractive square at the foot of Whitehall. Large crowds mill around the entrance to the Houses of Parliament to the southeast. To the west is Birdcage Walk. Broad Sanctuary goes off to the southwest, and Whitehall is to the north.
+
+Holmes follows you and begins pacing back and forth nervously.
+
+>n
+Whitehall
+
+Impressive government buildings line the street on either side. The street continues north and south, and the entrance to Scotland Yard is to the east.
+
+Your friend joins you and starts looking around with interest.
+
+>n
+Trafalgar Square
+
+Pigeons, pigeons, everywhere. You are standing in one of the great open spaces of London, named for Nelson's naval victory over Napoleon in 1805. Streets come in and go out at all angles, and everywhere you look there are people feeding pigeons.
+
+The square is dominated by Nelson's Column, a 167 foot tall Corinthian column with a statue of Nelson on the top and a bronze relief on the pedestal at the bottom.
+
+The entrance to the Diogenes Club is to the west.
+
+The detective follows you.
+
+>n
+St Giles Circus
+
+You are standing in St Giles Circus. Roads lead off in many directions.
+
+Your companion drifts along after you, apparently lost in thought.
+
+>e
+New Oxford Street
+
+The quality of the neighborhood seems to be deteriorating as you walk eastward along New Oxford Street.
+
+Holmes walks alongside you.
+
+>s
+Covent Garden
+
+You enter Covent Garden, which is the central market for all of London. Everywhere you look there are stalls packed with produce from the English countryside.
+
+The open-air market is crowded with housewives who are shopping for fruits and vegetables.
+
+After looking around for a few moments, you see a crowd of women gathered around a girl who has collapsed on the ground. Her lifeless hand clutches a bunch of flowers.
+
+Your friend trails along after you.
+
+>remove hat
+You take off your hat. Inside you see a stethoscope.
+
+>get stethoscope
+You take the stethoscope out of your hat.
+
+[Your score just went up by 1 point. The total is now 32 out of 100.]
+
+>wear stethoscope
+You put the stethoscope in your ears.
+
+>listen to girl
+Her heartbeat is incredibly fast.
+
+>read blue bottle
+The label on the bottle reads: "Digitalis leaf. For tachycardia and other accelerated arrhythmias."
+
+>read brown bottle
+The label on the bottle reads: "Belladonna. For bradycardia and other decelerated arrhythmias."
+
+>get orange pill
+You take the orange pill out of the blue bottle.
+
+>give pill to girl
+You give her the orange pill.
+
+Nothing happens for a moment, but then her eyelids flutter briefly and she opens her eyes.
+
+The crowd breaks into applause, and they help her to her feet. When she is standing, she smiles at you shyly and puts a lovely carnation in your lapel as a gesture of thanks.
+
+Just then, a distinguished-looking gentleman appears on the scene, takes her by the arm, and says, "Come, Eliza. We mustn't be late for the ball."
+
+He escorts her away, but as she leaves, she glances back at you once more with a grateful expression in her lovely eyes.
+
+[Your score just went up by 5 points. The total is now 37 out of 100.]
+
+>remove stethoscope
+You take the stethoscope out of your ears.
+
+>put stethoscope in bag
+You put the stethoscope in the black bag.
+
+>wear hat
+You put on your hat.
+
+>n
+New Oxford Street
+
+You leave Covent Garden and enter New Oxford Street.
+
+The detective follows you and begins pacing back and forth nervously.
+
+>w
+St Giles Circus
+
+You are standing in St Giles Circus. Roads lead off in many directions.
+
+Your companion joins you and starts looking around with interest.
+
+>n
+Tottenham Court Road
+
+This part of London is known for its furniture dealers, but all the shops seem to be closed for the Jubilee.
+
+Marylebone Road goes off to the west here, and Tottenham Court Road continues to the south.
+
+Throngs of shoppers peer in the windows of the closed shops.
+
+Holmes follows you.
+
+>w
+Marylebone Road
+
+You find yourself standing in front of Madame Tussaud's famous wax museum. From here the street continues east and west.
+
+The museum is closed for renovations, and there is a guard and a dog patrolling the street outside the entrance, which is just to the north of you. The guard puts out a cigarette, tips his hat, and says, "Good day, Mr Holmes."
+
+The dog growls at you.
+
+Your friend drifts along after you, apparently lost in thought.
+
+>get tobacco
+You take the tobacco out of the persian slipper.
+
+[Your score just went up by 1 point. The total is now 38 out of 100.]
+
+In the distance, you hear Big Ben strike the hour.
+
+>get pipe
+You take the pipe out of the black bag.
+
+>put tobacco in pipe
+You put the tobacco in the pipe.
+
+>open matchbook
+You open the matchbook.
+Inside you see a match.
+
+>get match
+You take the match out of the matchbook.
+
+>light match
+The match flares to life.
+
+>light pipe with match
+After a few puffs, the pipe fires right up.
+
+>drop match
+You drop the match.
+
+The match flickers and dies.
+
+>drop matchbook
+You drop the matchbook.
+
+>drop lamp
+You drop the lamp.
+
+>n
+Madame Tussaud's
+
+You come in off the street and are now standing in the lobby.
+
+All around you are wax statues of famous people. To the west is a dark and ominous-looking doorway with a sign over it. The exit to the street is to the south.
+
+Holmes drops to his hands and knees and begins a minute examination of the floor. After a few moments he cries, "Aha! Look here, Watson." He points to a miniscule speck of ash on the floor.
+
+[Your score just went up by 1 point. The total is now 39 out of 100.]
+
+>w
+Chamber Of Horrors
+
+You enter the Chamber of Horrors. Scattered around the room are wax groupings of some of the most gruesome scenes from English history. The only exit is to the east.
+
+The detective drifts in after you, apparently lost in thought.
+
+>examine statues
+The statues are of Guy Fawkes, Charles I, and Saint Thomas Becket.
+
+>examine guy fawkes
+The statue depicts Guy Fawkes crouched behind some barrels of gunpowder. He is awaiting the signal to light his torch and set off the trail of gunpowder that will blow up Parliament. The torch he holds looks like a real one.
+
+>get torch
+You take the torch off of the statue of Guy Fawkes.
+
+>get newspaper
+You take the newspaper out of the black bag.
+
+>light newspaper with pipe
+The newspaper lights up.
+
+>light torch with newspaper
+The torch catches fire quickly.
+
+Holmes looks at you and says, "An ingenious solution, Watson. My compliments, old chap."
+
+[Your score just went up by 4 points. The total is now 43 out of 100.]
+
+>drop newspaper
+You drop the newspaper.
+
+>examine king charles
+You cannot see any king charles here.
+
+>get head
+You take the wax head.
+
+The newspaper disappears into a cloud of fine ash, which itself disappears.
+
+>melt head with torch
+The wax head melts into a pool of wax on the floor. You see a gem glittering in the wax.
+
+>get emerald
+You take the emerald out of the wax pool.
+
+[Your score just went up by 5 points. The total is now 48 out of 100.]
+
+The pipe has gone out.
+
+>examine emerald with glass
+You see "20/6/87" scratched into the surface of the emerald.
+
+>put pipe in bag
+You put the pipe in the black bag.
+
+>put opal in bag
+You put the opal in the black bag.
+
+>put sapphire in bag
+You put the sapphire in the black bag.
+
+>put emerald in bag
+You put the emerald in the black bag.
+
+>e
+Madame Tussaud's
+
+You leave the Chamber of Horrors and go back into the lobby.
+
+All around you are wax statues of famous people. To the west is a dark and ominous-looking doorway with a sign over it. The exit to the street is to the south.
+
+You see some cigar ash.
+
+Your companion trails along after you.
+
+>examine william the conqueror
+[Please try to express that another way.]
+
+>s
+The guard says, "I'm sorry, but the torch is not to be removed." He takes it and returns it to the proper place.
+
+Marylebone Road
+
+You go out the door and are now standing in front of Madame Tussaud's famous wax museum. From here the street continues east and west.
+
+The museum is closed for renovations, and there is a guard and a dog patrolling the street outside the entrance, which is just to the north of you. The guard lights a cigarette, tips his hat, and says, "Goodbye, Mr Holmes."
+
+The dog growls at you.
+
+You see a lamp, a matchbook and a burnt match.
+
+Holmes walks alongside you.
+
+>get lamp
+You take the lamp.
+
+>e
+Tottenham Court Road
+
+This part of London is known for its furniture dealers, but all the shops seem to be closed for the Jubilee.
+
+Marylebone Road goes off to the west here, and Tottenham Court Road continues to the south.
+
+Throngs of shoppers peer in the windows of the closed shops.
+
+Your friend trails along after you.
+
+>s
+St Giles Circus
+
+You are standing in St Giles Circus. Roads lead off in many directions.
+
+The detective follows you and begins pacing back and forth nervously.
+
+>e
+New Oxford Street
+
+The quality of the neighborhood seems to be deteriorating as you walk eastward along New Oxford Street.
+
+Your companion joins you and starts looking around with interest.
+
+>e
+Cheapside
+
+This is a ramshackle part of town, with dark alleys leading off the main street, which continues east and west. Pinchin Lane leads off to the south.
+
+Holmes follows you.
+
+>s
+Pinchin Lane
+
+You enter Pinchin Lane, a dingy little alley that runs south from Cheapside.
+
+To the west is the entrance to what looks like a pet shop.
+
+Your friend drifts along after you, apparently lost in thought.
+
+>w
+Sherman's Shop
+
+You enter the cramped quarters of Sherman's shop. The old animal-trainer's eyes brighten up when he sees you.
+
+"You've probably come looking for Toby," he says. "But I'm afraid I won't be able to help you this time. Toby's not feeling too well, and all my other animals are already out on loan. All I have left is a half-trained pigeon."
+
+The detective walks into the room alongside you.
+
+>ask sherman about pigeon
+"He's a wonderful bird. All you have to do is show him something and tell him to get it, and away he goes. The only catch is, he only seems to like things that are red."
+
+>ask for pigeon
+[spoken to Sherman]
+Sherman hands you the bird. "Take good care of him, now. I've grown fond of him."
+
+[Your score just went up by 1 point. The total is now 49 out of 100.]
+
+>e
+Pinchin Lane
+
+You emerge from Sherman's shop into Pinchin Lane, a dingy little alley that runs north to Cheapside.
+
+To the west is the entrance to Sherman's shop.
+
+Your companion walks alongside you.
+
+>n
+
+In the distance, you hear Big Ben strike the hour.
+Cheapside
+
+This is a ramshackle part of town, with dark alleys leading off the main street, which continues east and west. Pinchin Lane leads off to the south.
+
+Holmes trails along after you.
+
+>w
+New Oxford Street
+
+The quality of the neighborhood seems to be improving as you walk westward along New Oxford Street.
+
+Your friend follows you and begins pacing back and forth nervously.
+
+>w
+St Giles Circus
+
+You are standing in St Giles Circus. Roads lead off in many directions.
+
+The detective joins you and starts looking around with interest.
+
+>s
+Trafalgar Square
+
+Pigeons, pigeons, everywhere. You are standing in one of the great open spaces of London, named for Nelson's naval victory over Napoleon in 1805. Streets come in and go out at all angles, and everywhere you look there are people feeding pigeons.
+
+The square is dominated by Nelson's Column, a 167 foot tall Corinthian column with a statue of Nelson on the top and a bronze relief on the pedestal at the bottom.
+
+The entrance to the Diogenes Club is to the west.
+
+Your companion follows you.
+
+>s
+Whitehall
+
+Impressive government buildings line the street on either side. The street continues north and south, and the entrance to Scotland Yard is to the east.
+
+Holmes drifts along after you, apparently lost in thought.
+
+>s
+Parliament Square
+
+This is an attractive square at the foot of Whitehall. Large crowds mill around the entrance to the Houses of Parliament to the southeast. To the west is Birdcage Walk. Broad Sanctuary goes off to the southwest, and Whitehall is to the north.
+
+Your friend walks alongside you.
+
+>w
+Birdcage Walk
+
+As you enter Birdcage Walk, your attention is diverted to a man who has set up a small souvenir stand near where the parade will pass on Tuesday. Hoping to attract the attention of the crowd, he is waving a handful of overpriced trinkets over his head.
+
+As soon as he sees you, the salesman ignores everyone else and says, "'Ere, Guv. Come early for the parade, 'ave you? There'll be thousands of people, you know. Now at the last Jubilee - about a year and a 'alf ago, as I remembers it - I could 'ardly see a fing. But if you was to buy one of my telescopes, you wouldn't 'ardly 'ave any problem, now would you? 'Ow 'bout it, Guv?"
+
+The detective trails along after you.
+
+>ask man about telescope
+"It's me top-of-the-line model. I can let you 'ave it for one pound."
+
+>haggle with vendor
+"Alright, guv. For you I'll come down to me special Jubilee price of Nineteen and six. 'Ow about it?"
+
+>haggle with vendor
+"It'll break me poor wife's 'eart, me comin' 'ome wif so little. But times is 'ard. Nineteen shillings. Not a farthing less."
+
+>buy telescope
+You give the pound note to the vendor. He gives you a shilling for change, and hands you the telescope.
+
+[Your score just went up by 1 point. The total is now 50 out of 100.]
+
+>e
+Parliament Square
+
+This is an attractive square at the foot of Whitehall. Large crowds mill around the entrance to the Houses of Parliament to the southeast. To the west is Birdcage Walk. Broad Sanctuary goes off to the southwest, and Whitehall is to the north.
+
+Your companion follows you and begins pacing back and forth nervously.
+
+>n
+Whitehall
+
+Impressive government buildings line the street on either side. The street continues north and south, and the entrance to Scotland Yard is to the east.
+
+Holmes joins you and starts looking around with interest.
+
+>n
+Trafalgar Square
+
+Pigeons, pigeons, everywhere. You are standing in one of the great open spaces of London, named for Nelson's naval victory over Napoleon in 1805. Streets come in and go out at all angles, and everywhere you look there are people feeding pigeons.
+
+The square is dominated by Nelson's Column, a 167 foot tall Corinthian column with a statue of Nelson on the top and a bronze relief on the pedestal at the bottom.
+
+The entrance to the Diogenes Club is to the west.
+
+Your friend follows you.
+
+>look at eye through telescope
+You focus the telescope on Nelson's blind eye.
+
+You can see a ruby in Nelson's blind eye.
+
+>show ruby to pigeon
+The pigeon looks interested.
+
+>pigeon, get ruby
+The pigeon trembles with excitement.
+
+>release pigeon
+The pigeon flies up into the air, gets the ruby, and starts to circle high over your head.
+
+>n
+St Giles Circus
+
+You are standing in St Giles Circus. Roads lead off in many directions.
+
+The detective drifts along after you, apparently lost in thought.
+
+In the distance, you hear Big Ben strike the hour.
+
+>e
+New Oxford Street
+
+The quality of the neighborhood seems to be deteriorating as you walk eastward along New Oxford Street.
+
+Your companion walks alongside you.
+
+>e
+Cheapside
+
+This is a ramshackle part of town, with dark alleys leading off the main street, which continues east and west. Pinchin Lane leads off to the south.
+
+Holmes trails along after you.
+
+>s
+Pinchin Lane
+
+You enter Pinchin Lane, a dingy little alley that runs south from Cheapside.
+
+To the west is the entrance to Sherman's shop.
+
+Your friend follows you and begins pacing back and forth nervously.
+
+>w
+Sherman's Shop
+
+Sherman's shop is dingy and cramped. Dozens of empty cages are stacked up against the walls.
+
+The detective enters and begins pacing back and forth nervously.
+
+Sherman says, "Welcome back. It's a pleasure to see you again."
+
+>ask sherman about pigeon
+Sherman says, "He came back with a ruby. I don't know where he found it." He gives you the ruby.
+
+Holmes looks at you approvingly and says, "Bravo, Watson. Well done, old chap."
+
+[Your score just went up by 5 points. The total is now 55 out of 100.]
+
+>examine ruby with glass
+You see "Wear a carnation" scratched into the surface of the ruby.
+
+>e
+Pinchin Lane
+
+You emerge from Sherman's shop into Pinchin Lane, a dingy little alley that runs north to Cheapside.
+
+To the west is the entrance to Sherman's shop.
+
+Your companion joins you and starts looking around with interest.
+
+>n
+Cheapside
+
+This is a ramshackle part of town, with dark alleys leading off the main street, which continues east and west. Pinchin Lane leads off to the south.
+
+Holmes follows you.
+
+>e
+Threadneedle Street
+
+You enter Threadneedle Street and are now in front of the Bank of England. The entrance to the bank is to the north, Cheapside leads off to the west, and King William Street continues to the southeast. On the wall is a small sign.
+
+A bank guard is lounging up against the wall, idly jangling some keys in his pocket while he watches a group of urchins playing in the street.
+
+One of the urchins looks strangely familiar to you.
+
+Your friend drifts along after you, apparently lost in thought.
+
+>examine urchin
+After staring at his dirty face for a few moments, you suddenly recognize the boy. He is Wiggins, the head of the Baker Street Irregulars, which is Holmes's unofficial army of street urchins who "go everywhere and do everything."
+Wiggins is shifting his weight from one foot to the other.
+
+>examine guard
+The guard is lounging against the wall, idly jangling some keys in his pocket and waiting for girls to walk by.
+
+>wiggins, steal keys
+Wiggins says with wounded pride, "Sorry, guv. Me and Mr 'Olmes has a deal. One shilling's me price. Nothing more. Nothing less."
+
+>give shilling to wiggins
+Wiggins looks at the shilling and then at you. After a few moments he stuffs it deep into the recesses of his clothing and says, "I'm all yours. Wot's the plan?"
+
+>wiggins, steal keys
+Wiggins casually strolls past the guard and says, "Cor blimey. That bird isn't 'alf built, is she?" While the guard's attention is diverted, Wiggins's hand flashes in and out of his pocket. Then just as casually as before, he strolls back to you, slips something into your hand, and whispers, "Sorry I couldn't get everything, guv. I 'ope this is enough."
+
+[Your score just went up by 1 point. The total is now 56 out of 100.]
+
+>examine key
+The key has the word "Master" written on it.
+
+>get opal from bag
+You take the opal out of the black bag.
+
+>get sapphire from bag
+You take the sapphire out of the black bag.
+
+>get emerald from bag
+You take the emerald out of the black bag.
+
+>give opal to guard
+"Now this is very nice. But I think I would need more than just one to make letting you in worth my while. I'll hold this for you until you come back."
+
+>give sapphire to guard
+"This is even more beautiful than the other one. But it isn't worth taking the risk for only two of them."
+
+>give ruby to guard
+"One more and you're in."
+
+>give emerald to guard
+The guard looks furtively up and down the street. Then he whispers to you out of the side of his mouth, "Good enough. Go on in."
+
+[Your score just went up by 3 points. The total is now 59 out of 100.]
+
+>n
+As soon as you enter, the guard leaves.
+
+Bank Of England
+
+The bank has the eerie silence that normally crowded places have when no one is there. The door to the vault is set into the west wall.
+
+The detective follows you.
+
+>get stethoscope from bag
+You take the stethoscope out of the black bag.
+
+>wear stethoscope
+You put the stethoscope in your ears.
+
+>listen to dial
+At the moment, the dial is silent.
+
+>turn dial right
+Whirr.
+
+>turn dial right
+Click.
+
+>turn dial left
+Click.
+
+>turn dial right
+Whirr.
+
+>turn dial right
+Click. Kerchunk. The vault door swings open.
+
+Holmes says, "Splendid, Watson. The net is drawing ever tighter around our quarry."
+
+[Your score just went up by 3 points. The total is now 62 out of 100.]
+
+>remove stethoscope
+You take the stethoscope out of your ears.
+
+>put stethoscope in bag
+You put the stethoscope in the black bag.
+
+>w
+Bank Vault
+
+Upon entering, you see rows and rows of safety deposit boxes.
+
+Your companion joins you and starts looking around with interest.
+
+>unlock box 600 with key
+You open the box with the key. Inside you see a topaz.
+
+>get topaz
+You take the topaz out of the safety deposit box.
+
+Holmes plucks you by the sleeve and reaches into the box. "Observe, Watson." He pulls out an almost invisible thread and examines it with glittering eyes. "Muslin," he declares, more to himself than to you. "Of Indian origin, and of the type used almost exclusively in the manufacture of turbans." He looks at you in triumph. "Our case is almost complete, Doctor. The Agra gems, the Trichinopoly cigar, and now this strand of muslin."
+
+Holmes puts the strand into his pocket and explains. "Moriarty - for reasons as yet unknown to us - has stolen the Crown Jewels. The Agra gems have somehow passed into his hands by way of this Indian accomplice, and he is using small pieces of it to lure me into a rendezvous with him. It's a dangerous game we play, Watson, but if we are to recover the regalia we have no choice."
+
+[Your score just went up by 5 points. The total is now 67 out of 100.]
+
+>examine topaz with glass
+You see "Bar of Gold" scratched into the surface of the topaz.
+
+>e
+Bank Of England
+
+The bank has the eerie silence that normally crowded places have when no one is there. The door to the vault is set into the west wall.
+
+Holmes drifts in after you, apparently lost in thought.
+
+>s
+Threadneedle Street
+
+You emerge into Threadneedle Street and are now in front of the Bank of England. The entrance to the bank is to the north, Cheapside leads off to the west, and King William Street continues to the southeast. On the wall is a small sign.
+
+A group of urchins is playing in the street.
+
+Wiggins is here.
+
+Your friend walks alongside you.
+
+Suddenly, someone grabs you from behind, pins your arms to your sides, and covers up your head. You struggle fiercely to get loose, but to no avail. Then you hear a voice shout, "Let him go, we've got the other one."
+
+The person holding you knocks you on the head and flings you to the ground. You lose consciousness for a few moments, and when you awake, you are alone.
+
+Sherlock Holmes has been kidnapped.
+
+>wait
+Wiggins says, "I saw it all, guv'nor. But it was over before I could lift a finger. Mr 'Olmes was a friend to me, 'e was. And I'd do anyfing to 'elp you get 'im back."
+
+Time passes...
+
+In the distance, you hear Big Ben strike the hour.
+
+>w
+Cheapside
+
+This is a ramshackle part of town, with dark alleys leading off the main street, which continues east and west. Pinchin Lane leads off to the south.
+
+>w
+New Oxford Street
+
+The quality of the neighborhood seems to be improving as you walk westward along New Oxford Street.
+
+The boy follows you.
+
+>s
+Covent Garden
+
+You enter Covent Garden, which is the central market for all of London. Everywhere you look there are stalls packed with produce from the English countryside.
+
+The open-air market is crowded with housewives who are shopping for fruits and vegetables.
+
+The urchin walks alongside you.
+
+>s
+The Strand
+
+You enter the Strand, which is the heart of London's theatre district.
+
+Crowds are gathering in front of the theatres, trying to select a show to see later in the day. Streets lead off to the north, east, and southwest.
+
+Your companion joins you and starts looking around with interest.
+
+>sw
+Trafalgar Square
+
+Pigeons, pigeons, everywhere. You are standing in one of the great open spaces of London, named for Nelson's naval victory over Napoleon in 1805. Streets come in and go out at all angles, and everywhere you look there are people feeding pigeons.
+
+The square is dominated by Nelson's Column, a 167 foot tall Corinthian column with a statue of Nelson on the top and a bronze relief on the pedestal at the bottom.
+
+The entrance to the Diogenes Club is to the west.
+
+Your assistant drifts along after you.
+
+>w
+Diogenes Club
+
+You enter the hushed atmosphere of the Diogenes Club. The furnishings are aging and opulent. The members are aging and asleep. The only exit is to the east.
+
+An ancient butler totters forward to greet you and says in a barely audible whisper, "May I be of some assistance?"
+
+Wiggins follows you.
+
+>ask butler about holmes
+The butler listens to you and then leaves. He comes back shortly.
+
+"Mr Mycroft Holmes requires that you offer some token to verify that you are indeed the person you claim to be. Give whatever it is to me and I will take it to him."
+
+>give ring to butler
+The butler accepts the item and asks you to wait while he takes it to Mr Mycroft Holmes.
+
+After a few moments, Mycroft Holmes appears. He looks very worried.
+
+"Sherlock warned me that you might come," he says. "And the fact that you are here indicates that he is indeed in trouble. I believe that in order to solve this mystery, you are going to have to go to the Tower of London. It will be closed, but you can give the password 'Boleyn' to the guard at the Byward Tower. He will let you in. Good luck."
+
+Mycroft pauses before he goes and looks at you meditatively, as if trying to decide if he can put his faith in you to rescue his brother. After a moment he gives his head an unconscious nod, then turns around and disappears back into the club.
+
+[Your score just went up by 1 point. The total is now 68 out of 100.]
+
+>e
+Trafalgar Square
+
+Pigeons, pigeons, everywhere. You are standing in one of the great open spaces of London, named for Nelson's naval victory over Napoleon in 1805. Streets come in and go out at all angles, and everywhere you look there are people feeding pigeons.
+
+The square is dominated by Nelson's Column, a 167 foot tall Corinthian column with a statue of Nelson on the top and a bronze relief on the pedestal at the bottom.
+
+The entrance to the Diogenes Club is to the west.
+
+The boy walks alongside you.
+
+>ne
+The Strand
+
+You enter the Strand, which is the heart of London's theatre district.
+
+Crowds are gathering in front of the theatres, trying to select a show to see later in the day. Streets lead off to the north, east, and southwest.
+
+The urchin joins you and starts looking around with interest.
+
+>e
+Fleet Street
+
+Fleet Street is the centre of London's thriving newspaper industry, and it is crowded with the thousands of people who put out the nation's newspapers.
+
+A street leads off to the west, and there is a passage south to the Embankment.
+
+Your companion drifts along after you.
+
+>s
+The Embankment
+
+You arrive at the Victoria Embankment, on the left bank of the Thames. The river is crowded with pleasure boats here for the Jubilee.
+
+Your assistant follows you.
+
+>e
+Upper Thames Street
+
+Upper Thames Street runs east and west between the Embankment and Lower Thames Street.
+
+Wiggins walks alongside you.
+
+>e
+
+In the distance, you hear Big Ben strike the hour.
+Lower Thames Street
+
+You enter Lower Thames Street. Roads lead off in many directions, some more savory than others. There is a set of particularly slovenly stairs leading down to an alley that runs alongside the river.
+
+The boy joins you and starts looking around with interest.
+
+>e
+Tower Of London Entrance
+
+You are standing outside the entrance to the Tower of London. Next to the entrance there is a sign.
+
+The urchin drifts along after you.
+
+>e
+Drawbridge
+
+So far, so good. No one has challenged your right to be here. Maybe the Tower has been left unguarded.
+
+To the east you see the Byward Tower, and to the west is the Tower Entrance.
+
+Your companion follows you.
+
+>e
+Byward Tower
+
+Your luck runs out. A costumed Yeoman of the Guard steps forward to challenge you.
+
+A few of the Tower's famous ravens are perched here, watching your every move.
+
+Your assistant walks alongside you.
+
+>guard, boleyn
+The guard steps aside as you walk in.
+
+Outer Ward
+
+This is the Outer Ward. From here you can go north, south, or west.
+
+A few of the Tower's famous ravens are perched here, watching your every move.
+
+Wiggins joins you and starts looking around with interest.
+
+[Your score just went up by 3 points. The total is now 71 out of 100.]
+
+>n
+Bloody Tower
+
+You enter the Bloody Tower where, allegedly, the "Little Princes in the Tower" met their death. One exit leads north. The other leads south.
+
+The boy drifts along after you.
+
+>n
+Tower Green
+
+You are on Tower Green, which is at the centre of the Tower of London. Entrances to various towers lie to the northeast, east, southeast, and south. A few ravens are strolling around the green, eyeing you with interest.
+
+The urchin follows you.
+
+>se
+Wakefield Tower
+
+You leave the Tower Green for the gloom of the Wakefield Tower.
+
+There is a dark stone staircase leading up, and the only other exit is to the northwest.
+
+Your companion walks alongside you.
+
+>u
+Jewel Room
+
+The stairs take you up to the Jewel Room of the Tower of London. The case that once held the Regalia is twisted and smashed, and the weapon that the thief used is lying on the ground nearby.
+
+Your assistant joins you and starts looking around with interest.
+
+>examine weapon
+It's a huge, medieval mace that some medieval knight probably used for knocking other knights off horses.
+
+>get mace
+You take the mace.
+
+[Your score just went up by 1 point. The total is now 72 out of 100.]
+
+>d
+Wakefield Tower
+
+You descend the stairs into the ground floor of the Wakefield Tower.
+
+There is a dark stone staircase leading up, and the only other exit is to the northwest.
+
+Wiggins drifts along after you.
+
+>nw
+Tower Green
+
+You are on Tower Green, which is at the centre of the Tower of London. Entrances to various towers lie to the northeast, east, southeast, and south. A few ravens are strolling around the green, eyeing you with interest.
+
+The boy follows you.
+
+>ne
+Bowyer Tower
+
+You enter the Bowyer Tower. It was in this room that the Duke of Clarence was drowned in a Butt of Malmsey in 1478. The keg still stands over in the corner.
+
+Exits lead out and down.
+
+The urchin walks alongside you.
+
+>examine keg
+It's an old wooden keg that's brimming over with malmsey and covered with stains where the wine has spilled down the sides and leaked through the bung.
+
+>hit bung with mace
+The bung flies across the room and lands in the corner. The malmsey streams out of the butt and across the floor. Soon the keg is completely empty, and there's wine all over the floor.
+
+>examine keg
+In the empty butt of malmsey you see a garnet.
+
+>wiggins, get garnet
+Wiggins climbs into the empty butt of malsey, gets the gem, gets out, and gives it to you.
+
+[Your score just went up by 5 points. The total is now 77 out of 100.]
+
+>examine garnet with glass
+You see "Give me to Akbar" scratched into the surface of the garnet.
+
+>sw
+Tower Green
+
+You are on Tower Green, which is at the centre of the Tower of London. Entrances to various towers lie to the northeast, east, southeast, and south. A few ravens are strolling around the green, eyeing you with interest.
+
+Your companion joins you and starts looking around with interest.
+
+>e
+White Tower
+
+This is the White Tower, which was started by William the Conqueror in 1078. Exits lead out and down.
+
+Your assistant drifts along after you.
+
+>d
+Dungeon
+
+You inch your way down the dark stairs and arrive in the oldest part of the Tower, the Dungeon.
+
+The room has been converted into museum space, and prominently featured is a man-size suit of armour.
+
+Wiggins follows you.
+
+>wear armour
+You put on the suit of armour.
+
+>u
+White Tower
+
+This is the White Tower, which was started by William the Conqueror in 1078. Exits lead out and down.
+
+The boy walks alongside you.
+
+>out
+Tower Green
+
+You are on Tower Green, which is at the centre of the Tower of London. Entrances to various towers lie to the northeast, east, southeast, and south. A few ravens are strolling around the green, eyeing you with interest.
+
+The urchin joins you and starts looking around with interest.
+
+>s
+Bloody Tower
+
+You enter the Bloody Tower where, allegedly, the "Little Princes in the Tower" met their death. One exit leads north. The other leads south.
+
+Your companion drifts along after you.
+
+>s
+Outer Ward
+
+This is the Outer Ward. From here you can go north, south, or west.
+
+A few of the Tower's famous ravens are perched here, watching your every move.
+
+Your assistant follows you.
+
+>s
+Inside Traitors Gate
+
+You walk south from the Outer Ward and find yourself just north of Traitors Gate. The portcullis is down. From the wall near the portcullis hangs a chain, and perched on top of the wall are some ravens.
+
+You see a paddle.
+
+Wiggins walks alongside you.
+
+>pull chain
+You grab the chain and lift your feet off the ground. The portcullis' ancient mechanism creaks, but then it rises up and locks into place. When you release the chain, the massive gate remains open.
+
+[Your score just went up by 1 point. The total is now 78 out of 100.]
+
+>remove armour
+You take off the suit of armour and leave it on the ground.
+
+>take paddle
+You take the paddle.
+
+[Your score just went up by 1 point. The total is now 79 out of 100.]
+
+>s
+Outside Traitors Gate
+
+You pass under the portcullis and find yourself just south of Traitors Gate, through which condemned prisoners were brought in to the Tower prior to being executed. The massive iron portcullis is up.
+
+You see an old boat.
+
+The boy joins you and starts looking around with interest.
+
+>get in boat
+You and Wiggins get into the boat.
+
+>raise anchor
+You raise the anchor and drop it into the boat.
+
+>launch boat
+The boat slips out into the river.
+
+>paddle west
+Fighting against the current, you paddle upstream. You pass under the London Bridge.
+
+>paddle west
+Fighting against the current, you paddle upstream. 
+
+>paddle west
+Fighting against the current, you paddle upstream. To the north you see the Embankment.
+
+>land
+You land the boat on the Embankment.
+
+>drop anchor
+You lower the anchor into the water.
+
+>get out
+As you and Wiggins get out of the boat, its red-faced owner runs up and yells, "You again?!!" He gives you a swift kick in the rear.
+
+The man jumps into the boat, launches it, and suddenly realizes he has no way to steer it. The last you see of him, he is drifting down the Thames, screaming and shaking his fist at you.
+
+>e
+
+In the distance, you hear Big Ben strike the hour.
+Upper Thames Street
+
+Upper Thames Street runs east and west between the Embankment and Lower Thames Street.
+
+The urchin drifts along after you.
+
+>e
+Lower Thames Street
+
+You enter Lower Thames Street. Roads lead off in many directions, some more savory than others. There is a set of particularly slovenly stairs leading down to an alley that runs alongside the river.
+
+Your companion follows you.
+
+>d
+Swan Lane
+
+With increasing apprehension, you descend into Swan Lane, which runs along the waterfront of the Thames.
+
+It is a seedy, disreputable, run-down part of town that normally you wouldn't be caught dead in. After a moment's reflection, you wish you hadn't thought of it in quite those terms.
+
+To the west is the entrance to one of the least savory buildings you have ever seen. There is a faded sign above the door that informs you that the establishment was, in better days, known as the Bar of Gold.
+
+Fortunately, it is only a short walk back up the stairs to Lower Thames Street.
+
+Your assistant walks alongside you.
+
+>drop paddle
+You drop the paddle.
+
+>drop mace
+You drop the mace.
+
+>drop telescope
+You drop the telescope.
+
+>drop blue paper
+You drop the blue piece of paper.
+
+>drop brown paper
+You drop the brown piece of paper.
+
+>drop yellow paper
+You drop the yellow piece of paper.
+
+>remove hat
+You take off your hat.
+
+>get ampoule from bag
+You take the ampoule of etherium out of the black bag.
+
+>put ampoule in hat
+You put the ampoule of etherium in your hat.
+
+>wear hat
+You put on your hat.
+
+>wait 24 hours
+Time passes...
+
+While you wait, you hear Big Ben strike each hour.
+
+Daylight begins to fade. Soon it will be dark.
+
+Do you want to continue waiting?
+Please press Y or N > y
+
+Darkness falls and the mists come in.
+
+Visibility increases in the gathering light of the new day. Tourists are beginning to crowd into the streets.
+
+Do you want to continue waiting?
+Please press Y or N > y
+
+The sun comes up, as much as it ever comes up in England.
+
+>wait until 1:59
+Time passes...
+
+While you wait, you hear Big Ben strike each hour.
+
+Daylight begins to fade. Soon it will be dark.
+
+Do you want to continue waiting?
+Please press Y or N > y
+
+Darkness falls and the mists come in.
+
+>wait until 1:59
+It is 1:59 a.m. now.
+
+>in
+Wiggins says, "You must be stark raving bonkers. That's the most dangerous place in London. I'll wait out here, thank you very much!"
+
+Bar Of Gold
+
+After fighting the urge to turn and run, you enter and find yourself in the Bar of Gold, the most infamous opium den in London. The proprietor is a most unsavory character who gives you a sidelong glance as you enter and then ignores you.
+
+In the distance, you hear Big Ben strike the hour.
+
+>proprietor, swordfish
+The denkeeper disappears into a back room and reappears moments later, accompanied by a tall, silent man who has dark skin and wears a white turban.
+
+The Indian glances at your head and then intones, "I am Akbar, honourable sir. What is it that you wish?"
+
+>give garnet to akbar
+Akbar takes the garnet and examines it closely. Then he says, "I must ask you to come with me, sir. But first, I ask that you give me all that you carry." He takes everything you give him, and then apologizes as he places a blindfold over your eyes. He leads you down a series of long winding corridors. You hear a door close behind you, and when he finally removes the blindfold, you are standing in Moriarty's lair. Akbar locks the door behind you, drops the key on Moriarty's desk, and piles most of what you were carrying onto the floor.
+
+[Your score just went up by 5 points. The total is now 84 out of 100.]
+
+Lair
+
+At last you come face to face with the evil Professor. He is sitting placidly behind his desk, looking at you as if you were some botanical specimen.
+
+As you look around the room, you see Sherlock Holmes tied to a chair. He is only inches away from the Crown Jewels, which Moriarty has spread out on his desk, the better to taunt Holmes.
+
+Holmes looks up and says, "Ah, there you are Watson." He turns his head towards Moriarty and says, "You see, Professor, you grossly underestimate the intelligence and determination of your fellow countrymen."
+
+"Watson," he continues. "The Professor and I have just been chatting about why he led us on this merry chase. If you care to ask him, I'm sure he would be happy to fill you in as well."
+
+>remove hat
+You take off your hat. Disconcerted by your sacrilegious action, Akbar averts his gaze. Inside you see an ampoule of etherium.
+
+>get ampoule
+Moriarty's normally emotionless features dissolve in rage. He shouts at Akbar, "Why didn't you take that from him when you brought him in?"
+
+The outburst startles Akbar into momentary inaction, but he quickly recovers and starts to come towards you with a violent look in his eyes.
+
+>hold breath
+You take a deep breath. Holmes notices your action and surreptitiously does likewise.
+
+>break ampoule
+You break open the ampoule. The etherium is released into the room. You see everyone but Holmes pass out.
+
+>untie holmes
+You untie Holmes, keeping the rope.
+
+>tie akbar to moriarty
+You tie Akbar to Moriarty.
+
+You can't hold your breath much longer...
+
+>take key
+You take Moriarty's key off of the desk.
+
+Your lungs scream for air. You take a deep breath.
+
+The etherium knocks you out.
+
+You awaken slowly and stumble to your feet. Moriarty and Akbar have already recovered, and they are struggling fiercely to free themselves. It seems as if you were unconscious for quite a while, but it's hard to tell. You probably don't have a lot of time.
+
+>get whistle
+You take the whistle.
+
+>get jewels
+You take the Crown Jewels off of the desk.
+
+[Your score just went up by 10 points. The total is now 94 out of 100.]
+
+>unlock door with key
+You unlock the door.
+
+>open door
+You open the door.
+
+>out
+London Bridge
+
+When you emerge from the lair you are momentarily disoriented, blinking your eyes in the bright sunlight. After a few moments, you realize you are standing on London bridge, but you have no idea from which direction you came.
+
+The detective trails along after you.
+
+You notice that the sun has risen... as much as it ever does in England.
+
+>blow whistle
+Tweeeeeeeeee!
+
+>blow whistle
+Tweeeeeeeeee!
+
+A hansom cab pulls up beside you.
+
+[Your score just went up by 5 points. The total is now 99 out of 100.]
+
+>get in cab
+You and Holmes get into the cab.
+
+"Where to, guv'nor?"
+
+>palace
+"Right-o."
+
+The cab speeds through the streets, deftly weaving in and out of the jubilee traffic and whizzing past famous landmarks. Only a few minutes later, you arrive at your destination.
+
+Queens Gardens
+
+You are in a cab outside the gate to Buckingham Palace.
+
+A Palace guard is here.
+
+>leave cab
+You and Holmes get out of the cab. After you get out, it drives off.
+
+>give jewels to guard
+The Palace guard examines the regalia closely and then disappears inside the palace. Moments later, he reappears with the Prime Minister, who quickly ushers you and Holmes into the presence of the Queen.
+
+Overcome by emotion, for a few moments she says nothing. Finally she smiles and says, "Once again, Mr Holmes, we find ourselves in your debt. Until now you have always refused our offers of gratitude. Do you intend to refuse your Queen yet again?"
+
+Holmes returns her smile. "I do, Your Majesty. But only because your thanks would be misdirected. It is Doctor Watson here who deserves your gratitude."
+
+The Queen turns her gaze towards you. "Indeed? And what reward would you ask of us, Doctor?"
+
+Flustered, you stammer something about the service itself being reward enough, and before you know it you have been royally thanked and ushered back out of the palace into Queens Gardens. There, you and Holmes join the cheering multitudes who greet the Queen when, promptly at 9:00 and wearing the full regalia, she steps onto the balcony to begin the Coronation Day festivities.
+
+[Your score just went up by 1 point. The total is now 100 out of 100.]
+
+[Your score is 100 out of 100, which earns you a ranking of Consulting Detective.]
+
+The game is no longer afoot.
+
+Do you wish to: (1) Quit, (2) Restart, (3) Restore, (4) Hints, (5) Undo ?
+[rezrov: At D3CE, sound_effect L00 L01 sp L04: sound effects beyond a bleep cannot be played here]
+[rezrov: At 22813, clear_attr L00 L01: attribute 48 is outside 0 to 47]

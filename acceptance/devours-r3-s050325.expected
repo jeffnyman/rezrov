@@ -1,0 +1,577 @@
+
+
+
+You're in.
+
+The plan now is simple: go to your lab, plant the bomb, and run. The prototype will be destroyed. The military will have no way to continue the experiment. No-one will die.
+
+The guard is out securing the grounds. The building is empty. You have six minutes.
+
+
+All Things Devours
+Written for IFComp 2004 by half sick of shadows.
+This is the post-competition release.
+It is in the public domain and may thus be freely copied or modified.
+First-time players should type 'about'.
+Release 3 / Serial number 050325 / Inform v6.30 Library 6/11 
+
+Foyer
+A darkened foyer, presided over by a security desk near the north wall. Floating above it in the capacious darkness is a small landing. A set of stairs both rises up to meet it and stretches downwards into the dark.
+
+In the north wall is a closed automatic door.
+
+To the south is a set of automatic doors leading out into the inky night.
+
+>d. n. n
+
+Basement Landing
+A cramped space at the bottom of the stairs. A corridor can be seen to the north through the automatic door, and the stairs lead back up to the foyer.
+
+To the north is a closed automatic door.
+(first inserting your ID card)
+You swipe your card through the slot, and hold your breath.
+The door slides open with a soft rattle.
+Perfect. Just as you'd hoped. The bastards hadn't even thought to disable your card.
+
+Basement Corridor
+A long north-south corridor, much the same as those on the other floors. Three gray doors line the eastern wall. The first two have small glass windows, peering into darkened laboratories. The third is plain and leads to a small equipment room. All three are closed.
+
+At the north end a fourth door leads to the Deutsch lab.
+
+To the south is an open automatic door, leading back to the landing.
+The automatic door softly slides closed.
+(first opening the door to the Deutsch lab)
+(first unlocking the door to the Deutsch lab)
+
+The Deutsch Laboratory
+The lab is order and chaos. By the dim blue-green light of a few swirling screen savers, you can see the cluttered benches of your colleagues, frozen in the mess of academic creativity. Frozen exactly as they were when badges were flashed, when we looked on in disbelief as they took control of the lab. Yours however, is clean. The books and papers are in neat stacks. They have been working here.
+
+Nearby, against the north wall is the prototype, a six foot cylinder of brushed steel cladding. The door has been taken off and is nowhere to be seen. They have been working on it too. You wince at the sight.
+
+To the south, the door to the lab lies open.
+
+You can see a flashlight (which is empty) and a worn brass key here.
+
+>take all
+flashlight: Taken.
+worn brass key: Taken.
+
+>x bench
+Your bench has clearly been used recently, and not by you. Your books and papers are neatly piled to one side, leaving the largest expanse of bare desk you have ever seen here.
+
+You suddenly notice that your research notes are not here. You were sure they would be -- and would thus be destroyed in the blast. This is bad. Very bad.
+
+>s. s. u
+
+Basement Corridor
+A long north-south corridor, much the same as those on the other floors. Three gray doors line the eastern wall. The first two have small glass windows, peering into darkened laboratories. The third is plain and leads to a small equipment room. All three are closed.
+
+At the north end is an open door leading to the Deutsch lab.
+
+To the south is a closed automatic door, leading back to the landing.
+(first pressing the green exit button)
+The door slides open with a soft rattle.
+
+Basement Landing
+A cramped space at the bottom of the stairs. A corridor can be seen to the north through the automatic door, and the stairs lead back up to the foyer.
+
+To the north is an open automatic door.
+The automatic door softly slides closed.
+
+Foyer
+A darkened foyer, presided over by a security desk near the north wall. Floating above it in the capacious darkness is a small landing. A set of stairs both rises up to meet it and stretches downwards into the dark.
+
+In the north wall is a closed automatic door.
+
+To the south is a set of automatic doors leading out into the inky night.
+
+>x desk
+A large black desk equipped with four CCTV screens showing live feeds from around the complex. There are also four buttons, labeled 'basement', 'first', 'second' and 'alarm'.
+
+>press second button
+Nothing obvious happens.
+
+>press first button
+The door slides open with a soft rattle.
+
+>n. ne
+
+First Floor Corridor
+A long north-south corridor, much the same as those on the other floors. Three gray doors line the eastern wall. The first two have small glass windows, peering into darkened laboratories. The third is plain and leads to a small equipment room. All three are closed.
+
+To the south is an open automatic door, leading back to the foyer.
+The automatic door softly slides closed.
+(first opening the door to the equipment room)
+(first unlocking the door to the equipment room)
+
+First Floor Equipment Room
+It is almost completely dark. Some faint light spills in from the west through the open door, allowing you to just discern the outlines of a series of shelves. By the door is a light switch.
+
+>switch lights on
+The lights come on after a brief flicker.
+
+First Floor Equipment Room
+By the flickering fluorescent lights, you see the crowded shelves of the equipment room.
+
+To the west, the door to the corridor lies open.
+
+You can see a length of ribbon cable and a battery here.
+
+>take all
+length of ribbon cable: Taken.
+battery: Taken.
+
+>out
+
+First Floor Corridor
+A long north-south corridor, much the same as those on the other floors. Three gray doors line the eastern wall. The first two have small glass windows, peering into darkened laboratories. The third is open onto an equipment room.
+
+To the south is a closed automatic door, leading back to the foyer.
+
+>s. d. n. n
+(first pressing the green exit button)
+The door slides open with a soft rattle.
+
+Foyer
+A darkened foyer, presided over by a security desk near the north wall. Floating above it in the capacious darkness is a small landing. A set of stairs both rises up to meet it and stretches downwards into the dark.
+
+In the north wall is an open automatic door.
+
+To the south is a set of automatic doors leading out into the inky night.
+The automatic door softly slides closed.
+
+Basement Landing
+A cramped space at the bottom of the stairs. A corridor can be seen to the north through the automatic door, and the stairs lead back up to the foyer.
+
+To the north is a closed automatic door.
+(first inserting your ID card)
+The door slides open with a soft rattle.
+
+Basement Corridor
+A long north-south corridor, much the same as those on the other floors. Three gray doors line the eastern wall. The first two have small glass windows, peering into darkened laboratories. The third is plain and leads to a small equipment room. All three are closed.
+
+At the north end is an open door leading to the Deutsch lab.
+
+To the south is an open automatic door, leading back to the landing.
+The automatic door softly slides closed.
+
+The Deutsch Laboratory
+The lab is order and chaos. By the dim blue-green light of a few swirling screen savers, you can see the cluttered benches of your colleagues, frozen in the mess of academic creativity. Yours however, is clean. The books and papers are in neat stacks. They have been working here.
+
+Nearby, against the north wall is the prototype, a six foot cylinder of brushed steel cladding. They have been working on it too. The door has been taken off and is nowhere to be seen.
+
+To the south, the door to the lab lies open.
+
+>fix prototype
+(first entering the prototype)
+
+Inside the prototype
+The interior of the prototype is cramped and dark. On the wall you can see the half-installed control panel. Through the open hatch you can see some of the Deutsch lab.
+
+You begin work completing the modifications...
+After a minute or so, you are done.
+
+>set panel to 390
+You quickly type the number in to the control panel.
+
+>press silver button
+You hold your breath and activate the prototype.
+
+>exit
+
+The Deutsch Laboratory
+The lab is order and chaos. By the dim blue-green light of a few swirling screen savers, you can see the cluttered benches of your colleagues, frozen in the mess of academic creativity. Yours however, is clean. The books and papers are in neat stacks. They have been working here.
+
+Nearby, against the north wall is the prototype, a six foot cylinder of brushed steel cladding. They have been working on it too. The door has been taken off and is nowhere to be seen.
+
+To the south, the door to the lab stands closed.
+
+You can see a flashlight (which is empty) and a worn brass key here.
+
+>s. s. u. n. ne
+(first opening the door to the Deutsch lab)
+(first unlocking the door to the Deutsch lab)
+
+Basement Corridor
+A long north-south corridor, much the same as those on the other floors. Three gray doors line the eastern wall. The first two have small glass windows, peering into darkened laboratories. The third is plain and leads to a small equipment room. All three are closed.
+
+At the north end is an open door leading to the Deutsch lab.
+
+To the south is a closed automatic door, leading back to the landing.
+(first pressing the green exit button)
+The door slides open with a soft rattle.
+
+Basement Landing
+A cramped space at the bottom of the stairs. A corridor can be seen to the north through the automatic door, and the stairs lead back up to the foyer.
+
+To the north is an open automatic door.
+The automatic door softly slides closed.
+
+Foyer
+A darkened foyer, presided over by a security desk near the north wall. Floating above it in the capacious darkness is a small landing. A set of stairs both rises up to meet it and stretches downwards into the dark.
+
+In the north wall is a closed automatic door.
+
+To the south is a set of automatic doors leading out into the inky night.
+(first pressing the button marked 'first')
+The door slides open with a soft rattle.
+
+First Floor Corridor
+A long north-south corridor, much the same as those on the other floors. Three gray doors line the eastern wall. The first two have small glass windows, peering into darkened laboratories. The third is plain and leads to a small equipment room. All three are closed.
+
+To the south is an open automatic door, leading back to the foyer.
+The automatic door softly slides closed.
+(first opening the door to the equipment room)
+(first unlocking the door to the equipment room)
+
+First Floor Equipment Room
+It is almost completely dark. Some faint light spills in from the west through the open door, allowing you to just discern the outlines of a series of shelves. By the door is a light switch.
+
+>switch lights on
+The lights come on after a brief flicker.
+
+First Floor Equipment Room
+By the flickering fluorescent lights, you see the crowded shelves of the equipment room.
+
+To the west, the door to the corridor lies open.
+
+You can see a length of ribbon cable and a battery here.
+
+>take battery
+(the battery)
+Taken.
+
+>out
+
+First Floor Corridor
+A long north-south corridor, much the same as those on the other floors. Three gray doors line the eastern wall. The first two have small glass windows, peering into darkened laboratories. The third is open onto an equipment room.
+
+To the south is a closed automatic door, leading back to the foyer.
+
+>s. d. n
+(first pressing the green exit button)
+The door slides open with a soft rattle.
+
+Foyer
+A darkened foyer, presided over by a security desk near the north wall. Floating above it in the capacious darkness is a small landing. A set of stairs both rises up to meet it and stretches downwards into the dark.
+
+In the north wall is an open automatic door.
+
+To the south is a set of automatic doors leading out into the inky night.
+The automatic door softly slides closed.
+
+Basement Landing
+A cramped space at the bottom of the stairs. A corridor can be seen to the north through the automatic door, and the stairs lead back up to the foyer.
+
+To the north is a closed automatic door.
+(first inserting your ID card)
+The door slides open with a soft rattle.
+
+Basement Corridor
+A long north-south corridor, much the same as those on the other floors. Three gray doors line the eastern wall. The first two have small glass windows, peering into darkened laboratories. The third is plain and leads to a small equipment room. All three are closed.
+
+At the north end is an open door leading to the Deutsch lab.
+
+To the south is an open automatic door, leading back to the landing.
+The automatic door softly slides closed.
+
+>put batteries in flashlight
+battery: Done.
+battery: Done.
+
+>turn flashlight on
+A thin beam of icy light shines forth.
+
+>ne
+(first opening the door to the equipment room)
+(first unlocking the door to the equipment room)
+
+Basement Equipment Room
+By the thin blue-white beam of your flashlight, you see the crowded shelves of the equipment room.
+
+To the west, the door to the corridor lies open.
+
+You can see a crowbar here.
+
+>take crowbar
+Taken.
+
+>exit
+
+Basement Corridor
+A long north-south corridor, much the same as those on the other floors. Three gray doors line the eastern wall. The first two have small glass windows, peering into darkened laboratories. The third is open onto an equipment room.
+
+At the north end is an open door leading to the Deutsch lab.
+
+To the south is a closed automatic door, leading back to the landing.
+
+>close equipment room
+You close the door to the equipment room.
+
+>close deutsch lab
+You close the door to the Deutsch lab.
+
+>lock deutsch lab
+The bright steel key turns smoothly in the lock.
+
+>s. u. n. ne
+(first pressing the green exit button)
+The door slides open with a soft rattle.
+
+Basement Landing
+A cramped space at the bottom of the stairs. A corridor can be seen to the north through the automatic door, and the stairs lead back up to the foyer.
+
+To the north is an open automatic door.
+The automatic door softly slides closed.
+
+Foyer
+A darkened foyer, presided over by a security desk near the north wall. Floating above it in the capacious darkness is a small landing. A set of stairs both rises up to meet it and stretches downwards into the dark.
+
+In the north wall is a closed automatic door.
+
+To the south is a set of automatic doors leading out into the inky night.
+(first pressing the button marked 'first')
+The door slides open with a soft rattle.
+
+First Floor Corridor
+A long north-south corridor, much the same as those on the other floors. Three gray doors line the eastern wall. The first two have small glass windows, peering into darkened laboratories. The third is open onto an equipment room.
+
+To the south is an open automatic door, leading back to the foyer.
+The automatic door softly slides closed.
+
+First Floor Equipment Room
+By the flickering fluorescent lights, you see the crowded shelves of the equipment room.
+
+To the west, the door to the corridor lies open.
+
+You can see a length of ribbon cable here.
+
+>remove battery from flashlight
+As you remove the battery, the light fails.
+Taken.
+
+>drop battery
+(the battery)
+Dropped.
+
+>flick switch
+The lights flicker briefly, then go out, leaving you in the darkness.
+
+>exit
+
+First Floor Corridor
+A long north-south corridor, much the same as those on the other floors. Three gray doors line the eastern wall. The first two have small glass windows, peering into darkened laboratories. The third is open onto an equipment room.
+
+To the south is a closed automatic door, leading back to the foyer.
+
+>lock equipment door
+(first closing the door to the equipment room)
+The worn brass key turns smoothly in the lock.
+
+>s. u
+(first pressing the green exit button)
+The door slides open with a soft rattle.
+
+Foyer
+A darkened foyer, presided over by a security desk near the north wall. Floating above it in the capacious darkness is a small landing. A set of stairs both rises up to meet it and stretches downwards into the dark.
+
+In the north wall is an open automatic door.
+
+To the south is a set of automatic doors leading out into the inky night.
+The automatic door softly slides closed.
+
+Upstairs Landing
+A small landing, hanging in the still darkness above the foyer.
+
+On the north wall lies a closed automatic door.
+
+>wait until 4:18:10
+Time passes.
+The door slides open with a soft rattle.
+
+>n. n
+
+Second Floor Corridor
+A long north-south corridor, much the same as those on the other floors. Three plain gray doors line the eastern wall.
+
+At the north end of the corridor is a closed glass door leading out to the balcony.
+
+To the south is an open automatic door, leading back to the landing.
+The automatic door softly slides closed.
+(first opening the balcony door)
+
+Balcony
+A wide balcony, looking out over the sleeping city. Below you, a lawn slopes gently away into the gloom, a few silhouetted trees marking the edge of the modest grounds. Above, the clear sky is a deep black, dusted with glinting stars.
+
+To the south-east is a large, tinted glass window.
+
+To the south, the door to the upstairs corridor lies open.
+
+>wait until 4:20:25
+Time passes.
+
+>smash window
+You swing the crowbar firmly into the window and it shatters with a loud crash.
+
+A piercing siren rings out.
+
+>enter window
+
+Conference Room
+A rather slick but soulless affair. A large table of dark polished wood takes pride of place and is surrounded by a half-dozen chairs.
+
+To the north, lie the shattered remains of a window, open to the starry night.
+
+On the conference table is a collection of notes.
+
+The siren wails.
+
+>take notes
+Taken.
+
+The siren wails.
+
+>exit
+
+Balcony
+A wide balcony, looking out over the sleeping city. Below you, a lawn slopes gently away into the gloom, a few silhouetted trees marking the edge of the modest grounds. Above, the clear sky is a deep black, dusted with glinting stars.
+
+To the south-east, lie the shattered remains of a window, opening into a murky conference room.
+
+To the south, the door to the upstairs corridor lies open.
+
+The siren wails.
+
+>s. s. d. d. n. n
+
+Second Floor Corridor
+A long north-south corridor, much the same as those on the other floors. Three plain gray doors line the eastern wall.
+
+At the north end of the corridor is an open glass door leading out to the balcony.
+
+To the south is a closed automatic door, leading back to the landing.
+
+The siren wails.
+(first pressing the green exit button)
+The door slides open with a soft rattle.
+
+The siren wails.
+
+Upstairs Landing
+A small landing, hanging in the still darkness above the foyer.
+
+On the north wall lies an open automatic door.
+
+The siren wails.
+The automatic door softly slides closed.
+
+Foyer
+A darkened foyer, presided over by a security desk near the north wall. Floating above it in the capacious darkness is a small landing. A set of stairs both rises up to meet it and stretches downwards into the dark.
+
+In the north wall is a closed automatic door.
+
+To the south is a set of automatic doors leading out into the inky night.
+
+The siren wails.
+
+Basement Landing
+A cramped space at the bottom of the stairs. A corridor can be seen to the north through the automatic door, and the stairs lead back up to the foyer.
+
+To the north is a closed automatic door.
+
+The siren wails.
+(first inserting your ID card)
+The door slides open with a soft rattle.
+
+The siren wails.
+
+Basement Corridor
+A long north-south corridor, much the same as those on the other floors. Three gray doors line the eastern wall. The first two have small glass windows, peering into darkened laboratories. The third is plain and leads to a small equipment room. All three are closed.
+
+At the north end is an open door leading to the Deutsch lab.
+
+To the south is an open automatic door, leading back to the landing.
+
+The siren wails.
+The automatic door softly slides closed.
+
+The Deutsch Laboratory
+The lab is order and chaos. By the dim blue-green light of a few swirling screen savers, you can see the cluttered benches of your colleagues, frozen in the mess of academic creativity. Yours however, is clean. The books and papers are in neat stacks. They have been working here.
+
+Nearby, against the north wall is the prototype, a six foot cylinder of brushed steel cladding. They have been working on it too. The door has been taken off and is nowhere to be seen.
+
+To the south, the door to the lab lies open.
+
+The siren wails.
+
+>drop device
+Dropped.
+
+The siren wails.
+
+>set timer to 20
+Time until detonation: 20 seconds.
+
+The siren wails.
+
+>enter prototype
+
+Inside the prototype
+The interior of the prototype is cramped and dark. On the wall you see the control panel with a small LED timer set to 390 seconds, and a silver button. Through the open hatch you can see some of the Deutsch lab.
+
+The siren wails.
+
+>set panel to 230
+You quickly type the number in to the control panel.
+
+The siren wails.
+
+>press button
+You hold your breath and activate the prototype.
+
+>exit
+
+The Deutsch Laboratory
+The lab is order and chaos. By the dim blue-green light of a few swirling screen savers, you can see the cluttered benches of your colleagues, frozen in the mess of academic creativity. Yours however, is clean. The books and papers are in neat stacks. They have been working here.
+
+Nearby, against the north wall is the prototype, a six foot cylinder of brushed steel cladding. They have been working on it too. The door has been taken off and is nowhere to be seen.
+
+To the south, the door to the lab lies open.
+
+>s. s. u. s
+
+Basement Corridor
+A long north-south corridor, much the same as those on the other floors. Three gray doors line the eastern wall. The first two have small glass windows, peering into darkened laboratories. The third is plain and leads to a small equipment room. All three are closed.
+
+At the north end is an open door leading to the Deutsch lab.
+
+To the south is a closed automatic door, leading back to the landing.
+(first pressing the green exit button)
+The door slides open with a soft rattle.
+
+Basement Landing
+A cramped space at the bottom of the stairs. A corridor can be seen to the north through the automatic door, and the stairs lead back up to the foyer.
+
+To the north is an open automatic door.
+The automatic door softly slides closed.
+
+Foyer
+A darkened foyer, presided over by a security desk near the north wall. Floating above it in the capacious darkness is a small landing. A set of stairs both rises up to meet it and stretches downwards into the dark.
+
+In the north wall is a closed automatic door.
+
+To the south is a set of automatic doors leading out into the inky night.
+(first pressing the green exit button)
+The main doors open onto the night.
+
+You slip out into the night, darting quickly through the Cambridge shadows until you reach the quiet corner where you left your car. Exhausted, you gently start the cold motor and roll off towards the interstate.
+
+Days, months, years run by. You find a new name, a new life. Fresh challenges are gladly met and life proceeds with full force in its new and welcome direction. Only now and then do you stop on a chill starry night and wonder whether you were right, what really would have happened.
+
+
+    *** Success. Final, lasting success. ***
+
+
+
+Would you like to RESTART, RESTORE a saved game, UNDO your last move or QUIT?
+> quit

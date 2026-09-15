@@ -1,0 +1,969 @@
+
+
+
+Look at him up there. Strutting up and down the stage like he owns the place, which he does. The whole crowd gazing at him, worshipping him. Never mind that he's a vampire, never mind that they're all so much blood to him - he's rich, he's famous, but he likes nerdy things and he smiles a lot, so he must be just like them!
+
+Bastard. That should be you up there.
+
+Vampire Ltd
+A Corporate Espionage Adventure (with Vampires In It) by Alex Harby
+Release 4 / Serial number 210129 / Inform 7 build 6M62 (I6/v6.33 lib 6/12N) 
+
+Campus Entrance
+The plaza outside the Lunarcel complex is packed this morning. The crowd hangs on Hadrian's every word as he paces a stage set up near the entrance to the main campus.
+
+An old phone booth huddles against the wall.
+
+Hadrian is in the middle of a speech. He's been going for about ten minutes, but he seems to be building up to something. "...Hydrological energy needs you to live next to a big enough river. Solar and wind power need you to have the right kind of weather. Geothermal power needs you to live on top of a volcano. Sustainable energy simply does not work for everybody."
+
+>x Hadrian
+Perfectly coiffed and coutured, as always. Amazing how good you can look when you probably pay a dozen people to dress you.
+
+"Clearly, the world needs a new solution. A sustainable source of clean energy which is absolutely reliable, no matter who you are or where you are." While he rambles, you shift your umbrella to your other arm, and daydream about the snack you're carrying.
+
+>x umbrella
+Your one remaining prized possession, an umbrella made of thick black fabric and an aspen wood shaft, sleek and sharp and aerodynamic. You want to keep out of the sun, but you want to look good doing it. The umbrella is currently open.
+
+"My friends," says Hadrian with a wink, "I present to you the Moonlite." And he whisks the cover off the screen next to him, revealing a picture of... something? Some kind of a machine?
+
+>x Moonlite
+The screen shows a promotional image of something called the Moonlite. It looks like some kind of big dumb thimble-shaped machine.
+
+The crowd oohs at the screen. "The Moonlite!" says Hadrian, gloating. "A fission reactor which will work anywhere, for anyone! Clean energy, for anyone! And it's completely safe. Forget uranium, forget plutonium - all that's needed is harmless helium."
+
+>x crowd
+Look at these idiots, lapping up everything Hadrian says. Didn't people use to throw tomatoes at guys like him? Or garlic?
+
+"We're still in the development stage, of course. We have a working prototype in our engineering laboratory, but we won't enter production until it's perfect. We'll be announcing more in the coming months. Take care." And Hadrian turns and leaves abruptly, leaving a pool of reporters shouting questions after him. The crowd disperses, the stage is dismantled, and you're standing in the middle of the bustle, fuming.
+
+You are Nero Brashov, former nobleman, current vampire, and temporarily-embarassed businessman. You have learned that humans don't like vampires very much... unless you happen to be rich and charismatic. Oh yes, the mortal world will line up to worship Hadrian Alba! You know what kind of person he really is, and you know it's all luck and lies that got him to the top, but that doesn't matter to anyone else, oh no.
+
+And you? Victim of rotten luck, reduced to stealing from blood banks and sleeping in your hearse, just because of a handful of failed startups and lawsuits and bankruptcies? Why should you accept that, and watch Hadrian be hailed as a hero because of his stupid Moonlite thing? It's not like he ever cared about sustainable energy when you knew him.
+
+Well, you've got your own plan. You're going to go in there and find this Moonlite. And you're going to destroy it. Don't let Hadrian be the bigger man. Get sweet revenge.
+
+And you'll put your grand plan into motion just as soon as you're invited in.
+
+Campus Entrance
+The entrance to the Lunarcel campus is now quiet apart from a handful of workers dismantling the stage. The main part of the campus is north of here.
+
+Now that the stage has been cleared away, you can see a "Help Wanted" banner affixed by the entrance.
+
+An old phone booth huddles against the wall.
+
+>x banner
+"DO YOU HAVE WHAT IT TAKES to deliver high-quality award-winning customer service online and by telephone to Lunarcel customers and clients? WE ARE HIRING! Entry-level positions - NO CV REQUIRED! Start as early as TODAY! CALL NOW!"
+
+"No CV required"? "Start today"? They must be desperate to hire people. There's a phone number on the banner - maybe you could get invited in for an interview...
+
+>x me
+You are the vampire Nero Brashov. Once proud and wealthy, now destitute and dusty, but still as blood-sucking as ever.
+
+>x blood bag
+Times are tough, and it's getting harder to bite people without being reported. You have to make do with whatever you can find when you break into the blood donation clinic after hours. This blood bag is full, and looking pretty tasty right now. You can bite it if you want a meal.
+
+>x stage
+Just a pile of scaffolding now.
+
+>x booth
+An old phone booth, but clearly looked after. That is, none of the windows are smashed right now.
+
+>in
+You enter the booth and pick up the phone. Who will you call?
+
+[When talking to people or using devices, you'll be given numbered options like those below. To choose one, just type the number of the option you want. For example, just type "1" if you want to select the first option.]
+
+[1] Call the Lunarcel job application number
+[2] Call the emergency services
+[3] Never mind
+
+>1
+You dial the number on the job advert. It rings for a while, but a glassy-sounding voice eventually picks up. "Hello, Lunarcel customer services department, how may I help you?"
+
+[1] I'm applying for that job opening.
+[2] Do you have Prince Albert in a can? Well you'd better go catch him!
+[3] Sorry, wrong number.
+
+>1
+"Brilliant. Well, we're hiring quickly at the moment, so we're open all week for applicants. We just need to do an informal interview to get to know you first. Can you drop in today?"
+
+You give the woman on the other end a fake name and details. (Well, better pretend to be human while you're sneaking in. You can feed on the employees later.) "Great! Thanks, Oren. Come into the office whenever you can. We're on the Lunarcel campus, on the west end. We're in the white office block there."
+
+[1] So I'm definitely allowed into the campus, then?
+[2] Great! See you soon.
+
+>1
+"Yes, of course you're allowed in! Why wouldn't you be?"
+
+[1] Great! See you soon.
+
+>1
+You say your goodbyes and end the call. So, you've been invited in for interview! You should be able to cross the threshold into the campus now. Unless Hadrian spots you and bans you again. But how could he possibly find you? You're using a fake name.
+
+Campus Entrance
+The entrance to the Lunarcel campus is now quiet apart from a handful of workers dismantling the stage. The main part of the campus is north of here.
+
+An old phone booth huddles against the wall.
+
+Now that the stage has been cleared away, you can see a "Help Wanted" banner affixed by the entrance.
+
+>n
+
+Campus Central
+This central plaza is wide and spacious, offering striking views of all the major landmarks of the campus, as if designed by a brutalist landscape gardener.
+
+As a wooden signpost indicates, the black glass building to the immediate north is the corporate headquarters; it also tells you that the campus stretches east to the engineering laboratory, and west to the customer service office. You can also leave the campus through the southern exit.
+
+>x signpost
+Lots of little signs jutting out of a wooden pole. It looks like one of those destination signposts they have at landmarks which tell you how far away other capital cities are, except this one points to buildings on the campus. Is this supposed to be Hadrian's way of making the place feel welcoming and playful to visitors? Because the big black building overshadows it.
+
+>w
+
+Campus West
+Somewhat less pretty than the entrance and central plaza were - this part of the campus must usually be seen only by employees. North is a grimy-looking office block, and the rest of the campus is to the east.
+
+>x office
+A tired and dirty cuboid of a building tucked away almost out of sight from the central campus.
+
+>n
+
+Office
+A modern open-plan office: bent backs from wall to wall and no privacy anywhere. Just how you used to like it when you were running these kinds of places. North seems to lead to some kind of meeting room. You can head back outside to the south.
+
+A woman who you take to be the office manager is bustling wildly, juggling several administrative tasks at once.
+
+A list of common passwords has been flimsily stuck up on the wall nearby.
+
+>x manager
+A bundle of stress in a turtleneck sweater.
+
+>x list
+This looks like a printout of some techie website article:
+
+"THIS YEAR'S MOST COMMON PASSWORDS
+Cybersecurity begins with a strong password, yet many people use simple and easily-guessed passwords. This is a list of the 12 most commonly used passwords of the past year, as revealed by security leaks and database breaches.
+
+* 12345678
+* admin
+* dragon
+* holiness
+* letmein
+* monkey
+* password
+* q1w2e3r4
+* qwerty
+* sunshine
+* shadow
+* trustn01
+
+If you use one of these passwords, you may be at risk of other people accessing your personal information!"
+
+>talk to manager
+"Can I help- How can I help you?"
+
+[1] I'm here for a job interview.
+[2] Never mind, I though you were someone else.
+
+>1
+"Ah, you must be Oren! I'm ready for you right now. Follow me, please." She leads you into the meeting room.
+
+Interview Room
+Now that you're in there, you see that what you thought was a conference room is really just a converted stationery closet with two chairs, a table and a cupboard. There's barely room for one person here; with both you and the manager in here, it's dangerously crowded.
+
+The manager is sitting across from you. She gives you her friendliest smile. "Good to meet you, Mr. Vohsarb. I only have a few questions for you, just to make sure you're an appropriate fit for this department. So, could you tell me why you applied for this job, and why you want to work at Lunarcel?"
+
+[1] Corporate espionage
+[2] Revenge
+[3] I've lost control of my life
+[4] It has always been my dream to serve the customer
+
+>4
+You say something about helping other people, the kind of thing you used to like to hear from other people. It looks like the manager likes it too. She scribbles a quick note, and says "Thank you, Oren. Now, why did you leave your last job position?"
+
+[1] Failed to attract sufficient startup investment
+[2] Employees unwilling to work for me
+[3] Run out of town by pitchforked mob
+[4] It did not challenge and inspire me like this job would
+
+>4
+You improvise something about how you've heard Lunarcel is the land of opportunity, and how the office looks like a great work environment and everything, just like you remember your old job applicants telling you.
+
+As you start to wonder if they were lying too, the manager makes another little note. "Thank you. Just one more question, and there are no right or wrong answers here... What would you say is your biggest weakness?"
+
+[1] Vulnerability to sunlight
+[2] Wooden stake through the heart or stomach
+[3] Inability to cross thresholds uninvited
+[4] Sensitivity to holy symbols
+[5] Running water
+[6] I guess I'm just a perfectionist
+
+>6
+"Yes, everyone says that." The interviewer has a wry little smile as she checks her notes one more time.
+
+"Well, I don't see any cause for concern here. Welcome abroad, Oren!" She shakes your hand. "Can you start today?"
+
+Five minutes later, you've been shown to your new desk, on which is a very old computer. You'll be handling online customer enquiries for your first shift, you've been told. Around you, other workers are being yelled at over the phone, or doing something clerical with a spreadsheet, or some other boring task.
+
+The interviewer - your new manager - comes back with something on a lanyard. "Here's your ID card, hot off the presses," she says, as you slip it around your neck. "You're supposed to wear your card at all times. You don't really need it unless you're going to high-security areas, but you'd need to be properly authorised anyway, so don't worry about it. Talk to me if you need anything!" And she's gone again.
+
+Of course, now that you're officially allowed on the Lunarcel campus, you have no intention of doing any work. You are going to find Hadrian's precious Moonlite machine and destroy it. As soon as you find it, that is.
+
+Office
+A modern open-plan office: bent backs from wall to wall and no privacy anywhere. Just how you used to like it when you were running these kinds of places. North leads to a meeting room. You can head back outside to the south.
+
+There's an unused miserable-looking computer here which is, apparently, yours. Lovely.
+
+The manager is bustling wildly, juggling several administrative tasks at once.
+
+A list of common passwords has been flimsily stuck up on the wall nearby.
+
+>x card
+A plastic keycard on a lanyard, currently dangling about your neck.
+
+>x desk
+On a rickety desk near you is a yellowing tower computer running an operating system from 10 years ago.
+
+The old computer is currently switched on.
+
+>x computer
+On a rickety desk near you is a yellowing tower computer running an operating system from 10 years ago.
+
+The old computer is currently switched on.
+
+>use it
+The computer makes noises like it's preparing for take-off, but it seems to work fine.
+
+[1] Check your email
+[2] Do the customer service work you were just hired to do
+[3] Got any games on this thing?
+[4] Stop using the computer
+
+>1
+You check your corporate email inbox.
+
+[1] Subject: Password Security
+[2] Subject: MAKE FREE MONEY NOW!!!
+[3] Quit looking at email
+
+>1
+Sent just this morning to the whole company, from someone you suppose to be the head of IT:
+
+"Please be advised that, in light of recent security breaches, we will be updating the requirements for account passwords.
+
+"Currently, all passwords must be at least seven characters long. Soon, we will also require all passwords to include at least one numerical character. No user password currently includes a number; you are advised that this leaves your account more vulnerable to hacking attempts.
+
+"You will be asked to change your password in the coming weeks, We apologise for the inconvenience after you all updated your passwords recently already."
+
+Hmm, maybe they're having security breaches because their IT guy is dropping hints about everyone's password to the whole company.
+
+[1] Subject: Password Security
+[2] Subject: MAKE FREE MONEY NOW!!!
+[3] Quit looking at email
+
+>2
+Oh! Free money? For cryptocurrency mining? What a steal! You will have to circle back to this as soon as you've finished sabotaging Lunarcel from the inside.
+
+[1] Subject: Password Security
+[2] Subject: MAKE FREE MONEY NOW!!!
+[3] Quit looking at email
+
+>3
+Enough email for now.
+
+[1] Check your email
+[2] Do the customer service work you were just hired to do
+[3] Got any games on this thing?
+[4] Stop using the computer
+
+>2
+Hah. No.
+
+[1] Check your email
+[2] Got any games on this thing?
+[3] Stop using the computer
+
+>2
+Just one or two solitaire games, it looks like. You ignore them. You hate things you can't win.
+
+[1] Check your email
+[2] Got any games on this thing?
+[3] Stop using the computer
+
+>3
+You step away from the computer.
+
+>n
+
+Interview Room
+A pokey little room currently set up as an interview room. Two chairs and a table take up most of the room; the rest of it is occupied by a cupboard.
+
+>open cupboard
+You open the cupboard, revealing WAAAUUGH-
+
+You slam the cupboard shut. You open the cupboard again, gingerly.
+
+Holy symbols! Dozens of them! Of every denomination you can think of! This is no innocent meeting room. It's a multifaith prayer room!
+
+The symbols are already getting to you. You look away, and notice a little box on the floor. It must have fallen out of the cupboard.
+
+>close cupboard
+You close the cupboard with relief. Thank God. Better yet, don't.
+
+>x box
+About the size of a matchbox. There's some writing on it: "Seedless RAISINS. Ingredients: 100% dried seedless grapes; additives." Oh great, now there's a raisin religion??
+
+>take it
+Taken.
+
+>s
+
+Office
+A modern open-plan office: bent backs from wall to wall and no privacy anywhere. Just how you used to like it when you were running these kinds of places. North leads to a multifaith prayer room. You can head back outside to the south.
+
+Your work computer is waiting for you here.
+
+The manager is bustling wildly, juggling several administrative tasks at once.
+
+A list of common passwords has been flimsily stuck up on the wall nearby.
+
+>talk to manager
+"Hi, Oren. Do you need help?"
+
+[1] What are my job duties again?
+[2] When do we get breaks?
+[3] Excuse me, there's been some kind of mistake. There's religion in the meeting room.
+[4] Well, back to work for me.
+
+>1
+(You're asking this just to look like you're interested, of course. You have no intention of doing any actual work.)
+
+"Today, you'll be handling online customer support. We've assigned you a computer there." She points to the grimy old spare computer nearby. "You've also got an email account set up for you already - you can check that on the computer too."
+
+[1] What are my job duties again?
+[2] When do we get breaks?
+[3] Excuse me, there's been some kind of mistake. There's religion in the meeting room.
+[4] Well, back to work for me.
+
+>2
+"Not for a while, Oren. You have a few more hours yet before your ten-minute break," she says. (You are, of course, not going to wait for a few more hours. You're already planning to sneak out of the office as soon as possible.)
+
+[1] What are my job duties again?
+[2] When do we get breaks?
+[3] Excuse me, there's been some kind of mistake. There's religion in the meeting room.
+[4] Well, back to work for me.
+
+>3
+"Shh, shh, shh!" She leans in closer and lowers her voice. "That's the prayer room. Could you keep it a secret for me, Oren? Mr. Alba doesn't know it's there. He's always come down very hard on religion. He says it's a distraction. Just keep it under your hat so he doesn't find out, okay? Thanks."
+
+[1] What are my job duties again?
+[2] When do we get breaks?
+[3] Excuse me, there's been some kind of mistake. There's religion in the meeting room.
+[4] Well, back to work for me.
+
+>4
+"Alright, Oren." The manager gives you a quick smile, and then bustles away again.
+
+>s
+You make a quick and confident exit while the manager's back is turned.
+
+Campus West
+Somewhat less pretty than the entrance and central plaza were - this part of the campus must usually be seen only by employees. North is a grimy-looking office block, and the rest of the campus is to the east.
+
+>e
+
+Campus Central
+This central plaza is wide and spacious, offering striking views of all the major landmarks of the campus, as if designed by a brutalist landscape gardener.
+
+As a wooden signpost indicates, the black glass building to the immediate north is the corporate headquarters; it also tells you that the campus stretches east to the engineering laboratory, and west to the customer service office. You can also leave the campus through the southern exit.
+
+>n
+
+Lobby
+This is the pleasantly airy and open lobby of the building where all the executives keep their offices. A corridor leads visitors and executives north. The main campus is to the south.
+
+There's a receptionist here, hunched over a computer and looking very bored.
+
+You can also see some grapes here.
+
+>x receptionist
+Receptionists and every other customer service role, you feel, should be bright-eyed and bushy-tailed, always ready with a friendly smile and a proactive attitude. This receptionist clearly doesn't share your opinion. He's not even standing up.
+
+>x computer
+Hey, how come this guy gets a computer made this millennium, and you're stuck with one from caveman times? No fair! Not that you care.
+
+The computer is currently switched on.
+
+>x grapes
+Juicy seedless purple grapes.
+
+>talk to him
+He glances up from whatever he's doing. "Hi, how can I help you," he mutters.
+
+[1] Hey, I'm new here.
+[2] I'd like to see Mr. Alba. Is he in?
+[3] Can I have some of that fruit?
+[4] Goodbye.
+
+>1
+"Sorry to hear that," he mumbles automatically.
+
+[1] Is this... not a good place to work?
+[2] I'd like to see Mr. Alba. Is he in?
+[3] Can I have some of that fruit?
+[4] Goodbye.
+
+>1
+"It's... it's fine. The people are good, but the bosses are-" The receptionist glances around, and sees no bosses listening in. He leans a little closer. "It's miserable. You've been hired for the customer service department, right? Have they told you you're not allowed bathroom breaks yet? They fired the guys trying to unionise, and most people just quit after the first few months, with all the long shifts. They stopped checking references because they're just trying to hire people quicker than they can quit. I'm lucky, I get to sit down and just deal with the important visitors, but I had some friends in customer service, being yelled at twelve hours a day because somebody else screwed up. Just... bad." He leans back again.
+
+[1] Are you thinking of quitting?
+[2] I'd like to see Mr. Alba. Is he in?
+[3] Can I have some of that fruit?
+[4] Goodbye.
+
+>1
+The receptionist gives you a wan little smile. "Can't. I need the job. I can't afford... I'm not... doing well-" He looks down abruptly and rubs his eyes for a few seconds.
+
+(You remember touring the factory floor once and seeing a worker in tears, and all the other workers clustered around her. You dealt with her. You don't remember what it was about.)
+
+He looks up again. "I need the money. I'm just lucky to have a job. Even if it's this one. Sorry. Thanks for listening."
+
+[1] I'd like to see Mr. Alba. Is he in?
+[2] Can I have some of that fruit?
+[3] Goodbye.
+
+>2
+"Yeah, sure, it's there for anyone. Help yourself."
+
+[1] I'd like to see Mr. Alba. Is he in?
+[2] Goodbye.
+
+>1
+"He's not in right now. Just wait for him in his office if you want. It's just down the hall that way." He waves vaguely northward.
+
+[1] Where is Mr. Alba right now?
+[2] Goodbye.
+
+>1
+"He's doing something in the lab. Uh, the laboratory, on the east bit of the campus. Where they do the prototypes, and... uh, things. I'd say just go over there and find him, but you need authorisation to get in, and I can't do that for you myself." He shrugs sympathetically. "Sorry, dude."
+
+[1] So who can authorise me to get into the laboratory?
+[2] Goodbye.
+
+>1
+"The security guys can. Let me check." The receptionist dials a number on his phone and murmurs a conversation for a minute or two. He hangs up. "No luck, sorry. They say they're not changing any of the lab's security permissions at this time. I think they've locked things down with the Moonlite, to stop anyone getting in who shouldn't be there." Damn Hadrian, always a step ahead.
+
+"I think all the executives get to change the cards as well," the receptionist adds. "So they can show guests around."
+
+[1] Can I get an executive to change my card to let me into the laboratory?
+[2] Goodbye.
+
+>1
+"You can ask, but they probably won't do it." The secretary shrugs. "Maybe one of them left themselves logged in. Just borrow their computer and do it yourself. I know Mr. Alba is out. His office is up that way." He waves a lethargic arm northwards. This receptionist has a terrible attitude towards security.
+
+[1] Can I get an executive to change my card to let me into the laboratory?
+[2] Goodbye.
+
+>2
+"Oh. Bye."
+
+>take grapes
+Taken.
+
+>n
+
+Hade's Office
+This is an office?? It looks more like a furniture showroom. It's all expensive tables and chairs and sofas - Hadrian could hold three meetings at once in here. But there are film posters hung up around the room too, like he thinks it makes him look cool.
+
+On one especially luxurious desk sits a fancy computer.
+
+>x tables
+Leather and mahogany, everywhere you look. Here's ten chairs arranged around a long table for meetings; over there are deep armchairs and a coffee table for entertainments. It's all very expensive-looking.
+
+>x posters
+Posters for sci-fi films and cartoons, and things nerds like. Does Hadrian actually like these things?? You thought maybe he was pretending to like media to trick people into liking him.
+
+>x computer
+An oak or oak-ish desk supports what must be Hadrian's computer. It's one of those really expensive computers they sell to teenagers and nerds. It's black with red accents, and it looks like a spaceship.
+
+The fancy computer is currently switched on.
+
+>use it
+A password field blocks you! Curse that Hadrian, and screw him, too! He's always one step ahead. Hmm, how can you figure out Hade's password? Hopefully he's not very careful with it - maybe other people in the company can help you guess.
+
+>s
+
+Lobby
+This is the pleasantly airy and open lobby of the building where all the executives keep their offices. A corridor leads visitors and executives north. The main campus is to the south.
+
+There's a receptionist here, hunched over a computer and looking very bored.
+
+>talk to receptionist
+He glances up from whatever he's doing. "Hi again," he mutters.
+
+[1] Can I get an executive to change my card to let me into the laboratory?
+[2] I'm trying to guess Mr. Alba's password. Any idea what it is?
+[3] Goodbye.
+
+>2
+"I don't know his password. Sorry. Let me think." The secretary pinches the bridge of his nose. "I know he forgets his password a lot. I can hear him shouting at his computer for keeping him out from all the way out here. But he usually stops pretty quickly. I guess he remembers after he's shouted a bit. Sorry, that's all I can tell you."
+
+[1] Can I get an executive to change my card to let me into the laboratory?
+[2] I'm trying to guess Mr. Alba's password. Any idea what it is?
+[3] Goodbye.
+
+>3
+"Oh. Bye."
+
+>n
+
+Hade's Office
+Hadrian's office looks more like a furniture showroom. It's all expensive tables and chairs and sofas - Hadrian could hold three meetings at once in here. But there are film posters hung up around the room too, like he thinks it makes him look cool.
+
+On one especially luxurious desk sits a fancy computer.
+
+>shout
+(the fancy computer's operating system)
+The computer wakes up without a sound. You could snoop through Hade's emails, but you also see an application for controlling Lunarcel's security permissions.
+
+[1] Check Hadrian's emails
+[2] Edit campus security permissions
+[3] Got any games on this thing?
+[4] Stop using the computer
+
+>1
+You open Hade's email program. Looks like Hade deletes a lot of his emails as he gets them (you remember he doesn't like to leave evidence), but there's a few messages here that he hasn't gotten around to destroying yet.
+
+[1] Subject: Re: Re: Re: Re: URGENT: Moonlite Efficiency Report
+[2] Subject: please change your password, I am BEGGING you
+[3] Subject: MAKE FREE MONEY NOW!!!
+[4] Subject: Moonlite Update Request
+[5] Quit Hadrian's email
+
+>1
+You skim through a long back-and-forth conversation between Hadrian and one of the Moonlite engineers.
+
+Huh... it looks like the Moonlite has problems. A lot of it is jargon and gibberish, but it sounds like the type of fission the reactor uses is massively inefficient. Looks like the energy you put into splitting the helium atom isn't worth the energy you get out of it. And the engineer says something about a shortage of helium in the world. So the Moonlite is both unsustainable and worthless. Hah. Great job, Hade.
+
+[1] Subject: Re: Re: Re: Re: URGENT: Moonlite Efficiency Report
+[2] Subject: please change your password, I am BEGGING you
+[3] Subject: MAKE FREE MONEY NOW!!!
+[4] Subject: Moonlite Update Request
+[5] Quit Hadrian's email
+
+>2
+This one is sort of like the company-wide email about password security you got, except it's personalised to Hade. The sender is very politely explaining something about the importance of numbers and symbols and length in passwords, the value of strong password protection, and the cost of security breaches and ensuing lawsuits. Oh dear, what a shame he didn't pay attention!
+
+[1] Subject: Re: Re: Re: Re: URGENT: Moonlite Efficiency Report
+[2] Subject: please change your password, I am BEGGING you
+[3] Subject: MAKE FREE MONEY NOW!!!
+[4] Subject: Moonlite Update Request
+[5] Quit Hadrian's email
+
+>4
+Here's an older email sent by some banker. It seems they put some investment capital into the Moonlite a few years back, and they're trying to get Hadrian to give them an update. Maybe that was what the press conference earlier was for. Looks like Hadrian never replied to them. You don't blame him. You always wished your investors would just give you the money and then never talk to you again. Just to help Hadrian out, you send a quick reply in his name telling the banker that the project is cancelled and they should demand their money back. Hadrian can thank you later.
+
+[1] Subject: Re: Re: Re: Re: URGENT: Moonlite Efficiency Report
+[2] Subject: please change your password, I am BEGGING you
+[3] Subject: MAKE FREE MONEY NOW!!!
+[4] Subject: Moonlite Update Request
+[5] Quit Hadrian's email
+
+>5
+You close the email inbox.
+
+[1] Check Hadrian's emails
+[2] Edit campus security permissions
+[3] Got any games on this thing?
+[4] Stop using the computer
+
+>2
+Oho! You've found a program for giving and taking away privileges to staff members. And it looks like you're already in the database!
+
+[1] Browse the permissions list
+[2] Enable full permissions for "Oren" (you)
+[3] Disable full permissions for Hadrian (prick)
+[4] Quit the permissions list
+
+>1
+You have a quick look through the whole database of people with security privileges. As well as all the staff, it looks like certain visitors also get listed here. Some names and titles catch your eye. "Count Urât," "Baroness Neplacut"... these are other vampires! Hadrian's been giving single-day passes for his engineering laboratory to vampires here and there over the last couple of years. How come they get invited and not you??
+
+[1] Browse the permissions list
+[2] Enable full permissions for "Oren" (you)
+[3] Disable full permissions for Hadrian (prick)
+[4] Quit the permissions list
+
+>2
+It's the work of a moment to tick the little checkboxes next to your pseudonym. Now you have full security permissions to your name!
+
+[1] Browse the permissions list
+[2] Disable full permissions for Hadrian (prick)
+[3] Quit the permissions list
+
+>2
+Aw, nuts. The options next to Hadrian's name are greyed out. The system must be smart enough to not let the boss get locked out of his own property. Pity. You were hoping that if you disinvited Hadrian while he was on campus, maybe he'd be catapulted off the premises or something.
+
+[1] Browse the permissions list
+[2] Quit the permissions list
+
+>2
+You close the security program.
+
+[1] Check Hadrian's emails
+[2] Edit campus security permissions
+[3] Got any games on this thing?
+[4] Stop using the computer
+
+>3
+Yes! Wow, a lot of games. Modern-looking ones, too. Does Hadrian do any actual work?
+
+[1] Check Hadrian's emails
+[2] Edit campus security permissions
+[3] Got any games on this thing?
+[4] Stop using the computer
+
+>4
+You get up and step away from Hadrian's fancy computer.
+
+>s
+
+Lobby
+This is the pleasantly airy and open lobby of the building where all the executives keep their offices. A corridor leads visitors and executives north. The main campus is to the south.
+
+There's a receptionist here, hunched over a computer and looking very bored.
+
+>s
+
+Campus Central
+This central plaza is wide and spacious, offering striking views of all the major landmarks of the campus, as if designed by a brutalist landscape gardener.
+
+As a wooden signpost indicates, the black glass building to the immediate north is the corporate headquarters; it also tells you that the campus stretches east to the engineering laboratory, and west to the customer service office. You can also leave the campus through the southern exit.
+
+>e
+
+Campus East
+This part of the campus plaza wants to be open and airy, but it's hemmed in by various concrete structures, the biggest of them being the Engineering Laboratory to the north. Prettier parts of the campus are to the west.
+
+Water cuts across the laboratory doorway here, spouting from a burst pipe in the wall.
+
+There's a worker here, maybe a janitor or other maintenance person, leaning against the wall and holding a sign that says "VAMPIRES SUCK". There's just no need for that kind of tone.
+
+>x water
+A stream of water issues from a tear in one of the pipes in the wall. It's only a stream, but it's still running water.
+
+>x worker
+She's leaning against the wall, holding a protest sign. She spots you looking at her, nods at you and waggles the sign a little.
+
+>talk to her
+She nods at you as you approach. "Hiya. Vampires suck."
+
+[1] What's the protest for?
+[2] Could you fix this water leak so I can get to the laboratory?
+[3] I'm trying to break into Hadrian Alba's computer. Do you know what his password is?
+[4] Goodbye.
+
+>1
+"It's against vampires. Especially our guy in charge. It's against vampiric systems. It's against the exploitation of labour on long hours and low pay. It's for changes at the highest level for Lunarcel and every other company which lines its own pockets at the expense of workers. It's for radical new ways of being which aren't built on blood and toil." (You don't like this woman.)
+
+[1] Isn't anyone else striking with you?
+[2] But haven't vampires done so much for us?
+[3] Could you fix this water leak so I can get to the laboratory?
+[4] I'm trying to break into Hadrian Alba's computer. Do you know what his password is?
+[5] Goodbye.
+
+>1
+"See, that's another problem. Any time we stand up for ourselves, some spurious reason to fire them comes up. I've known three guys here who were getting support for unions, and they all got found out, and they all got fired immediately for, like, 'toxic influence' or something. They're busting unions. So it's just me protesting for now. I won't get anybody else in trouble."
+
+[1] But haven't vampires done so much for us?
+[2] Could you fix this water leak so I can get to the laboratory?
+[3] I'm trying to break into Hadrian Alba's computer. Do you know what his password is?
+[4] Goodbye.
+
+>1
+"Oh, I used to think that too! You're not alone. But someone showed me it's all selfish. Vampires get rich off blood and labour, and whatever they give back doesn't usually help anyone but themselves, right? Look at Hadrian Alba. He gave that money for more blood donation clinics years ago, right? But he provided the land, so all the clinics were built on land he owned, right? So he becomes the landlord and proprietor of, basically, grocery stores for vampires. You can't prove anything, but it's a conflict of interest, right? You have to be suspicious. All the stuff vampires do 'for us' is just stuff they'd do anyway but they want to be congratulated for it, so we ignore all the blood-drinking."
+
+(You'd argue for vampires if it wasn't Hadrian she was picking on. Anyway, she's right. You were working for Hade when he planned it. You think about some of your own past businesses, such as your mail-order blood testing kits and your anti-garlic lobby, and you decide to drop the subject.)
+
+[1] Could you fix this water leak so I can get to the laboratory?
+[2] I'm trying to break into Hadrian Alba's computer. Do you know what his password is?
+[3] Goodbye.
+
+>1
+"Hm? Oh, this?" The janitor glances at the rip in the water pipe next to her, as if she forgot about it. "Yeah, it's a nasty one. Don't know how it got there. Sorry, mate, I'm leaving it for now. Not much of a strike if I'm working during it. Can't you just cross it?" Before you can think of an excuse, she gasps. "Oh! Holes in your shoes? Fair enough, mate. Nice umbrella, by the way."
+
+She thinks a little. "Tell you what, mate, can you do me a favour? I brought some raisins to snack on, but I think I left them in the prayer room. Can you get them for me? I'll tape up the leak for you when you do."
+
+[1] What did you want again before fixing the leak?
+[2] What prayer room?
+[3] Was this empty raisin box yours?
+[4] Do you want these grapes instead of your raisins?
+[5] I'm trying to break into Hadrian Alba's computer. Do you know what his password is?
+[6] Goodbye.
+
+>6
+"See ya."
+
+>suck grapes
+(first turning discreetly away from the janitor)
+You pierce the flesh of one grape and drink deep. Then you pierce the flesh of another grape and drink deep. Then another, then another... It takes a while, but eventually all the grapes are shrivelled and dry. You pick them off the stem and throw the stem away.
+
+>x grapes
+Dry, shrivelled, sweet purple grapes.
+
+>put grapes in box
+You file the raisins neatly into the raisin box.
+
+>give box to worker
+"Brilliant! Thanks, mate!" She takes the box of raisins gratefully. She notices your meaningful look. "Oh yeah! Sorry, mate, forgot I promised." She produces a roll of tape from somewhere and patches up the leak in seconds. "Done! Your shoes are safe." She gives you a genuine smile, puts the roll away and returns to leaning.
+
+>n
+
+Laboratory Entrance
+This is a little antechamber which serves as a security checkpoint before the laboratory itself. The lab can vaguely be seen through a frosted glass door to the north; the main campus is south.
+
+There is a card reader device mounted next to the glass door, which must control the lock.
+
+>x reader
+A device in the wall next to the glass door, with a slot for a card. A little sign taped to the reader says "If card is not recognised, please consult a manager to check your card's authorisation."
+
+>put card in reader
+(the ID card in the card reader)
+You flick your ID card through the reader. Its LED lights up a cheery green, and you hear a soft click from the glass door.
+
+>n
+(first opening the glass door)
+
+Engineering Lab
+An open-plan laboratory the size of a warehouse, littered with all sorts of scrap and junk. Engineers move from project to project, doing engineering jobs (you've never been interested in the technical side of things). The exit is south.
+
+In the centre of the lab sits the Moonlite.
+
+Hadrian is here, talking to some engineers. He glances up as you enter.
+
+Shock and fury flit across his face. But they're gone in a flash, replaced by the same old magnaminous smirk. You might not have noticed if you weren't watching him carefully.
+
+"Nero! To what do I owe this unexpected pleasure?"
+
+[1] Surprised to see me again, Hadrian, you prick?
+[2] I'm here for the machine.
+[3] (skip all the gloating and just attack Hade)
+
+>1
+"You could say that, Nero," he says. His smile is broad, but his teeth are grinding. "You could say that, after I forbade you from ever darkening my door again. After you stole from me. Tell me, how did you get in? Who invited you?"
+
+[1] Looks like you hired me back, boss!
+[2] Stole? So it's my fault your employees wanted to work for me instead?
+[3] I'm here for the machine.
+[4] (skip all the gloating and just attack Hade)
+
+>2
+"It's your fault you poached my staff, yeah!" Hadrian snaps. "It's your fault you stole my staff and my ideas when you quit! It's your fault you tried to sabotage me on the way out!
+
+"And it's your fault you failed anyway, isn't it?" he continues, in a quieter voice. "It's your fault that you alienated everyone you've ever worked with. That now everyone can see you for the stupid hateful little man you are. It's all your own fault. The only mistake I made was turning you. You have no one to blame but yourself."
+
+Hadrian is smiling again. You try to hold his gaze.
+
+[1] Looks like you hired me back, boss!
+[2] I'm here for the machine.
+[3] (skip all the gloating and just attack Hade)
+
+>2
+"Oh, you don't even know what it does," says Hadrian dismissively.
+
+[1] Looks like you hired me back, boss!
+[2] I know exactly what the machine is.
+[3] I don't care what your machine for idiots does.
+[4] (skip all the gloating and just attack Hade)
+
+>3
+"Oh, you will care, Nero. You'll like this. And it's NOT for idiots."
+
+Hadrian starts pacing. He's about to give you a speech if you let him. "Let me ask you something, Nero. Aren't you tired?" He gestures vaguely. "Of all this?"
+
+[1] Of... talking to you?
+[2] Of... capitalism?
+[3] Of... being a vampire?
+[4] Yes. (attack Hade)
+
+>3
+"Exactly! Exactly! You feel it too!" Hade almost sounds genuinely happy.
+
+"Look at us! We are vampires! We own this world! We're smarter than everyone, we're stronger than everyone, we've seen everything, we've, we have power. True power.
+
+"But we can't use it! We're trapped by all these, these ridiculous weaknesses! We can't go anywhere without permission! We can't cross rivers! We can't eat garlic! We can't handle holy symbols! We can't have stakes driven through our hearts! We can't even go outside without some stupid umbrella or veil!
+
+"The Moonlite is going to change that. The Moonlite is going to unshackle us.
+
+"Well, again, not you. I'm going to kill you in a few minutes."
+
+[1] How does the Moonlite make us more powerful?
+[2] Where are you getting the money to develop this thing?
+[3] Sounds like a cool machine. Be a shame if someone took it for themselves.
+[4] You need to destroy this machine. It's too dangerous.
+
+>1
+"Sunlight, Nero, sunlight!" Hade almost sounds giddy. He loves explaining how smart he is. "What is sunlight, Nero? It's an explosion! It's the energy of octillions of octillions of hydrogen atoms fusing together into helium! A celestial Hindenburg!
+
+"And I wondered, if that hurts us... what about the opposite? So I had the eggheads here prototype a new kind of energy reactor, one that takes helium and splits it into hydrogen. Oh, some of the staff carped at me about inefficiency, and how hard it is to safely contain a nuclear explosion, and how it shouldn't have a window -" he pats the glass bulb on the Moonlite "- but we made it. Of course, I just say it's a new kind of fission reactor we're going to sell, otherwise people might get suspicious. But that's not what it is, Nero. It's an anti-sunlight machine. And just wait till you see what it does for us."
+
+[1] Wait, you just had them prototype a nuclear fission reactor? Just like that?
+[2] Where are you getting the money to develop this thing?
+[3] Sounds like a cool machine. Be a shame if someone took it for themselves.
+[4] You need to destroy this machine. It's too dangerous.
+
+>1
+"Yes," says Hade blankly. There's a small silence. "Well, they had to pull a couple hundred all-nighters to do it," he adds.
+
+[1] Where are you getting the money to develop this thing?
+[2] Sounds like a cool machine. Be a shame if someone took it for themselves.
+[3] You need to destroy this machine. It's too dangerous.
+
+>2
+"Oh, I'm not worried about that," says Hadrian. He moves to stand in front of the reactor's glass bulb as he talks. "For a start, they'd need a crane. And if anyone did threaten to take the Moonlite off me... I'd have to do something about that." And, holding your gaze and smiling, he slaps the button on the machine.
+
+Something explodes in the machine. Engineers around the lab panic and dive for cover. The glass bulb fills with incandescent light, forming a beam pointed directly at Hadrian.
+
+Squinting, you see Hade's shape... change. You can see his silhouette grow, and hear the sound of ripping fabric.
+
+Soon, the machine powers down. You open your eyes fully.
+
+Hadrian is now the size and shape of a comic book superhero. His newfound absurd muscles have torn through his suit, revealing a scarred chest and perfect pectorals. He shines brilliantly. And his fingers have lengthened to evil talons.
+
+The engineers around the room sense a change in the atmosphere, and leave the room swiftly. Hadrian grins and advances on you.
+
+Hadrian lunges! You narrowly dodge.
+
+>s
+
+Laboratory Entrance
+This is a little antechamber which serves as a security checkpoint before the laboratory itself. The lab can vaguely be seen through a frosted glass door to the north; the main campus is south.
+
+There is a card reader device mounted next to the glass door, which must control the lock.
+
+As you enter, you slam the glass door shut behind you and hear its lock engage.
+
+Hadrian strides straight through! The glass explodes into confetti against his huge body! "Can't run away from this one, Nero!" he bellows (a little unfairly - he was the one who banned you from meeting him).
+
+>s
+
+Campus East
+This part of the campus plaza wants to be open and airy, but it's hemmed in by various concrete structures, the biggest of them being the Engineering Laboratory to the north. Prettier parts of the campus are to the west.
+
+There's a worker here, maybe a janitor or other maintenance person, leaning against the wall and holding a sign that says "VAMPIRES SUCK".
+
+The janitor sees Hadrian in hot pursuit and understands what needs to be done. She lets you past, and then rips the pipe leak open again. A river runs across the campus in front of Hadrian.
+
+He grabs the pipe and bends it like spaghetti, diverting the leak to behind the laboratory. The janitor shrugs at you sympathetically, and then legs it before Hadrian can do the same to her.
+
+>w
+
+Campus Central
+This central plaza is wide and spacious, offering striking views of all the major landmarks of the campus, as if designed by a brutalist landscape gardener.
+
+As a wooden signpost indicates, the black glass building to the immediate north is the corporate headquarters; it also tells you that the campus stretches east to the engineering laboratory, and west to the customer service office. You can also leave the campus through the southern exit.
+
+As Hadrian pursues you, the signpost catches his eye. He winks at you. "Let's do this like the vampire hunters used to!"
+
+He grabs the signpost and tears it out of the ground effortlessly. The wooden pole of the signpost has a very pointy end. Uh oh.
+
+>w
+
+Campus West
+Somewhat less pretty than the entrance and central plaza were - this part of the campus must usually be seen only by employees. North is a grimy-looking office block, and the rest of the campus is to the east.
+
+Hadrian pursues you.
+
+>n
+You charge into the office at full-tilt!
+
+Office
+A modern open-plan office: bent backs from wall to wall and no privacy anywhere. Just how you used to like it when you were running these kinds of places. North leads to a multifaith prayer room. You can head back outside to the south.
+
+Your work computer is waiting for you here.
+
+The manager is bustling wildly, juggling several administrative tasks at once.
+
+A list of common passwords has been flimsily stuck up on the wall nearby.
+
+Hadrian storms in and pulls the manager aside. "When I'm done with this one, we need to have a little talk about your hiring policies," he hisses. He lets her go and returns to chasing you. You see the manager very quietly slink out of the door.
+
+>n
+
+Prayer Room
+A mean little room for faiths of all kinds to indulge themselves. All the religious stuff is shoved up inside a cupboard, which is closed. Currently, it's set up as an interview room with two chairs and a table.
+
+Hadrian strides towards you.
+
+>open cupboard
+You open the cupboard. You're ready for it this time, but it's no less distressing to you.
+
+Hadrian isn't ready for it. He screeches and recoils from the religious symbols as if burned. "WHAT THE HELL ARE THOSE DOING IN THERE???" he cries.
+
+>stab Hadrian with umbrella
+Hadrian is too distracted by the symbols, and notices your advance too late! You plunge the umbrella into his heart!
+
+A banshee wail escapes his lips. His body starts to crumble and crumple, like a balloon losing its air. Holes open up in his skin, and dust pours out. He tries to say something, maybe a curse, but it's too late, his throat has opened up and all you hear is a wheeze. His eyes sink inwards. Something crackles.
+
+It's over in about a minute. All that remains is a pile of dust.
+
+He could be back soon. He could be resurrected tonight, if someone loves him enough. You need to act now, while the Moonlite is unprotected. You've seen what it does. Power is good, but that much power? You've seen how Hade treats people - how you treat people - even fettered by weaknesses. But unfettered? No, the right thing to do would be-
+
+You blink, and close the cupboard. All shameful thoughts flee your mind. Ah, that feels better. Now let's grab that Moonlite.
+
+>s
+
+Office
+A modern open-plan office: bent backs from wall to wall and no privacy anywhere. Just how you used to like it when you were running these kinds of places. North leads to a multifaith prayer room. You can head back outside to the south.
+
+Your work computer is waiting for you here.
+
+A list of common passwords has been flimsily stuck up on the wall nearby.
+
+>s
+
+Campus West
+Somewhat less pretty than the entrance and central plaza were - this part of the campus must usually be seen only by employees. North is a grimy-looking office block, and the rest of the campus is to the east.
+
+>e
+
+Campus Central
+This central plaza is wide and spacious, offering striking views of all the major landmarks of the campus, as if designed by a brutalist landscape gardener. The black glass building to the immediate north is the corporate headquarters; the campus stretches east to the engineering laboratory, and west to the customer service office. You can also leave the campus through the southern exit.
+
+>e
+
+Campus East
+This part of the campus plaza wants to be open and airy, but it's hemmed in by various concrete structures, the biggest of them being the Engineering Laboratory to the north. Prettier parts of the campus are to the west.
+
+>n
+
+Laboratory Entrance
+This is a little antechamber which serves as a security checkpoint before the laboratory itself. The lab is clearly visible to the north now that the door which once guarded it has been obliterated; the main campus is south.
+
+There is a card reader device mounted next to the glass door, which used to control the lock.
+
+>n
+
+Engineering Lab
+An open-plan laboratory the size of a warehouse, littered with all sorts of scrap and junk. The exit is south.
+
+In the centre of the lab sits the Moonlite.
+
+>x machine
+The reactor looks like a thimble the size of an elephant. Up close, you can see a little power button, and next to that, a sort of... glass bulb? It reminds you of a football-sized version of the little bulbs on laser pointers.
+
+The Moonlite is currently switched off.
+
+>push button
+You were planning to destroy this thing this morning. That's pretty funny now.
+
+Of course, you've got some jobs to do later. You'll have to get the Moonlite out of the lab, or maybe just take control of the lab. You'll have to threaten a lot of people to make that happen. You'll have to figure out how it actually operates, or get someone else to teach you. You'll have the power - the money will come soon, you're sure - but a lot of people will want to take it away from you. Get rid of that janitor and her friends, if she has any. Burn down that office with the prayer room. Maybe buy a breastplate. You'l be busy.
+
+But that all comes later. Right now, you slam the Moonlite's button with an open palm, and watch the machine explode to life. Your hard work is finally paying off.
+
+
+
+    *** The world is yours ***
+
+
+
+Would you like to RESTART, RESTORE a saved game, see some suggestions for AMUSING things to do, QUIT, or UNDO the last command?
+> quit
