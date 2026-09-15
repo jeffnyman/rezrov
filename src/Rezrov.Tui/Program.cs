@@ -1,4 +1,5 @@
 using Rezrov.Core;
+using Rezrov.Core.Audio;
 using Rezrov.Core.Blorb;
 using Rezrov.Glulx;
 using Rezrov.Glulx.Execution;
@@ -146,6 +147,10 @@ internal static class Program
     {
         using var app = Application.Create().Init();
 
+        // [zm 9.1] The machine's audio output, or nothing on a machine
+        // with none, which the header then tells the game.
+        using var audio = AudioEngine.Create();
+
         var window = new Window { Title = title };
         var keys = new KeyMap(UnicodeTranslationTable.ForStory(header, memory));
         var view = new GameView(() => app.RequestStop());
@@ -196,7 +201,7 @@ internal static class Program
                 input,
                 seed is { } s ? new RandomGenerator(s) : null,
                 files: new TerminalFiles(app, presets),
-                sound: new TerminalSound(),
+                sound: new TerminalSound(audio),
                 interpreterNumber: machine,
                 tandy: tandy);
 
@@ -290,6 +295,10 @@ internal static class Program
 
         var directory = Path.GetDirectoryName(Path.GetFullPath(path)) ?? Directory.GetCurrentDirectory();
         using var app = Application.Create().Init();
+
+        // [glk #sound] The machine's audio output, or nothing on a
+        // machine with none, which the gestalt answers then report.
+        using var audio = AudioEngine.Create();
         var window = new Window { Title = Path.GetFileName(path) };
         var view = new GameView(() => app.RequestStop());
         window.Add(view);
@@ -343,7 +352,7 @@ internal static class Program
                 files.NamedFiles[FileUsage.SavedGame] = Path.GetFullPath(presets.Save);
             }
 
-            var library = new GlkLibrary(display, files) { Resources = resources };
+            var library = new GlkLibrary(display, files, sound: new TerminalGlkSound(audio)) { Resources = resources };
             glk = library;
             var machine = new GlulxMachine(memory, seed is { } s ? new GlulxRandom((uint)s) : null, library);
 

@@ -1641,6 +1641,16 @@ public sealed class Interpreter
         var effect = a.Length > 1 ? a[1] : 2;
         var routine = a.Length > 3 ? a[3] : (ushort)0;
 
+        if (routine != 0 && Header.Version < ZMachineVersion.V5)
+        {
+            // [zm op:sound_effect] The routine belongs to the Version 5
+            // form of the opcode; before that there is no fourth
+            // operand, and a game that passes one is not asking for an
+            // end-of-sound routine it could not have.
+            ReportRuntimeError(instruction, "an end-of-sound routine is not supported before Version 5");
+            routine = 0;
+        }
+
         // [zm op:sound_effect] The low byte of the third operand is the
         // volume and the high byte the number of plays, 255 meaning
         // loudest possible and forever. [zm 9.3] Volume runs 1 to 8.
