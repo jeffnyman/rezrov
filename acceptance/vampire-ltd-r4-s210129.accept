@@ -1,0 +1,166 @@
+! SEED=10
+! GAME=../entharion/glulx-code/vampire-ltd-r4-s210129.gblorb
+
+x Hadrian
+x umbrella
+x Moonlite
+x crowd
+x banner
+x me
+x blood bag
+x stage
+x booth
+in
+1
+1
+1
+1
+
+n
+x signpost
+w
+x office
+n
+x manager
+x list
+talk to manager
+
+1
+4
+4
+6
+
+x card
+x desk
+x computer
+use it
+
+1
+1
+2
+3
+2
+2
+3
+
+n
+open cupboard
+close cupboard
+x box
+take it
+s
+
+talk to manager
+
+1
+2
+3
+4
+
+s
+e
+n
+
+x receptionist
+x computer
+x grapes
+talk to him
+
+1
+1
+1
+2
+1
+1
+1
+1
+2
+
+take grapes
+n
+x tables
+x posters
+x computer
+use it
+s
+talk to receptionist
+
+2
+3
+
+n
+shout
+
+1
+1
+2
+4
+5
+2
+1
+2
+2
+2
+3
+4
+
+s
+s
+e
+
+x water
+x worker
+talk to her
+
+1
+1
+1
+1
+6
+
+suck grapes
+x grapes
+put grapes in box
+give box to worker
+n
+
+x reader
+put card in reader
+n
+
+1
+2
+2
+3
+3
+1
+1
+2
+
+
+s
+s
+w
+w
+n
+n
+
+open cupboard
+stab Hadrian with umbrella
+s
+s
+e
+e
+n
+n
+x machine
+
+# ENDING 1
+
+push button
+quit
+
+```ENDING 2
+undo
+destroy machine
+```

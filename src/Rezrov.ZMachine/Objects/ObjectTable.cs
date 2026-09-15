@@ -474,9 +474,9 @@ public sealed class ObjectTable
         var entry = ObjectAddress(obj);
 
         // [zm 12] The remarks note that Sherlock tries to set and clear
-        // attribute 48, one past the last. That is a bug in the game and
-        // is treated as one here, at least until it turns out a lenient
-        // interpreter is needed to play it.
+        // attribute 48, one past the last. The interpreter reports that
+        // as the game's error and leaves the attribute alone, so this is
+        // a guard for callers that did not check first.
         if (attribute < 0 || attribute >= AttributeCount)
         {
             throw new ArgumentOutOfRangeException(

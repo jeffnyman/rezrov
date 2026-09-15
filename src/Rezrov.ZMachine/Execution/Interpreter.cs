@@ -539,7 +539,7 @@ public sealed class Interpreter
                 break;
             case Opcode.TestAttr:
                 // [zm op:test_attr]
-                Branch(instruction, ObjectExists(instruction, a[0]) && Objects.HasAttribute(a[0], a[1]));
+                Branch(instruction, ObjectExists(instruction, a[0]) && AttributeExists(instruction, a[1]) && Objects.HasAttribute(a[0], a[1]));
                 break;
             case Opcode.CheckArgCount:
                 // [zm op:check_arg_count]
@@ -668,7 +668,7 @@ public sealed class Interpreter
                 break;
             case Opcode.SetAttr:
                 // [zm op:set_attr]
-                if (ObjectExists(instruction, a[0]))
+                if (ObjectExists(instruction, a[0]) && AttributeExists(instruction, a[1]))
                 {
                     Objects.SetAttribute(a[0], a[1]);
                 }
@@ -676,7 +676,7 @@ public sealed class Interpreter
                 break;
             case Opcode.ClearAttr:
                 // [zm op:clear_attr]
-                if (ObjectExists(instruction, a[0]))
+                if (ObjectExists(instruction, a[0]) && AttributeExists(instruction, a[1]))
                 {
                     Objects.ClearAttribute(a[0], a[1]);
                 }
@@ -2544,6 +2544,23 @@ public sealed class Interpreter
         }
 
         ReportRuntimeError(instruction, "object 0 is not an object");
+        return false;
+    }
+
+    /// <summary>
+    /// [zm A] An attribute outside the range is an error to report, not
+    /// a reason to stop: the appendix itself notes that Sherlock sets and
+    /// clears attribute 48, one past its last, and the game plays on
+    /// with the bit it never had left alone.
+    /// </summary>
+    private bool AttributeExists(Instruction instruction, ushort attribute)
+    {
+        if (attribute < Objects.AttributeCount)
+        {
+            return true;
+        }
+
+        ReportRuntimeError(instruction, $"attribute {attribute} is outside 0 to {Objects.AttributeCount - 1}");
         return false;
     }
 

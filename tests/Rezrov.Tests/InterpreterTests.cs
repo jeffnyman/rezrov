@@ -666,6 +666,26 @@ public partial class InterpreterTests
     }
 
     [Fact]
+    public void AnAttributePastTheLastIsReportedAndLeftAlone()
+    {
+        // [zm A] Sherlock sets and clears attribute 48 in a Version 5
+        // story, which has 0 to 47. That is the game's error, reported
+        // as one, and the play goes on: nothing is set, nothing is
+        // cleared, and the test is false.
+        var run = Execute(new Assembler()
+            .Long(Op.SetAttr, Small(1), Small(48))
+            .Long(Op.ClearAttr, Small(1), Small(48))
+            .Long(Op.TestAttr, Small(1), Small(48)).Branch(true, SkipStore)
+            .Long(Op.Store, Small(G0), Small(1))
+            .Quit());
+
+        Assert.Equal(1, run.Global(G0));
+        var errors = run.Interpreter.RuntimeErrors;
+        Assert.Equal(3, errors.Count);
+        Assert.All(errors, e => Assert.Contains("attribute 48 is outside 0 to 47", e, StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void ReadsAndWritesProperties()
     {
         var run = Execute(new Assembler()
