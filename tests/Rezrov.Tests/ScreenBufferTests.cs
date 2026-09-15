@@ -89,6 +89,33 @@ public class ScreenBufferTests
     }
 
     [Fact]
+    public void TheInputCursorFollowsTheGameIntoTheUpperWindow()
+    {
+        // [zm 8.7.2.3] Bureaucracy fills its form a field at a time,
+        // reading in the upper window with the cursor on the field, and
+        // the terminal's cursor has to be there and not in the lower
+        // window. The model counts rows and columns from 1, the grid
+        // from 0, and a status line sits above the upper window.
+        var (buffer, model) = MakeWithModel(20, 6, ZMachineVersion.V3);
+        model.ShowStatusLine("Form", timeGame: false, 0, 0);
+        model.SplitWindow(3);
+        buffer.Print("> ", Blank);
+        model.SetWindow(ScreenModel.Upper);
+        model.SetCursor(2, 5);
+        buffer.UpdateUpper(model);
+
+        Assert.Equal((2, 4), buffer.UpperCursor);
+        Assert.Equal((2, 4), buffer.InputCursor);
+
+        // Back in the lower window, the lower cursor is the one shown.
+        model.SetWindow(ScreenModel.Lower);
+        buffer.UpdateUpper(model);
+
+        Assert.Null(buffer.UpperCursor);
+        Assert.Equal((buffer.CursorRow, 2), buffer.InputCursor);
+    }
+
+    [Fact]
     public void BackspaceAndEraseToEndOfLineEditTheCurrentRow()
     {
         var buffer = new ScreenBuffer(10, 2, Blank, cursorStartsAtBottom: false);

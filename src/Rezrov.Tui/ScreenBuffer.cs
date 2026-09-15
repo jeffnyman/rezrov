@@ -57,6 +57,24 @@ public sealed class ScreenBuffer
     /// <summary>The first row of the lower window.</summary>
     public int LowerTop => Math.Min(StatusRows + UpperLines, Height - 1);
 
+    /// <summary>
+    /// The upper window's cursor as a row and column of this grid,
+    /// while the upper window is the game's current window, or null
+    /// while the lower window is. [zm 8.7.2.3] A game that reads in
+    /// the upper window has put its cursor there first, and Infocom's
+    /// interpreters showed the cursor there: Bureaucracy's form is
+    /// filled in a field at a time, each at the cursor.
+    /// </summary>
+    public (int Row, int Column)? UpperCursor { get; private set; }
+
+    /// <summary>
+    /// Where the terminal's cursor belongs for input: the upper
+    /// window's cursor while that window is current, otherwise the
+    /// lower window's.
+    /// </summary>
+    public (int Row, int Column) InputCursor =>
+        UpperCursor ?? (CursorRow, Math.Min(CursorColumn, Width - 1));
+
     /// <summary>The lower window's cursor row, from 0.</summary>
     public int CursorRow { get; private set; }
 
@@ -112,6 +130,13 @@ public sealed class ScreenBuffer
             CursorRow = LowerTop;
             CursorColumn = 0;
         }
+
+        // The model's cursor counts from 1, this grid from 0, and the
+        // status line sits above the upper window.
+        UpperCursor = model.CurrentWindow == ScreenModel.Upper
+            ? (Math.Min(StatusRows + model.UpperWindow.CursorRow - 1, Height - 1),
+               Math.Min(model.UpperWindow.CursorColumn - 1, Width - 1))
+            : null;
     }
 
     /// <summary>
@@ -140,6 +165,7 @@ public sealed class ScreenBuffer
         CursorRow = Math.Min(model.CursorRow, Height - 1);
         CursorColumn = Math.Min(model.CursorColumn, Width - 1);
         CursorVisible = model.CursorVisible;
+        UpperCursor = null;
     }
 
     /// <summary>Prints a run at the cursor, in the lower window.</summary>

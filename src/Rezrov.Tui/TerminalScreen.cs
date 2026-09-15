@@ -55,8 +55,12 @@ public sealed class TerminalScreen : IScreen, ITerminalPicture
     /// </summary>
     public Cell this[int row, int column] => Buffer[row, column];
 
+    /// <summary>
+    /// The cursor for input: in the upper window while the game reads
+    /// there, as Bureaucracy's form does, and otherwise in the lower.
+    /// </summary>
     public (int Row, int Column)? Cursor =>
-        Buffer.CursorVisible ? (Buffer.CursorRow, Math.Min(Buffer.CursorColumn, Buffer.Width - 1)) : null;
+        Buffer.CursorVisible ? Buffer.InputCursor : null;
 
     /// <summary>
     /// The buffer is always up to date, since the interpreter writes
