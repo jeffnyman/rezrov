@@ -68,4 +68,40 @@ public sealed class KeyMap
 
         return null;
     }
+
+    /// <summary>
+    /// The ZSCII codes for text pasted into the terminal, which arrives
+    /// whole rather than as keys.
+    /// </summary>
+    /// <remarks>
+    /// [zm 10.7] Only characters defined for input can be read, so
+    /// anything the story has no code for is dropped rather than typed
+    /// as something else. A line ending of any of the three shapes is
+    /// the return key, which is what makes a pasted command run.
+    /// </remarks>
+    public IEnumerable<ushort> ToZscii(string text)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+
+        for (var i = 0; i < text.Length; i++)
+        {
+            var character = text[i];
+
+            if (character is '\r' or '\n')
+            {
+                if (character == '\r' && i + 1 < text.Length && text[i + 1] == '\n')
+                {
+                    i++;
+                }
+
+                yield return Zscii.Newline;
+                continue;
+            }
+
+            if (Zscii.FromUnicode(character, _extraCharacters) is { } zscii)
+            {
+                yield return zscii;
+            }
+        }
+    }
 }

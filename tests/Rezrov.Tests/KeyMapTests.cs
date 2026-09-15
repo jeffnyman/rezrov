@@ -1,3 +1,4 @@
+using Rezrov.Glulx.Glk;
 using Rezrov.Tui;
 using Rezrov.ZMachine.Text;
 using Terminal.Gui.Drivers;
@@ -11,6 +12,38 @@ namespace Rezrov.Tests;
 public class KeyMapTests
 {
     private static readonly KeyMap Map = new(UnicodeTranslationTable.Default);
+
+    [Fact]
+    public void PastedTextIsTypedForThePlayer()
+    {
+        var keys = new KeyMap(UnicodeTranslationTable.Default);
+
+        // [zm 10.7] Each character as its ZSCII code, and a line ending
+        // of any of the three shapes as the return key, so a command
+        // pasted from somewhere else runs when it arrives.
+        Assert.Equal(
+            [(ushort)'h', (ushort)'i', 13, (ushort)'y', 13, (ushort)'o', 13],
+            keys.ToZscii("hi\ny\r\no\r").ToArray());
+
+        // A character the story has no code for is dropped rather than
+        // typed as something else.
+        Assert.Equal([(ushort)'a', (ushort)'b'], keys.ToZscii("a\u4e2db").ToArray());
+        Assert.Empty(keys.ToZscii(""));
+    }
+
+    [Fact]
+    public void PastedTextIsTypedForAGlulxGameToo()
+    {
+        // [glk #encoding_inchar] A character is its own code point, and
+        // one beyond the Basic Multilingual Plane is one character, not
+        // the two halves it is written with.
+        Assert.Equal(
+            [(uint)'h', 'i', GlkKeyCode.Return, 0x4E2D, GlkKeyCode.Return, 0x1F600],
+            GlkKeyMap.ToGlk("hi\r\n\u4e2d\n\U0001F600").ToArray());
+
+        // A control character is not a key a game can read.
+        Assert.Equal([(uint)'a'], GlkKeyMap.ToGlk("a\u0007").ToArray());
+    }
 
     [Fact]
     public void SpecialKeysHaveTheirZsciiCodes()

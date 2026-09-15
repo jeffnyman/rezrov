@@ -47,6 +47,11 @@ public sealed class GameView : View
 
         KeyDown += OnKeyDown;
         MouseEvent += OnMouse;
+
+        // A terminal that sends a paste as a bracketed paste needs
+        // nothing here, but one that leaves Ctrl+V to the program can
+        // still paste from the clipboard.
+        KeyBindings.Add(Key.V.WithCtrl, Command.Paste);
     }
 
     /// <summary>
@@ -72,6 +77,38 @@ public sealed class GameView : View
     /// bit 2 middle.
     /// </summary>
     public Action<int, int, bool, int>? Clicked { get; set; }
+
+    /// <summary>
+    /// Takes text pasted into the terminal, which the game receives as
+    /// though it had been typed.
+    /// </summary>
+    public Action<string>? TextPasted { get; set; }
+
+    /// <summary>
+    /// A paste arrives whole, from the terminal's own bracketed paste
+    /// or from the clipboard, rather than as keys, so it is handed over
+    /// as text. A terminal with bracketed paste turned off sends the
+    /// characters as keystrokes instead, which need nothing here.
+    /// </summary>
+    /// <param name="text">
+    /// The pasted text, with control characters already taken out and
+    /// the line endings left in.
+    /// </param>
+    /// <returns>Whether the game took it.</returns>
+    protected override bool OnPaste(string text)
+    {
+        if (TextPasted is not { } pasted || string.IsNullOrEmpty(text))
+        {
+            return false;
+        }
+
+        pasted(text);
+        return true;
+    }
+
+    // The text went to the game, not into a text model of this view's
+    // own, so there is nothing for the toolkit to report as inserted.
+    protected override bool ShouldRaisePastedEvent(string text) => false;
 
     // [zm 10.3] A click is input like a key, with its position.
     private void OnMouse(object? sender, Mouse mouse)
