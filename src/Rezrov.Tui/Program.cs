@@ -193,6 +193,16 @@ internal static class Program
             };
             view.Clicked = input.EnqueueClick;
 
+            // Pasted text is typed for the player, a character at a
+            // time, so a command copied from somewhere else runs.
+            view.TextPasted = text =>
+            {
+                foreach (var zscii in keys.ToZscii(text))
+                {
+                    input.Enqueue(zscii);
+                }
+            };
+
             // [zm 2.4.2] A seed makes the game's random numbers
             // predictable, so a session can be played again the same way.
             interpreter = new Interpreter(
@@ -325,6 +335,16 @@ internal static class Program
             // input too: the display works out which window and which
             // cell it lands on.
             view.Clicked = (column, row, _, _) => display.EnqueueClick(column, row);
+
+            // Pasted text is typed for the player, a character at a
+            // time, so a command copied from somewhere else runs.
+            view.TextPasted = text =>
+            {
+                foreach (var code in GlkKeyMap.ToGlk(text))
+                {
+                    display.Enqueue(code);
+                }
+            };
 
             // [glk op:fileref_create_by_prompt] The player is asked
             // through the same dialogs the Z-machine uses, with the
