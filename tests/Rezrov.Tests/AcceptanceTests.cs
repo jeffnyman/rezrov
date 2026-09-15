@@ -50,6 +50,36 @@ public class AcceptanceTests
     }
 
     [Fact]
+    public void AScriptCanTouchAWindowAndSelectALink()
+    {
+        var script = AcceptanceScript.Parse(
+            "! SEED=1\n! GAME=windowtest.ulx\n<click 3,1>\n<CLICK 0, 0>\n<link 5>\n<up>\n",
+            ScriptPath);
+
+        // [glk #mouse_events] and [glk #link_events] The two pointer
+        // forms become the commands a display understands, beside the
+        // named keys, and the case and the spaces do not matter.
+        Assert.Equal(["[click 3,1]", "[click 0,0]", "[link 5]", "[129]"], script.Commands);
+    }
+
+    [Theory]
+    [InlineData("<click 3>", "is not a click")]
+    [InlineData("<click 3,>", "is not a click")]
+    [InlineData("<click left,1>", "is not a click")]
+    [InlineData("<link>", "is not a key")]
+    [InlineData("<link 0>", "is not a link")]
+    [InlineData("<link two>", "is not a link")]
+    public void APointerCommandThatMakesNoSenseIsRefused(string command, string complaint)
+    {
+        // A mistyped click would otherwise be typed into the game as
+        // text, which is worse than refusing the script.
+        var e = Assert.Throws<InvalidDataException>(() =>
+            AcceptanceScript.Parse($"! SEED=1\n! GAME=windowtest.ulx\n{command}\n", ScriptPath));
+
+        Assert.Contains(complaint, e.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void AFencedSectionIsNotRead()
     {
         var script = AcceptanceScript.Parse(

@@ -89,6 +89,8 @@ public sealed class TextWriterGlkDisplay : IGlkDisplay
 {
     private readonly TextWriter _writer;
     private readonly TextReader _reader;
+    private readonly bool _hasPointer;
+    private GlkWindow? _root;
 
     /// <param name="writer">Where text buffer output goes.</param>
     /// <param name="reader">
@@ -97,11 +99,19 @@ public sealed class TextWriterGlkDisplay : IGlkDisplay
     /// </param>
     /// <param name="width">The display's width in characters.</param>
     /// <param name="height">The display's height in lines.</param>
-    public TextWriterGlkDisplay(TextWriter writer, TextReader? reader = null, int width = 80, int height = 24)
+    /// <param name="hasPointer">
+    /// [glk #mouse_events] Whether the reader can touch a window or
+    /// select a link, by giving a line of the form <c>[click 3,1]</c>
+    /// or <c>[link 5]</c> where input is expected. A player at a
+    /// console has no pointer and the default is false; a script that
+    /// means to exercise a game's links says otherwise.
+    /// </param>
+    public TextWriterGlkDisplay(TextWriter writer, TextReader? reader = null, int width = 80, int height = 24, bool hasPointer = false)
     {
         ArgumentNullException.ThrowIfNull(writer);
         _writer = writer;
         _reader = reader ?? TextReader.Null;
+        _hasPointer = hasPointer;
         Width = width;
         Height = height;
     }
@@ -135,9 +145,11 @@ public sealed class TextWriterGlkDisplay : IGlkDisplay
         }
     }
 
-    public void Arranged(GlkWindow? root)
-    {
-    }
+    public void Arranged(GlkWindow? root) => _root = root;
+
+    public bool CanReportMouse(WindowType type) => _hasPointer && type == WindowType.TextGrid;
+
+    public bool CanReportHyperlinks(WindowType type) => _hasPointer && type is WindowType.TextBuffer or WindowType.TextGrid;
 
     public GlkInput WaitForInput(IReadOnlyList<GlkWindow> lineRequests, IReadOnlyList<GlkWindow> charRequests, TimeSpan? timeout)
     {
@@ -151,7 +163,7 @@ public sealed class TextWriterGlkDisplay : IGlkDisplay
         if (lineRequests.Count > 0)
         {
             var line = _reader.ReadLine();
-            return line is null ? GlkInput.Ended : GlkInput.Line(lineRequests[0], line);
+            return line is null ? GlkInput.Ended : Pointer(line) ?? GlkInput.Line(lineRequests[0], line);
         }
 
         // [glk #char_events] A key is a line too, on a console: its first
@@ -164,8 +176,29 @@ public sealed class TextWriterGlkDisplay : IGlkDisplay
                 return GlkInput.Ended;
             }
 
+            if (Pointer(line) is { } pointed)
+            {
+                return pointed;
+            }
+
             var key = line.Length == 0 ? GlkKeyCode.Return : (uint)char.ConvertToUtf32(line, 0);
             return GlkInput.KeyPress(charRequests[0], key);
+        }
+
+        // [glk #mouse_events] Nothing to type into, but a window may be
+        // waiting to be touched, which is a line of its own kind.
+        while (Listening(window => window.MouseRequest || window.HyperlinkRequest) is not null)
+        {
+            var line = _reader.ReadLine();
+            if (line is null)
+            {
+                return GlkInput.Ended;
+            }
+
+            if (Pointer(line) is { } touched)
+            {
+                return touched;
+            }
         }
 
         // [glk #timer_events] Nothing to type into, so the timer is all
@@ -184,6 +217,55 @@ public sealed class TextWriterGlkDisplay : IGlkDisplay
         // A console read cannot be cut short, and nothing here plays a
         // sound whose end would need to.
     }
+
+    /// <summary>
+    /// [glk #mouse_events] and [glk #link_events] A line that touches a
+    /// window or selects a link rather than being typed into the game:
+    /// <c>[click 3,1]</c> for the cell of whichever window is waiting
+    /// for a click, and <c>[link 5]</c> for the window waiting for a
+    /// link. A line of either shape with nothing waiting for it, and
+    /// every other line, is typed as it stands, so that a script whose
+    /// click lands nowhere says so plainly in its recording rather
+    /// than quietly doing nothing.
+    /// </summary>
+    private GlkInput? Pointer(string line)
+    {
+        if (!_hasPointer || line.Length < 3 || line[0] != '[' || line[^1] != ']')
+        {
+            return null;
+        }
+
+        var inside = line[1..^1];
+
+        if (inside.StartsWith("click ", StringComparison.Ordinal) && Listening(window => window.MouseRequest) is { } clicked)
+        {
+            var at = inside[6..].Split(',');
+            if (at.Length == 2 && uint.TryParse(at[0], out var column) && uint.TryParse(at[1], out var row))
+            {
+                return GlkInput.MouseClick(clicked, column, row);
+            }
+        }
+
+        if (inside.StartsWith("link ", StringComparison.Ordinal) && Listening(window => window.HyperlinkRequest) is { } selected
+            && uint.TryParse(inside[5..], out var value) && value != 0)
+        {
+            return GlkInput.LinkSelected(selected, value);
+        }
+
+        return null;
+    }
+
+    // The first window of the tree that matches, or null for none. A
+    // console has no pointer to aim, so the window waiting to be
+    // touched is the one that is touched.
+    private GlkWindow? Listening(Func<GlkWindow, bool> wanted) => Leaves(_root).FirstOrDefault(wanted);
+
+    private static IEnumerable<GlkWindow> Leaves(GlkWindow? window) => window switch
+    {
+        null => [],
+        PairWindow pair => Leaves(pair.First).Concat(Leaves(pair.Second)),
+        _ => [window],
+    };
 }
 
 /// <summary>Turning Glk characters into text.</summary>
