@@ -1618,6 +1618,15 @@ public sealed class Interpreter
         return State.Pop() != 0;
     }
 
+    // [zm 9.1] Why a sound is missing: a game whose sounds live in a
+    // resource file that was never found asks for every one of them and
+    // gets none, which is worth saying once rather than leaving the
+    // player to wonder why the game is silent.
+    private string NoSuchSound(int number) =>
+        Sound.Resources.Count == 0
+            ? $"there is no sound {number}, since no resource file was found for this game"
+            : $"there is no sound {number}";
+
     private void SoundEffect(Instruction instruction, ushort[] a)
     {
         // [zm op:sound_effect] number effect volume routine. With no
@@ -1691,7 +1700,7 @@ public sealed class Interpreter
                 // [zm 9.4.1]
                 if (!Sound.Prepare(number))
                 {
-                    ReportRuntimeError(instruction, $"there is no sound {number}");
+                    ReportRuntimeError(instruction, NoSuchSound(number));
                 }
 
                 break;
@@ -1703,7 +1712,7 @@ public sealed class Interpreter
                 }
                 else if (!Sound.Play(number, volume, repeats, routine))
                 {
-                    ReportRuntimeError(instruction, $"there is no sound {number}");
+                    ReportRuntimeError(instruction, NoSuchSound(number));
                 }
 
                 break;

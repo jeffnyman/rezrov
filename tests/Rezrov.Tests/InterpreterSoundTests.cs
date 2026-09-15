@@ -122,6 +122,23 @@ public partial class InterpreterTests
     }
 
     [Fact]
+    public void WithNoResourceFileTheErrorSaysWhyEverySoundIsMissing()
+    {
+        // The Lurking Horror and Sherlock keep their sounds in a file
+        // beside the story, and the releases that came without one ask
+        // for sounds that are not there. "There is no sound 10" alone
+        // leaves the player wondering why the game is silent.
+        var run = Execute(
+            new Assembler()
+                .Variable(Op.SoundEffect, true, Small(10), Small(2), Large(0x0108))
+                .Quit(),
+            sound: new RecordingSound(),
+            resources: false);
+
+        Assert.Contains("no resource file was found", Assert.Single(run.Interpreter.RuntimeErrors));
+    }
+
+    [Fact]
     public void AnEndOfSoundRoutineBeforeVersion5IsIgnored()
     {
         // [zm op:sound_effect] The four-operand form is Version 5 and
@@ -183,7 +200,8 @@ public partial class InterpreterTests
         ISound sound,
         Action<Story>? setup = null,
         Action<Interpreter, int>? afterEachStep = null,
-        ZMachineVersion version = ZMachineVersion.V5)
+        ZMachineVersion version = ZMachineVersion.V5,
+        bool resources = true)
     {
         var story = new Story(version);
         story.Put(Code, code.ToArray());
@@ -192,8 +210,11 @@ public partial class InterpreterTests
         var memory = new ZMemory(story.Bytes);
         var writer = new StringWriter();
         var interpreter = new Interpreter(memory, new TextWriterScreen(writer), new ScriptedInput(), sound: sound);
-        interpreter.Sound.AddResource(new SoundResource(3, "AIFF", new byte[] { 1 }));
-        interpreter.Sound.AddResource(new SoundResource(4, "MOD ", new byte[] { 2 }));
+        if (resources)
+        {
+            interpreter.Sound.AddResource(new SoundResource(3, "AIFF", new byte[] { 1 }));
+            interpreter.Sound.AddResource(new SoundResource(4, "MOD ", new byte[] { 2 }));
+        }
 
         var count = 0;
         while (!interpreter.HasQuit && count < 10000)
