@@ -361,7 +361,7 @@ public class GlkWindowTests
     public void GestaltAnswersForWhatIsBuilt(GestaltSelector selector, uint value, uint expected)
     {
         var (glk, _) = Library();
-        Assert.Equal(expected, GlkLibrary.Gestalt((uint)selector, value, null));
+        Assert.Equal(expected, glk.Gestalt((uint)selector, value, null));
     }
 
     [Fact]
@@ -372,9 +372,9 @@ public class GlkWindowTests
 
         // [glk #encoding_out] One glyph for a printable character, none
         // for one that cannot be printed.
-        GlkLibrary.Gestalt((uint)GestaltSelector.CharOutput, 'a', extra);
+        glk.Gestalt((uint)GestaltSelector.CharOutput, 'a', extra);
         Assert.Equal(1u, extra[0]);
-        GlkLibrary.Gestalt((uint)GestaltSelector.CharOutput, 7, extra);
+        glk.Gestalt((uint)GestaltSelector.CharOutput, 7, extra);
         Assert.Equal(0u, extra[0]);
     }
 }

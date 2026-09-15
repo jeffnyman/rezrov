@@ -127,6 +127,33 @@ public class TerminalGlkDisplayTests
     }
 
     [Fact]
+    public void AWakeEndsAWaitWithNoKey()
+    {
+        var (glk, display, memory) = Library();
+        var story = glk.OpenWindow(null, 0, 0, GlkWindowType.TextBuffer, 1)!;
+
+        // [glk #sound_playing] A wake from another thread ends a wait
+        // for a key, for a line, and for the timer, each reported as a
+        // wake and not as a key or the timer; a key typed after is
+        // still there for the next wait.
+        glk.RequestLineEvent(story, memory, Buffer, 20, 0, false);
+        display.Wake();
+        Assert.Equal(GlkInputKind.Woken, display.WaitForInput([story], [], TimeSpan.FromSeconds(5)).Kind);
+
+        GlkLibrary.CancelLineEvent(story);
+        glk.RequestCharEvent(story, false);
+        display.Wake();
+        Assert.Equal(GlkInputKind.Woken, display.WaitForInput([], [story], null).Kind);
+
+        display.Wake();
+        Assert.Equal(GlkInputKind.Woken, display.WaitForInput([], [], TimeSpan.FromSeconds(5)).Kind);
+
+        display.Wake();
+        display.Enqueue('x');
+        Assert.Equal('x', display.WaitForAnyKey());
+    }
+
+    [Fact]
     public void WithNothingToWaitForTheInputHasEnded()
     {
         var (_, display, _) = Library();

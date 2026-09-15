@@ -54,6 +54,16 @@ public interface IGlkDisplay
     /// for and the answer is that input has ended.
     /// </summary>
     GlkInput WaitForInput(IReadOnlyList<GlkWindow> lineRequests, IReadOnlyList<GlkWindow> charRequests, TimeSpan? timeout);
+
+    /// <summary>
+    /// [glk #sound_playing] An event became ready on another thread, a
+    /// sound's end, while the display may be waiting: a wait under way
+    /// should return <see cref="GlkInput.Woken"/> as soon as it can,
+    /// so the library can hand the event over. A display whose waits
+    /// cannot be cut short, or that is never asked to play sounds, may
+    /// do nothing.
+    /// </summary>
+    void Wake();
 }
 
 /// <summary>
@@ -151,6 +161,12 @@ public sealed class TextWriterGlkDisplay : IGlkDisplay
         }
 
         return GlkInput.Ended;
+    }
+
+    public void Wake()
+    {
+        // A console read cannot be cut short, and nothing here plays a
+        // sound whose end would need to.
     }
 }
 

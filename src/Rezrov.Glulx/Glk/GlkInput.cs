@@ -23,6 +23,12 @@ public enum GlkInputKind
     Arrange,
 
     /// <summary>
+    /// The library asked, through <see cref="IGlkDisplay.Wake"/>, for
+    /// the wait to end early; nothing arrived.
+    /// </summary>
+    Woken,
+
+    /// <summary>
     /// There will never be any input: the player has gone, or the
     /// input was a file that ran out.
     /// </summary>
@@ -51,6 +57,11 @@ public sealed record GlkInput(GlkInputKind Kind, GlkWindow? Window, string? Text
 
     /// <summary>[glk #arrange_events] The display changed size.</summary>
     public static GlkInput Arrange { get; } = new(GlkInputKind.Arrange, null, null, 0, 0);
+
+    /// <summary>
+    /// The wait was cut short by <see cref="IGlkDisplay.Wake"/>.
+    /// </summary>
+    public static GlkInput Woken { get; } = new(GlkInputKind.Woken, null, null, 0, 0);
 
     public static GlkInput Line(GlkWindow window, string text, uint terminator = 0) =>
         new(GlkInputKind.Line, window, text, 0, terminator);

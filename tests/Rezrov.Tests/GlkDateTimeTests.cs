@@ -170,7 +170,7 @@ public class GlkDateTimeTests
     [Fact]
     public void GestaltPromisesTheClock()
     {
-        Assert.Equal(1u, GlkLibrary.Gestalt((uint)GestaltSelector.DateTime, 0, null));
+        Assert.Equal(1u, new GlkLibrary(new RecordingGlkDisplay()).Gestalt((uint)GestaltSelector.DateTime, 0, null));
     }
 
     [Fact]

@@ -292,15 +292,16 @@ public class GlkInputTests
     [Fact]
     public void GestaltAnswersForInput()
     {
-        Assert.Equal(1u, GlkLibrary.Gestalt((uint)GestaltSelector.Timer, 0, null));
-        Assert.Equal(1u, GlkLibrary.Gestalt((uint)GestaltSelector.LineInputEcho, 0, null));
-        Assert.Equal(1u, GlkLibrary.Gestalt((uint)GestaltSelector.LineTerminators, 0, null));
-        Assert.Equal(0u, GlkLibrary.Gestalt((uint)GestaltSelector.LineTerminatorKey, GlkKeyCode.Escape, null));
-        Assert.Equal(1u, GlkLibrary.Gestalt((uint)GestaltSelector.CharInput, 'a', null));
-        Assert.Equal(1u, GlkLibrary.Gestalt((uint)GestaltSelector.CharInput, GlkKeyCode.Return, null));
-        Assert.Equal(0u, GlkLibrary.Gestalt((uint)GestaltSelector.CharInput, GlkKeyCode.Left, null));
-        Assert.Equal(0u, GlkLibrary.Gestalt((uint)GestaltSelector.CharInput, 3, null));
-        Assert.Equal(0u, GlkLibrary.Gestalt((uint)GestaltSelector.MouseInput, (uint)WindowType.TextGrid, null));
+        var (glk, _, _, _) = Library();
+        Assert.Equal(1u, glk.Gestalt((uint)GestaltSelector.Timer, 0, null));
+        Assert.Equal(1u, glk.Gestalt((uint)GestaltSelector.LineInputEcho, 0, null));
+        Assert.Equal(1u, glk.Gestalt((uint)GestaltSelector.LineTerminators, 0, null));
+        Assert.Equal(0u, glk.Gestalt((uint)GestaltSelector.LineTerminatorKey, GlkKeyCode.Escape, null));
+        Assert.Equal(1u, glk.Gestalt((uint)GestaltSelector.CharInput, 'a', null));
+        Assert.Equal(1u, glk.Gestalt((uint)GestaltSelector.CharInput, GlkKeyCode.Return, null));
+        Assert.Equal(0u, glk.Gestalt((uint)GestaltSelector.CharInput, GlkKeyCode.Left, null));
+        Assert.Equal(0u, glk.Gestalt((uint)GestaltSelector.CharInput, 3, null));
+        Assert.Equal(0u, glk.Gestalt((uint)GestaltSelector.MouseInput, (uint)WindowType.TextGrid, null));
     }
 
     [Fact]

@@ -10,12 +10,15 @@ internal static class TestBlorb
 {
     /// <summary>
     /// A Blorb with the given pictures, and optionally data resources,
-    /// a resolution chunk, and a release number. A data resource of
-    /// type FORM is written as a form whose contents the bytes are.
+    /// sounds, a resolution chunk, and a release number. A data resource
+    /// of type FORM is written as a form whose contents the bytes are;
+    /// a sound is written as a plain chunk of its type, so an AIFF,
+    /// which is a form, is not what this builds.
     /// </summary>
-    public static byte[] Build(IReadOnlyList<(int Number, string Type, byte[] Data)> pictures, byte[]? resolution = null, int release = 0, IReadOnlyList<(int Number, string Type, byte[] Data)>? data = null)
+    public static byte[] Build(IReadOnlyList<(int Number, string Type, byte[] Data)> pictures, byte[]? resolution = null, int release = 0, IReadOnlyList<(int Number, string Type, byte[] Data)>? data = null, IReadOnlyList<(int Number, string Type, byte[] Data)>? sounds = null)
     {
         data ??= [];
+        sounds ??= [];
         var others = new List<(string Id, byte[] Data)>();
         if (release != 0)
         {
@@ -30,7 +33,7 @@ internal static class TestBlorb
         // [blorb 1] The form header, then the resource index, then the
         // other chunks, then the pictures, each entry in the index
         // pointing at its chunk's header.
-        var indexLength = 4 + (12 * (pictures.Count + data.Count));
+        var indexLength = 4 + (12 * (pictures.Count + data.Count + sounds.Count));
         var cursor = 12 + 8 + indexLength;
         foreach (var (_, bytes) in others)
         {
@@ -51,13 +54,20 @@ internal static class TestBlorb
             cursor += 8 + bytes.Length + (bytes.Length & 1);
         }
 
+        var soundStarts = new Dictionary<int, int>();
+        foreach (var (number, _, bytes) in sounds)
+        {
+            soundStarts[number] = cursor;
+            cursor += 8 + bytes.Length + (bytes.Length & 1);
+        }
+
         var output = new List<byte>();
         output.AddRange("FORM"u8.ToArray());
         Word(output, cursor - 8);
         output.AddRange("IFRS"u8.ToArray());
 
         var index = new List<byte>();
-        Word(index, pictures.Count + data.Count);
+        Word(index, pictures.Count + data.Count + sounds.Count);
         foreach (var (number, _, _) in pictures)
         {
             index.AddRange("Pict"u8.ToArray());
@@ -70,6 +80,13 @@ internal static class TestBlorb
             index.AddRange("Data"u8.ToArray());
             Word(index, number);
             Word(index, dataStarts[number]);
+        }
+
+        foreach (var (number, _, _) in sounds)
+        {
+            index.AddRange("Snd "u8.ToArray());
+            Word(index, number);
+            Word(index, soundStarts[number]);
         }
 
         Chunk(output, "RIdx", index.ToArray());
@@ -88,10 +105,17 @@ internal static class TestBlorb
             Chunk(output, type, bytes);
         }
 
+        foreach (var (_, type, bytes) in sounds)
+        {
+            Chunk(output, type, bytes);
+        }
+
         return output.ToArray();
     }
 
-    /// <summary>The start of a PNG file: the signature and an IHDR chunk.</summary>
+    /// <summary>
+    /// The start of a PNG file: the signature and an IHDR chunk.
+    /// </summary>
     public static byte[] Png(int width, int height)
     {
         var bytes = new List<byte> { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };

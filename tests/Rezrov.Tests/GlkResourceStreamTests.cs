@@ -128,7 +128,7 @@ public class GlkResourceStreamTests
     [Fact]
     public void GestaltPromisesResourceStreams()
     {
-        Assert.Equal(1u, GlkLibrary.Gestalt((uint)GestaltSelector.ResourceStream, 0, null));
+        Assert.Equal(1u, Library(null).Gestalt((uint)GestaltSelector.ResourceStream, 0, null));
     }
 
     [Fact]

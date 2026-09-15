@@ -25,6 +25,10 @@ namespace Rezrov.Tui;
 /// </remarks>
 public sealed class TerminalGlkDisplay : IGlkDisplay, ITerminalPicture
 {
+    // Put on the key queue by Wake, to end a wait with no key: a value
+    // that is neither a character nor one of Glk's special keys.
+    private const uint WakeKey = 0x80000000;
+
     private readonly BlockingCollection<uint> _keys = [];
     private readonly Dictionary<GlkWindow, int> _marks = [];
     private readonly Dictionary<GlkWindow, StringBuilder> _partialLines = [];
@@ -69,7 +73,19 @@ public sealed class TerminalGlkDisplay : IGlkDisplay, ITerminalPicture
     public void Enqueue(uint key) => _keys.Add(key);
 
     /// <summary>Waits for any key at all.</summary>
-    public uint WaitForAnyKey() => _keys.Take();
+    public uint WaitForAnyKey()
+    {
+        while (true)
+        {
+            var key = _keys.Take();
+            if (key != WakeKey)
+            {
+                return key;
+            }
+        }
+    }
+
+    public void Wake() => _keys.Add(WakeKey);
 
     public void Repaint() => Screen.Repaint();
 
@@ -161,18 +177,22 @@ public sealed class TerminalGlkDisplay : IGlkDisplay, ITerminalPicture
         if (charRequests.Count > 0)
         {
             ShowCursor(charRequests[0]);
-            return TryTake(timeout, out var key) ? GlkInput.KeyPress(charRequests[0], key) : GlkInput.Timer;
+            return TryTake(timeout, out var key) ? GlkInput.KeyPress(charRequests[0], key) : NoKey(key);
         }
 
         // [glk #timer_events] Nothing to type into: keys pressed now mean
-        // nothing, and only the timer can end the wait.
+        // nothing, and only the timer, or a wake, can end the wait.
         Cursor = null;
         _repaint();
         if (timeout is { } wait)
         {
             var deadline = DateTime.UtcNow + wait;
-            while (_keys.TryTake(out _, deadline - DateTime.UtcNow))
+            while (_keys.TryTake(out var pressed, deadline - DateTime.UtcNow))
             {
+                if (pressed == WakeKey)
+                {
+                    return GlkInput.Woken;
+                }
             }
 
             return GlkInput.Timer;
@@ -232,7 +252,7 @@ public sealed class TerminalGlkDisplay : IGlkDisplay, ITerminalPicture
             ShowCursor(window, text.ToString());
             if (!TryTake(timeout, out var key))
             {
-                return GlkInput.Timer;
+                return NoKey(key);
             }
 
             if (key == GlkKeyCode.Return)
@@ -365,16 +385,27 @@ public sealed class TerminalGlkDisplay : IGlkDisplay, ITerminalPicture
         }
     }
 
+    // A key within the timeout, or false with the key telling why not:
+    // WakeKey for a wake, zero for the timeout.
     private bool TryTake(TimeSpan? timeout, out uint key)
     {
         if (timeout is { } wait)
         {
-            return _keys.TryTake(out key, wait);
+            if (!_keys.TryTake(out key, wait))
+            {
+                key = 0;
+                return false;
+            }
+        }
+        else
+        {
+            key = _keys.Take();
         }
 
-        key = _keys.Take();
-        return true;
+        return key != WakeKey;
     }
+
+    private static GlkInput NoKey(uint key) => key == WakeKey ? GlkInput.Woken : GlkInput.Timer;
 
     private static Cell[] Cells(string text, TextAttributes attributes) =>
         [.. text.Select(c => new Cell(c, attributes))];
