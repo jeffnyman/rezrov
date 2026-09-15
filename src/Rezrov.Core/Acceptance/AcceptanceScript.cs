@@ -28,9 +28,13 @@ namespace Rezrov.Core.Acceptance;
 /// a path still being worked out, without playing it. Every other line
 /// is a command, in the format the Z-Machine's command files use, so a
 /// key that is not a printable character is written as its code in
-/// square brackets. A command may be written with the prompt in front,
-/// as <c>&gt; look</c>, which is how a transcript reads and how a
-/// command that itself begins with <c>#</c> or <c>!</c> is given.
+/// square brackets, or by name for the ones a menu is worked with:
+/// <c>&lt;up&gt;</c>, <c>&lt;down&gt;</c>, <c>&lt;left&gt;</c>,
+/// <c>&lt;right&gt;</c>, <c>&lt;escape&gt;</c>, and <c>&lt;space&gt;</c>,
+/// one press per line. A command may be written with the prompt in
+/// front, as <c>&gt; look</c>, which is how a transcript reads and how
+/// a command that itself begins with <c>#</c>, <c>!</c>, or <c>&lt;</c>
+/// is given.
 ///
 /// The script's expected output lives beside it in a file of the same
 /// name with the extension <c>.expected</c>, which the interpreter
@@ -38,6 +42,18 @@ namespace Rezrov.Core.Acceptance;
 /// </remarks>
 public sealed class AcceptanceScript
 {
+    // The keys a script may name instead of numbering, as their ZSCII
+    // codes: the cursor keys, escape, and the space bar.
+    private static readonly Dictionary<string, int> KeyNames = new(StringComparer.Ordinal)
+    {
+        ["<up>"] = 129,
+        ["<down>"] = 130,
+        ["<left>"] = 131,
+        ["<right>"] = 132,
+        ["<escape>"] = 27,
+        ["<space>"] = 32,
+    };
+
     private AcceptanceScript(string scriptPath, string gamePath, string? blorbPath, string? interpreter, bool tandy, bool upper, int seed, IReadOnlyList<string> commands, IReadOnlyList<int> commandLines, IReadOnlyDictionary<int, int> seedChanges)
     {
         ScriptPath = scriptPath;
@@ -179,6 +195,22 @@ public sealed class AcceptanceScript
             if (trimmed[0] == '>')
             {
                 commands.Add(trimmed[1..].TrimStart());
+                commandLines.Add(i + 1);
+                continue;
+            }
+
+            // A named key is written as its code, which is what the
+            // command file format takes; a name that is not a key is
+            // more likely a typo than a command, and is refused so that
+            // its letters are not typed into the game.
+            if (trimmed[0] == '<' && trimmed[^1] == '>')
+            {
+                if (!KeyNames.TryGetValue(trimmed.ToLowerInvariant(), out var code))
+                {
+                    throw new InvalidDataException($"{name}, line {i + 1}: {trimmed} is not a key; the keys are {string.Join(", ", KeyNames.Keys)}, and a command that begins with < is written with the prompt in front");
+                }
+
+                commands.Add($"[{code}]");
                 commandLines.Add(i + 1);
                 continue;
             }

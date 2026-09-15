@@ -704,7 +704,24 @@ public sealed class ScreenModel : IScreenModel
         _linesSincePause = 0;
         _pagingSuppressed = suppressPaging;
         _upperChanged = true;
+        Pause();
+    }
+
+    /// <summary>
+    /// True during the repaint asked for because the game is pausing,
+    /// about to read input or to quit, which a frontend that shows the
+    /// upper window only at pauses, as a text stream does, tells apart
+    /// from a repaint in the middle of a turn.
+    /// </summary>
+    public bool IsPausing { get; private set; }
+
+    // A pause is the frontend's moment to show the upper window as the
+    // game leaves it.
+    private void Pause()
+    {
+        IsPausing = true;
         Sync();
+        IsPausing = false;
     }
 
     /// <summary>
@@ -722,13 +739,25 @@ public sealed class ScreenModel : IScreenModel
     }
 
     /// <summary>
-    /// Sends out whatever is buffered and lets the frontend repaint,
-    /// as before the game quits.
+    /// Sends out whatever is buffered and lets the frontend repaint.
     /// </summary>
     public void Flush()
     {
         FlushWord();
         Sync();
+    }
+
+    /// <summary>
+    /// The game is quitting: whatever is buffered comes out, and the
+    /// frontend gets the last pause of all, with the upper window as
+    /// the game leaves it, which for a game that ends by drawing its
+    /// last words there (Custard) is the ending itself.
+    /// </summary>
+    public void Finish()
+    {
+        FlushWord();
+        _upperChanged = true;
+        Pause();
     }
 
     private static string FormatScore(short score, short turns) =>

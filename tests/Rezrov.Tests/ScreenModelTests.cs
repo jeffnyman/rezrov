@@ -565,6 +565,37 @@ public class ScreenModelTests
     }
 
     [Fact]
+    public void ATextScreenWritesTheUpperWindowOutAtAPauseAndAtTheEnd()
+    {
+        // A game redraws the window several times in a turn, and the
+        // stream wants only the picture the game pauses on: a flush in
+        // the middle of a turn, as selecting an output stream does,
+        // shows nothing, and a pause for input shows the finished
+        // window. Quitting is the last pause, so a game whose ending is
+        // drawn there (Custard's) ends in the stream too.
+        var (writer, model) = MakeText(20, 6);
+        model.SplitWindow(2);
+        model.SetWindow(ScreenModel.Upper);
+        Print(model, "Title");
+        model.Flush();
+        model.SetCursor(1, 1);
+        Print(model, "Bakery");
+        model.PrepareForInput(false);
+
+        Assert.Equal("Bakery\n\n", writer.ToString());
+
+        model.SetCursor(2, 1);
+        Print(model, "The end.");
+        model.Flush();
+
+        Assert.Equal("Bakery\n\n", writer.ToString());
+
+        model.Finish();
+
+        Assert.Equal("Bakery\n\nBakery\nThe end.\n\n", writer.ToString());
+    }
+
+    [Fact]
     public void ATextScreenKeepsTheUpperWindowToItselfUnlessAsked()
     {
         var (_, _, memory) = MakeWithMemory(20, 6);

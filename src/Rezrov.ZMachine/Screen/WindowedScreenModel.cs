@@ -976,6 +976,8 @@ public sealed class WindowedScreenModel : IScreenModel
         Sync();
     }
 
+    public void Finish() => Flush();
+
     // [zm 8.3] Under the Amiga rule, one window's new colors become
     // every window's, and every cell on the screen changes to match.
     private void ShareColors(ZWindow source)

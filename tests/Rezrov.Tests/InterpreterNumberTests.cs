@@ -77,6 +77,21 @@ public class InterpreterNumberTests
     }
 
     [Fact]
+    public void AScriptCanNameTheKeysAMenuIsWorkedWith()
+    {
+        // Beyond Zork's character setup is driven by the cursor keys,
+        // which read better by name than as [130]. A bracketed command
+        // that is not a key is refused, and the prompt form types the
+        // angle brackets as they are.
+        var script = AcceptanceScript.Parse("! SEED=1\n! GAME=zork1.z3\n<Down>\n<right>\n<escape>\n<space>\n> <up>\n[133]\n", Path.Combine(Path.GetTempPath(), "t.accept"));
+
+        Assert.Equal(["[130]", "[132]", "[27]", "[32]", "<up>", "[133]"], script.Commands);
+
+        var e = Assert.Throws<InvalidDataException>(() => AcceptanceScript.Parse("! SEED=1\n! GAME=zork1.z3\n<dwon>\n", Path.Combine(Path.GetTempPath(), "t.accept")));
+        Assert.Contains("line 3: <dwon> is not a key", e.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void ATandyDirectiveMustBeYesOrNo()
     {
         var e = Assert.Throws<InvalidDataException>(() => AcceptanceScript.Parse("! SEED=1\n! GAME=zork1.z3\n! TANDY=maybe\nlook\n", Path.Combine(Path.GetTempPath(), "t.accept")));

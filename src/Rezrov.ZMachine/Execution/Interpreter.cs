@@ -762,9 +762,10 @@ public sealed class Interpreter
             case Opcode.Quit:
                 // [zm op:quit] The only legal way to stop, since the
                 // starting routine cannot return. Whatever is still
-                // buffered is shown and written first, and the sound
-                // stops with the game.
+                // buffered is shown and written first, the screen gets
+                // its last look, and the sound stops with the game.
                 Streams.Flush();
+                Display.Finish();
                 Sound.StopAll();
                 HasQuit = true;
                 break;
