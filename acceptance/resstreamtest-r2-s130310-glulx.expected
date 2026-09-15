@@ -1,0 +1,149 @@
+
+ResStream: Not a game.
+Release 2 / Serial number 130310 / Inform v6.33, compiler options S
+Interpreter version 0.2.0 / VM 3.1.3 / game file format 3.0.0
+
+A voice booooms out: Welcome to the test chamber.
+
+Opening Data 1 for iteration:
+* text byte stream, byte read calls
+Opening Data 1 for get_buffer_stream:
+got: Magic purple people eater.
+Opening Data 2 for short get_buffer_stream:
+First read: 10
+got: Orange bucket.
+Lavender socks.
+
+Opening Data 1 for get_line_stream:
+got: Magic purple people eater.
+Opening Data 2 for get_line_stream:
+got: Orange bucket.
+got: Lavender socks.
+
+Opening Data 2 for get_char_stream:
+got: Orange bucket.
+Lavender socks.
+
+Opening Data 1 for get/set position:
+Got 99
+Got 117
+Now at 8
+Got 114
+
+* text byte stream, unicode read calls
+Opening Data 1 for get_buffer_stream_uni:
+got: Magic purple people eater.
+Opening Data 2 for short get_buffer_stream_uni:
+First read: 10
+got: Orange bucket.
+Lavender socks.
+
+Opening Data 1 for get_line_stream_uni:
+got: Magic purple people eater.
+Opening Data 2 for get_line_stream_uni:
+got: Orange bucket.
+got: Lavender socks.
+
+Opening Data 2 for get_char_stream_uni:
+got: Orange bucket.
+Lavender socks.
+
+Opening Data 1 for get/set position:
+Got 99
+Got 105
+Now at 4
+Got 114
+
+* binary byte stream, byte read calls
+Opening Data 3 for get_buffer_stream:
+got: Azálëåß.
+
+Opening Data 3 for get_line_stream:
+got: AAzálëåß.
+Opening Data 3 for get_char_stream:
+got: Azálëåß.
+
+* binary byte stream, unicode read calls
+Opening Data 3 for get_buffer_stream_uni:
+got: Azálëåß.
+
+Opening Data 3 for get_line_stream_uni:
+got: AzAzálëåß
+Opening Data 3 for get_char_stream_uni:
+got: Azálëåß.
+
+* text unicode stream, byte read calls
+Opening Data 1 for get_buffer_stream:
+got: Magic purple people eater.
+Opening Data 2 for short get_buffer_stream:
+First read: 10
+got: Orange bucket.
+Lavender socks.
+
+Opening Data 1 for get_line_stream:
+got: Magic purple people eater.
+Opening Data 2 for get_line_stream:
+got: Orange bucket.
+got: Lavender socks.
+
+Opening Data 2 for get_char_stream:
+got: Orange bucket.
+Lavender socks.
+
+Opening Data 1 for get/set position:
+Got 99
+Got 117
+Now at 8
+Got 114
+
+* text unicode stream, unicode read calls
+Opening Data 5 for get_buffer_stream_uni:
+got: A åω את “” おすも.
+
+Opening Data 6 for short get_buffer_stream_uni:
+got 10 first: “Bob” Zörñ
+got 18 second: enček
+The Человек
+
+Opening Data 5 for get_line_stream_uni:
+got: A åω את “” おすも.
+
+
+Opening Data 6 for get_line_stream_uni:
+got: “Bob” Zörñenček
+
+got: The Человек
+
+Opening Data 5 for get_char_stream_uni:
+got: A åω את “” おすも.
+
+* binary unicode stream, byte read calls
+Opening Data 4 for get_buffer_stream_uni:
+got: Cheese
+bucket.
+
+Opening Data 4 for get_line_stream_uni:
+got: $Cheese
+got: bucket.
+
+Opening Data 4 for get_char_stream_uni:
+got: Cheese
+bucket.
+
+* binary unicode stream, unicode read calls
+Opening Data 7 for get_buffer_stream_uni:
+got: Cát
+ŦΩẎ’s丈!
+Opening Data 7 for get_line_stream_uni:
+got: $Cát
+got: ŦΩẎ’s丈!
+Opening Data 7 for get_char_stream_uni:
+got: Cát
+ŦΩẎ’s丈!
+
+* binary FORM byte stream, byte read calls
+Opening Data 8 for get_buffer_stream:
+Read 12 bytes.
+Contents: 1179603533, 4, 1413829460
+
+All tests passed.

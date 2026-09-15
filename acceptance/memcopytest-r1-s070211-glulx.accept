@@ -1,0 +1,12 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/memcopytest-r1-s070211.ulx
+
+# mzero and mcopy over a twenty-byte array, overlapping both ways.
+
+say hello
+zero 2 3
+copy 0 10 5
+copy 8 6 6
+copy 6 8 6
+quit
+y

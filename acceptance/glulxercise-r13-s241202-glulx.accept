@@ -1,0 +1,8 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/glulxercise-r13-s241202.ulx
+
+# Glulxercise, Andrew Plotkin's Glulx unit test: "all" runs every
+# test, and the last line is the tally.
+
+all
+quit

@@ -1,0 +1,12 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/floatparsetest-r2-s120527.ulx
+
+# Parsing floating-point numbers: the chart and the tape are the unit
+# tests, and a few numbers are typed by hand.
+
+read chart
+read tape
+type 3.25
+type -1e10 on keyboard
+quit
+y

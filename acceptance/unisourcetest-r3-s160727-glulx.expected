@@ -1,0 +1,28 @@
+
+UniSourceTest: Not a game.
+Release 3 / Serial number 160727 / Inform v6.34, compiler options S
+Interpreter version 0.2.0 / VM 3.1.3 / game file format 3.0.0
+
+NOTE: This test will only pass if compiled with the new "inform -Cu" switch. If you try to compile it with any other source-text encoding, you will get a big pile of test failures.
+
+String literals:
+
+"Simple ASCII" (12 chars)
+"AEIOU with umlauts: äëïöü ÄËÏÖÜ" (31 chars)
+"Greek: αβγδε (abgde)" (20 chars)
+"Hebrew: אבגדמ (abgdm)" (21 chars)
+"Punctuation: ‘single curly quotes’ “double curly quotes”" (56 chars)
+"Ligatures: æ (ae) œ (oe) ŋ (nj) ﬀ (ff) ﬁ (fi) ﬃ (ffi) ﬄ (ffl)" (61 chars)
+"Hirigana: おすも (O SU MO)" (23 chars)
+"Katakana: オスモ (O SU MO)" (23 chars)
+"CJK ideographs: 丂倀惿矢腄饧" (22 chars)
+"Emoji: 😀🚀🚲🍄 (GRINNING FACE, ROCKET, BICYCLE, MUSHROOM)" (54 chars)
+"At signs: @ @ @ @ @." (20 chars)
+
+Dict literals:
+
+'ascii'
+'hwæt'
+'xy@z'
+
+All tests passed.

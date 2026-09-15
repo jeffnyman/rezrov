@@ -1,0 +1,17 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/accelfunctest-r4-s220529.ulx
+
+# Accelerated functions: which ones the interpreter offers, and the
+# same sequence run slow and fast, which must agree.
+
+which
+slow core test
+fast core test
+slow ZRegion test
+fast ZRegion test
+slow CPTab (new) test
+fast CPTab (new) test
+slow errmsg test
+fast errmsg test
+quit
+y

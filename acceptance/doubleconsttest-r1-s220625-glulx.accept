@@ -1,0 +1,6 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/doubleconsttest-r1-s220625.ulx
+
+# Double-precision constants, stored and loaded. The test runs on
+# its own and reports.
+

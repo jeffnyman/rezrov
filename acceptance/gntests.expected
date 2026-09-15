@@ -1,0 +1,195 @@
+
+This is a collection of the six test programs which came attached to the Z-Spec 0.99 file (spec.tex.) No changes have been made, except for the idiot menu system glued to the front.
+
+1: Fonts; 2: Accents; 3: InputCodes, 4: Colours, 5: Header, 6: TimedInput, 0: Exit
+
+1: Fonts; 2: Accents; 3: InputCodes, 4: Colours, 5: Header, 6: TimedInput, 0: Exit
+Accented characters test in font 1
+
+Decimal code:  character     name  plain ASCII equivalent
+
+155:   ä     a-umlaut  ae
+156:   ö     o-unlaut  oe
+157:   ü     u-umlaut  ue
+158:   Ä     A-umlaut  Ae
+159:   Ö     O-umlaut  Oe
+160:   Ü     U-umlaut  Ue
+161:   ß     sz-ligature  ss
+162:   »     quotation mark  >> or "
+163:   «     quotation mark  << or "
+164:   ë     e-umlaut  e
+165:   ï     i-umlaut  i
+166:   ÿ     y-umlaut  y
+167:   Ë     E-umlaut  E
+168:   Ï     I-umlaut  I
+169:   á     a-acute  a
+170:   é     e-acute  e
+171:   í     i-acute  i
+172:   ó     o-acute  o
+173:   ú     u-acute  u
+174:   ý     y-acute  y
+175:   Á     A-acute  A
+176:   É     E-acute  E
+177:   Í     I-acute  I
+178:   Ó     O-acute  O
+179:   Ú     U-acute  U
+180:   Ý     Y-acute  Y
+181:   à     a-grave  a
+182:   è     e-grave  e
+183:   ì     i-grave  i
+184:   ò     o-grave  o
+185:   ù     u-grave  u
+186:   À     A-grave  A
+187:   È     E-grave  E
+188:   Ì     I-grave  I
+189:   Ò     O-grave  O
+190:   Ù     U-grave  U
+191:   â     a-circumflex  a
+192:   ê     e-circumflex  e
+193:   î     i-circumflex  i
+194:   ô     o-circumflex  o
+195:   û     u-circumflex  u
+196:   Â     A-circumflex  A
+197:   Ê     E-circumflex  E
+198:   Î     I-circumflex  I
+199:   Ô     O-circumflex  O
+200:   Û     U-circumflex  U
+201:   å     a-ring  a
+202:   Å     A-ring  A
+203:   ø     o-slash  o
+204:   Ø     O-slash  O
+205:   ã     a-tilde  a
+206:   ñ     n-tilde  n
+207:   õ     o-tilde  o
+208:   Ã     A-tilde  A
+209:   Ñ     N-tilde  N
+210:   Õ     O-tilde  O
+211:   æ     ae-ligature  ae
+212:   Æ     AE-ligature  AE
+213:   ç     c-cedilla  c
+214:   Ç     C-cedilla  C
+215:   þ     Icelandic thorn  th
+216:   ð     Icelandic eth  th
+217:   Þ     Icelandic Thorn  Th
+218:   Ð     Icelandic Eth  Th
+219:   £     pound symbol  L
+220:   œ     oe-ligature oe
+221:   Œ     OE-ligature OE
+222:   ¡     upside-down !
+223:   ¿     upside-down ?
+
+Please press SPACE.
+Accented characters test in font 4
+
+Decimal code:  character     name  plain ASCII equivalent
+
+155:   ä     a-umlaut  ae
+156:   ö     o-unlaut  oe
+157:   ü     u-umlaut  ue
+158:   Ä     A-umlaut  Ae
+159:   Ö     O-umlaut  Oe
+160:   Ü     U-umlaut  Ue
+161:   ß     sz-ligature  ss
+162:   »     quotation mark  >> or "
+163:   «     quotation mark  << or "
+164:   ë     e-umlaut  e
+165:   ï     i-umlaut  i
+166:   ÿ     y-umlaut  y
+167:   Ë     E-umlaut  E
+168:   Ï     I-umlaut  I
+169:   á     a-acute  a
+170:   é     e-acute  e
+171:   í     i-acute  i
+172:   ó     o-acute  o
+173:   ú     u-acute  u
+174:   ý     y-acute  y
+175:   Á     A-acute  A
+176:   É     E-acute  E
+177:   Í     I-acute  I
+178:   Ó     O-acute  O
+179:   Ú     U-acute  U
+180:   Ý     Y-acute  Y
+181:   à     a-grave  a
+182:   è     e-grave  e
+183:   ì     i-grave  i
+184:   ò     o-grave  o
+185:   ù     u-grave  u
+186:   À     A-grave  A
+187:   È     E-grave  E
+188:   Ì     I-grave  I
+189:   Ò     O-grave  O
+190:   Ù     U-grave  U
+191:   â     a-circumflex  a
+192:   ê     e-circumflex  e
+193:   î     i-circumflex  i
+194:   ô     o-circumflex  o
+195:   û     u-circumflex  u
+196:   Â     A-circumflex  A
+197:   Ê     E-circumflex  E
+198:   Î     I-circumflex  I
+199:   Ô     O-circumflex  O
+200:   Û     U-circumflex  U
+201:   å     a-ring  a
+202:   Å     A-ring  A
+203:   ø     o-slash  o
+204:   Ø     O-slash  O
+205:   ã     a-tilde  a
+206:   ñ     n-tilde  n
+207:   õ     o-tilde  o
+208:   Ã     A-tilde  A
+209:   Ñ     N-tilde  N
+210:   Õ     O-tilde  O
+211:   æ     ae-ligature  ae
+212:   Æ     AE-ligature  AE
+213:   ç     c-cedilla  c
+214:   Ç     C-cedilla  C
+215:   þ     Icelandic thorn  th
+216:   ð     Icelandic eth  th
+217:   Þ     Icelandic Thorn  Th
+218:   Ð     Icelandic Eth  Th
+219:   £     pound symbol  L
+220:   œ     oe-ligature oe
+221:   Œ     OE-ligature OE
+222:   ¡     upside-down !
+223:   ¿     upside-down ?
+
+Please press SPACE.
+
+1: Fonts; 2: Accents; 3: InputCodes, 4: Colours, 5: Header, 6: TimedInput, 0: Exit
+
+1: Fonts; 2: Accents; 3: InputCodes, 4: Colours, 5: Header, 6: TimedInput, 0: Exit
+Interpreter declarations:
+
+(In Flags 1...)
+Colours available?  no
+Boldface available?  no
+Italic available?  no
+Fixed-pitch font available?  yes
+Timed keyboard input available?  no
+
+(In Flags 2.  The following four questions have meaningful answers only if bits 3, 4, 5 and 7 of Flags 2 were set in advance: to do this, alter the game file by setting byte 16 to 184 and then run it again.)
+Pictures available?  no
+UNDO available?  no
+Mouse available?  no
+Sound effects available?  no
+
+Interpreter (machine) number 6 version R
+
+Screen height: infinite
+Screen width: 80 fixed-pitch font characters
+Screen height in units: 255
+Screen width in units: 80
+Font height in units: 1
+Font width (of a '0') in units: 1
+
+Font 1 available?  yes
+Font 2 available?  no
+Font 3 available?  yes
+Font 4 available?  yes
+
+Standard specification claimed by the interpreter: 1.1
+
+
+(Press SPACE to clear.)
+
+1: Fonts; 2: Accents; 3: InputCodes, 4: Colours, 5: Header, 6: TimedInput, 0: Exit

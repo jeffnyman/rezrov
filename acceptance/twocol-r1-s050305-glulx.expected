@@ -1,0 +1,59 @@
+
+You look around your shiny new apartment, admiring the latest nanotech-made futon.
+
+
+You look around your filthy mud-stained hovel, admiring the stump you sleep on.
+
+TWO COLUMNS
+A Glk demo by Andrew Plotkin.
+Release 1 / Serial number 050305 / Inform v6.30 Library 6/11 SD
+TWO COLUMNS
+A Glk demo by Andrew Plotkin.
+Release 1 / Serial number 050305 / Inform v6.30 Library 6/11 SD
+
+Shiny Apartment
+Your apartment is in the latest style. The exodoor is north.
+
+Your nanotech futon hums in the corner.
+
+Hovel
+It's the same filthy hovel your family has lived in for three generations. The door is north.
+
+In the center of the room is a rotten stump.
+
+>look
+
+Shiny Apartment
+Your apartment is in the latest style. The exodoor is north.
+
+Your nanotech futon hums in the corner.
+
+>look
+
+Hovel
+It's the same filthy hovel your family has lived in for three generations. The door is north.
+
+In the center of the room is a rotten stump.
+
+>n
+
+Aldebaran City
+You are standing amid the gleaming towers of Aldebaran City. It's very large. Your home is south.
+
+>n
+
+Swamp
+You are standing in the dismal swamp you call home. It's very small. Your hovel is south.
+
+>look
+
+Aldebaran City
+You are standing amid the gleaming towers of Aldebaran City. It's very large. Your home is south.
+
+>look
+
+Swamp
+You are standing in the dismal swamp you call home. It's very small. Your hovel is south.
+
+>quit
+Are you sure you want to quit? y

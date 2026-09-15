@@ -1,0 +1,12 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/randomgen-r1-s231012.ulx
+
+# The random number generator, seeded by the game so the numbers are
+# the same every run.
+
+seed 5
+print
+range 10
+nrange 10
+seed 0
+quit

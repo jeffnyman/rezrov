@@ -1,0 +1,35 @@
+DiscardUndoTest: Not a game.
+Release 1 / Serial number 220526 / Inform v6.40, compiler options S
+Interpreter version 0.2.0 / VM 3.1.3 / game file format 3.1.3
+
+Test1:
+hasundo: 1
+saveundo: 0
+hasundo: 0
+saveundo: 0
+hasundo: 0
+hasundo: 0
+hasundo: 1
+restoreundo: 1
+hasundo: 1
+restoreundo: 1
+
+Test2:
+hasundo: 1
+saveundo: 0
+undone!
+glob: 2
+p1: 99
+hasundo: 1
+
+Test3:
+hasundo: 1
+saveundo: 0
+saveundo: 0
+undone!
+glob: 2
+p1: 99
+hasundo: 1
+
+
+All tests passed.

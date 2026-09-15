@@ -88,6 +88,37 @@ public class GlkStreamTests
     }
 
     [Fact]
+    public void AStreamOpenedToWriteEndsWhereItsWritingReached()
+    {
+        // [glk #stream_positions] For a stream opened only to write, the
+        // end is the furthest point written, not the buffer's end: the
+        // memory stream checker writes 29 characters, seeks one back
+        // from the end, and expects to be at 28.
+        var (glk, memory) = Library();
+        var stream = glk.OpenMemoryStream(memory, Buffer, 128, false, FileMode.Write, 0)!;
+        for (var i = 0; i < 29; i++)
+        {
+            stream.PutChar((uint)'x');
+        }
+
+        stream.SetPosition(-1, SeekMode.End);
+        Assert.Equal(28u, stream.Position);
+
+        // Seeking past the end stops at the end, and writing there moves
+        // the end along.
+        stream.SetPosition(100, SeekMode.Start);
+        Assert.Equal(29u, stream.Position);
+        stream.PutChar((uint)'y');
+        stream.SetPosition(0, SeekMode.End);
+        Assert.Equal(30u, stream.Position);
+
+        // A stream opened to read and write ends at the buffer's end.
+        var both = glk.OpenMemoryStream(memory, Buffer, 128, false, FileMode.ReadWrite, 0)!;
+        both.SetPosition(-1, SeekMode.End);
+        Assert.Equal(127u, both.Position);
+    }
+
+    [Fact]
     public void ANullBufferTakesNothingAndGivesTheEnd()
     {
         var (glk, memory) = Library();

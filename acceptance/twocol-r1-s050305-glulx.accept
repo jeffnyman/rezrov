@@ -1,0 +1,11 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/twocol-r1-s050305.ulx
+
+# Two columns, Andrew Plotkin's Glk demo of two text windows telling
+# one story: north, and look.
+
+look
+n
+look
+quit
+y

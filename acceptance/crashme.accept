@@ -1,0 +1,7 @@
+! SEED=1
+! GAME=../entharion/zcode-checkers/crashme.z5
+
+# Crashme generates random Z-code and runs it, to see whether the
+# interpreter survives. It is stopped at its first question.
+
+q

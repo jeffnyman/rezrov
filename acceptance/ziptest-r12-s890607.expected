@@ -1,0 +1,135 @@
+FOO
+ZIPTEST: Interpreter 1, Version 82/ Screen 320 x 255
+
+ZIPTEST Tests:
+
+Q = QUIT             S = Partial SAVE/RESTORE
+A = Arithmetic       L = Looping/Predicates     1 = DIROUT wrapping
+O = Objects/Tables   C = Call/Stacks            2 = User Stacks
+P = Print            R = ReRead                 3 = Window info
+T = Read/Timeouts    W = Windows/Displays       4 = SCROLL test
+D = Pictures         M = Margins & Pictures     5 = Multiwindows
+F = Function keys    Z = Character Set 1
+B = Character Set 2  U = Charsets 1 & 2 Mixed
+K = Color Text       V = Verify test
+                     Y = YZIP windows test
+
+Which?: 
+╲┬←
+┴┌│
+─├─
+┤└
+╲┬ │┬←
+┴┌│┌┴┌│
+╱├──├→
+└┤
+│┬ 
+┴┌│
+╱├→
+┌ Have ┌ a nice ┌ day! ┌
+
+Operation: End of test. Hit RETURN to continue. [Press RETURN]
+ZIPTEST Tests:
+
+Q = QUIT             S = Partial SAVE/RESTORE
+A = Arithmetic       L = Looping/Predicates     1 = DIROUT wrapping
+O = Objects/Tables   C = Call/Stacks            2 = User Stacks
+P = Print            R = ReRead                 3 = Window info
+T = Read/Timeouts    W = Windows/Displays       4 = SCROLL test
+D = Pictures         M = Margins & Pictures     5 = Multiwindows
+F = Function keys    Z = Character Set 1
+B = Character Set 2  U = Charsets 1 & 2 Mixed
+K = Color Text       V = Verify test
+                     Y = YZIP windows test
+
+Which?: 
+( ! %    & " '
+$   #    #   $
+' " &    % ! (
+Up = !  Down = "  Left = $  Right = #
+
+Operation: End of test. Hit RETURN to continue. [Press RETURN]
+ZIPTEST Tests:
+
+Q = QUIT             S = Partial SAVE/RESTORE
+A = Arithmetic       L = Looping/Predicates     1 = DIROUT wrapping
+O = Objects/Tables   C = Call/Stacks            2 = User Stacks
+P = Print            R = ReRead                 3 = Window info
+T = Read/Timeouts    W = Windows/Displays       4 = SCROLL test
+D = Pictures         M = Margins & Pictures     5 = Multiwindows
+F = Function keys    Z = Character Set 1
+B = Character Set 2  U = Charsets 1 & 2 Mixed
+K = Color Text       V = Verify test
+                     Y = YZIP windows test
+
+Which?: 
+( ! %    & " '
+$ ┌ #    # ┌ $
+' " &    % ! (
+Up = !  Down = "  Left = $  Right = #
+
+┌ Have ┌ a nice ┌ day! ┌
+
+Operation: End of test. Hit RETURN to continue. [Press RETURN]
+ZIPTEST Tests:
+
+Q = QUIT             S = Partial SAVE/RESTORE
+A = Arithmetic       L = Looping/Predicates     1 = DIROUT wrapping
+O = Objects/Tables   C = Call/Stacks            2 = User Stacks
+P = Print            R = ReRead                 3 = Window info
+T = Read/Timeouts    W = Windows/Displays       4 = SCROLL test
+D = Pictures         M = Margins & Pictures     5 = Multiwindows
+F = Function keys    Z = Character Set 1
+B = Character Set 2  U = Charsets 1 & 2 Mixed
+K = Color Text       V = Verify test
+                     Y = YZIP windows test
+
+Which?: 
+Verify says "Okay!"
+
+Operation: End of test. Hit RETURN to continue. [Press RETURN]
+ZIPTEST Tests:
+
+Q = QUIT             S = Partial SAVE/RESTORE
+A = Arithmetic       L = Looping/Predicates     1 = DIROUT wrapping
+O = Objects/Tables   C = Call/Stacks            2 = User Stacks
+P = Print            R = ReRead                 3 = Window info
+T = Read/Timeouts    W = Windows/Displays       4 = SCROLL test
+D = Pictures         M = Margins & Pictures     5 = Multiwindows
+F = Function keys    Z = Character Set 1
+B = Character Set 2  U = Charsets 1 & 2 Mixed
+K = Color Text       V = Verify test
+                     Y = YZIP windows test
+
+Which?: 
+Default colors; 8-line window.
+This sentence should be red.
+Isn't this a lovely blue line?
+This line is obviously green.
+A whiter shade of pale.
+Back to the default colors.
+BOXBOXBOX
+RED GREEN YELLOW BLUE MAGENTA CYAN WHITE
+Back to the defaults.
+
+The 3 boxes above should be:
+
+1) White fore, blue background
+2) Yellow fore, green background
+3) Black fore, white background
+
+Operation: End of test. Hit RETURN to continue. [Press RETURN]
+ZIPTEST Tests:
+
+Q = QUIT             S = Partial SAVE/RESTORE
+A = Arithmetic       L = Looping/Predicates     1 = DIROUT wrapping
+O = Objects/Tables   C = Call/Stacks            2 = User Stacks
+P = Print            R = ReRead                 3 = Window info
+T = Read/Timeouts    W = Windows/Displays       4 = SCROLL test
+D = Pictures         M = Margins & Pictures     5 = Multiwindows
+F = Function keys    Z = Character Set 1
+B = Character Set 2  U = Charsets 1 & 2 Mixed
+K = Color Text       V = Verify test
+                     Y = YZIP windows test
+
+Which?: 

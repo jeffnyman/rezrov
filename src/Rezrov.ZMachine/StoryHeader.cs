@@ -373,12 +373,61 @@ public sealed class StoryHeader
     }
 
     /// <summary>
+    /// Sums the file as the verify opcode must during play, when the
+    /// game has been writing to dynamic memory: those bytes are taken
+    /// from <paramref name="originalDynamicMemory"/>, the copy made when
+    /// the story was loaded, and the rest from memory as it stands,
+    /// since nothing above the static memory base is ever written.
+    /// </summary>
+    /// <remarks>
+    /// [zm op:verify] The checksum is of the story file, not of memory,
+    /// and Czech's verify test comes after four hundred tests that have
+    /// stored into globals and arrays. Summing live memory then reports
+    /// a sound file as corrupt.
+    /// </remarks>
+    /// <exception cref="InvalidOperationException">
+    /// The file records no length, so there is nothing to sum to.
+    /// </exception>
+    public ushort ComputeChecksum(ReadOnlySpan<byte> originalDynamicMemory)
+    {
+        if (!HasFileLength)
+        {
+            throw new InvalidOperationException(
+                "This story file records no length, so there is nothing to sum to.");
+        }
+
+        var sum = 0;
+        var dynamicEnd = Math.Min(originalDynamicMemory.Length, FileLength);
+        for (var address = ZMemory.HeaderLength; address < dynamicEnd; address++)
+        {
+            sum += originalDynamicMemory[address];
+        }
+
+        foreach (var b in _memory.Slice(dynamicEnd, FileLength - dynamicEnd))
+        {
+            sum += b;
+        }
+
+        return (ushort)sum;
+    }
+
+    /// <summary>
     /// Whether the file's bytes add up to the checksum in its header.
     /// </summary>
     /// <exception cref="InvalidOperationException">
     /// The file records no length, so there is nothing to verify.
     /// </exception>
     public bool VerifyChecksum() => ComputeChecksum() == Checksum;
+
+    /// <summary>
+    /// Whether the file's bytes add up to the checksum in its header, as
+    /// judged during play from the original dynamic memory.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">
+    /// The file records no length, so there is nothing to verify.
+    /// </exception>
+    public bool VerifyChecksum(ReadOnlySpan<byte> originalDynamicMemory) =>
+        ComputeChecksum(originalDynamicMemory) == Checksum;
 
     /// <summary>
     /// Which of Infocom's platforms the interpreter claims to be. Version 4

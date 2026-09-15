@@ -1,0 +1,7 @@
+! SEED=1
+! GAME=../entharion/zcode-checkers/unicode-r1.z5
+
+# David Kinder's Unicode test prints the Unicode table the game
+# carries and then reads characters until escape.
+
+<escape>

@@ -1,0 +1,6 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/discardundotest-r1-s220526.ulx
+
+# The discardundo opcode and the undo stack. The test runs on
+# its own and reports.
+

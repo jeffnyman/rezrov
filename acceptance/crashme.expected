@@ -1,0 +1,3 @@
+This program generates random Z-code which is run to test the robustness of your Z-machine interpreter. Most likely this will infinite loop. Do not run if you can't kill your interpreter when it is tightly looping.
+Will attempt to write CRASHME.MEM which should be a valid Z-machine game which contains the same code that will be run.
+Press 'q' to abort.

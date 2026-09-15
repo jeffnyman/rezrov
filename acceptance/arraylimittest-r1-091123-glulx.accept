@@ -1,0 +1,7 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/arraylimittest-r1-091123.ulx
+
+# A print_to_array call with one argument, the deprecated form, which
+# the checker says a strict interpreter should warn about. This one
+# takes the call as it comes and prints the two lines the checker
+# describes for an older interpreter. The test runs on its own.

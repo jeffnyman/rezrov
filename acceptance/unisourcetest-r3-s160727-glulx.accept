@@ -1,0 +1,6 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/unisourcetest-r3-s160727.ulx
+
+# Unicode source text, dictionary words included. The test runs on
+# its own and reports.
+

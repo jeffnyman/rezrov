@@ -34,6 +34,25 @@ public partial class InterpreterTests
     }
 
     [Fact]
+    public void OutputStreamThreeDoesNotGrowByANullCharacter()
+    {
+        // [zm 3.8.2.1] The null character prints nothing anywhere, so a
+        // memory stream holds the characters around it and no more, which
+        // is what praxix's round trip counts.
+        var run = Execute(new Assembler()
+            .Variable(Op.OutputStream, true, Small(3), Large(Table))
+            .Variable(Op.PrintChar, true, Small('a'))
+            .Variable(Op.PrintChar, true, Small(0))
+            .Variable(Op.PrintChar, true, Small('@'))
+            .Variable(Op.OutputStream, true, Large(0xFFFD))
+            .Quit());
+
+        var memory = run.Interpreter.Memory;
+        Assert.Equal(2, memory.ReadWord(Table));
+        Assert.Equal("a@", Ascii(run, Table + 2, 2));
+    }
+
+    [Fact]
     public void OutputStreamThreeNestedSeventeenDeepHaltsTheInterpreter()
     {
         var code = new Assembler();

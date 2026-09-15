@@ -1,0 +1,54 @@
+
+UnicodeTest
+Not a game.
+Release 3 / Serial number 160727 / Inform v6.34 Library 6/11 S
+
+Unicode Room
+This is a polyglot room.
+
+You can see a latin-1 sign, an at sign, a greek sign, a hebrew sign, a punctuation sign, a ligature sign, a hirigana sign, a katakana sign, an emoji sign and a big sign here.
+
+>examine latin-1 sign
+AEIOU with umlauts: ÄËÏÖÜ
+aeiou with umlauts: äëïöü
+
+>examine at sign
+At signs: @ @ @
+
+>examine greek sign
+Greek: αβγδε (abgde)
+
+>examine hebrew sign
+Hebrew: אבגדמ (abgdm... the aleph should be on the right)
+
+>examine punctuation sign
+Punctuation: ‘single curly quotes’ “double curly quotes”
+
+>examine ligature sign
+Ligatures: æ (ae) œ (oe) ŋ (nj) ﬀ (ff) ﬁ (fi) ﬃ (ffi) ﬄ (ffl)
+
+>examine hirigana sign
+Hirigana: おすも (O SU MO)
+
+>examine katakana sign
+Katakana: オスモ (O SU MO)
+
+>examine emoji sign
+Emoji: 😀🚀🚲🍄 (GRINNING FACE, ROCKET, BICYCLE, MUSHROOM)
+
+>examine big sign
+This is all the signs in sequence:
+
+AEIOU with umlauts: ÄËÏÖÜ
+aeiou with umlauts: äëïöü
+At signs: @ @ @
+Greek: αβγδε (abgde)
+Hebrew: אבגדמ (abgdm... the aleph should be on the right)
+Punctuation: ‘single curly quotes’ “double curly quotes”
+Ligatures: æ (ae) œ (oe) ŋ (nj) ﬀ (ff) ﬁ (fi) ﬃ (ffi) ﬄ (ffl)
+Hirigana: おすも (O SU MO)
+Katakana: オスモ (O SU MO)
+Emoji: 😀🚀🚲🍄 (GRINNING FACE, ROCKET, BICYCLE, MUSHROOM)
+
+>quit
+Are you sure you want to quit? y

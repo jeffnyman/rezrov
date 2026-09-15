@@ -1,0 +1,12 @@
+! SEED=1
+! GAME=../entharion/zcode-checkers/cloak-plus.z5
+
+# Cloak of Darkness with extras, the ZIL port: the same route to the
+# message, past the sleeping pets.
+
+w
+hang cloak on hook
+e
+s
+read message
+y

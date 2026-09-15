@@ -1,0 +1,19 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/memstreamtest-r3-s110824.ulx
+
+# Memory streams, byte and Unicode: descriptions written to arrays,
+# null streams that count, and positioning.
+
+help
+stream grape
+streamuni umlauts
+nullstream pie
+uninullstream restaurant
+stream quotes
+streamuni long string
+pos
+unipos
+read
+uniread
+quit
+y

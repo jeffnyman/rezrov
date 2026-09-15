@@ -1,0 +1,17 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/unicodetest-r3-s160727.ulx
+
+# Unicode output: a sign in each script, examined in turn.
+
+examine latin-1 sign
+examine at sign
+examine greek sign
+examine hebrew sign
+examine punctuation sign
+examine ligature sign
+examine hirigana sign
+examine katakana sign
+examine emoji sign
+examine big sign
+quit
+y
