@@ -54,6 +54,9 @@ internal sealed class RecordingGlkDisplay : IGlkDisplay
     /// <summary>The timeouts passed to each wait.</summary>
     public List<TimeSpan?> Timeouts { get; } = [];
 
+    /// <summary>How many times the library asked for a wake.</summary>
+    public int Wakes { get; private set; }
+
     /// <summary>What was printed to one window.</summary>
     public string Text(GlkWindow window) => _texts.TryGetValue(window.Id, out var text) ? text.ToString() : "";
 
@@ -107,6 +110,8 @@ internal sealed class RecordingGlkDisplay : IGlkDisplay
                 return input;
         }
     }
+
+    public void Wake() => Wakes++;
 
     private void Append(GlkWindow window, string text)
     {

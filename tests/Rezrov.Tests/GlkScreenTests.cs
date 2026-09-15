@@ -31,6 +31,10 @@ public class GlkScreenTests
         public void Arranged(GlkWindow? root) => screen.Arranged(root);
 
         public GlkInput WaitForInput(IReadOnlyList<GlkWindow> lineRequests, IReadOnlyList<GlkWindow> charRequests, TimeSpan? timeout) => GlkInput.Ended;
+
+        public void Wake()
+        {
+        }
     }
 
     private static (GlkLibrary Glk, GlkScreen Screen) Library(int width = 20, int height = 6)

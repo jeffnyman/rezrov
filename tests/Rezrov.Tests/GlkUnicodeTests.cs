@@ -194,6 +194,6 @@ public class GlkUnicodeTests
     {
         // [glk #gestalt] gestalt_UnicodeNorm says the two canonical
         // functions are there.
-        Assert.Equal(1u, GlkLibrary.Gestalt((uint)GestaltSelector.UnicodeNorm, 0, null));
+        Assert.Equal(1u, new GlkLibrary(new RecordingGlkDisplay()).Gestalt((uint)GestaltSelector.UnicodeNorm, 0, null));
     }
 }

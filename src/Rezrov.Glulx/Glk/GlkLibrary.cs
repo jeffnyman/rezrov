@@ -19,7 +19,8 @@ namespace Rezrov.Glulx.Glk;
 /// text output in Latin-1 and Unicode, styles and style hints, the
 /// gestalt answers, the case functions, and line, character, and timer
 /// events, resource streams over the <see cref="Resources"/> it was
-/// given, and the system clock. Graphics, sound, and hyperlinks throw
+/// given, the system clock, and sound channels over whatever
+/// <see cref="IGlkSound"/> it was given. Graphics and hyperlinks throw
 /// <see cref="NotSupportedException"/> naming the function, so a game
 /// stops at the first one it needs.
 ///
@@ -56,11 +57,15 @@ public sealed partial class GlkLibrary
     /// read, with its time zone, or none for the system's; a test gives
     /// one it can set by hand.
     /// </param>
-    public GlkLibrary(IGlkDisplay display, IGlkFileSystem? files = null, TimeProvider? clock = null)
+    /// <param name="sound">
+    /// The frontend's sound, or none for a frontend that plays nothing.
+    /// </param>
+    public GlkLibrary(IGlkDisplay display, IGlkFileSystem? files = null, TimeProvider? clock = null, IGlkSound? sound = null)
     {
         ArgumentNullException.ThrowIfNull(display);
         _display = display;
         _clock = clock ?? TimeProvider.System;
+        _sound = sound ?? NoGlkSound.Instance;
         Files = files ?? new MemoryGlkFileSystem();
     }
 
@@ -385,41 +390,102 @@ public sealed partial class GlkLibrary
             case 0x0065: // fileref_get_rock
                 call.Result = FileReferences.Find(call.ObjectId(0))?.Rock ?? 0;
                 break;
+
+            // [glk #sound] The sound channels.
             case 0x00F0: // schannel_iterate
-                // [glk #sound_testing] There are no sound channels, so
-                // there is nothing to iterate.
-                call.Out(1, 0);
-                call.Result = 0;
+            {
+                var next = SoundChannels.Next(call.ObjectId(0) == 0 ? null : SoundChannels.Find(call.ObjectId(0)));
+                call.Out(1, next?.Rock ?? 0);
+                call.Result = next?.Id ?? 0;
+                break;
+            }
+            case 0x00F1: // schannel_get_rock
+                call.Result = SoundChannel(call, 0)?.Rock ?? 0;
                 break;
             case 0x00F2: // schannel_create
+                call.Result = CreateSoundChannel(call.Arg(0))?.Id ?? 0;
+                break;
             case 0x00F4: // schannel_create_ext
-                // [glk #sound_channels] Creating a channel can fail and
-                // return null, which it always does here, as
-                // gestalt_Sound warns beforehand.
-                call.Result = 0;
+                call.Result = CreateSoundChannel(call.Arg(0), call.Arg(1))?.Id ?? 0;
                 break;
             case 0x00F3: // schannel_destroy
-            case 0x00FC: // sound_load_hint
-                // [glk #sound_channels] and [glk #sound_playing] There
-                // is nothing to destroy, and a loading hint is only a
-                // hint.
+                if (SoundChannel(call, 0) is { } destroyedChannel)
+                {
+                    DestroySoundChannel(destroyedChannel);
+                }
+
                 break;
             case 0x00F7: // schannel_play_multi
-                // [glk #sound_playing] Nothing started.
-                call.Result = 0;
+            {
+                // [glk op:schannel_play_multi] Two arrays of the same
+                // length, which the game is trusted to have made so.
+                var count = Math.Min(call.ArrayLength(0), call.ArrayLength(1));
+                if (call.ArrayLength(0) != call.ArrayLength(1))
+                {
+                    Warn($"schannel_play_multi: {call.ArrayLength(0)} channels but {call.ArrayLength(1)} sounds.");
+                }
+
+                var channels = new List<GlkSoundChannel>();
+                var sounds = new List<uint>();
+                for (var i = 0u; i < count; i++)
+                {
+                    var id = call.Memory.ReadWord(call.ArrayAddress(0) + (4 * i));
+                    if (SoundChannels.Find(id) is not { } channel)
+                    {
+                        Warn($"schannel_play_multi: invalid sound channel id {id}.");
+                        continue;
+                    }
+
+                    channels.Add(channel);
+                    sounds.Add(call.Memory.ReadWord(call.ArrayAddress(1) + (4 * i)));
+                }
+
+                call.Result = PlaySounds(channels, sounds, call.Arg(2));
                 break;
-            case 0x00F1: // schannel_get_rock
+            }
             case 0x00F8: // schannel_play
+                call.Result = SoundChannel(call, 0) is { } playChannel && PlaySound(playChannel, call.Arg(1)) ? 1u : 0u;
+                break;
             case 0x00F9: // schannel_play_ext
+                call.Result = SoundChannel(call, 0) is { } playExtChannel && PlaySound(playExtChannel, call.Arg(1), call.Arg(2), call.Arg(3)) ? 1u : 0u;
+                break;
             case 0x00FA: // schannel_stop
+                if (SoundChannel(call, 0) is { } stoppedChannel)
+                {
+                    StopSound(stoppedChannel);
+                }
+
+                break;
             case 0x00FB: // schannel_set_volume
+                if (SoundChannel(call, 0) is { } volumeChannel)
+                {
+                    SetSoundVolume(volumeChannel, call.Arg(1));
+                }
+
+                break;
             case 0x00FD: // schannel_set_volume_ext
+                if (SoundChannel(call, 0) is { } fadedChannel)
+                {
+                    SetSoundVolume(fadedChannel, call.Arg(1), call.Arg(2), call.Arg(3));
+                }
+
+                break;
             case 0x00FE: // schannel_pause
+                if (SoundChannel(call, 0) is { } pausedChannel)
+                {
+                    PauseSound(pausedChannel);
+                }
+
+                break;
             case 0x00FF: // schannel_unpause
-                // [glk #sound_playing] No channel was ever created, so
-                // whatever the game passes is not one.
-                Warn($"{call.Function.Name}: invalid sound channel id {call.ObjectId(0)}.");
-                call.Result = 0;
+                if (SoundChannel(call, 0) is { } unpausedChannel)
+                {
+                    UnpauseSound(unpausedChannel);
+                }
+
+                break;
+            case 0x00FC: // sound_load_hint
+                SoundLoadHint(call.Arg(0), call.Arg(1) != 0);
                 break;
 
             case 0x0080: // put_char
@@ -622,7 +688,7 @@ public sealed partial class GlkLibrary
     /// extra answer of some selectors written into
     /// <paramref name="extra"/> when there is room.
     /// </summary>
-    public static uint Gestalt(uint selector, uint value, uint[]? extra)
+    public uint Gestalt(uint selector, uint value, uint[]? extra)
     {
         switch ((GestaltSelector)selector)
         {
@@ -668,6 +734,18 @@ public sealed partial class GlkLibrary
                 // [glk #line_events] Terminators are recorded, but no key
                 // the display has can be one, so none is promised.
                 return 0;
+
+            case GestaltSelector.Sound:
+            case GestaltSelector.Sound2:
+            case GestaltSelector.SoundMusic:
+            case GestaltSelector.SoundVolume:
+            case GestaltSelector.SoundNotify:
+                // [glk #sound_testing] The whole suite, the old one
+                // included, when the frontend can play at all: the
+                // channels, volume, and notification are the library's,
+                // and music is asked of the frontend like any other
+                // sound, which may decline it.
+                return _sound.CanPlaySounds ? 1u : 0u;
 
             default:
                 // [glk #gestalt] An unknown selector, and every feature
@@ -1086,6 +1164,13 @@ public sealed partial class GlkLibrary
     {
         while (true)
         {
+            // [glk #sound_playing] A sound or a volume change that has
+            // ended is already an event, and goes before any waiting.
+            if (NextSoundEvent() is { } soundEvent)
+            {
+                return soundEvent;
+            }
+
             // [glk #timer_events] A timer that is due goes first, but
             // never stacks up: the next is an interval from now.
             if (TimerDue())
@@ -1133,19 +1218,26 @@ public sealed partial class GlkLibrary
                     throw new EndOfStreamException("The input ended while the game was waiting for the player.");
 
                 default:
-                    // A timer tick, or input for a window that no longer
-                    // asks: back to the top, where the timer is checked.
+                    // A timer tick, a wake, or input for a window that no
+                    // longer asks: back to the top, where the sound
+                    // events and the timer are checked.
                     break;
             }
         }
     }
 
     /// <summary>
-    /// [glk op:select_poll] The timer event if it is due, else no event.
-    /// Player input is never polled for.
+    /// [glk op:select_poll] A sound or volume notification if one is
+    /// ready, else the timer event if it is due, else no event. Player
+    /// input is never polled for.
     /// </summary>
     public GlkEvent SelectPoll()
     {
+        if (NextSoundEvent() is { } soundEvent)
+        {
+            return soundEvent;
+        }
+
         if (TimerDue())
         {
             _timerStarted = _clock.GetTimestamp();
