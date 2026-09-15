@@ -87,10 +87,24 @@ public abstract class GlkWindow : GlkObject
     public IReadOnlyList<uint> LineTerminators { get; internal set; } = [];
 
     /// <summary>
-    /// [glk #window_textbuf] Prints one character to the window, in a
-    /// style, as the window's stream does.
+    /// [glk #mouse_events] Whether the next click in this window is to
+    /// be reported. A display reads this to know which windows are
+    /// listening, and the request is over once a click is reported.
     /// </summary>
-    internal abstract void Put(uint character, GlkStyle style);
+    public bool MouseRequest { get; internal set; }
+
+    /// <summary>
+    /// [glk #link_events] Whether the next link selected in this window
+    /// is to be reported, on the same terms.
+    /// </summary>
+    public bool HyperlinkRequest { get; internal set; }
+
+    /// <summary>
+    /// [glk #window_textbuf] Prints one character to the window, in a
+    /// style and as part of a link or of no link, as the window's
+    /// stream does.
+    /// </summary>
+    internal abstract void Put(uint character, GlkStyle style, uint link);
 
     /// <summary>[glk op:window_clear] Erases the window.</summary>
     public abstract void Clear();
@@ -191,7 +205,7 @@ public sealed class PairWindow : GlkWindow
     /// </summary>
     public WindowMethod Method => Direction | Division | (Border ? 0 : WindowMethod.NoBorder);
 
-    internal override void Put(uint character, GlkStyle style)
+    internal override void Put(uint character, GlkStyle style, uint link)
     {
     }
 
@@ -227,7 +241,7 @@ public sealed class BlankWindow : GlkWindow
     {
     }
 
-    internal override void Put(uint character, GlkStyle style)
+    internal override void Put(uint character, GlkStyle style, uint link)
     {
     }
 
@@ -250,7 +264,7 @@ public sealed class TextBufferWindow : GlkWindow
         _display = display;
     }
 
-    internal override void Put(uint character, GlkStyle style) => _display.Print(this, character, style);
+    internal override void Put(uint character, GlkStyle style, uint link) => _display.Print(this, character, style, link);
 
     public override void Clear() => _display.Clear(this);
 }
@@ -263,6 +277,7 @@ public sealed class TextGridWindow : GlkWindow
 {
     private uint[] _characters = [];
     private GlkStyle[] _styles = [];
+    private uint[] _links = [];
 
     internal TextGridWindow(uint rock)
         : base(rock, WindowType.TextGrid)
@@ -282,6 +297,12 @@ public sealed class TextGridWindow : GlkWindow
 
     /// <summary>The style at a cell.</summary>
     public GlkStyle StyleAt(int x, int y) => _styles[(y * Width) + x];
+
+    /// <summary>
+    /// [glk #link_creating] The link the character at a cell belongs
+    /// to, zero for one that is not a link.
+    /// </summary>
+    public uint LinkAt(int x, int y) => _links[(y * Width) + x];
 
     /// <summary>One row of the grid as text.</summary>
     public string Row(int y)
@@ -306,7 +327,7 @@ public sealed class TextGridWindow : GlkWindow
         CursorY = (int)Math.Min(y, int.MaxValue);
     }
 
-    internal override void Put(uint character, GlkStyle style)
+    internal override void Put(uint character, GlkStyle style, uint link)
     {
         // [glk #window_textgrid] Characters are laid into the array left
         // to right and top to bottom; a newline or the end of a row
@@ -332,6 +353,7 @@ public sealed class TextGridWindow : GlkWindow
 
         _characters[(CursorY * Width) + CursorX] = character;
         _styles[(CursorY * Width) + CursorX] = style;
+        _links[(CursorY * Width) + CursorX] = link;
         CursorX++;
     }
 
@@ -341,6 +363,7 @@ public sealed class TextGridWindow : GlkWindow
         // cursor at the top left.
         Array.Fill(_characters, (uint)' ');
         Array.Fill(_styles, GlkStyle.Normal);
+        Array.Fill(_links, 0u);
         CursorX = 0;
         CursorY = 0;
     }
@@ -351,6 +374,7 @@ public sealed class TextGridWindow : GlkWindow
         // fills the new area with blanks.
         var characters = new uint[Width * Height];
         var styles = new GlkStyle[Width * Height];
+        var links = new uint[Width * Height];
         Array.Fill(characters, (uint)' ');
 
         for (var y = 0; y < Math.Min(oldHeight, Height); y++)
@@ -359,10 +383,12 @@ public sealed class TextGridWindow : GlkWindow
             {
                 characters[(y * Width) + x] = _characters[(y * oldWidth) + x];
                 styles[(y * Width) + x] = _styles[(y * oldWidth) + x];
+                links[(y * Width) + x] = _links[(y * oldWidth) + x];
             }
         }
 
         _characters = characters;
         _styles = styles;
+        _links = links;
     }
 }

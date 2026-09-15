@@ -27,6 +27,14 @@ public class TerminalGlkDisplayTests
         return display.Screen.RowText(row);
     }
 
+    private static void Write(GlkLibrary glk, GlkWindow window, string text)
+    {
+        foreach (var character in text)
+        {
+            glk.PutChar(window.Stream, character);
+        }
+    }
+
     private static void Type(TerminalGlkDisplay display, string text)
     {
         foreach (var character in text)
@@ -124,6 +132,93 @@ public class TerminalGlkDisplayTests
 
         var alone = display.WaitForInput([], [], TimeSpan.FromMilliseconds(1));
         Assert.Equal(GlkInputKind.Timer, alone.Kind);
+    }
+
+    [Fact]
+    public void AClickIsReportedToTheWindowItLandsIn()
+    {
+        var (glk, display, _) = Library();
+        var story = glk.OpenWindow(null, 0, 0, GlkWindowType.TextBuffer, 1)!;
+        var status = glk.OpenWindow(story, WindowMethod.Above | WindowMethod.Fixed, 2, GlkWindowType.TextGrid, 2)!;
+        glk.RequestMouseEvent(status);
+
+        // [glk #mouse_events] The event carries the cell of the window,
+        // counted from the window's own corner rather than the screen's.
+        display.EnqueueClick(status.Left + 3, status.Top + 1);
+        var input = display.WaitForInput([], [], null);
+
+        Assert.Equal(GlkInputKind.Mouse, input.Kind);
+        Assert.Same(status, input.Window);
+        Assert.Equal((3u, 1u), (input.Column, input.Row));
+
+        // A click in the other window, which asked for nothing, is
+        // nothing: the wait goes on until the library wakes it.
+        glk.RequestMouseEvent(status);
+        display.EnqueueClick(story.Left, story.Top);
+        display.Wake();
+        Assert.Equal(GlkInputKind.Woken, display.WaitForInput([], [], null).Kind);
+        Assert.True(status.MouseRequest);
+    }
+
+    [Fact]
+    public void AClickOnLinkTextIsReportedAsTheLink()
+    {
+        var (glk, display, _) = Library();
+        var story = glk.OpenWindow(null, 0, 0, GlkWindowType.TextBuffer, 1)!;
+
+        GlkLibrary.SetHyperlink(story.Stream, 42);
+        Write(glk, story, "north");
+        GlkLibrary.SetHyperlink(story.Stream, 0);
+        Write(glk, story, " or down");
+        GlkLibrary.RequestHyperlinkEvent(story);
+
+        display.EnqueueClick(2, 0);
+        var input = display.WaitForInput([], [], null);
+
+        // [glk #link_events] The value the game gave the text that was
+        // clicked on.
+        Assert.Equal(GlkInputKind.Hyperlink, input.Kind);
+        Assert.Same(story, input.Window);
+        Assert.Equal(42u, input.Link);
+
+        // [glk #link_creating] Link text is shown in a color of its own,
+        // and ordinary text beside it is not.
+        Assert.Equal("north or down       ", Row(display, 0));
+        Assert.Equal(GlkScreen.LinkColor, display[0, 2].Attributes.Foreground);
+        Assert.NotEqual(GlkScreen.LinkColor, display[0, 8].Attributes.Foreground);
+
+        // A click on text that is not a link says nothing.
+        GlkLibrary.RequestHyperlinkEvent(story);
+        display.EnqueueClick(8, 0);
+        display.Wake();
+        Assert.Equal(GlkInputKind.Woken, display.WaitForInput([], [], null).Kind);
+    }
+
+    [Fact]
+    public void AClickWhileALineIsBeingTypedKeepsTheLine()
+    {
+        var (glk, display, memory) = Library();
+        var story = glk.OpenWindow(null, 0, 0, GlkWindowType.TextBuffer, 1)!;
+        GlkLibrary.SetHyperlink(story.Stream, 3);
+        Write(glk, story, "map");
+        GlkLibrary.SetHyperlink(story.Stream, 0);
+        GlkLibrary.RequestHyperlinkEvent(story);
+        glk.RequestLineEvent(story, memory, Buffer, 20, 0, false);
+
+        // [glk #link_events] A window can be taking a line and watching
+        // for links at once.
+        Type(display, "no");
+        display.EnqueueClick(1, 0);
+        var input = display.WaitForInput([story], [], null);
+        Assert.Equal(GlkInputKind.Hyperlink, input.Kind);
+        Assert.Equal(3u, input.Link);
+
+        // The line goes on from where it was left when the game asks
+        // again, and what was typed is still there.
+        Type(display, "rth");
+        display.Enqueue(GlkKeyCode.Return);
+        var line = display.WaitForInput([story], [], null);
+        Assert.Equal("north", line.Text);
     }
 
     [Fact]

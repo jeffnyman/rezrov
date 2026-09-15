@@ -17,6 +17,18 @@ public enum GlkInputKind
     Timer,
 
     /// <summary>
+    /// [glk #mouse_events] A cell of a window was clicked, in a window
+    /// with a mouse request.
+    /// </summary>
+    Mouse,
+
+    /// <summary>
+    /// [glk #link_events] A link was selected, in a window with a
+    /// hyperlink request.
+    /// </summary>
+    Hyperlink,
+
+    /// <summary>
     /// [glk #arrange_events] The player changed the display's size, so
     /// the windows need laying out again.
     /// </summary>
@@ -49,7 +61,15 @@ public enum GlkInputKind
 /// [glk #line_events] The special keycode that ended the line, or zero
 /// for the enter key.
 /// </param>
-public sealed record GlkInput(GlkInputKind Kind, GlkWindow? Window, string? Text, uint Key, uint Terminator)
+/// <param name="Column">
+/// [glk #mouse_events] The column of the window that was clicked, from
+/// zero, for a click.
+/// </param>
+/// <param name="Row">The row that was clicked, from zero.</param>
+/// <param name="Link">
+/// [glk #link_events] The value of the link that was selected.
+/// </param>
+public sealed record GlkInput(GlkInputKind Kind, GlkWindow? Window, string? Text, uint Key, uint Terminator, uint Column = 0, uint Row = 0, uint Link = 0)
 {
     public static GlkInput Ended { get; } = new(GlkInputKind.Ended, null, null, 0, 0);
 
@@ -68,6 +88,17 @@ public sealed record GlkInput(GlkInputKind Kind, GlkWindow? Window, string? Text
 
     public static GlkInput KeyPress(GlkWindow window, uint key) =>
         new(GlkInputKind.Key, window, null, key, 0);
+
+    /// <summary>
+    /// [glk #mouse_events] A cell of a window was clicked, counted from
+    /// the window's own top left corner.
+    /// </summary>
+    public static GlkInput MouseClick(GlkWindow window, uint column, uint row) =>
+        new(GlkInputKind.Mouse, window, null, 0, 0, column, row);
+
+    /// <summary>[glk #link_events] A link was selected.</summary>
+    public static GlkInput LinkSelected(GlkWindow window, uint link) =>
+        new(GlkInputKind.Hyperlink, window, null, 0, 0, 0, 0, link);
 }
 
 /// <summary>

@@ -582,12 +582,32 @@ public sealed partial class GlkLibrary
 
                 break;
             case 0x00D4: // request_mouse_event
+                if (Window(call, 0) is { } clickable)
+                {
+                    RequestMouseEvent(clickable);
+                }
+
+                break;
             case 0x00D5: // cancel_mouse_event
+                if (Window(call, 0) is { } unclickable)
+                {
+                    CancelMouseEvent(unclickable);
+                }
+
+                break;
             case 0x0102: // request_hyperlink_event
+                if (Window(call, 0) is { } linkable)
+                {
+                    RequestHyperlinkEvent(linkable);
+                }
+
+                break;
             case 0x0103: // cancel_hyperlink_event
-                // [glk #mouse_events] and [glk #link_events] Legal to ask
-                // for, as gestalt has said, but nothing ever comes of it.
-                Window(call, 0);
+                if (Window(call, 0) is { } unlinkable)
+                {
+                    CancelHyperlinkEvent(unlinkable);
+                }
+
                 break;
             case 0x00D6: // request_timer_events
                 RequestTimerEvents(call.Arg(0));
@@ -614,10 +634,14 @@ public sealed partial class GlkLibrary
                 break;
 
             case 0x00E8: // window_flow_break
+                // [glk #graphics_textbuf] A hint about where a margin
+                // image ends, which a display with no images ignores.
+                break;
             case 0x0100: // set_hyperlink
+                SetHyperlink(CurrentStream, call.Arg(0));
+                break;
             case 0x0101: // set_hyperlink_stream
-                // [glk #graphics_textbuf] and [glk #link_creating] Both
-                // are hints a plain text display can do nothing with.
+                SetHyperlink(Stream(call, 0), call.Arg(1));
                 break;
 
             case 0x00E0: // image_get_info
@@ -734,6 +758,20 @@ public sealed partial class GlkLibrary
                 // [glk #line_events] Terminators are recorded, but no key
                 // the display has can be one, so none is promised.
                 return 0;
+
+            case GestaltSelector.MouseInput:
+                // [glk #mouse_events] Which kinds of window a click can
+                // be reported in is the display's to say.
+                return _display.CanReportMouse((WindowType)value) ? 1u : 0u;
+
+            case GestaltSelector.Hyperlinks:
+                // [glk #link_testing] The four functions are all here,
+                // whatever the display can do with them: text carries
+                // the link values it is given either way.
+                return 1;
+
+            case GestaltSelector.HyperlinkInput:
+                return _display.CanReportHyperlinks((WindowType)value) ? 1u : 0u;
 
             case GestaltSelector.Sound:
             case GestaltSelector.Sound2:
@@ -1144,6 +1182,63 @@ public sealed partial class GlkLibrary
     }
 
     /// <summary>
+    /// [glk op:request_mouse_event] Asks for the next click in a window
+    /// to be reported.
+    /// </summary>
+    /// <remarks>
+    /// [glk #mouse_events] Only a text grid or a graphics window can
+    /// take mouse input; asking of any other is allowed but does
+    /// nothing, which is what the gestalt answer said would happen.
+    /// </remarks>
+    public void RequestMouseEvent(GlkWindow window)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+
+        if (window.Type is not (WindowType.TextGrid or WindowType.Graphics))
+        {
+            Warn($"request_mouse_event: a window of type {window.Type} takes no mouse input.");
+            return;
+        }
+
+        window.MouseRequest = true;
+    }
+
+    /// <summary>
+    /// [glk op:cancel_mouse_event] Stops waiting for a click.
+    /// </summary>
+    public static void CancelMouseEvent(GlkWindow window)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+        window.MouseRequest = false;
+    }
+
+    /// <summary>
+    /// [glk op:request_hyperlink_event] Asks for the next link selected
+    /// in a window to be reported. Any window may be asked, though only
+    /// one showing text can have links in it.
+    /// </summary>
+    public static void RequestHyperlinkEvent(GlkWindow window)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+        window.HyperlinkRequest = true;
+    }
+
+    /// <summary>
+    /// [glk op:cancel_hyperlink_event] Stops waiting for a link.
+    /// </summary>
+    public static void CancelHyperlinkEvent(GlkWindow window)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+        window.HyperlinkRequest = false;
+    }
+
+    /// <summary>
+    /// [glk op:set_hyperlink_stream] Sets the link value of a stream,
+    /// which everything written to it from now on belongs to.
+    /// </summary>
+    public static void SetHyperlink(GlkStream? stream, uint value) => stream?.SetLink(value);
+
+    /// <summary>
     /// [glk op:request_timer_events] Starts timer events every so many
     /// milliseconds, or stops them for zero.
     /// </summary>
@@ -1206,6 +1301,19 @@ public sealed partial class GlkLibrary
                     window.CharRequest = CharRequest.None;
                     return new GlkEvent(EventType.CharInput, window, key, 0);
                 }
+
+                case GlkInputKind.Mouse when input.Window is { MouseRequest: true } clicked:
+                    // [glk #mouse_events] The request is finished, and
+                    // the event carries the column and the row of the
+                    // character, counted from the window's corner.
+                    clicked.MouseRequest = false;
+                    return new GlkEvent(EventType.MouseInput, clicked, input.Column, input.Row);
+
+                case GlkInputKind.Hyperlink when input.Link != 0 && input.Window is { HyperlinkRequest: true } selected:
+                    // [glk #link_events] Likewise, and the value is the
+                    // game's own, which is never zero.
+                    selected.HyperlinkRequest = false;
+                    return new GlkEvent(EventType.Hyperlink, selected, input.Link, 0);
 
                 case GlkInputKind.Arrange:
                     // [glk #arrange_events] The windows are laid out again

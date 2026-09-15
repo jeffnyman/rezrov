@@ -19,6 +19,14 @@ namespace Rezrov.Tui;
 public sealed class TextPane
 {
     /// <summary>
+    /// One character of a buffer: how it looks, and [glk
+    /// #link_creating] the link it belongs to, zero for ordinary text.
+    /// </summary>
+    /// <param name="Cell">The character and its attributes.</param>
+    /// <param name="Link">The link value, or zero.</param>
+    public readonly record struct PaneCell(Cell Cell, uint Link);
+
+    /// <summary>
     /// How many paragraphs are kept before the oldest go: enough to
     /// scroll back through a long session, not enough to grow without
     /// bound.
@@ -67,7 +75,7 @@ public sealed class TextPane
     /// Prints one character: a newline ends the paragraph, anything
     /// else joins it.
     /// </summary>
-    public void Put(char character, TextAttributes attributes)
+    public void Put(char character, TextAttributes attributes, uint link = 0)
     {
         if (character == '\n')
         {
@@ -90,7 +98,7 @@ public sealed class TextPane
             return;
         }
 
-        Current.Cells.Add(new Cell(character, attributes));
+        Current.Cells.Add(new PaneCell(new Cell(character, attributes), link));
         Current.Wrapped = null;
     }
 
@@ -121,9 +129,9 @@ public sealed class TextPane
     /// view, or all of them when there are fewer. An empty open
     /// paragraph is a line too, since that is where the cursor is.
     /// </summary>
-    public IReadOnlyList<IReadOnlyList<Cell>> VisibleLines(int height)
+    public IReadOnlyList<IReadOnlyList<PaneCell>> VisibleLines(int height)
     {
-        var lines = new List<IReadOnlyList<Cell>>();
+        var lines = new List<IReadOnlyList<PaneCell>>();
         for (var i = _paragraphs.Count - 1; i >= 0 && lines.Count < height; i--)
         {
             var wrapped = Lines(_paragraphs[i]);
@@ -148,7 +156,7 @@ public sealed class TextPane
         return (Math.Max(visible.Count - 1, 0), last.Count == 0 ? 0 : last[^1].Count);
     }
 
-    private List<IReadOnlyList<Cell>> Lines(Paragraph paragraph)
+    private List<IReadOnlyList<PaneCell>> Lines(Paragraph paragraph)
     {
         if (paragraph.Wrapped is null || paragraph.WrappedWidth != Width)
         {
@@ -165,9 +173,9 @@ public sealed class TextPane
     /// than the window. The space a line breaks at is dropped, and an
     /// empty paragraph is one empty line.
     /// </summary>
-    private static List<IReadOnlyList<Cell>> Wrap(List<Cell> cells, int width)
+    private static List<IReadOnlyList<PaneCell>> Wrap(List<PaneCell> cells, int width)
     {
-        var lines = new List<IReadOnlyList<Cell>>();
+        var lines = new List<IReadOnlyList<PaneCell>>();
         if (width <= 0)
         {
             lines.Add([]);
@@ -181,7 +189,7 @@ public sealed class TextPane
             var breakAt = -1;
             for (var i = end; i > start; i--)
             {
-                if (cells[i].Character == ' ')
+                if (cells[i].Cell.Character == ' ')
                 {
                     breakAt = i;
                     break;
@@ -206,9 +214,9 @@ public sealed class TextPane
 
     private sealed class Paragraph
     {
-        public List<Cell> Cells { get; } = [];
+        public List<PaneCell> Cells { get; } = [];
 
-        public List<IReadOnlyList<Cell>>? Wrapped { get; set; }
+        public List<IReadOnlyList<PaneCell>>? Wrapped { get; set; }
 
         public int WrappedWidth { get; set; }
     }
