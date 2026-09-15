@@ -238,7 +238,11 @@ public static class AcceptanceRun
         var sink = (TextWriter?)screenWriter ?? output;
         var random = new GlulxRandom((uint)script.Seed);
         var commands = new GlulxCommands(script, output, sink, random, resume ? Console.In : null, errors);
-        var glk = new GlkLibrary(new TextWriterGlkDisplay(sink, commands), new MemoryGlkFileSystem()) { Resources = story.Resources };
+
+        // [glk #mouse_events] A script may touch a window or select a
+        // link, which a player at a console cannot, so this display
+        // says it has a pointer where the console program does not.
+        var glk = new GlkLibrary(new TextWriterGlkDisplay(sink, commands, hasPointer: true), new MemoryGlkFileSystem()) { Resources = story.Resources };
 
         GlulxMachine machine;
         try

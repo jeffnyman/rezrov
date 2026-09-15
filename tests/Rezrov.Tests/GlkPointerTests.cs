@@ -182,6 +182,42 @@ public class GlkPointerTests
     }
 
     [Fact]
+    public void AScriptCanPointAtAConsoleWhereAPlayerCannot()
+    {
+        // [glk #mouse_events] A console has no pointer, so a display
+        // over one takes a click as a line of its own kind, which is
+        // how an acceptance script exercises a game's links.
+        var writer = new StringWriter();
+        var reader = new StringReader("[click 3,1]\n[link 5]\n[click 9,9]\n");
+        var display = new TextWriterGlkDisplay(writer, reader, hasPointer: true);
+        var glk = new GlkLibrary(display);
+        var memory = new GlulxMemory(TestGlulx.File(ramStart: 0x400, extStart: 0x800, endMem: 0xA00));
+        var story = glk.OpenWindow(null, 0, 0, WindowType.TextBuffer, 1)!;
+        var status = glk.OpenWindow(story, WindowMethod.Above | WindowMethod.Fixed, 2, WindowType.TextGrid, 2)!;
+
+        glk.RequestMouseEvent(status);
+        Assert.Equal(new GlkEvent(EventType.MouseInput, status, 3, 1), glk.Select());
+
+        GlkLibrary.RequestHyperlinkEvent(story);
+        Assert.Equal(new GlkEvent(EventType.Hyperlink, story, 5, 0), glk.Select());
+
+        // With nothing waiting to be touched, the same shape of line is
+        // only a line, so a click that lands nowhere is plain in the
+        // recording rather than quietly doing nothing.
+        glk.RequestLineEvent(story, memory, 0x400, 20, 0, false);
+        var typed = glk.Select();
+        Assert.Equal(EventType.LineInput, typed.Type);
+        Assert.Equal("[click 9,9]", System.Text.Encoding.Latin1.GetString(memory.Slice(0x400, typed.Value1)));
+
+        // And a console that was not told it has a pointer says so.
+        var plain = new TextWriterGlkDisplay(writer);
+        Assert.False(plain.CanReportMouse(WindowType.TextGrid));
+        Assert.False(plain.CanReportHyperlinks(WindowType.TextBuffer));
+        Assert.True(display.CanReportMouse(WindowType.TextGrid));
+        Assert.True(display.CanReportHyperlinks(WindowType.TextBuffer));
+    }
+
+    [Fact]
     public void TheFunctionsWorkThroughTheDispatchLayer()
     {
         var display = new RecordingGlkDisplay(20, 6) { Pointer = true };

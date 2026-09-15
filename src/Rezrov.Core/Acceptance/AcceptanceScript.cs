@@ -44,6 +44,40 @@ public sealed class AcceptanceScript
 {
     // The keys a script may name instead of numbering, as their ZSCII
     // codes: the cursor keys, escape, and the space bar.
+    /// <summary>
+    /// [glk #mouse_events] and [glk #link_events] A touch of a window
+    /// or a link, as the command form a display understands: a click at
+    /// a column and a row of the window, or the value of a link. Null
+    /// for anything that is not one of the two.
+    /// </summary>
+    private static string? Pointer(string line)
+    {
+        var inside = line[1..^1].Trim();
+
+        if (inside.StartsWith("click ", StringComparison.OrdinalIgnoreCase))
+        {
+            var at = inside[6..].Split(',');
+            if (at.Length != 2 || !uint.TryParse(at[0].Trim(), out var column) || !uint.TryParse(at[1].Trim(), out var row))
+            {
+                throw new InvalidDataException($"{line} is not a click; a click is written <click column,row>, counting from zero at the window's top left corner");
+            }
+
+            return $"[click {column},{row}]";
+        }
+
+        if (inside.StartsWith("link ", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!uint.TryParse(inside[5..].Trim(), out var value) || value == 0)
+            {
+                throw new InvalidDataException($"{line} is not a link; a link is written <link value>, and a link value is never zero");
+            }
+
+            return $"[link {value}]";
+        }
+
+        return null;
+    }
+
     private static readonly Dictionary<string, int> KeyNames = new(StringComparer.Ordinal)
     {
         ["<up>"] = 129,
@@ -205,9 +239,19 @@ public sealed class AcceptanceScript
             // its letters are not typed into the game.
             if (trimmed[0] == '<' && trimmed[^1] == '>')
             {
+                // [glk #mouse_events] and [glk #link_events] A game may
+                // be waiting for the pointer rather than the keyboard,
+                // so a script can touch a window or select a link.
+                if (Pointer(trimmed) is { } pointer)
+                {
+                    commands.Add(pointer);
+                    commandLines.Add(i + 1);
+                    continue;
+                }
+
                 if (!KeyNames.TryGetValue(trimmed.ToLowerInvariant(), out var code))
                 {
-                    throw new InvalidDataException($"{name}, line {i + 1}: {trimmed} is not a key; the keys are {string.Join(", ", KeyNames.Keys)}, and a command that begins with < is written with the prompt in front");
+                    throw new InvalidDataException($"{name}, line {i + 1}: {trimmed} is not a key; the keys are {string.Join(", ", KeyNames.Keys)}, or <click column,row> and <link value>, and a command that begins with < is written with the prompt in front");
                 }
 
                 commands.Add($"[{code}]");

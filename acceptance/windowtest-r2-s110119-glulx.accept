@@ -1,0 +1,42 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/windowtest-r2-s110119.ulx
+
+# Andrew Plotkin's window explorer: it opens, arranges, and closes a
+# second window on command and reports what the library did with each
+# one. On a stream of text a second window is kept but not shown, so
+# what this recording proves is the library's side, which is what the
+# checker is asking about.
+
+windows
+size
+styles
+streams
+
+# [glk #link_events] The links. The game prints two of them and asks
+# to hear when one is selected; the script touches one by its value.
+# The game answers with the value, the window it came from, and the
+# state of the line it was typing, which it cancels and asks for
+# again, so this also shows a link arriving while a line is pending.
+link
+<link 1>
+<link 2>
+
+# A second window above the first, three rows of a text grid, then the
+# same questions again: the tree now has a pair window with the two of
+# them under it, and the sizes are the split the library worked out.
+open top grid 3
+windows
+size
+
+# The game asks about links in the new window too, and gives it links
+# 3 and 4 of its own. A console has no pointer to aim, so the display
+# hands a link to the first window waiting for one, which is now the
+# text grid: the game says so, and says its own links are there.
+link
+<link 3>
+
+poll
+close
+windows
+
+quit
