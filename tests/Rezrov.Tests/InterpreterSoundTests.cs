@@ -122,6 +122,23 @@ public partial class InterpreterTests
     }
 
     [Fact]
+    public void AnEndOfSoundRoutineBeforeVersion5IsIgnored()
+    {
+        // [zm op:sound_effect] The four-operand form is Version 5 and
+        // later, so a routine from an older game is not one.
+        var sound = new RecordingSound();
+        var run = Execute(
+            new Assembler()
+                .Variable(Op.SoundEffect, true, Small(3), Small(2), Small(8), Large(0x1234))
+                .Quit(),
+            sound: sound,
+            version: ZMachineVersion.V3);
+
+        Assert.Equal("Play 3 v8 r1", sound.Calls[0]);
+        Assert.Contains("routine", Assert.Single(run.Interpreter.RuntimeErrors));
+    }
+
+    [Fact]
     public void ZeroRepeatsInVersion5PlaysOnceWithAWarning()
     {
         var sound = new RecordingSound();

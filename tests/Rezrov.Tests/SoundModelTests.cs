@@ -162,6 +162,44 @@ public class SoundModelTests
     }
 
     [Fact]
+    public void TheLurkingHorrorsSparkIsNotCutOffByWhatFollowsIt()
+    {
+        // The line plugged into the socket in The Lurking Horror: the
+        // shower of sparks, which plays once, and then in the same turn
+        // the creature taking shape, which [blorb 11.4] the resource
+        // file marks as repeating until stopped. A turn later the game
+        // stops the creature. On Infocom's slow machines the sparks
+        // were heard in full, and an interpreter that lets the second
+        // sound interrupt the first plays almost none of it.
+        var sound = new RecordingSound();
+        var model = new SoundModel(sound, ZMachineVersion.V3);
+        model.AddResource(new SoundResource(11, "AIFF", new byte[] { 1 }, PlaysOnce: true));
+        model.AddResource(new SoundResource(16, "AIFF", new byte[] { 2 }, PlaysOnce: false));
+
+        model.InputHappened();
+        model.Play(11, 8, 1, 0);
+        model.Play(16, 8, 1, 0);
+
+        // The remarks on section 9: the creature waits its turn rather
+        // than cutting the sparks off.
+        Assert.Equal(["Play 11 v8 r1"], sound.Calls);
+        Assert.Equal(11, model.PlayingSample);
+
+        // The stop reaches the creature while it is still waiting, so
+        // it never sounds at all, and the sparks play on.
+        model.InputHappened();
+        model.Stop(16);
+        Assert.Equal(["Play 11 v8 r1"], sound.Calls);
+        Assert.Equal(11, model.PlayingSample);
+
+        // And when the sparks end there is nothing queued behind them.
+        sound.EndCycle(11);
+        Assert.Empty(model.Update());
+        Assert.Null(model.PlayingSample);
+        Assert.Equal(["Play 11 v8 r1"], sound.Calls);
+    }
+
+    [Fact]
     public void PrepareAndVolumeArePassedAlong()
     {
         var (model, sound) = Make();
