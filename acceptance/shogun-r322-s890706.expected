@@ -1,0 +1,6001 @@
+SHOGUN
+A Story of Japan
+Copyright (c) 1988 by Infocom
+All rights reserved.
+SHOGUN is a trademark of James Clavell
+Original Literary Work Copyright 1975 by James Clavell
+Licensed by Noble House Trading Limited, London.
+Release 322 / Serial number 890706
+Debugging Interpreter version 6.82
+You may choose to: START the game 
+RESTORE a saved game 
+QUIT the game 
+Erasmus:
+Bridge
+Score:0
+Moves:0
+The gale tears at you, biting deep within, and you know that if you don't make 
+landfall soon you'll all be dead. You are John Blackthorne, Pilot-Major of a 
+dead fleet: one ship left out of five, eight and twenty men out of one hundred 
+and seven, and only ten of those can walk. Little food, almost no water, and 
+that brackish and foul.
+
+Bridge
+This is the bridge of the Erasmus, a Dutch merchant and privateer. The unlashed
+wheel is directly forward of you, a sea chair is lashed to the deck aft of the 
+wheel, and the ship's bell is hanging here. Spray blows past in an angry 
+torrent.
+
+The wheel dominates the quarterdeck. It is turned straight and free to turn 
+now.
+
+The ship heels in a sudden squall, throwing you from your post at the wheel, 
+which, uncontrolled, begins to turn to port.
+
+>straighten the wheel
+You take the wheel and straighten it. Helped by the following wind, the ship 
+returns to its course.
+
+Hendrik Specz, the third mate, appears on deck, pulling himself painfully up 
+the gangway. He joins you on the bridge. "Go below, Pilot. I take this watch if
+it pleases you." Gray with fatigue, he leans heavily against the binnacle and 
+retches. "Blessed Lord Jesus help me!"
+
+Bridge; course west; wheel straight
+5
+1
+>lash the wheel
+You loop the protective lashing around the spokes of the wheel. It is now 
+locked in place.
+
+"Where's the landfall you promised us? Where's the Japans? Where is it, I ask?"
+
+Bridge2
+>specz, take the wheel
+"Aye, Pilot, I take the wheel."
+
+"Perhaps there is no Japans," Hendrik mutters scornfully. "It's just a 
+Gottbewonden legend."
+
+Bridge3
+>down
+Deck
+This is the main deck of the Erasmus. A companionway leads up to the bridge, 
+and another one forward leads below decks to the crew quarters. A stairway aft 
+leads to the officers' cabins.
+
+The anchor hangs over the side, ready to be dropped if ever, by the grace of 
+God and your good piloting, the Erasmus reaches port.
+
+You are tired, deathly tired, and near starving. With a start, you realize it's
+time to go below and send out replacements for the men on watch, by now 
+freezing and windburned. It's past time to eat some of your meager cache of 
+food; a few shrivelled apples. Time, too, for the unpleasant task of visiting 
+Captain Spillbergen, still in nominal command but deathly sick, confined to his
+cabin. It's also time to write in your rutter, though God knows there is 
+nothing new since yesterday; nothing, that is, but death.
+
+Erasmus:
+Deck
+Score:5
+Moves:4
+>fore
+You open the focsle door and go through.
+
+As you enter, a volley of feeble curses greets you. You close the door and they
+subside. No one moves.
+
+Below Decks
+The crew's quarters of the Erasmus. A companionway leads up to the deck. It's 
+dim, warm and close here, and the stench is abominable.
+
+Most of the survivors of the crew are here in bunks and hammocks, some 
+sleeping, some awake.
+
+Erasmus:
+Below Decks
+Score:5
+Moves:5
+>examine the crew
+The crewmen here are Croocq, Salamon, Sonk, Ginsel, Maetsukker, and Vinck. 
+Vinck, Ginsel, and Maetsukker are in the best condition, although everyone is 
+badly off.
+
+6
+>vinck, go on deck
+"Take the dawn watch, Vinck," you order. Vinck pulls himself painfully out of 
+his bunk and goes out.
+
+7
+>ginsel, go on deck
+"Ginsel, you're bow lookout," you say quietly.
+"Yes, sir." Ginsel pulls himself upright and stumbles out.
+
+8
+>maetsukker, go on deck
+"I'm near death," the small, sharp-featured man says, and cringes away from 
+you. "I'm sick. Look, the scurvy's taken all my teeth. Take someone else!" 
+Other members of the crew take up the refrain. They are all sick, all scurvied,
+all tired unto death.
+
+9
+>grab maetsukker
+Maetsukker screams as you jerk him to his feet. Blood flecks his mouth as he 
+pulls the door open and flees in agony. The other crewmen grumble, but seem to 
+accept this assertion of your authority.
+
+10
+10
+>aft
+You open the focsle door and go through.
+
+Deck
+
+The anchor hangs over the side, ready to be dropped if ever, by the grace of 
+God and your good piloting, the Erasmus reaches port.
+
+You see Vinck here.
+
+Erasmus:
+Deck
+Score:10
+Moves:11
+>aft
+You open the passageway door and go through.
+
+As you enter the relative quiet of the aft passageway, you notice Jan Roper 
+heading across the passage from your cabin to the Mates' cabin.
+
+Passageway
+The Captain's cabin is aft of here. Your cabin is to port, and the Mates' cabin
+to starboard. The main deck is forward of here.
+
+Timbers creak pleasantly.
+
+Erasmus:
+Passageway
+Score:10
+Moves:12
+>port
+You open the Pilot's cabin door and go through.
+
+Pilot's Cabin
+This is your cabin, sparsely furnished and small but nonetheless the second 
+best on the ship. The only exit is out to the passageway.
+
+The long narrow bunk with its straw palliasse looks inviting.
+
+There are a desk and a sea chest here. Sitting on the desk is a quill.
+
+Erasmus:
+Pilot's Cabin
+Score:10
+Moves:13
+>examine the desk
+This is a battered old writing desk, with a top large enough for charts and 
+rutters. You don't see the apples you've been saving.
+
+14
+>open the desk
+The first thing you notice is that the apples you've been saving are gone! You 
+notice the key to your sea chest, safe and sound where you left it.
+
+A rat scurries in the shadows cast by a hanging oil lamp.
+
+15
+15
+>take the quill and the key
+quill: Taken.
+rusty key: Taken.
+
+You glance at your bunk. You are so tired. Go to sleep just for an hour, for 
+ten minutes...
+
+"I won't, I'll sleep tomorrow," you force yourself to say.
+
+16
+>unlock the chest with the key
+The chest unlocks with a rusty click.
+
+17
+>open it
+The sea chest opens. Inside it is your rutter and a secret Portuguese rutter.
+
+Cockroaches swarm on the floor.
+
+18
+>take my rutter
+Taken.
+
+Cockroaches swarm on the floor.
+
+19
+>read it
+This rutter is the record of your voyage from Rotterdam in the Netherlands 
+south through the Atlantic, through the Pass of Magellan, up the west coast of 
+South America, and into the unknown Pacific.
+
+20
+>write in it
+You write: "April 21 1600. Fifth hour. Dusk. 133d day from Santa Maria Island, 
+Chile, on the 32 degree North line of latitude. Sea still high and wind strong.
+We are running before the wind along a course of 270 degrees, making way 
+briskly. Large reefs were sighted at half the hour bearing North East by North 
+half a league distant. Three men died in the night of the scurvy. Today Bosun 
+Rijckloff died. I estimate we are still on course and that landfall in the 
+Japans should be soon."
+
+But how soon, you wonder?
+
+20
+21
+>put my rutter and the quill in the chest
+your rutter: Done.
+quill: Done.
+
+You glance at your bunk. You are so tired. Go to sleep just for an hour, for 
+ten minutes...
+
+"I won't, I'll sleep tomorrow," you force yourself to say.
+
+22
+>close the chest
+The sea chest is now closed.
+
+A rat scurries in the shadows cast by a hanging oil lamp.
+
+23
+>lock it with the key
+The chest is now securely locked.
+
+24
+>starboard
+Passageway
+
+Erasmus:
+Passageway
+Score:20
+Moves:25
+>starboard
+You open the Mates' cabin door and go through.
+
+Mates' Cabin
+This is the Mates' cabin. It is now shared by Baccus van Nekk, the chief 
+merchant, Hendrik the third mate, and the boy, Croocq. The passageway is 
+outside.
+
+You see Jan Roper, Baccus van Nekk and Pieterzoon here.
+
+Erasmus:
+Mates' Cabin
+Score:20
+Moves:26
+>ask roper about my apple
+"You've been in my cabin," you say tiredly.
+
+"I didn't steal anything, Pilot. Besides, alone in the wilderness we good 
+Christians must share what little we have." You recall how Roper and the rest 
+didn't conserve their food, especially the fruit which has made your scurvy a 
+matter of aching gums rather than lost teeth.
+
+27
+>examine roper
+He's a narrow-eyed young man with a high forehead and a thin nose. His pale 
+chin is marred by a drip of apple juice.
+
+28
+>take my apple
+You grab Roper tightly, and twist his arm until he drops the apple into your 
+hands.
+
+25
+29
+>port
+Passageway
+
+The wind freshens even more, and the ship lurches.
+
+Erasmus:
+Passageway
+Score:25
+Moves:30
+>eat the apple
+You carefully eat a quarter of the apple, wrap the remainder, and put it away. 
+There are a few maggots in the quarter you've cut off, but you heed the old sea
+legend that apple maggots are effective against scurvy. You chew the fruit 
+gently because your teeth are aching and your gums sore and tender. After you 
+finish the apple, you feel better.
+
+30
+31
+>aft
+You open the Captain's cabin door and go through.
+
+Captain's Cabin
+This is the great cabin, the Captain-General's quarters and magazine. The 
+passageway leading to the other officers' cabins is forward.
+
+Captain-General Paulus Spillbergen lies half conscious in his bunk.
+
+The Captain's ornate desk fills one wall of the cabin.
+
+Spillbergen whines weakly. "I'm thirsty," he rasps. You've set some water aside
+for him, out of pity.
+
+Erasmus:
+Captain's Cabin
+Score:30
+Moves:32
+>examine the desk
+This desk is much like your own, but the captain hasn't used it in weeks. He is
+too sick to leave his bunk. You look through the desk, knowing you left a 
+flagon of water in it. In your tiredness you fumble around, unsure where you 
+put it, and then remember the secret drawer. Where's that catch? Ah, there it 
+is, a small piece of ornamentation.
+
+33
+>open the desk
+You open the secret drawer to the desk, revealing a flagon.
+
+Spillbergen whines weakly. "I'm thirsty," he rasps.
+
+35
+34
+>take the flagon
+Taken.
+
+35
+>give water to the captain
+Weakly, Spillbergen drinks a little water. "Thanks," he says. "Where's land -- 
+where's land?"
+
+"Ahead" is all you can say in reply.
+
+40
+36
+>fore
+
+You close your ears to the whines and leave, hating Spillbergen anew.
+
+Passageway
+
+Erasmus:
+Passageway
+Score:40
+Moves:37
+>fore
+Deck
+
+The anchor hangs over the side, ready to be dropped if ever, by the grace of 
+God and your good piloting, the Erasmus reaches port.
+
+You see Vinck here.
+
+Erasmus:
+Deck
+Score:40
+Moves:38
+>up
+As you climb onto the bridge, you see that Hendrik has fallen asleep at his 
+post. At least the wheel is lashed in place.
+
+Bridge
+
+Hendrik Specz is asleep at the wheel.
+
+The wheel dominates the quarterdeck. It is turned straight and lashed in place 
+now.
+
+Erasmus:
+Bridge
+Score:40
+Moves:39
+>unlash the wheel
+You remove the protective lashing, and brace yourself in place against the 
+force of the sea. You can now turn the wheel freely.
+
+Bridge; course west; wheel straight40
+>wait
+Time passes...
+
+Bridge; course west; wheel straight43
+>wait
+Time passes...
+
+Bridge; course west; wheel straight46
+>wait
+Time passes...
+
+Bridge; course west; wheel straight49
+>wait
+Time passes...
+
+Bridge; course west; wheel straight52
+>wait
+Time passes...
+
+Bridge; course west; wheel straight55
+>wait
+Time passes...
+
+Bridge; course west; wheel straight58
+>wait
+Time passes...
+
+Ginsel, the bow lookout, yells "Rotz vooruit!" Reef ahead! A foaming line of 
+surf stretches ahead of you, broken intermittently to port!
+
+The yelling wakes Hendrik.
+
+Bridge; course west; wheel straight60
+>turn the wheel to port
+Straining against the sea, you turn the wheel to port. The ship turns broadside
+to the reef, struggling against the wind which tries to drive it onto the 
+spines.
+
+A forepeak halliard snaps, and the highest top gallant spar is carried away 
+into the sea, but the ship is now making way parallel to the reef.
+
+Bridge; course southwest; wheel port61
+>straighten the wheel
+You straighten the wheel, trying to hold a steady course.
+
+Bridge; course southwest; wheel straight62
+>wait
+Time passes...
+
+The ship runs parallel to the reef, barely staying away from it, and a huge 
+following wave towers over the ship!
+
+Bridge; course southwest; wheel straight65
+>wait
+Time passes...
+
+Bridge; course southwest; wheel straight68
+>wait
+Time passes...
+
+Another halliard gives, block and tackle swinging wildly. The wave breaks over 
+the ship! It looks for a moment like you're going to founder, but she shakes it
+off.
+
+Bridge; course southwest; wheel straight69
+>wait
+Time passes...
+
+Bridge; course southwest; wheel straight72
+>wait
+Time passes...
+
+Another following sea towers above the ship. The ship is wallowing, and the 
+foresails are torn away by the tempest.
+
+Bridge; course southwest; wheel straight73
+>ring the bell
+You ring the bell. "All hands on deck!" you yell.
+
+Bridge; course southwest; wheel straight
+45
+74
+>wait
+Time passes...
+
+The noise of the bell and your yelling have aroused the crew and they pull 
+themselves out onto the deck. They are terrified when they see the encroaching 
+reef, most are panicked and don't know what to do next, but a few with their 
+last reserves of strength try ineffectually to get the ship under control.
+
+Bridge; course southwest; wheel straight75
+>raise the foresails
+You yell to the crewmen, "Fores'ls ho!" Foot by foot they haul themselves into 
+the shrouds of the foremast rigging, dragging new sails aloft as others below 
+lean on the ropes to give them a hand. They curse the sail out of its ropes. It
+falls open, cracking like a cannonade as the wind fills it, and the ship 
+lurches. Now you have some control!
+
+Bridge; course southwest; wheel straight
+50
+76
+>wait
+Time passes...
+
+This wave comes in stronger than the last. Hendrik is caught and lifted, 
+gasping and struggling, into the sea.
+
+A giant comber throws Hendrik high above the ship, then takes him away and 
+pulps him against a rock spine.
+
+Bridge; course southwest; wheel straight77
+>wait
+Time passes...
+
+Bridge; course southwest; wheel straight80
+>wait
+Time passes...
+
+Bridge; course southwest; wheel straight83
+>wait
+Time passes...
+
+There's a break in the reef ahead and to starboard!
+
+Bridge; course southwest; wheel straight85
+>turn the wheel to starboard
+You turn the wheel to starboard. The wind snaps the sails full and the ship 
+heads for the gap, but it means coming very close to the waiting reef!
+
+The gulch through the reef is three points to windward, and you aren't gaining 
+way! You search desperately for another channel but know there is none. The 
+Erasmus is heading for the rocks starboard of the gap!
+
+Bridge; course west; wheel starboard86
+>turn the wheel to port
+You haul the wheel to port, centering it, trying to hold a steady course.
+
+Bridge; course west; wheel straight87
+>turn the wheel to port
+Straining against the sea, you turn the wheel to port. The ship turns broadside
+to the reef, struggling against the wind which tries to drive it onto the 
+spines.
+
+The ship is gaining way, helped by the fall off from the wind. You are holding 
+course parallel to the reef and approaching a narrow gap which heads to 
+starboard.
+
+You see Vinck making his way up the companionway to the bridge.
+
+Bridge; course southwest; wheel port88
+>straighten the wheel
+You straighten the wheel, trying to hold a steady course.
+
+Bridge; course southwest; wheel straight89
+>turn the wheel to starboard
+You turn the wheel to starboard. With a crack the sails fill, shooting the 
+Erasmus into the gap!
+
+There is a wailing, tormented shudder as the keel scrapes the razor spines of 
+the reef below! The wheel spins out of your hands!
+
+Bridge90
+>vinck, help me
+Together you and Vinck grab the wheel and set her on course again, but she 
+still bobs and twists drunkenly.
+
+Bridge; course west; wheel straight91
+>straighten the wheel
+You maintain course west, the wheel still straight.
+
+Bridge; course west; wheel straight92
+>wait
+Time passes...
+
+The ship is sucked into a narrow vortex between the rocks. The bowsprit catches
+a rock and is torn loose! The foremast snaps! The men on deck fall on the 
+rigging with axes and cut it adrift as the ship founders down the channel.
+
+Bridge; course west; wheel straight94
+>wait
+Time passes...
+
+Bridge; course west; wheel straight97
+>wait
+Time passes...
+
+The ship is pulled by the waves deeper into the strait, and then pushed back by
+the return, but she's making some progress.
+
+Bridge; course west; wheel straight98
+>wait
+Time passes...
+
+Bridge; course west; wheel straight101
+>wait
+Time passes...
+
+For an instant, the strait broadens. Ahead, it narrows ominously and turns to 
+port.
+
+Bridge; course west; wheel straight102
+>turn the wheel to port
+Straining against the sea, you turn the wheel to port. The ship turns broadside
+to the reef, struggling against the wind which tries to drive it onto the 
+spines.
+
+The sea race quickens. The ship is in the neck and dead, but then the keel 
+scrapes a mud shoal, and the shock turns her head. The rudder bites into the 
+sea, the wind and sea join to help, and before the wind she speeds through the 
+pass to safety. Into the bay beyond.
+
+Bridge; course southwest; wheel port
+55
+[Congratulations, you have finished this scene with a score of 55 out of a 
+possible 55.]
+
+What now?CONTINUE to next scene 
+SAVE this game position 
+QUIT this session of the game 
+Anjiro:
+Mura's House, on the quilt
+Score:55
+Moves:102
+You awaken suddenly. For a moment you think you are dreaming, because you are 
+ashore and in a small, clean room whose floor is covered with soft mats. You 
+are lying on a thick quilt.
+
+You realize that you aren't dreaming because you are terribly hungry.
+
+Mura's House, on the quilt
+The room is filled with muted light shining through the opaque paper that fills
+squares of cedar lath. The ceiling is polished cedar.
+
+Hanging on the wall is a crucifix.
+
+There is a red lacquered tray here. Sitting on the red lacquered tray are food 
+and a pair of sticks.
+
+Anjiro:
+Mura's House, on the quilt
+Score:55
+Moves:103
+>eat food
+You wolf down the vegetables, which have a piquant taste. You drain the bowl of
+soup. You eat the porridge with your fingers, as there appear to be no 
+utensils, just some sticks of wood.
+
+You are still ravenously hungry.
+
+With an effort you try to collect yourself. You remember getting the anchor 
+out. With Vinck. At least you think it was Vinck. There were lights ashore. 
+Then there were lights and strange voices. One of the natives talked a little 
+Portuguese. They must have carried you ashore and put you here.
+
+Anjiro:
+Mura's House, on the quilt
+Score:55
+Moves:104
+>examine crucifix
+This is the sort of crucifix you would expect to find in a Catholic country. 
+You cannot help but look at it with anger and dread, as Spain and Portugal, the
+Catholic powers, have been at war with England for decades.
+
+All your life you have heard rumors of Portugal's secret empire in the East, 
+how they had by now converted the heathens to Catholicism and so held them in 
+bondage. Can these rumors have been true? If so, what about the other rumors, 
+that gold here is as cheap as pig iron, and emeralds and diamonds are as 
+plentiful as pebbles on the beach?
+
+A panel in the wall slides open. A middle-aged, heavy-set, round-faced woman 
+drops to her knees beside the door and bows and smiles at you. "Goshujinsama, 
+gokibun wa ikaga desu ka?" she asks.
+
+Anjiro:
+Mura's House, on the quilt
+Score:55
+Moves:105
+>point to tray
+You point to the red lacquered tray, and the woman looks at it and nods. She 
+smiles, politely takes the tray, and slides the door shut.
+
+Anjiro:
+Mura's House, on the quilt
+Score:55
+Moves:106
+>wait
+Time passes...
+
+The door slides open again, and the small woman reappears with more food, and 
+your clothes which she places in a neat pile. She bows again and departs.
+
+You are feeling better, but still on the verge of collapse.
+
+Anjiro:
+Mura's House, on the quilt
+Score:55
+Moves:107
+>eat food
+This tray of food is the same as the first. There is no meat and no grog or 
+brandy. You can eat more slowly now, and you try to savor the unfamiliar fare, 
+but you can't convince yourself it's more than just filling. Your stomach is 
+pleasantly full when you finish, though.
+
+Anjiro:
+Mura's House, on the quilt
+Score:60
+Moves:108
+>wear clothes
+You stand shakily and put on your clothes, feeling strange without your boots.
+
+Anjiro:
+Mura's House
+Score:60
+Moves:109
+>open door
+You reach to open the door, reeling slightly as you are still very weak, and 
+put out a hand to steady yourself but the light, square wood laths can't bear 
+your weight and they shatter, paper ripping apart.  You marvel at how flimsy it
+is, not at all like the sturdy wooden doors of England. Are there no thieves 
+here?
+
+You right yourself and manage to open the door. The shocked woman in the 
+corridor is staring at you.
+
+110
+>east
+Garden
+This is a small garden surrounded by a high wall. It is unlike anything you 
+have ever seen: a little waterfall and stream and a small bridge and manicured 
+pebbled paths and rocks and flowers and shrubs. It's so clean, so neat. The 
+house is to the west, the village to the east.
+
+Sitting at the bottom of the steps are your boots.
+
+You see the middle-aged woman here.
+
+Anjiro:
+Garden
+Score:60
+Moves:111
+>wear boots
+You put on your boots.
+
+112
+>east
+Anjiro
+The village is set around a crescent harbor that faces east, perhaps two 
+hundred houses unlike any you've ever seen nestling at the beginning of the 
+mountain which spills down to the shore. Above are terraced fields to the west 
+and dirt roads that lead north and south. Below to the east is the waterfront. 
+In the harbor you can see the Erasmus riding at anchor.
+
+You see a tonsured man approaching and fear sweeps sickeningly from your 
+testicles into your stomach. He is obviously a Portuguese or Spanish priest, 
+and though his flowing robe is orange, there is no mistaking the crucifix and 
+rosary at his belt, or the cold hostility on his face. Priests here! A world 
+away in Europe, England and Holland are fighting for their freedom from the 
+priests. Is there no place not infested by these idolators and their 
+Inquisition? Your fear begins to give way to rage.
+
+Behind him are several Japanese.
+
+Anjiro:
+Anjiro
+Score:60
+Moves:113
+>wait
+Time passes...
+
+"Who are you?" the priest says in Portuguese. He points to the harbor. "That's 
+a Netherlander privateer. You're a heretic Dutchman. You're pirates. You're an 
+enemy of the church!"
+
+114
+>wait
+Time passes...
+
+"They crucify criminals here. You're going to die. The daimyo's coming with his
+samurai. God have mercy on you!"
+
+115
+>wait
+Time passes...
+
+The priest lifts his crucifix and holds it between you as a shield. "Oh, God, 
+protect us from this evil! May God have mercy on your soul."
+
+He snaps something in Japanese and the men surge toward you, grabbing and 
+pinioning your arms. You feel yourself choking!
+
+116
+>hit men
+You are outnumbered and weak, but you manage to smash the nose of one. The 
+noise of his scream slows the rest down a little.
+
+65
+117
+>wait
+Time passes...
+
+Suddenly the attack ceases. A young man is ten paces away. He wears two 
+scabbarded swords in his belt. His right hand is casually on the hilt of the 
+longer one. "Nanigoto da?" he asks harshly. "NANIGOTO DA?" The Japanese fall to
+their knees.
+
+118
+>wait
+Time passes...
+
+The young man says, "Doko no kuni no monoda?" The priest translates, "Kasigi 
+Omi-san says, 'What's your nationality?'"
+
+119
+>wait
+Time passes...
+
+The young man scowls, fingering the sword in his scabbard. The priest looks 
+nervously at him and then at you. "What's your nationality? Answer!" rasps the 
+priest. "Answer or die, heretic!"
+
+120
+>English
+[In other words: I am english]
+The priest steps back as though struck. "English! England!" He begins to 
+explain to Omi but the samurai cuts him short.
+
+Omi says, "Onushi ittai doko kara kitanoda?" The priest says nervously, "Kasigi
+Omi-san says, 'Where did you sail from?'"
+
+121
+>Holland
+[In other words: I sailed from Holland]
+The priest's anger is obvious. "A Dutch pirate ship!" he gasps. He says 
+something haltingly to Omi-san.
+
+Another flurry of words from Omi. "Omi-san asks if you're the leader. The 
+headman says there are only a few of you heretics alive and most are sick."
+
+122
+>yes
+The priest translates for Omi, still digesting what you have told him.
+
+Another spate of words from the samurai. "Omi-san says because you are the 
+leader you will be allowed to walk around the village freely, until his master 
+comes."
+
+70
+123
+>bow to Omi
+Omi returns your bow, instinctively knowing exactly the correct degree of 
+deference to show.
+
+Omi speaks contemptuously to the priest and his men, then waves them away. They
+all bow low, except for one man who rises deliberately, without bowing. With 
+blinding speed Omi's killing sword hisses in a silver arc and the man's head 
+topples off his shoulders. No one else moves a muscle. "Ikinasai!" he says, 
+motioning everyone away.
+
+124
+>east
+Waterfront
+This is the waterfront of the village. The ground is cobbled and a stone 
+launching ramp goes from the shore into the sea. There are men and women 
+cleaning fish. Small islands are visible to the east and south. At anchor, to 
+the east, is the Erasmus.
+
+There is a small boat here. The small boat contains oars.
+
+It comes suddenly to mind that since you awoke, you haven't seen your rutters 
+or the rest of the crew. Can they still be on the Erasmus, you wonder?
+
+Anjiro:
+Waterfront
+Score:70
+Moves:125
+>enter boat
+You are now in the small boat.
+
+126
+>take oar
+Taken.
+
+In the distance, you can hear Omi laughing uproariously.
+
+127
+>row east
+You launch the boat and row out into the harbor towards the Erasmus.
+
+Harbor, in the small boat
+This is the middle of the harbor. The Erasmus is to the east, the waterfront to
+the west. Small islands lie distantly toward the eastern and southern horizons.
+
+Anjiro:
+Harbor, in the small boat
+Score:70
+Moves:128
+>row east
+You row up to the side of the Erasmus. The samurai aboard eye you curiously.
+
+Beside the Erasmus, in the small boat
+The Erasmus rides at anchor here, held by three bow cables.
+
+Anjiro:
+Beside the Erasmus, in the small boat
+Score:70
+Moves:129
+>up
+You clamber up the gangway onto the deck. One samurai, more elaborately dressed
+than the others, comes over to you and bows.
+
+Deck
+This is the main deck of the Erasmus. A companionway leads up to the bridge, 
+and another one forward leads below decks to the crew quarters. A stairway aft 
+leads to the officers' cabins.
+
+Stretched across each doorway is a red silk ribbon.
+
+Several samurai are at posts on the main deck. They seem a little nervous.
+
+Anjiro:
+Deck
+Score:70
+Moves:130
+>aft
+"Hotte oke!" The samurai on guard shakes his head to make the point clear. He 
+is no longer smiling.
+
+You try again. "Kinjiru!" the guards say emphatically.
+
+When you still don't seem to be listening, the guard yells, "KINJIRU!" You are 
+jerked around to face the samurai. Their swords are half out of the scabbards. 
+They wait for you to make up your mind.
+
+You realize they are not going to let you retrieve your rutters, and begin to 
+retreat. You remember to bow and at once all hostility vanishes, but the guards
+are still watchful.
+
+As you climb down the gangway you can still feel the sweat trickling down your 
+spine. You hate everything about the Japans and wish yourself and your crew 
+back aboard, armed, and out to sea.
+Anjiro:
+Beside the Erasmus
+Score:75
+Moves:130
+[Congratulations, you have finished this scene with a score of 20 out of a 
+possible 20.]
+
+What now?CONTINUE to next scene 
+SAVE this game position 
+QUIT this session of the game 
+Yabu:
+Village Square
+Score:75
+Moves:130
+The next day, you and your crewmen are brought before the daimyo. Samurai slam 
+all of you on your knees and push your heads into the dust.
+
+Village Square
+This is the village square of Anjiro. The day is clear and warm. You are 
+kneeling in front of the platform.
+
+The daimyo, Kasigi Yabu, sits on the platform.
+
+The rabble of the ship's crew kneel behind you, guards watching them.
+
+Captain-General Paulus Spillbergen lies nearly unconscious on a pallet.
+
+You see Omi, Father Sebastio and Mura here.
+
+Father Sebastio comes forward. "I will translate for you," he says. "The 
+daimyo, Kasigi Yabu, Lord of Izu, wants to know who you are, where you come 
+from, how you got here, and what acts of piracy you have committed."
+
+131
+>John Blackthorne
+[In other words: I am John Blackthorne]
+Father Sebastio translates your answer. He seems very deferential to Yabu, and 
+very sweaty.
+
+Father Sebastio asks, "Where did you sail from?"
+
+132
+>Holland
+[In other words: I sailed from Holland]
+Father Sebastio translates your answer. Yabu is showing irritation and 
+impatience. Perhaps the Jesuit's Japanese isn't fluent?
+
+The Jesuit asks, "What are you? You're not the Captain!"
+
+133
+>Pilot
+[In other words: I am pilot]
+Father Sebastio doesn't translate what you said. Instead he asks, "Why is an 
+Englishman the pilot of a Dutch ship? Answer!" Yabu looks annoyed at the 
+priest. Perhaps they aren't allies after all.
+
+Father Sebastio asks, trying to control his anger, "How did you get here?"
+
+134
+>Straits of Magellan
+[In other words: I sailed straits of magellan]
+You describe your voyage. "We came through Magellan's Pass. This is the one 
+hundred and thirty-sixth day from there."
+
+"You're lying! Magellan's Pass is secret. You came via Africa and India. You'll
+have to tell the truth eventually. They use torture here."
+
+Now, Father Sebastio is barely listening to you. "You're a lying heretic 
+pirate!" screams the priest, spittle flying from his mouth as he whirls toward 
+you, shaking his fist. His crucifix on its long chain waves mockingly near your
+face.
+
+80
+135
+>grab crucifix
+You snatch the crucifix from Father Sebastio's hand. He stares at you, shocked 
+and astonished. Yabu watches your incredible behavior with disgust, Omi with 
+increasing interest. You can almost see his curiosity: what will the barbarian 
+do next?
+
+"Ano mono wa nani o moshite oru?" the daimyo snaps impatiently.
+
+136
+>break crucifix
+You break the crucifix in two, and hurl the pieces on the ground. The samurai 
+watch. Omi, in particular, seems interested and excited.
+
+Father Sebastio kneels, staring fixedly at the pieces of the cross. He picks up
+the violated wood. He turns to you, and says quietly, "I will pray for you, 
+heretic."
+
+85
+137
+>bow to Yabu
+You bow, bending forward from your kneeling position. Yabu motions the guards 
+forward, giving them curt orders. "You have insulted the Lord Yabu with your 
+bad manners and incredible impertinence," explains Father Sebastio smugly. Yabu
+turns to confer with Omi.
+
+After a while, Yabu and Omi finish their polite discussion. Yabu speaks to the 
+guards again, and Father Sebastio explodes with indignation. "They are sparing 
+you and your crew precisely because you are heretics who hate the true Church! 
+Surely this land is in the power of Satan!"
+
+Yabu smiles happily at you and your crewmen, then points to you and barks an 
+additional order to Omi, who bows. You shudder, wondering what fate could be in
+store for you, and afraid you are about to find out.
+
+[Congratulations, you have finished this scene with a score of 10 out of a 
+possible 10.]
+
+What now?CONTINUE to next scene 
+SAVE this game position 
+QUIT this session of the game 
+Pit:
+Pit
+Score:85
+Moves:137
+At Yabu's order, the samurai herd you and your crew across the square, down a 
+ladder, and underground. A trap door locks above you.
+
+Pit
+You are crammed into a deep cellar, one of the many that the fishermen use to 
+store sun-dried fish. The cellar is five paces long and five wide and four 
+deep, with an earthen floor and walls. The ceiling is made of planks with a 
+foot of earth above and a single closed trapdoor set into it.
+
+Captain-General Paulus Spillbergen sits in the mud, leaning back against a 
+wall.
+
+You see Sonk, Jan Roper, Baccus van Nekk, Maetsukker, Ginsel, Croocq, Vinck, 
+Salamon and Pieterzoon here.
+
+Captain-General Spillbergen, half-awake and querulous, says "Pass the water."
+
+"There isn't any, Paulus" Van Nekk answers gloomily, "We haven't even got a pot
+to piss in!"
+
+Spillbergen points at Vinck. "Ask for water!" he orders.
+
+Vinck stands under the opening and shouts, "Hey! You up there! Give us 
+God-cursed water! We want food and water!"
+
+There is no answer.
+
+138
+>yell
+You begin yelling, and everyone else joins in. "Water! And food, by God! Let us
+out of here!"
+
+The trapdoor opens. Omi looks down at you. Beside him are Mura and the priest. 
+Everyone but you begins yelling. "Water! And food, by God! Let us out of here!"
+Omi motions to Mura, who nods and leaves.
+
+Mura returns with another fisherman, carrying a large barrel. They empty the 
+contents, rotting fish offal and seawater, onto your heads.
+
+139
+>examine Omi
+The young man is a head shorter and much younger than you, his handsome face 
+slightly pockmarked though. He wears breeches and clogs and a light kimono with
+two scabbarded swords stuck into the belt. One is daggerlike, the other, a 
+two-handed killing sword, is long and slightly curved.
+
+Omi begins talking. When he finishes, the priest nervously translates. "These 
+are Kasigi Omi's orders: You will begin to act like decent human beings. You 
+will make no more noise. When you have learned to behave, you will be allowed 
+up into the world of men. Lord Yabu has spared all your lives, providing you 
+serve him loyally. All except one. One of you is to die. At dusk. You are to 
+choose who it will be."
+
+The trapdoor slams into place.
+
+140
+>wait
+Time passes...
+
+It's now very near dusk.
+
+Spillbergen collects a bundle of rice straw stalks from the litter in the pit. 
+Slowly, reluctantly, the crewmen draw straws. Sonk first, then Pieterzoon, then
+Jan Roper, Salomon, and Croocq. Then Ginsel is safe. Five left. Maetsukker, 
+weeping openly, pushes Vinck aside and takes a straw. He can't believe it's not
+the one. Van Nekk picks and the straw is not short!
+
+Vinck watches his fingers select a straw and it falls to the ground but 
+everyone sees it's the shortest straw yet.
+
+Now it's your turn. Spillbergen holds out his trembling hand toward you. There 
+are only two straws left; one for you and one for the Captain.
+
+141
+>take straw
+You take a straw, and as you see it emerge, you realize that it's short, very 
+short! Shorter than Vinck's. Vinck laughs a short, barking laugh, then is 
+quiet.
+
+Spillbergen, last to pick, unclenches his hand and you see that his straw is 
+long. Everyone stares at you. The men ease away from you.
+
+142
+>wait
+Time passes...
+
+The trapdoor opens. Omi stands etched against the sky, his kimono blooded by 
+the dying sun. The ladder is lowered, and Omi motions for the one man to come 
+up. "Isogi!" he barks. Hurry up. Roper says, "Don't be afraid, Pilot. You're 
+the anointed of God. You're in God's hands."
+
+143
+>wait
+Time passes...
+
+Omi barks an order, and several samurai start to descend the ladder.
+
+90
+144
+>attack samurai
+You grapple with one of the samurai, who kicks viciously. The entire crew hurls
+themselves at the ladder. The man manages to throw his sword out of the pit, 
+but tumbles heavily into the mud.
+
+The samurai you knocked off of the ladder gropes his way to his feet. The fall 
+obviously hurt him.
+
+The samurai are hampered by the confined space, but a kick from one of them 
+catches Vinck in the face and he reels away.
+
+145
+>attack samurai
+You attempt to subdue the samurai, and Vinck helps, pounding again and again. 
+"Don't kill him -- we can use him as a hostage!" you warn. Finally, Vinck kicks
+him in the back of the neck and he goes limp, dropping his dagger.
+
+Three more samurai, carrying knives and wearing only loincloths, leap nimbly 
+into the cellar. The first two crash into you, carrying you helpless to the 
+floor. They attack viciously, and the crewmen retreat. One samurai retrieves 
+the dagger.
+
+Omi comes arrogantly into the pit and grabs the nearest man, who is Pieterzoon.
+He jerks him toward the ladder. "Christ help me, it's not me that's to go -- " 
+Pieterzoon is being driven up the ladder.
+
+Omi follows without hurrying. The samurai retreat stepping contemptuously over 
+the prostrate body of their unconscious comrade. The ladder is jerked aloft. 
+Air and sky and light vanish. Bolts crash into place.
+
+95
+146
+>wait
+Time passes...
+
+The screams begin when the moon is high, and cease just before first light.
+
+147
+>kill samurai
+You hold his face under the water until he stops breathing. He's dead.
+
+Finally, it is high noon. Everyone is nervous, tired and scared from listening 
+to the screams.
+
+There are footsteps above. The trapdoor opens and the ladder is lowered again. 
+The priest stands there flanked by samurai.
+
+"Pilot. You are to come up. You are to come up alone," he says.
+
+148
+>up
+You climb up the ladder into the sunlight, blinking in the brightness.
+
+Village Square
+
+A ladder leads down into the pit.
+
+A huge black-iron cauldron stands in the square.
+
+The daimyo, Kasigi Yabu, sits on the platform.
+
+You see Omi, Father Sebastio, the samurai guards and Mura here.
+
+The priest says, "Omi-san says that you will be given a bath. And food and 
+drink. If you behave, you will not be put back into the pit. Your men will stay
+below. If you do not behave, another of your men will be taken up. There is 
+plenty of firewood." He pauses while Omi speaks to him at length. "Omi-san says
+you must obey. Do what you are told. Eat dung if need be. The Japanese for 
+'yes' is 'hai.'  If you agree, say it directly to him."
+
+Pit:
+Village Square
+Score:95
+Moves:149
+>hai
+"Omi-san says, lie down. Immediately."
+
+Omi watches you with great curiousity.
+
+100
+150
+>lie down
+You do as you were ordered.
+
+"Omi-san says that because you are a barbarian and know no better yet, you will
+not be killed. But you will be taught manners." You see Omi hitch up his 
+kimono. He pisses on your back.
+
+By the Lord God, you swear, I will remember this day and somehow, somewhere, 
+Omi will pay.
+
+Omi adjusts his kimono and continues to speak in a casual way. The priest 
+translates, "Omi-san says that because no one can say the barbarous sounds of 
+your name, you are to be called Anjin -- Pilot. He asks me to impress upon you 
+that this is not intended as an insult. If you continue to behave, you will be 
+called Anjin-san -- Mr. Pilot -- when you merit it."
+
+105
+151
+>get up
+You stand up.
+
+The priest translates. "Omi-san suggests that you take a bath." He smirks 
+contemptuously. "A barbarous custom. Once when you're born and once when you're
+laid out is good enough for us, but here they bathe constantly. Mura says there
+is a bath house over there." He points to the north.
+
+152
+>north
+You enter the bath house, followed by Mura, who keeps a close eye on you.
+
+Bath House
+The bath house is dominated by a huge wooden tub, steaming with scalding water.
+You are reminded of the torture you have just seen, and shiver with fear.
+
+A crowd of villagers, old women and men, are sitting and standing around the 
+tub. They seem intensely interested in the proceedings.
+
+You see Mura and Onna here.
+
+Mura pantomimes removing your clothes, saying "Dozo, Anjin, gomen nasai."
+
+Pit:
+Bath House
+Score:105
+Moves:153
+>remove boots
+You remove your boots. The old women watching cackle and nudge each other in 
+the ribs.
+
+Mura pantomimes removing your clothes, saying "Dozo, Anjin, gomen nasai."
+
+154
+>remove clothes
+You slowly remove your clothes, embarrassed by the audience. They don't even 
+have the courtesy of looking the other way. The old women laugh and joke with 
+each other. Finally, you are naked, covering yourself as best you can. One old 
+crone claps her hands, and Mura says to you, with enormous gravity, 
+"Captain-san, Mother-san thank you, best she's ever seen, now die happy!"
+
+Mura points to your clothes.
+
+155
+>drop all
+your clothes: Dropped.
+your boots: Dropped.
+
+Mura points to the bathtub. "Please go there," he says in halting Portuguese.
+
+156
+>enter tub
+You climb gingerly up and over the side of the tub, and ease yourself in. The 
+water is scalding!
+
+157
+>wash
+You splash some of the scalding water half-heartedly over yourself. The water 
+is soapy and scented, and it washes away the filth. Three times you make them 
+scour your back with the roughest stone and with pumice. You begin to feel 
+cleaner, but your back still burns with shame.
+
+Before long, even your hatred of Omi becomes a banked fire as the heat of the 
+bath burns into you, relaxing every muscle and dissolving your fatigue.
+110
+[Congratulations, you have finished this scene with a score of 25 out of a 
+possible 25.]
+
+
+[Type any key to continue]
+Pit:
+Interlude
+
+Yabu and Omi are sitting sipping cha -- tea -- with all the ceremony Omi's 
+mother can command. "Where did you learn so much about the barbarian mind?" he 
+asks Omi.
+
+"When I was fourteen I had a teacher who had been a Christian priest. He said 
+that Christians were vulnerable because they were taught that all people should
+'love' one another, and that life was sacred. These new barbarians are just a 
+different sect. I thought we could control the leader by taking the life or 
+threatening to take the life of one of his men." Omi avoids mentioning the 
+torture death, the befouled death, reining in his disgust.
+
+"Is the barbarian broken for good?" asks Yabu. "Is it temporary or permanent?"
+
+"Temporary," Omi answers hesitantly. "Only temporary, Lord."
+
+
+What now?CONTINUE to next scene 
+SAVE this game position 
+QUIT this session of the game 
+Rodrigues:
+Waterfront
+Score:110
+Moves:157
+The next day you walk down the hill, four samurai flanking you. Ahead the 
+street curves with the contour of the hillside, slides down toward the harbor.
+
+Waterfront
+This is the waterfront of the village. The ground is cobbled and a stone 
+launching ramp goes from the shore into the sea. There are men and women 
+cleaning fish. Small islands are visible to the east and south. At anchor, to 
+the east, is the Erasmus.
+
+A sixty-oared galley is anchored off of one of the jetties.
+
+There is a small boat here. The small boat contains oars.
+
+You see archers, an old man, Yabu, Omi and Mura here.
+
+You can see that even Omi and Yabu are deferring to the old man. He has 
+evidently come from the slave galley.
+
+You shiver involuntarily. The last time you saw a slave galley was two years 
+ago when the fleet was outward bound off the Gold Coast. You've always had a 
+mortal fear of being taken alive and made a galley slave -- not an unusual fate
+for a captured seaman.
+
+158
+>examine Yabu
+Kasigi Yabu is short, squat, and dominating.
+
+Omi kneels before the old man, and you do the same, bowing exactly as low as 
+Omi. Now there is a discussion among Omi, the old man and Yabu. Yabu speaks to 
+Mura.
+
+Mura points at the galley. "Anjin-san. Please go there."
+
+159
+>east
+You wade into the water, striding deeper and deeper, until you realize that you
+haven't regained enough strength to swim. You return to the beach.
+
+"Isogi!" Omi commands, waving you toward the galley.
+
+When you still don't move, there is an immediate order from Omi and four 
+samurai fall on you and pinion your arms. Mura produces a rope and begins to 
+bind your hands.
+
+160
+>wait
+Time passes...
+
+"Madonna! Leave him alone! Hey, let that bastard alone! Kinjiru, neh?  Is he 
+the pilot? The Anjin?"
+
+You can scarcely believe your ears. The boisterous abuse in Portuguese comes 
+from the deck of the galley. Then you see a man start down the gangway, a 
+Portuguese seaman!
+
+"Are you the pilot? The pilot of the Dutchman?"
+
+161
+>wait
+Time passes...
+
+"Well, are you the pilot or no? I'm trying to help you, you fool!"
+
+162
+>yes
+"Good, good! I'm Vasco Rodrigues, pilot of this galley!" He turns to the old 
+man and speaks a mixture of Japanese and Portuguese, calling him Toda-sama but 
+the way it sounds it comes out "Toady-sama."
+
+"That's better," he says after a while. "Listen, Pilot, this man's like a king.
+His name is Toda Hiro-matsu. I told him I'd be responsible for you, and I'd 
+blow your head off as soon as drink with you!"
+
+"Now tell me where you trained as a pilot?"
+
+163
+>Trinity House
+[In other words: I trained at trinity house]
+"Excellent, Ingeles! A nest of pirates indeed, but what pilots you pirates are!
+We're taking you to Osaka, at the pleasure of the Great Lord High Executioner 
+himself. Toranaga!"
+
+"Maybe you are a pilot! Now, what's the latitude of The Lizard?"
+
+115
+164
+>50 degrees north
+[In other words: the latitude is 50 degrees north]
+"You are the pilot, by God!" He shakes your hand warmly. "Come aboard. There's 
+food and good brandy and wine and grog and all pilots should love all pilots, 
+who're the sperm of the earth! Amen! Right?"
+
+"All right, Ingeles!" Rodrigues looks out into the harbor. "She's got good 
+lines, your ship. Madonna, she'd be fast, very fast. Very rough to deal with."
+
+120
+165
+>tell Rodrigues about Erasmus
+You tell him about your ship, how you lost the foremast just before making 
+landfall, how the samurai wouldn't let you retrieve your gear. "Listen, 
+Rodrigues, there's no chance of going aboard, is there? They haven't let me 
+back aboard, I've no clothes and they sealed her up the moment we arrived." You
+carefully avoid mentioning your rutters.
+
+"Ah, Ingeles, let's go aboard. I'd like see what she's like. Come on, get in 
+the boat."
+
+He points to a small boat pulled up on the beach, and jumps in.
+
+Rodrigues yells to the surprised samurai, "You don't have to worry about him, 
+Captain-san, I'm responsible. Me, Rodrigu-san, ichi ban Anjin-san, by the 
+Virgin! Wakarimasu ka?"
+
+125
+166
+>enter boat
+You are now in the small boat.
+
+Rodrigues grabs the oars and shoves off with great skill. The captain samurai 
+calls out, unmistakably beckoning you to come back. Rodrigues points to the 
+Erasmus.  "Just go there," he shouts. "Tell me if the archers put arrows in 
+their bows, Ingeles!"
+
+Harbor, in the small boat
+
+Rodrigues:
+Harbor, in the small boat
+Score:125
+Moves:167
+>examine archer
+These are archers from the galley, all dressed in the same uniform as 
+Hiro-matsu.
+
+Rodrigues rows toward the Erasmus, pushing against the oars in Japanese fashion
+while standing amidships.
+
+Rodrigues:
+Harbor, in the small boat
+Score:125
+Moves:168
+>examine archer
+One of the archers has drawn out an arrow, and is putting it in his bow.
+
+Rodrigues continues to row toward the Erasmus.
+
+Rodrigues:
+Harbor, in the small boat
+Score:125
+Moves:169
+>tell Rodrigues about archer
+Rodrigues stops rowing immediately, and turns toward shore, waving and babbling
+in pidgin Japanese, reassuring the captain samurai, who says something to the 
+man with the arrow. Now the man puts it away.
+
+You are at the Erasmus. Rodrigues ships the oars under the watchful eyes of the
+samurai on board.
+
+Beside the Erasmus, in the small boat
+
+Rodrigues:
+Beside the Erasmus, in the small boat
+Score:130
+Moves:170
+>up
+You clamber up the gangway onto the deck. One samurai, more elaborately dressed
+than the others, comes over to you and bows.
+
+Deck
+This is the main deck of the Erasmus. A companionway leads up to the bridge, 
+and another one forward leads below decks to the crew quarters. A stairway aft 
+leads to the officers' cabins.
+
+Stretched across each doorway is a red silk ribbon.
+
+Several samurai are at posts on the main deck. They seem a little nervous.
+
+Rodrigues vaults onto the deck. "Konnichi wa to all sod-eating samas!" he 
+bellows, bowing like a courtier. Rodrigues heads immediately for the sealed 
+passage. "Kinjiru, gomen nasai," says one of the samurai.
+
+Rodrigues:
+Deck
+Score:130
+Moves:171
+>wait
+Time passes...
+
+"Kinjiru, eh?" Rodrigues says, unimpressed. "I'm from Toda Hiro-matsu-sama, 
+who's a bigger king than your bugger and Toady-sama's from Toranaga-sama, who's
+the biggest bugger-sama in this whole world. Neh?" He rips the seal off the 
+door, and drops a hand to one of his pistols.
+
+"Toranaga-sama!" he yells. "Wakarimasu ka?" The samurai hesitate, swords ready.
+Rodrigues crashes his foot against the door, the latch snaps, and the door 
+bursts open. "WAKARIMASU KA?"
+
+"Wakarimasu, Anjin-san." The samurai quickly put their swords away, and 
+Rodrigues says hoarsely, "That's better," and leads the way aft.
+
+172
+>aft
+Passageway
+The Captain's cabin is aft of here. Your cabin is to port, and the Mates' cabin
+to starboard. The main deck is forward of here.
+
+Rodrigues stands near you.
+
+"Which is your cabin?" asks Rodrigues, and when you point it out he enters. The
+door was unlocked.
+
+Rodrigues:
+Passageway
+Score:130
+Moves:173
+>port
+Pilot's Cabin
+This is your cabin, sparsely furnished and small but nonetheless the second 
+best on the ship. The only exit is out to the passageway. The room looks as 
+though it has been tidied up and then thoroughly turned over again.
+
+The long narrow bunk with its straw palliasse looks inviting.
+
+Rodrigues stands near you.
+
+There are a sea chest and a desk here. The sea chest contains a quill.
+
+"Where are they?" Rodrigues asks. "Your rutters. Where are your rutters? No 
+pilot would worry about clothes, you came for the rutters, didn't you? Why do 
+you think I came aboard? I was here two or three hours ago, and searched for 
+them, but found nothing! The Portuguese rutter -- it had to be Portuguese! 
+Where is it?"
+
+"Stolen. They're stolen!" It's all you can say.
+
+Rodrigues:
+Pilot's Cabin
+Score:130
+Moves:173
+[Congratulations, you have finished this scene with a score of 20 out of a 
+possible 20.]
+
+
+[Type any key to continue]
+Rodrigues:
+Interlude
+
+Omi and the others waited on the jetty until the galley rounded the headland 
+and vanished. He then returned to the pit, summoning the priest.
+
+"Priest, tell the barbarians they are to come up, one by one. Lord Yabu has 
+said they may live again in the world of men. But the smallest breaking of a 
+rule, and two will be put back into the pit. They are to behave and obey all 
+orders."
+
+
+What now?CONTINUE to next scene 
+SAVE this game position 
+QUIT this session of the game 
+Voyage to Osaka:
+Toranaga's Galley
+Score:130
+Moves:173
+It is near noon and you are standing on the quarterdeck of the galley under an 
+overcast sky. During the first night the galley had sped southward down the 
+east coast of the Izu peninsula. When it came abreast of the southmost cape, 
+Cape Ito, Rodrigues had set the course West South West and had left the safety 
+of the coast for the open sea, heading for a landfall at Cape Shinto two 
+hundred miles away.
+
+"What do you think, Ingeles?" asks Rodrigues.
+"I think there'll be a storm," you reply.
+"When?"
+"Before sunset" you answer.
+
+The storm comes before sunset and catches you out to sea. Land is ten miles 
+away.
+
+Toranaga's Galley
+You are standing on the quarterdeck of Toranaga's galley, with a good view 
+forward to the oar deck.
+
+A wooden life ring hangs nearby.
+
+Rodrigues stands at the helm.
+
+The helm is here, turned to port now. The life line secures you as the deck 
+pitches and rolls.
+
+"Watch out forward!" Rodrigues shouts. The galley rolls sickeningly, twenty 
+oars pulling at air instead of sea and there is chaos aboard. The first comber 
+has struck and the port gunwale is awash. The galley is floundering.
+
+Toranaga's Galley174
+>examine Rodrigues
+Rodrigues is a man as tall as you and about your own age, but black-haired and 
+dark-eyed and carelessly dressed in seaman's clothes, rapier by his side, 
+pistols in his belt. A jeweled crucifix hangs from his neck. He wears a jaunty 
+cap.
+
+"Go forward," Rodrigues orders. "Get 'em to ship the oars, get 'em back in 
+order, and then get 'em rowing again before we all drown! Hurry, hurry, hurry!"
+
+Toranaga's Galley175
+>untie line
+You untie the line. You know that without your lifeline you can easily be 
+carried overboard. But the oars have to be shipped or you are lost.
+
+"Hurry, Ingeles! Where are your cojones?" curses Rodrigues.
+
+Toranaga's Galley176
+>fore
+You fight your way forward along the heaving, greasy deck, down the short 
+gangway to the main deck.
+
+Main Deck
+This is the oar deck of the galley, forward of the quarterdeck. The chaos here 
+is incredible. Half the oars are flailing in the air, some of the oarsmen have 
+been washed overboard, and some have slipped their safety lines to try to fight
+order into their oars.
+
+A skiff is tied to the deck near the centerline of the galley.
+
+There is an anchor here.
+
+Abruptly the galley swerves and you are carried to the down side, tripped by 
+the flailing bodies of rowers who have lost their own footing.
+
+The gunwale is under water and one man goes overboard! You feel the rush of 
+water carrying you over the gunwale as well!
+
+Voyage to Osaka:
+Main Deck
+Score:130
+Moves:177
+>grab gunwale
+You grab desperately for the gunwale, and you catch it, your tendons stretching
+but your grip holds! Then your other hand reaches the rail and, choking, you 
+pull yourself back.
+
+A man is at your feet and he drags you from the grip of the sea.
+
+135
+178
+>ship oars
+You hurl yourself into the work of resorting the rowers. All rowing has stopped
+except for the two oars most forward, which are keeping the galley tidily into 
+the wind. With signs and yelling, you get the oars shipped, double up the men 
+on the working ones, and generally restore order.
+
+The oarsmen, spent by their fight against the waves, and unsure what to do 
+next, wait for the next order.
+
+The storm continues to rage, and the galley is getting no closer to the bay.
+
+140
+179
+>row
+The oarsmen don't understand you, but they get the idea, and begin rowing 
+again.
+
+Rodrigues picks his way forward and claps you on the shoulder. He points aft. 
+"You take the helm. When I signal, steer west for that point. You see it? I'm 
+going to help the captain with the oarsmen."
+
+145
+180
+>aft
+Toranaga's Galley
+
+A wooden life ring hangs nearby.
+
+The helm is here, turned to port now.
+
+There are a broken oar and a safety line here.
+
+Voyage to Osaka:
+Toranaga's Galley
+Score:145
+Moves:181
+>take helm
+You take the helm.
+
+The wind and tide are carrying you close to the rocks. Rodrigues stares, 
+terrified, at the approaching shore.
+
+Toranaga's Galley; course south; wheel port182
+>straighten helm
+You try to hold a steady course.
+
+Rodrigues stares in horror at the jagged rocks of the headland. It's clear he's
+lost his nerve. "Steer south for the open sea!" Rodrigues screams. "Turn and 
+run before the wind! We'll never make it safe to the bay!"
+
+Toranaga's Galley; course south; wheel straight183
+>turn helm to starboard
+You turn the wheel to starboard, steering for the bay.
+
+You hold course toward the bay. Rodrigues shouts, "God curse you, you'll kill 
+us all!"
+
+Toranaga's Galley; course west; wheel starboard184
+>straighten helm
+You try to hold a steady course.
+
+A great wave comes out of the north. The galley has taken much water 
+previously, now you're awash and being driven backward towards the 
+rock-infested shore.
+
+You see the wave take Rodrigues, and you watch him, gasping and struggling in 
+the churning sea. You remember that he can't swim.
+
+Toranaga's Galley; course west; wheel straight185
+>take oar
+Taken.
+
+Rodrigues splashes to the surface, but the current is carrying him further 
+away.
+
+Toranaga's Galley; course west; wheel straight186
+>take ring
+Taken.
+
+The rain slashes down and you see that Rodrigues is being carried further from 
+the galley.
+
+Toranaga's Galley; course west; wheel straight187
+>throw oar to Rodrigues
+You throw the oar toward Rodrigues. It crashes into the water near him and he 
+lunges for it.
+
+The last you see of Rodrigues is an arm gripping a broken oar.
+
+Toranaga's Galley; course west; wheel straight
+150
+188
+>wait
+Time passes...
+
+The ship moves away from the rocks, and you hold course for the lee shore. Soon
+you are in calmer waters. There is still a gale but it's overhead. There is 
+still a tempest but it's out to sea.
+
+Toranaga's Galley; course west; wheel straight189
+>fore
+You fight your way forward along the heaving, greasy deck, down the short 
+gangway to the main deck.
+
+Main Deck
+
+A skiff is tied to the deck near the centerline of the galley.
+
+There is an anchor here.
+
+The current is swinging the ship around and towards the rocks, away from the 
+safe anchorage.
+
+Voyage to Osaka:
+Main Deck
+Score:150
+Moves:190
+>lower anchor
+"Let go the anchor!" No one understands your words but they all know what you 
+want. The anchor splashes over the side. You let the ship fall off the wind 
+slightly to test the firmness of the seabed. The ship is safe.
+
+Hiro-matsu and Yabu climb shakily up from below decks, both somewhat seasick, 
+but once there, both daimyos stand erect.
+
+Somewhere out there is Rodrigues' body. You know there is minimal hope of 
+finding his body, but you feel you owe it to him to try.
+
+155
+191
+>lower skiff
+The skiff is lowered into the water.
+
+192
+>enter skiff
+You go to the gunwale and begin to scale down the side but a harsh voice stops 
+you. Hiro-matsu is here, with Yabu beside him. "Iye!" Hiro-matsu shakes his 
+head, and speaks at length clearly refusing permission because of the danger.
+
+193
+>enter skiff
+This time the old man points his sword at the skiff and shakes his head. He and
+Yabu begin an animated discussion in Japanese, motioning the mate over to join 
+them. Hiro-matsu studies the coast for a while. Finally, he beckons a samurai, 
+points to you, and gives some apparent instructions. The samurai and six other 
+warriors clamber nimbly into the skiff, and to your surprise, so does Yabu!
+
+Hiro-matsu points to the skiff, bows politely to you, and then goes below.
+
+Yabu motions for you to get in the skiff.
+
+160
+194
+>enter skiff
+You climb down the side of the galley, joining the others in the skiff.
+
+In the Sea, in the skiff
+The skiff rides lightly in the relatively gentle swells of the bay. Yabu sits 
+imperiously in the bow, and the search party mans the oars.
+
+The galley rides heavily at anchor on the relatively gentle swells of the bay.
+
+The skiff contains oars.
+
+Voyage to Osaka:
+In the Sea, in the skiff
+Score:160
+Moves:195
+>row east
+The rowers look to Yabu for confirmation, and he nods impatiently.
+
+The rowers row the skiff east to the shore, jump out, and pull it up on the 
+beach.
+
+Pebbled Beach, in the skiff
+The beach here consists of small, rounded pebbles. To the south the cliff rises
+behind a field of larger rocks. Riding at anchor in the bay is Toranaga's 
+galley.
+
+There are seven samurai here, watching you intently.
+
+The skiff contains oars.
+
+Voyage to Osaka:
+Pebbled Beach, in the skiff
+Score:160
+Moves:196
+>exit skiff
+You disembark quickly, intending to lead the search party, but Yabu usurps that
+position and will not yield it.
+
+Voyage to Osaka:
+Pebbled Beach
+Score:160
+Moves:197
+>south
+Yabu sets a strong pace, which you are hard put to keep up with. The other 
+seven samurai watch you carefully.
+
+Rocky Shore
+Inland from the shore the pebbles become sea-smoothed rocks. To the south is a 
+path leading along the cliffs and around the headland. To the north is the bay 
+where the galley rides at anchor.
+
+There are seven samurai here, watching you intently.
+
+Yabu, wet and impatient, watches you carefully.
+
+Voyage to Osaka:
+Rocky Shore
+Score:160
+Moves:198
+>south
+Yabu sets a strong pace, which you are hard put to keep up with. The other 
+seven samurai watch you carefully.
+
+Cliff Path
+Above you the cliff soars two hundred feet. The white-frothed sea is fifty feet
+below. All around are mountains, not a house or hut in the whole bay area. The 
+path dips and rises along the cliff face, very unsafe, the surface loose.
+
+There are seven samurai in soaking wet kimonos here, watching you intently.
+
+Yabu, wet and impatient, watches you carefully.
+
+Voyage to Osaka:
+Cliff Path
+Score:160
+Moves:199
+>south
+Yabu sets a strong pace, which you are hard put to keep up with. The other 
+seven samurai watch you carefully.
+
+Around the Headland
+This side of the headland is in the lee of the wind, for which you are very 
+grateful. Half a mile away a small fishing village nestles on the white-frothed
+shore.
+
+There are seven samurai here, watching you intently.
+
+Yabu, wet and impatient, watches you carefully.
+
+Yabu motions to two of the samurai, who immediately bow and then lope off 
+toward the fishing village.
+
+Voyage to Osaka:
+Around the Headland
+Score:160
+Moves:200
+>north
+Yabu sets a strong pace, which you are hard put to keep up with. The other five
+samurai watch you carefully.
+
+Cliff Path
+
+There are five samurai in soaking wet kimonos here, watching you intently.
+
+Yabu, wet and impatient, watches you carefully.
+
+Yabu wipes the rain off of his face, glances up at you, and motions for you to 
+return to the galley.
+
+Voyage to Osaka:
+Cliff Path
+Score:160
+Moves:201
+>look down
+You search the foreshore, every crevice and cleft and gulley. The spume wind is
+gusting, tearing tears from your eyes. But halfway back along the path, you see
+Rodrigues! The body is caught in a cleft between two great rocks, above the 
+surf but washed by part of it. One arm is still locked to a broken oar which 
+moves slightly with the ebb and flow.
+
+165
+202
+>point to Rodrigues
+Yabu peers over the cliff and finally sees Rodrigues. He shrugs as if to say, 
+"He's dead." He doesn't seem inclined to do anything else.
+
+203
+>down
+You start for the cliff edge, and immediately the samurai restrain you. Yabu 
+shakes his head. "Iye!"
+
+You stare at Yabu, towering over him. "If you won't let me go, Yabu-san, then 
+send one of your men. Or go yourself. You!"
+
+The wind tears around you, whining off the cliff face. Yabu looks down, 
+weighing the climb and the falling light, and you know Yabu is hooked. A 
+samurai begins to climb down but Yabu orders him back.
+
+Yabu gives orders to one of the samurai, pointing back toward the beach. The 
+man runs off.
+
+Yabu kicks off his thong slippers. He takes the swords out of his belt and puts
+them safely under cover. He barks some orders at one of the samurai, then takes
+off his soaking kimono, and clad only in his loincloth, goes to the cliff edge,
+testing it carefully with his toes and feet.
+
+204
+>wait
+Time passes...
+
+Yabu climbs down the side of the cliff with great skill.
+
+Suddenly, Yabu slips! He grips an outcrop with his left hand, stopping his 
+fall. He grinds his toes in a crevice, fighting for another hold, but his left 
+hand rips away. His toes find a cleft and he hugs the cliff desperately. Then 
+the toehold gives way! He falls the last twenty feet.
+
+205
+>wait
+Time passes...
+
+Yabu lands on his feet like a cat, and comes to rest in a wheezing ball. One 
+ankle is twisted, but unbroken.
+
+206
+>wait
+Time passes...
+
+Yabu reaches Rodrigues, then shouts something. He is signalling that the pilot 
+is still alive! One of the samurai runs off toward the galley to fetch a 
+stretcher and a doctor.
+
+Yabu pulls Rodrigues up onto the rocks, out of the surf.
+
+207
+>wait
+Time passes...
+
+Yabu scrambles up and winces at a shaft of pain from his ankle. He manages to 
+climb a few feet up, but then stops, his eyes searching the area diligently for
+a ledge or a crack within his reach. He sees no way to get further up the 
+cliff.
+
+208
+>take kimono
+Taken.
+
+Yabu looks out to sea, then looks up at you briefly. He composes himself and 
+sits down on his rocky perch. With a sudden shock you realize that he has 
+resigned himself to death.
+
+209
+>tear kimono
+You tear the silk kimono into strips, testing them for strength. The silk is 
+very strong.
+
+The tide is coming in fast, washing closer and closer to the rock Yabu is 
+perched on!
+
+210
+>tie strips together
+You tie the strips together, making a rope. The samurai emulate you, removing 
+their own kimonos and leaving them clad only in loincloths. You now have a rope
+of some length.
+
+The tide is coming in fast, washing closer and closer to the rock Yabu is 
+perched on!
+
+170
+211
+>lower rope
+With the help of the samurai, you lower the rope towards Yabu. It's too short, 
+about twenty feet too short.
+
+The tide is coming in fast, washing closer and closer to the rock Yabu is 
+perched on!
+
+212
+>point to loincloths
+You point to the loincloths, and the samurai immediately understand. They 
+remove them and tie them together, adding them to the rope. It is now 
+significantly longer. The rope now reaches almost to Yabu. If he could just 
+climb a little higher, he might be able to reach it.
+
+The tide is coming in fast, washing closer and closer to the rock Yabu is 
+perched on!
+
+175
+213
+>search for ledge
+You stick your head out over the cliff edge as far as you dare, while the 
+samurai hold your ankles for safety. You begin to search as you would at sea, 
+quarter by quarter. Using every part of your vision but mostly the sides. A 
+complete sweep. Nothing!
+
+Once more. Nothing!
+
+Again. What's that? Just above the tide line? Is it a crack in the cliff? You 
+shift position. Now you can see better:  there is clearly a narrow ledge!
+
+The tide continues to rise.
+
+180
+214
+>point to ledge
+You shout, pointing at the ledge, pantomiming a man standing on it carrying a 
+burden:  Yabu carrying Rodrigues, standing above the waves, if only you can get
+his attention somehow. The samurai talk rapidly to each other and then they too
+begin to shout. There is still no movement from Yabu. He seems like a stone.
+
+One of the samurai speaks to the others briefly and they all nod and bow. He 
+bows back. Then, with a sudden screaming shout of "Bansaiiii!" he casts himself
+off the cliff and falls to his death. Yabu comes violently out of his trance, 
+whirls around and scrambles up. He follows the pointing fingers and shouts of 
+his men and sees the ledge! Within seconds he has scrambled up to it, dragging 
+the unconscious Rodrigues behind him.
+
+Yabu staggers up. He half slides, half crawls, dragging the unconscious 
+Rodrigues with him through the surf-disturbed shallows to the bottom of the 
+cliff. He finds the ledge. It's barely a foot wide. Painfully he shoves 
+Rodrigues onto it, almost losing him once, then hauls himself up.
+
+185
+215
+>wait
+Time passes...
+
+Yabu stretches for the rope, pulling himself partway up the cliff, carrying 
+Rodrigues. Twice he loses the pilot, but each time Yabu drags him back. His 
+position is precarious, but you can see that the bottom of the cliff is now 
+completely under water.
+
+216
+>wait
+Time passes...
+
+For almost an hour Yabu sets himself against the sea and against his failing 
+body, and then, in the dusk, he reaches a wide ledge where he's safe from the 
+sea and he can rest and not hang from the makeshift, fraying rope.
+
+Just then, the samurai Yabu sent to the galley returns with coils of strong 
+rope. They make a cradle and shin down the cliff with a skill that you have 
+never seen ashore. Quickly Rodrigues is brought aloft, and then Yabu. You look 
+at him.
+
+"Thank you," you say finally, pointing at Rodrigues. "Thank you, Yabu-san." You
+bow. That's for your courage, you black-eyed son of a whore.
+
+Yabu bows back, stiffly. But inside, he smiles.
+
+[Congratulations, you have finished this scene with a score of 55 out of a 
+possible 55.]
+
+
+[Type any key to continue]
+Voyage to Osaka:
+Interlude
+
+The rest of the voyage to Osaka is uneventful.
+
+Rodrigues is tended by a Japanese doctor with strange ideas, such as keeping 
+the air in the cabin fresh, but begins to recover anyway.
+
+"Ah, Ingeles," he sighs. "If I live, it is because of a heretic and a Japman." 
+Then he turns serious. "Japan's an upside-down world. They have a saying, that 
+a man has a false heart in his mouth for all the world to see, another in his 
+breast to show his very special friends and family, and the real one, the true 
+one, the secret one, which is never known to anyone except himself alone. So 
+never forget they're six-faced and have three hearts!"
+
+
+What now?CONTINUE to next scene 
+SAVE this game position 
+QUIT this session of the game 
+Toranaga:
+Outer Corridor
+Score:185
+Moves:216
+You take your leave of Rodrigues, and then you are on deck, your mind whirling 
+from the impact of Osaka, its immensity, the teeming anthills of people, and 
+the enormous castle that dominates the city. From within the castle's vastness 
+comes the soaring beauty of the donjon, seven or eight stories high, pointed 
+gables with curved roofs at each level, the tiles all gilded and the walls 
+blue.
+
+The next day you are brought by Hiro-matsu to Toranaga's keep within the 
+castle.
+
+Outer Corridor
+This outer corridor is where those who are about to be granted audience with 
+Toranaga wait. The great Audience Chamber is to the east and stairs down to the
+lower part of the keep are to the west. Massed samurai, their young officer in 
+front of them, protect the last door -- each with right hand on the sword hilt,
+left on the scabbard, motionless and ready, staring at you.
+
+You see Hiro-matsu here.
+
+You and Hiro-matsu stop before the officer of the watch, a mean-tempered, 
+dangerous young man. He and Hiro-matsu converse briefly, and then several of 
+the samurai search you expertly. Nothing would have escaped them.
+
+The officer opens the thick door himself, and you and Hiro-matsu are ushered 
+into the audience room.
+
+Audience Chamber
+This is the immense audience room. The room is forty paces square and ten high,
+the tatami mats the best quality, four fingers thick and impeccable. Near the 
+dais, in a niche, is a small earthenware vase with a single spray of cherry 
+blossom and this fills the room with color and fragrance. Ten paces from the 
+dais, circling it, are twenty samurai, seated cross-legged and facing outward. 
+Doors lead east and west to the outer and inner corridors, respectively.
+
+Toranaga is repairing a broken wing feather of a hooded falcon as delicately as
+any ivory carver.
+
+You see Hiro-matsu, Yabu and a tonsured priest here.
+
+Just beyond the doorway Hiro-matsu kneels, puts his swords on the floor, and 
+bows his head low, waiting in that abject position.
+
+The officer indicates to you to do the same, but you are disgusted with the old
+man's servility.
+
+Toranaga:
+Audience Chamber
+Score:185
+Moves:217
+>bow
+You bow as you have learned to, remembering Rodrigues' words: "Behave like a 
+king and they'll treat you like a king." You don't want to kneel.
+
+In the doorway the officer's hand is on his sword. Hiro-matsu has already 
+grasped his, though his head is still bent.
+
+218
+>sit down
+Taking a deep breath, you sit cross-legged and stare at Toranaga.
+
+Toranaga looks up slowly. He watches you briefly, his face impassive, then 
+looks down and concentrates on his work again. Tension subsides in the room.
+
+190
+219
+>examine Toranaga
+You look up boldly at Toranaga. He seems surprised and amused at your 
+impertinence.
+
+Toranaga gives the falcon to a handler, who bows and leaves. Then Toranaga 
+greets Hiro-matsu, and they converse briefly and casually. At one point they 
+are clearly talking about you.
+
+220
+>examine Hiro-Matsu
+He is tall for a Japanese, just under six feet, a bull-like man with heavy 
+jowls. His military kimono is brown silk, stark but for five small Toranaga 
+crests -- three interlocked bamboo sprays.
+
+Toranaga turns and beckons to the lean-faced Portuguese who is sitting 
+patiently in his shadow. The priest comes forward, and kneels close to the 
+dais. Toranaga speaks briefly to him, and the man then glances pleasantly at 
+you. He speaks to you in Portuguese. "My name is Martin Alvito of the Society 
+of Jesus, Captain-Pilot. Lord Toranaga has asked me to interpret for him. We 
+can speak Portuguese, Spanish, or, of course, Latin -- whichever you prefer," 
+Alvito offers smoothly.
+
+221
+>tell Alvito to speak Latin
+"Very well," Alvito replies.
+
+"The Japanese word for 'enemy' is 'teki.'  You may use it if you wish. If you 
+point at me and use the word, Lord Toranaga will understand clearly what you 
+mean. I am your enemy, but not your assassin. That you will do yourself."
+
+222
+>point to Alvito
+You point to Alvito.
+
+Alvito waits patiently. You wonder if 'teki' truly means 'enemy.'  Of course it
+does, you tell yourself. This man's not like the other one.
+
+223
+>teki
+You say teki. Toranaga speaks curtly, and the priest begins translating 
+simultaneously, a few words behind. "Why are you an enemy of Tsukku-san, who's 
+the enemy of no one?" Alvito adds, "The Japanese cannot pronounce my name 
+either. Tsukku is a pun on tsuyaku -- to interpret."
+
+Toranaga begins to interrogate you, Alvito translating smoothly, calmly. It's 
+clear that Alvito has told him some of the questions to ask, but others 
+obviously surprise the Jesuit. The existence of the Protestant religion, and 
+the English and Dutch alliance against Spain and Portugal make Toranaga pause 
+and think: the Catholics are not the only sort of Christian after all, and a 
+small island country can hold off, perhaps even beat a great empire through 
+command of the seas! Before long Alvito is sweating; this is worse, far worse 
+than he anticipated.
+
+195
+224
+>examine Alvito
+Father Alvito is a graceful, handsome man, perhaps a few years older than you. 
+He wears tabi socks and a flowing kimono that seems, on him, to belong. A 
+rosary and a carved golden cross hang at his belt. He has an easy elegance, and
+the aura of strength and natural power of the Jesuits.
+
+Suddenly, there is the sound of loud voices outside the room. Hiro-matsu and 
+half the guards are instantly at the doorway and the rest move into a tight 
+knot screening the dais.
+
+"You are to come over here, Captain Blackthorne, away from the door," Father 
+Alvito says with carefully contained urgency. "If you value your life, do not 
+move suddenly or say anything!"
+
+225
+>move away from outer door
+You carefully and quietly stand, bow to Toranaga, and move to Alvito's side, 
+away from the main door.
+
+The door at the far end shivers open. Alvito translates what follows. "Lord 
+Ishido wishes to see you, Sire," Naga announces. "He's -- he's here in the 
+corridor and he wishes to see you. At once, he says."
+
+"Naga-san, tell Lord Ishido he is always welcome. Ask him to come in."
+
+A tall man strides into the room. Ten of his samurai, gray-uniformed, follow.
+
+Toranaga says, "Welcome, Lord Ishido. Please sit there." He gestures at the 
+single cushion on the dais. "I'd like you to be comfortable."
+
+"Thank you, no," responds Ishido. "I'd be embarrassed to be comfortable while 
+you were not. One day I will take your cushion, but not today."
+
+200
+226
+>examine Ishido
+Ishido Kazunari is tall, lean, swarthy and very tough, a little younger than 
+Toranaga. He is dressed in the Gray uniform.
+
+Ishido looks at you with pronounced distaste. "I heard he was ugly but not this
+ugly! Rumor has it that he's a pirate. Before you crucify him, please let me 
+have him for half a day. Perhaps he could be taught to dance like a bear, and 
+you could exhibit him throughout the Empire: 'The Freak from the East.'"
+
+Toranaga smiles. "You're a man of vast humor, Lord Ishido. I agree the sooner 
+the barbarian's removed the better. Naga-san, send some men and put him with 
+the common criminals." Alvito turns to you, and says "You are to follow these 
+men. You are to be detained. I don't know how for how long: until Lord Toranaga
+decides."
+
+[Congratulations, you have finished this scene with a score of 15 out of a 
+possible 15.]
+
+
+[Type any key to continue]
+Toranaga:
+Interlude
+
+Toranaga watches you leave the room, taking his mind off the interview and 
+coming to grips with the problem of Ishido. Toranaga was summoned to Osaka to 
+give answers to the Council of Regents, and against the advice of his advisors,
+he chose to obey. Now he is stuck, the meeting delayed and delayed, Toranaga 
+caught in the castle of his most deadly enemy.
+
+Ishido comes instantly to the point. "What is your answer to the Council of 
+Regents?"
+
+Toranaga answers, "As President of the Council of Regents I do not believe an 
+answer is necessary. Our late Master, the Taiko, has been dead a year. I don't 
+threaten his house or my nephew Yaemon, the Taiko's Heir. I seek no more 
+territory. By the Lord Buddha, I'll not be the first to break the peace."
+
+Ishido bristles. "The Lady Ochiba, the mother of the heir, is hostage in your 
+castle at Yedo, against your safety here. The Council requests her presence in 
+Osaka instantly. We're all agreed: Lord Sugiyama, Lord Onoshi, Lord Kiyama, and
+I. Here are their signatures."
+
+Toranaga is livid. Why had Kiyama and Onoshi defected to Ishido? Four to one 
+means isolation and disaster!
+
+
+What now?CONTINUE to next scene 
+SAVE this game position 
+QUIT this session of the game 
+Prison:
+Cell Block
+Score:200
+Moves:226
+Toranaga's guards take you to the prison, strip you, and force you through the 
+door of one of the cell blocks.
+
+At dawn it is feeding time and the guards pass out cups of gruel and water 
+through a small opening. The lining up for food and water is unusually calm -- 
+without discipline no one would eat. You take your ration and pick your way 
+over the bodies toward a corner.
+
+Cell Block
+This murky and suffocating room is fifty paces long and ten wide and packed 
+with naked, sweating Japanese. Scarcely any light filters through the boards 
+and beams that make up the walls and low ceiling. A heavy iron door seals the 
+prisoners in.
+
+An apelike man stares at you with hatred.
+
+227
+>examine apelike man
+You see nothing special about the apelike man.
+
+Suddenly, the apelike man -- unshaven, filthy, lice-ridden -- chops you over 
+the kidneys and takes your ration. The others wait to see what will happen.
+
+228
+>attack man
+You feign momentary helplessness, then kick him viciously.
+
+The prisoner tries to bite you.
+
+The other prisoners watch impassively.
+
+229
+>attack man
+You butt your head into the man's face.
+
+The thug kicks out, trying to trip you.
+
+The other prisoners watch impassively.
+
+230
+>attack man
+You close with him, intending to attack him, but he grabs you. You manage to 
+grab his throat and hammer his head against a beam until he's senseless. He 
+falls on some of the other prisoners, who curse loudly, and one of them, a 
+heavyset bulldog of a man, chops him viciously on the neck with the side of his
+hand. There is a dry snap and the thug's head sags. The bulldog man lifts the 
+half-shaven head and lets it fall. He smiles at you and shrugs.
+
+To your amazement, the bulldog-like man offers you the cup of gruel that you 
+had presumed lost.
+
+205
+231
+>take gruel
+Taken.
+
+232
+>bow to bulldog-like man
+The bulldog-like man returns your bow, instinctively knowing exactly the 
+correct degree of deference to show.
+
+233
+>eat gruel
+It's thin, watery barley and rice, but you wolf it down.
+
+234
+>wait
+Time passes...
+
+Your exhaustion is beginning to take its toll, and you start to fall into a 
+nightmare. In what seems like moments, you are jerked to wakefulness, your ears
+exploding with the sonorous Latin of the Last Sacrament: "In nomine Patris et 
+Filii et Spiritus Sancti." There is another European, a toothless old scarecrow
+of a man, bending over you!
+
+235
+>examine old priest
+He is a toothless old man with long filthy hair and a matted beard and broken 
+nails. He wears a foul, threadbare smock. In one hand he carries a wooden 
+cross.
+
+"The senor speaks Spanish, eh? The senor is not a thrice-damned heretic, is 
+he?" There is an edge of hysteria in the old man's voice. His followers edge 
+closer to him.
+
+236
+>speak Spanish to priest
+He stares down at you with rheumy eyes. "Oh blessed Virgin! The senor is real!"
+His words become a jumble of Japanese and Latin and Spanish. His head twitches.
+"The senor is real?" he asks again. "The mother tongue! Oh, it is so good to 
+hear it again, my son!"
+
+210
+237
+>ask priest about himself
+"I'm Friar... Friar Domingo... Domingo of the Sacred Order of St. Francis. I 
+came here to teach the heathen, to bring them to the light, but Jesuits put me 
+here, Jesuits poured filth into the ears of the Taiko!"
+
+238
+>ask priest to teach me Japanese
+"Ah, Japanese! It's a devil's own language for us, but they find our languages 
+as hard, or worse! The first thing you must know is to be polite, always 
+polite, even when you're spitting in their eyes. 'Domo,' that's the first word 
+to know. It means 'thank you,' sometimes you say 'arigato' as well, 'domo 
+arigato.'"
+
+Suddenly the crowd of prisoners parts and a naked, filthy prisoner comes into 
+view. He is singing something noisy and incomprehensible. He starts to dance a 
+wild capering dance. The man is obviously crazy, but no one hurts him or kicks 
+him aside, even when he accidentally knocks over a cup of food. Father Domingo 
+makes the sign of the cross and shakes his head.
+
+215
+239
+>wait
+Time passes...
+
+"To greet someone politely, you say 'Konnichi wa.'  It means 'How are you?'  To
+say you are well, you say 'Domo, genki desu.'"
+
+240
+>wait
+Time passes...
+
+"That man over there, he tells me he helped you. His name is Gonzalez, but 
+before he became a Christian he was Akabo. It just means 'porter,' senor. They 
+don't have names. Only samurai have names."
+
+241
+>wait
+Time passes...
+
+"As 'domo' is 'thank you,' 'dozo' is 'please.' 'Water' is 'mizu.'"
+
+The iron door of the cell swings open. Guards begin to call names from a list. 
+The man who befriended you is one of those called. One of Domingo's followers 
+is also among those called. He kneels before Domingo, who gives him the sign of
+the cross and the Last Sacrament. He walks away, and the door closes again.
+
+"His Calvary is outside the door," says Domingo.
+
+The madman capers away, singing and drooling. You lose sight of him in the 
+crowd of prisoners.
+
+242
+>wait
+Time passes...
+
+"'Gomen nasai' is 'sorry,' remember the Japanese put a great price on manners 
+and courtesy!"
+
+243
+>wait
+Time passes...
+
+"'Nihon go ga hanase-masen' is 'I don't speak Japanese,' and yes, you must 
+apologize, so you say 'gomen nasai' as well. The daimyos are prideful and as 
+touchy as wasps, but courteous, ah, so courteous!"
+
+244
+>wait
+Time passes...
+
+"It is so good to teach, senor!" Domingo continues to teach you simple words 
+and phrases. The old man is lonely, and proud of his knowledge, and his success
+in converting the prisoners.
+
+245
+>wait
+Time passes...
+
+
+
+For three days and three nights, you fill your mind with facts and Japanese 
+words and phrases. For three days and three nights you sit with Father Domingo 
+and question and listen and learn and sleep in nightmare.
+
+Then, on the fourth day, they call out your name.
+
+"Anjin-san!"
+
+"Thy confession, my son, say it quickly," cries Father Domingo.
+
+"Go with God, Father" you reply, and the door slams behind you.
+
+The air is incredibly cool and sweet, the clouds meandering before a fine 
+southeasterly wind. You gulp deep draughts of the clean, glorious air. The joy 
+of life fills you.
+
+Prison Courtyard
+This is a courtyard with great doors to the east. A line of naked prisoners 
+stands before an official in a somber kimono.
+
+You see Gray-uniformed samurai here.
+
+Prison:
+Prison Courtyard
+Score:215
+Moves:247
+>wait
+Time passes...
+
+One of the jailers prods you roughly toward the line.
+
+248
+>wait
+Time passes...
+
+One of the jailers prods you roughly toward the line.
+
+249
+>wait
+Time passes...
+
+One of the jailers prods you roughly toward the line.
+
+250
+>get in line
+You join the line of prisoners.
+
+The official stands in front of the first prisoner and reads from a delicate 
+scroll. As he finishes, each man begins to plod after his party of jailers 
+toward the great doors of the courtyard.
+
+220
+251
+>wait
+Time passes...
+
+You reach the front of the line. Unlike the others, you are given clean clothes
+to wear. Your guards are samurai, and they motion you to put on the clothes.
+
+252
+>wear clothes
+You put on the kimono.
+You put on the socks.
+You put on the pair of sandals.
+
+Your guards hustle you towards the gate.
+
+253
+>wait
+Time passes...
+
+Your guards hustle you towards the gate.
+
+Your guards keep pace and a wary eye on you.
+
+Outside Prison
+Prisoners are being executed here. A large, spruce crowd looks on, crimson and 
+yellow with golden sunshades.
+
+You see Gray-uniformed samurai here.
+
+Prison:
+Outside Prison
+Score:220
+Moves:254
+>wait
+Time passes...
+
+255
+>wait
+Time passes...
+
+One man is already roped to his cross and the cross is being lifted into the 
+sky. Beside each cross two eta wait, their long lances sparkling in the sun.
+
+The samurai jostle closer, hurrying you. You prepare to lunge for the nearest 
+sword, thinking numbly that it would be better to die now, quickly. But 
+suddenly they are turning away from the arena, heading toward the paths that 
+lead through the woods to the city and the castle!
+
+Deep in the Woods
+This is a wide track deep in the woods. There are tall trees and a well-tended 
+sward which feels soft underfoot. The castle is to the west and the path 
+continues to the east.
+
+You see Gray-uniformed samurai here.
+
+Prison:
+Deep in the Woods
+Score:220
+Moves:256
+>wait
+Time passes...
+
+When you are deep in the woods, another party of thirty-odd Grays approaches 
+from around a curve ahead. The two parties of Grays greet each other, and then,
+just as the new group is preparing to leave, their leader calmly pulls out his 
+sword and impales the leader of your samurai. The ambush is so sudden that all 
+your escort is dead almost in the same instant. Not one has even had time to 
+draw his sword.
+
+At a command from the leader, these new Grays strip off their uniform kimonos. 
+Underneath they wear a motley collection of rags and ancient kimonos. All pull 
+on masks. The bandit leader smiles and motions you to begin walking back toward
+the city.
+
+257
+>west
+You start back toward the city, walking as slowly as possible.
+
+Suddenly there are noises ahead and another party of samurai rounds the bend. 
+Browns and Grays, the Browns the vanguard, their leader in a palanquin. Both 
+groups move into skirmish positions, eyeing each other hostilely.
+
+The man in the palanquin gets down and you recognize him. It is Kasigi Yabu! He
+shouts at the bandit leader but the man shakes his sword furiously, ordering 
+them out of the way. Yabu gives a curt order, and charges with a screaming 
+battle cry, limping slightly. The bandit guarding you swings his sword at you!
+
+258
+>duck
+With all your remaining strength you jerk away from the bandit and roll to one 
+side. His sword slashes down, but he misses.
+
+The bandit leader turns and flees, his men following. The Browns and Grays are 
+quickly beside you. Some scramble after the fleeing bandits into the bushes. 
+Yabu stops at the edge of the brush, shouts orders imperiously, then comes back
+slowly, his limp more pronounced.
+
+225
+259
+>wait
+Time passes...
+
+None of the bandits are captured. Yabu and the Gray leader begin to argue, Yabu
+pointing to the castle, and the Gray to the woods. You hear the word shunjin, 
+which you know to mean 'prisoner.'  They are trying to decide what to do with 
+you! To return you to Toranaga at the castle, or send you on with the Grays to 
+Ishido.
+
+Yabu motions you to get into the palanquin. The Gray captain says, "Iye!"
+
+260
+>enter palanquin
+You speak in halting Japanese, knowing the words to be ungrammatical, but 
+hoping they will be understood, "I friend. Not prisoner. Want bath. Tired. 
+Hungry. Bath." You point to the castle. "Go there! Now, please. Lord Toranaga. 
+Go now." You get awkwardly into the palanquin and lay down on the cushions, 
+your feet sticking far out.
+
+Then Yabu laughs, and everyone joins in. He bows mockingly. "Ah so, 
+Anjin-sama!"
+
+"Iye, Yabu-sama. Anjin-san."
+230
+[Congratulations, you have finished this scene with a score of 30 out of a 
+possible 30.]
+
+
+[Type any key to continue]
+Prison:
+Interlude
+
+A bath and massage and two hours of sleep immeasurably refresh you. The bath 
+attendants, all women of girth and strength, pummel you and shampoo your hair, 
+and the barber trims your beard. The futons on which you sleep are so clean, 
+like the room. It all seems dreamlike. You wait impatiently, hoping to be 
+brought to Toranaga again.
+
+You know, beyond all doubt, because of what Friar Domingo told you about the 
+Portuguese and Japanese politics and trade, that you can help Toranaga, who, in
+return, can easily give you the riches and freedom you desire. There is no ship
+in all Asia like yours, and if Toranaga commands, you can sweep the Portuguese 
+and Spanish from the seas with it, make a gift to him of the Black Ship, 
+destroy his enemies, anything!
+
+
+What now?CONTINUE to next scene 
+SAVE this game position 
+QUIT this session of the game 
+Mariko:
+Glade of Maples
+Score:230
+Moves:260
+And at last, Toranaga summons you.
+
+Glade of Maples
+This is Toranaga's private garden within Osaka Castle. You are in a glade of 
+maples near a little thatched hut.
+
+You see Toranaga, a woman and a young boy here.
+
+The three Japanese are watching you. The woman is curious but nervous, Toranaga
+is like a hawk watching a rabbit, and the boy stares at you as he would stare 
+at a fabulous monster. It's exactly what your own son, so far away in England, 
+would do. What was the polite phrase the old monk taught you? You try to 
+remember.
+
+261
+>konnichi wa
+You use the phrases the old monk taught you. "Konnichi wa," you say. "Konnichi 
+wa, Toranaga-sama." You gather your kimono around you and sit. "Gomen nasai, 
+Toranaga-sama, nihon go ga hanase-masen. Tsuyaku go imasu ka?"
+
+The woman looks surprised. "I am your interpreter, senhor," she says at once. 
+"My name is Mariko. But you speak Japanese?" she asks. You explain that you 
+know only a few words and phrases. "My Master wishes to know where you learned 
+your 'few words and phrases.'"
+
+235
+262
+>tell Mariko about Domingo
+"There was a monk in the prison, senhorita, a Francisan monk, and he taught me.
+Things like 'food, friend, bath, go, come, true, false,' and so on. Would you 
+please tell Lord Toranaga that I'm better prepared now to answer his questions,
+to help, and more than a little pleased to be out of prison. For which I thank 
+him."
+
+Mariko begins to ask you questions. Where you were born, whether you are 
+married, where you lived in England. She is not as good an interpreter as 
+Father Alvito, but she is more pleasant to talk to, and beautiful. At one point
+you compliment her on her flawless grasp of Portuguese, and she blushes, 
+fluttering her fan.
+
+263
+>examine Mariko
+You have never seen anyone so petite. You could pick her up with one hand. You 
+wonder if she is Toranaga's consort. What would it be like to have such a woman
+in bed? You'd be afraid of crushing her. No, she wouldn't break. There are 
+women in England almost as small. But not like her.
+
+The young boy seems bored with you. He reminds you of your own son when the 
+talk of adults becomes too serious. His attention is drifting.
+
+"My Lord wishes to know about you and your family," Mariko continues. "About 
+your country, its queen and previous rulers, habits, customs, and history. 
+Similarly about all other countries, particularly Portugal and Spain. All about
+the world you live in. About your ships, weapons, foods, trade. About your wars
+and battles and how to navigate a ship, how you guided your ship and what 
+happened on the voyage. He wants to understand -- Excuse me, why do you laugh?"
+
+"Only because, senhorita," you reply, "that seems to be just about everything I
+know."
+
+"That is precisely what my Master wishes."
+
+264
+>smile at Yaemon
+The boy jumps, then laughs and interrupts Mariko and points and speaks out, and
+everyone listens indulgently and no one hushes him.
+
+"Lord Toranaga asks why you did that, senor?"
+
+You think for a moment and reply, "Oh, just to amuse the lad. He's a child like
+any, and children in my country would usually laugh if you did that. My son 
+must be about his age now. My son's seven."
+
+"The Heir is seven," Mariko says after a pause.
+
+Ishido appears at the edge of the glade, bows formally to the young boy, and to
+Toranaga, who looks annoyed at the interruption but bows back.
+
+240
+265
+>wait
+Time passes...
+
+Ishido and Toranaga converse. Mariko translates for you. "Please excuse me, 
+Lord Toranaga," he says. "There is an important matter I wish to see you about.
+The last formal meeting of the Regents has been postponed. We do not meet 
+tonight at sunset. Lord Kiyama's sick. Lord Sugiyama and Lord Onoshi have 
+agreed to the delay. A few days are unimportant, aren't they, on such important
+matters?"
+
+"When will the meeting be?" Toranaga asks, seething. Any delay jeopardizes him 
+immeasurably.
+
+266
+>wait
+Time passes...
+
+"I understand Lord Kiyama should be well tomorrow, or perhaps the next day. His
+physician has forbidden any visitors. The disease might be contagious." Ishido 
+is very nonchalant, implying the delay could be indefinite.
+
+267
+>wait
+Time passes...
+
+"I'll visit Lord Kiyama the day after tomorrow," Toranaga says, naming a 
+deadline. "The contagion that will topple me has not yet been born. Remember 
+the soothsayer's prediction!"
+
+"No, Lord Toranaga, I haven't forgotten," Ishido says, remembering very well. 
+He bows again, very deferential to the boy, and leaves.
+
+268
+>ask Mariko about prediction
+Mariko asks permission of Toranaga, who nods. "Six years ago a Chinese embassy 
+came to the Taiko to try to settle the Japanese-Chinese-Korean war. A famous 
+astrologer was among them. He forecast many things which have since come true. 
+The Taiko asked him to predict the deaths of certain of his counselors. The 
+astrologer said that Toranaga would die by the sword when he was middle-aged. 
+Ishido, the famous conqueror of Korea, would die undiseased, an old man, his 
+feet firm in the earth, the most famous man of his day. The Taiko himself would
+die in his bed, respected, revered, of old age, leaving a healthy son to follow
+him. At this time Yaemon had not yet been born, so that part of the prophecy 
+has already come to pass."
+
+Soon the interview is over, and the Heir is sent for his swimming lesson. 
+Toranaga installs you in his own sleeping chamber, as a mark of his favor. 
+Things are looking up, indeed!
+245
+[Congratulations, you have finished this scene with a score of 15 out of a 
+possible 15.]
+
+
+[Type any key to continue]
+Mariko:
+Interlude
+
+Elsewhere in Osaka, Father Alvito reports to his superior, dell'Aqua, the 
+Father-Visitor of Asia, the most powerful Jesuit and thus the most powerful man
+in Asia.
+
+"We're already in trouble. Toranaga began by saying that he understands from 
+the Ingeles that incredible profits are being made from the Portuguese monopoly
+of the silk trade with China. He 'invites' you to report to the Regents on 
+rates of exchange. He does not object to our making a large profit, providing 
+it comes from the Chinese. I'm sorry to tell you that Blackthorne seems to be 
+particularly well informed."
+
+Ferriera, the Spanish Captain of the Black Ship, says coldly, "The sooner the 
+heretic's dead the better. If the Dutch and English start spreading their filth
+in Asia we're in for trouble!"
+
+"I regret to tell you, Captain, that Toranaga said that if any harm befalls the
+Ingeles, it's quite possible the Taiko's Expulsion Edicts would be reexamined 
+and all Christian churches, schools, places of rest, would be immediately 
+closed."
+
+
+What now?CONTINUE to next scene 
+SAVE this game position 
+QUIT this session of the game 
+Escape:
+Courtyard
+Score:245
+Moves:268
+Just after dusk Kiri waddled nervously down the steps. She headed for her 
+curtained litter that stood near the little tea house just inside the garden. 
+You are leaning against the wall near the fortified gate. You are wearing a 
+belted kimono of the Browns and tabi socks and military thongs.
+
+Courtyard
+This is the courtyard of Toranaga's keep within Osaka castle. The garden is 
+through a gate to the west, and to the south is the forecourt and fortified 
+gate that guards the keep.
+
+In the forecourt, outside the gate, an escort of sixty heavily armed samurai is
+drawn up in neat lines, every third man carrying a flare.
+
+Mariko's litter is here.
+
+Kiritsubo's curtained litter sits near the garden gate.
+
+You see Buntaro, Yabu, Sazuko and Mariko here.
+
+269
+>west
+You open the garden gate and go through.
+
+As you enter the garden, Mariko calls to you "Anjin-san, we are leaving soon. 
+Come back!" You see her explain to Yabu what she said.
+
+Formal Garden
+It is like a different world within the garden gates, verdant and serene, the 
+sun on the treetops, birds chattering and insects foraging, the brook falling 
+sweetly into the lily pond. A tiny thatch-roofed tea house is beside the garden
+gate. The courtyard of the keep, a world away, is to the east.
+
+You hear a loud shout from the forecourt, and a great deal of commotion from 
+that direction.
+
+Escape:
+Formal Garden
+Score:245
+Moves:270
+>enter tea house
+You slip your feet out of your thongs and walk up the three steps. You have to 
+stoop, almost to your knees, to go through the tiny screened doorway.
+
+Tea House
+The tea house is small, simple, and immaculate. The doorway is small so that 
+all will be humble, equal, the host and guest, the most high Lord and the 
+merest samurai.
+
+You see a veiled figure here.
+
+Escape:
+Tea House
+Score:245
+Moves:271
+>examine Kiri
+You look at the veiled figure. She is dressed exactly like Kiri, and at first 
+you assume that it must be her. But if so, how did she get here? Then you look 
+more carefully, and realize it's a man, not a woman -- it's Toranaga, in 
+disguise! What can he be planning? Escape!
+
+250
+272
+>exit
+Formal Garden
+
+There are a pair of sandals here.
+
+Escape:
+Formal Garden
+Score:250
+Moves:273
+>wear sandals
+You put on the pair of sandals.
+
+274
+>east
+Courtyard
+
+Mariko's litter is here.
+
+Kiritsubo's curtained litter sits near the garden gate.
+
+You see Yabu, Hiro-matsu, Sazuko and Mariko here.
+
+Kiritsubo begins to cry. She obviously doesn't want to leave. She tries to 
+stifle her sobs and unlooses her thick veil. She calls Yabu over to her litter 
+and points to Lady Sazuko, Toranaga's pregnant consort, apparently giving him 
+instructions. All you can understand is the word dozo, 'please.'  Yabu bows.
+
+Escape:
+Courtyard
+Score:250
+Moves:275
+>wait
+Time passes...
+
+Lady Sazuko bows and hurries off, Yabu following. The girl runs up the steps. 
+As she nears the top she slips and falls. Kiri screams something in Japanese. 
+All eyes flash to the prostrate girl.
+
+276
+>examine Kiri
+Everyone else is watching Sazuko, terrified that some harm may come to 
+Toranaga's unborn child. Kiritsubo scuttles with surprising speed into the 
+garden and inside the little hut. She vanishes for a moment, reappears, and 
+darts into the litter, jerking the curtains closed. For an instant, your eyes 
+meet. It is Toranaga!
+
+You see that Sazuko, one of Toranaga's consorts, has fallen to the ground. She 
+is pregnant, and everyone is terrified for the safety of the child.
+
+Mariko and Yabu rush to aid the girl. Yabu picks her up. Sazuko is more 
+startled than hurt. She speaks to them, embarrassed at her clumsiness, then 
+stands. Everyone relaxes. Toranaga's unborn child is safe.
+
+255
+277
+>wait
+Time passes...
+
+Yabu shouts orders at the head of the column and sets off. Mariko gets into her
+litter, leaving the curtains partially open. Kiri's litter is closed.
+
+278
+>south
+Forecourt
+This is the forecourt of Toranaga's keep. To the south is the maze of paths and
+walls that makes up the rest of the castle. To the north, through an arched 
+gateway with a fortified gate, is a courtyard.
+
+You see Buntaro and Gray-uniformed samurai here.
+
+The column begins to move out into the forecourt, the litter bearers carrying 
+Mariko's and Kiritsubo's litters. Samurai move to the great door and prepare to
+close it.
+
+Escape:
+Forecourt
+Score:255
+Moves:279
+>south
+
+The little cortege surrounding the two litters goes slowly through the maze of 
+the castle and through the continual checkpoints. Each time there are formal 
+bows, the documents are meticulously examined afresh, a new captain and group 
+of escorting Grays take over, and then you are passed. At each checkpoint you 
+watch with increasing misgivings as the captain of the guard comes close to 
+scrutinize the drawn curtains of Kiritsubo's litter.  Each time the man bows 
+politely to the half-seen figure, hears the muffled sobs, and in the course of 
+time, waves you on again.
+
+Finally, you pass a checkpoint, turn a corner, and reach the last barrier.
+
+Gateway
+This is the last portcullis and last gateway of the castle, and beyond is the 
+final drawbridge and the final moat. To the south, on the far side of the 
+bridge, is the ultimate strongpoint. A multitude of flares turn the night into 
+crimson day.
+
+Mariko's litter is here, and through the open curtains you can see Mariko.
+
+Kiritsubo's curtained litter is nearby.
+
+You see Buntaro and Yabu here.
+
+Ishido steps from the shadows. The Browns see him almost in the same instant. 
+Hostility whips though them. Buntaro almost leaps past you to get nearer the 
+head of the column.
+
+Escape:
+Gateway
+Score:255
+Moves:280
+>wait
+Time passes...
+
+Ishido takes a roll of parchment out of his sleeve. "I wanted to ask Lady 
+Kiritsubo if she'd take this with her to Yedo. For my niece. It's unlikely I'll
+go to Yedo for some time."
+
+"Certainly." Yabu puts out his hand to take the parchment.
+
+"Don't trouble yourself, Yabu-san. I'll ask her." Ishido walks toward the 
+litter.
+
+The maids obsequiously intercept Ishido. "May I take the message, Lord. My 
+Mis--"
+
+"No." To Ishido's surprise the maids do not move out of the way.
+
+281
+>wait
+Time passes...
+
+"Move!" Buntaro snarls. Both maids back off, frightened.
+
+Ishido bows to the curtain. "Kiritsubo-san, I wonder if you'd be kind enough to
+take this message for me to Yedo? To my niece?"
+
+There is a slight hesitation between the sobs and the figure bows an assent.
+
+"Thank you." Ishido offers up the slim roll of parchment an inch from the 
+curtains.
+
+282
+>act crazy
+Ishido and the others whirl on you dumbfounded.
+
+Ishido draws his sword.
+
+260
+283
+>take parchment
+You grab the parchment out of Ishido's fingers. He stares at you, shocked.
+
+Ishido watches you, his sword raised high, ready to strike, but your actions 
+have momentarily stunned him.
+
+265
+284
+>give parchment to Kiri
+You thrust the parchment through the curtains, babbling the first foolish thing
+that comes into your head. "It's bad luck in my country for a prince to give a 
+message himself like a common bastard ... bad luck ..." Everyone watches as you
+do this.
+
+Ishido's reflexes take over and he sends his sword slashing for your throat. 
+Mariko cries out. The blade stops a hair's breadth from your neck. She tries to
+soothe Ishido, and he lowers his sword, listens for a moment, then shouts with 
+increasing vehemence and hits you in the face with the back of his hand.
+
+270
+285
+>sing
+Ishido and the others whirl on you dumbfounded.
+
+Yabu begins placating Ishido, Mariko tearfully repeating over and over in 
+forced semihysteria that the mad barbarian believed he was only trying to save 
+Ishido from a bad kami.
+
+286
+>sing
+Everyone continues to stare at you. The tension is incredible, and your 
+exhaustion is beginning to take its toll.
+
+Ishido grabs a bow and arrow. "He's a mad dog! Mad dogs have to be dealt with!"
+
+287
+>sing
+Everyone continues to stare at you. The tension is incredible, and your 
+exhaustion is beginning to take its toll.
+
+Mariko leaps forward from her position near Toranaga's litter. "Don't worry, 
+Lord Ishido. It's a momentary madness." She approaches you. "I can help now, 
+Anjin-san. We have to try to walk out. I will follow you. Please stop now."
+
+288
+>south
+Bridge
+This is the last bridge. It leads south over the moat from the last checkpoint.
+
+Mariko follows quickly after you.
+
+Yabu comes to life and says to Ishido, "If you want him killed, let me do it." 
+Then he comes very close and drops his voice. "Leave him alive. He's more 
+valuable alive. Trust me. We need him alive." Ishido puts the bow down.
+
+Escape:
+Bridge
+Score:270
+Moves:289
+>south
+Portcullis
+This is the last portcullis. To the north is the bridge over the moat. Guards 
+watch you curiously.
+
+Mariko follows quickly after you.
+
+Mariko looks back for an instant. "They're following, Anjin-san, both litters 
+are through the gate and they're on the bridge now!"
+
+Escape:
+Portcullis
+Score:270
+Moves:290
+>south
+It requires all of your remaining will to stay erect. You have lost your 
+sandals, your face burns from Ishido's blow, and your head pounds with pain. 
+The last guards let you through the portcullis and beyond. They also let Mariko
+past without stopping, and then the litters.
+
+You lead the way down a slight hill, past some open ground and into a wooded 
+area.
+
+Wooded Area
+This is a wooded area totally out of sight of the castle. To the east is the 
+city proper.
+
+As you enter the wooded area and assure yourself that you are out of sight of 
+the castle, you gratefully collapse.
+
+Escape:
+Wooded Area
+Score:275
+Moves:291
+>get up
+You stand up.
+
+"Anjin-san!" Mariko calls to you, jarring you out of your stupor. "It's time to
+move on." She glances significantly at the Gray captain, and adds, "Kiritsubo 
+feels we must hurry for the tide. All the trouble you have caused has made her 
+even more upset. Please use my litter, I'm really very strong and you needn't 
+worry."
+
+292
+>enter litter
+You sway on your feet, and allow yourself to be helped into the litter. At once
+the procession starts again. The rolling gait is soothing and you lay back, 
+depleted.
+
+City of Osaka, in Mariko's litter
+The city by night is a fairyland. The rich houses have many colored lanterns, 
+oil-lit and candle-lit, hanging over their gateways and in their gardens, the 
+shoji screens giving off a delightful translucence. Even the poor houses are 
+mellowed by the shojis. Lanterns light the way of pedestrians and kagas, and of
+samurai on horseback.
+
+The harbor is to the east.
+
+Kiritsubo's curtained litter is nearby.
+
+You see Mariko, Yabu and Buntaro here.
+
+Escape:
+City of Osaka, in Mariko's litter
+Score:275
+Moves:293
+>east
+The cortege continues through the winding, curling city streets, the 
+pedestrians bowing and the very poor on their knees until you pass.
+
+[Building Osaka.]
+
+You have entered a maze of back streets and alleys.
+
+[Type any key to continue]
+City Streets, in Mariko's litter
+This maze of streets and alleys extends from the great castle to the harbor. At
+night, it is a nightmare of blind alleys, twisting overhung streets, and 
+shadowy hurrying shapes.
+
+Kiritsubo's curtained litter is nearby.
+
+You see Buntaro, Yabu and Mariko here.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:294
+>south
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:295
+>east
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:296
+>north
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:297
+>east
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:298
+>north
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:299
+>west
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:300
+>north
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:301
+>west
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:302
+>south
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:303
+>east
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:304
+>south
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:305
+>east
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:306
+>north
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:307
+>east
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:308
+>north
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:309
+>east
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:310
+>south
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:311
+>east
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:312
+>north
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:313
+>east
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:314
+>south
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:315
+>east
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:316
+>north
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:317
+>west
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:318
+>north
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:319
+>east
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:320
+>north
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:321
+>east
+You make your way through the deserted streets.
+
+Escape:
+City Streets, in Mariko's litter
+Score:275
+Moves:322
+>north
+You make your way through the deserted streets.
+
+The arrows come out of the night, the first impaling the captain through the 
+throat. His lungs fill with molten fire and death swallows him. His last 
+thought is one of wonder, for did not Lord Kiyama, his master, tell him the 
+ambush was to be later, beside the wharves, and directed at the pirate?
+
+City Street, in Mariko's litter
+This is a dark, deserted street in the middle of Osaka.
+
+Dim figures can be seen on one of the tiled roofs of a nearby house.
+
+Kiritsubo's curtained litter is nearby.
+
+You see Mariko, Yabu and Buntaro here.
+
+Escape:
+City Street, in Mariko's litter
+Score:275
+Moves:323
+>exit litter
+You are now on your feet.
+
+An arrow slams into the litter post an inch from your head! Two arrows pierce 
+the curtains of Kiritsubo's litter, and another strikes one of the maids in the
+waist. As she screams, the litter bearers take to their heels into the 
+darkness. Mariko stands in the open, staring in shock at the dying maid.
+
+Escape:
+City Street
+Score:275
+Moves:324
+>grab Mariko
+You roll for cover, taking Mariko with you into the lee of the tumbled litter.
+
+A shower of arrows straddles both litters. One thuds into the ground where 
+Mariko was an instant ago.
+
+280
+325
+>wait
+Time passes...
+
+Buntaro shields Toranaga's litter with his body as best he can, then whips open
+the curtains. Two arrows are imbedded in Toranaga's chest and side, and he 
+jerks them out of the armor he wears beneath the kimono. He fights his way out 
+of the litter and stands in the street, sword drawn, an incongruous figure in 
+kimono and hat.
+
+326
+>wait
+Time passes...
+
+Another volley of arrows comes out of the darkness, one missing you so narrowly
+that it takes skin off of your cheek, and then all is silent.
+
+Buntaro and some of his men are near the wall in pursuit but the ambushers 
+vanish into the blackness. A dozen men race in pursuit but all know it's 
+hopeless.
+
+327
+>get up
+You stand up.
+
+One of the officer Grays says, "Toranaga!" and though it is said quietly, 
+everyone hears. Here, incredibly, is the enemy of his master, free, outside the
+castle walls. "You will wait here, Lord Toranaga. You," he snaps at one of his 
+men, "report to Lord Ishido at once!" The man races toward you, heading back 
+toward the castle!
+
+328
+>attack man
+You stretch to intercept the man, grabbing and nearly tackling him, and he 
+tumbles to the ground.
+
+Immediately he rolls and is on his feet again!
+
+329
+>attack man
+Desperately you struggle with the messenger and manage to knock him down a 
+second time.
+
+This time Buntaro, with a vicious chop of his sword, cuts the man down.
+
+285
+330
+>wait
+Time passes...
+
+The rest of the Grays attack, trying to reach Toranaga. One officer whips out 
+his two-handed sword and leaps for Toranaga but Buntaro parries. The Browns and
+Grays, all intermixed, erupt into a swirling melee.
+
+The Grays fight courageously. Four join in a suicidal charge at Toranaga. The 
+Browns break it and the Grays regroup and charge again. Then a senior officer 
+orders three to retreat for help and the rest to guard the retreat.
+
+331
+>wait
+Time passes...
+
+The three Grays tear off, and though Buntaro kills one, the other two are only 
+wounded. The rest die.
+
+The cortege re-forms and prepares to continue the escape. The urgency is now 
+great, as the escaped Grays will spread the alarm.
+
+[Type any key to continue]
+City Streets
+
+Kiritsubo's curtained litter is nearby.
+
+Mariko's litter is here.
+
+You see Buntaro, Yabu, Mariko and Toranaga here.
+
+Escape:
+City Streets
+Score:285
+Moves:332
+>west
+You make your way through the deserted streets.
+
+333
+>north
+You make your way through the deserted streets.
+
+334
+>west
+You make your way through the deserted streets.
+
+335
+>south
+You make your way through the deserted streets.
+
+336
+>west
+You make your way through the deserted streets.
+
+337
+>north
+You make your way through the deserted streets.
+
+338
+>west
+You make your way through the deserted streets.
+
+339
+>south
+You make your way through the deserted streets.
+
+340
+>west
+You make your way through the deserted streets.
+
+341
+>north
+You make your way through the deserted streets.
+
+342
+>west
+You make your way through the deserted streets.
+
+343
+>north
+You make your way through the deserted streets.
+
+344
+>east
+You make your way through the deserted streets.
+
+345
+>north
+You make your way through the deserted streets.
+
+346
+>east
+You make your way through the deserted streets.
+
+347
+>south
+You make your way through the deserted streets.
+
+348
+>east
+You make your way through the deserted streets.
+
+349
+>south
+You make your way through the deserted streets.
+
+350
+>west
+You make your way through the deserted streets.
+
+351
+>south
+You make your way through the deserted streets.
+
+352
+>east
+You make your way through the deserted streets.
+
+353
+>south
+You make your way through the deserted streets.
+
+354
+>west
+You make your way through the deserted streets.
+
+355
+>south
+You make your way through the deserted streets. Toranaga stops the cortege 
+outside a battered gate. A fish is etched into its timbers. He knocks in code. 
+The door opens at once, and an ill-kempt samurai bows. "Bring your men and 
+follow me," Toranaga says. Fifteen men dressed as ronin follow him and slip 
+into place as advance and rear guard. Others spread the alarm to other secret 
+cadres. Soon there are fifty troops with you and a hundred guarding your 
+flanks.
+
+290
+356
+>east
+You make your way through the deserted streets.
+
+357
+>north
+You make your way through the deserted streets.
+
+358
+>east
+You make your way through the deserted streets.
+
+359
+>north
+You make your way through the deserted streets.
+
+360
+>east
+You make your way through the deserted streets.
+
+361
+>south
+You make your way through the deserted streets.
+
+362
+>east
+You make your way through the deserted streets.
+
+363
+>south
+You make your way through the deserted streets.
+
+364
+>east
+Warehouse
+You are in a narrow and deserted back street near the dock. The shadows of a 
+nearby warehouse shield the party from the view of anyone on the wharf to the 
+east.
+
+Mariko's litter is here.
+
+Kiritsubo's curtained litter is nearby.
+
+You see Toranaga, Mariko, Yabu, Buntaro and a detachment of ronin here.
+
+Toranaga beckons to Mariko, and they converse. Mariko nods. "Anjin-san, my 
+Master orders that we, with six samurai, go to the galley. We are to tell the 
+Grays on board that we were ambushed, and that our Gray escort sent us ahead to
+get help, that the battle is still raging. We will draw them away from the 
+galley, and our Browns can recover it and we will be free. Do you understand?"
+
+Escape:
+Warehouse
+Score:290
+Moves:365
+>yes
+"Good!" she responds. She turns to Toranaga. "My Master says you should be 
+armed." She hands you a knife. "Better, give me two," you respond, and Toranaga
+agrees. You slide the large one into your sash and tie the small one, haft 
+downwards, to your forearm. "My Master asks, do all Englishmen carry knives 
+secretly in their sleeves like that?"
+
+"No, but most seamen do." Now you are ready. Mariko stares at the wharf, then 
+commits herself.
+
+"Follow me!"
+
+Mariko laughs, bows once to Toranaga, and runs off.
+
+366
+>east
+You and the six samurai race after her. Mariko is very fleet and you don't 
+catch up with her as you round the corner and head across the open space. You 
+have never felt so naked. The moment you appear, the Grays spot you and surge 
+forward.
+
+Wharf
+You are near a gangway leading up to the galley. The galley is to the east, 
+moored to stanchions fixed into the stone wharf that extends a hundred yards 
+out into the sea.
+
+You see Mariko here.
+
+The Grays surround you, Mariko jabbering feverishly with the samurai and the 
+Grays. You add to the babel in a panting mixture of Portuguese, English, and 
+Dutch, motioning for them to hurry. You lean against the gangway, unable to see
+anything on the galley distinctly. You can't tell if the samurai on deck are 
+Grays or Browns or both.
+
+Escape:
+Wharf
+Score:290
+Moves:367
+>east
+You pull yourself up the gangway using the ropes for support. Your dash across 
+the wharf has tired you more than you realized at first. Mariko and two Browns 
+follow after.
+
+Main Deck
+This is the oar deck of the galley, forward of the quarterdeck. Gray guardsmen 
+crowd the deck.
+
+You see Brown-uniformed samurai and Mariko here.
+
+Mariko is frantically haranguing the senior officer of the Grays. He shouts 
+orders, and suddenly a hundred samurai, all Grays, pour off the ship.
+
+Quickly, Mariko turns to you and asks, "Does the ship seem all right to you?"
+
+Escape:
+Main Deck
+Score:290
+Moves:368
+>yes
+"Well, she's floating, at least," you reply, and then notice one of the crewmen
+from the voyage to Osaka. With Mariko's help, you ask him if the galley is 
+ready, and if there are still Grays aboard. "Anjin-san, he thanks you for the 
+life of his ship, and says they are ready. As for the other, he doesn't know." 
+Mariko seems very worried as she says this.
+
+Mariko looks around, as if assessing the situation. You can see that there are 
+still sixteen Grays on the wharf and the galley. Suddenly, Mariko walks weakly 
+to the head of the gangway and appears to faint!
+
+369
+>help Mariko
+You make your way over to Mariko. "Get some water -- water, by God!" What's the
+word for water? Desperately you search your mind for the Japanese word. The old
+monk had told it to you a thousand times.
+
+295
+370
+>mizu
+"Mizu, mizu! Hai! Wakarimas?" you yell. A man nods, and begins to hurry away. 
+You stand protectively over Mariko.
+
+Ashore, thirty of Toranaga's ronin-disguised samurai lope out of an alleyway. 
+The Grays that had begun to leave the dock spin around on the gangway. Abruptly
+one shouts orders. "Bandits!" one of the Browns screams on cue. The six Browns 
+split up, intermingling with the Grays.
+
+300
+371
+>inventory
+You are carrying a large knife. You are wearing a small knife, a kimono and 
+socks.
+
+Toranaga's ronin-samurai charge. At the same time the Browns on board attack 
+the remaining Grays on board. The leader of the Grays on deck, a large tough 
+grizzle-bearded man, confronts you and Mariko. "Kill the traitors!" he bellows,
+and charges.
+
+372
+>throw knife at man
+You slide your large knife into your hand and hurl it in an arc. It takes the 
+samurai in the throat.
+
+The other two Grays lunge for you, killing swords high. You feel, more than 
+see, the sword slashing for your throat!
+
+305
+373
+>duck
+You leap out of the way, and the blow misses.
+
+A younger Gray halts over Mariko, sword raised. Suddenly, Mariko comes alive. 
+She throws herself against the inexperienced young samurai's legs, crashing him
+to the deck. Then, she scrambles across the dead Gray, grabs his sword out of 
+his still-twitching hands, and prepares to defend herself as best she can.
+
+374
+>take knife
+Taken.
+
+The young Gray that Mariko tripped regains his feet, and howling with rage, 
+comes at her. She backs and slashes bravely but you know she's lost, the man 
+too strong.
+
+375
+>throw knife at Gray
+You throw your large knife at Mariko's assailant. It strikes him in the back, 
+causing his blow to go wild. He slumps to the deck, his life ebbing fast.
+
+Toranaga's ronin-samurai burst up the gangway, over the dead Grays. They 
+quickly dispose of the remaining Grays and dump their bodies into the sea.
+
+Wiping the blood off your face, you dimly see Mariko stretched out on the deck,
+ronin-samurai milling around her. You shake off your helpers and stumble toward
+her, but your knees give out and you collapse.
+
+310
+376
+>get up
+You stand up.
+
+When all aboard has been checked and double-checked, the leader of the 
+ronin-samurai cups his hands around his lips and halloos shoreward. At once 
+more ronin-disguised samurai under Yabu come out of the night, and fan into 
+protective shields. Then Toranaga appears and walks slowly toward the gangway 
+alone. He has discarded the woman's kimono and the dark travelling cloak. Now 
+he wears his armor, and over it a simple brown kimono, swords in his sash. The 
+phalanx moves with measured tread toward the galley.
+
+Bastard, you think. You're a cruel, cold-gutted, heartless bastard but you've 
+got majesty, no doubt about that.
+
+[Congratulations, you have finished this scene with a score of 65 out of a 
+possible 65.]
+
+
+[Type any key to continue]
+Escape:
+Interlude
+
+The galley escapes from Osaka harbor, the rowers speeding it back towards 
+Anjiro and Toranaga's capital, Yedo, beyond.
+
+For your services to him, Lord Toranaga gives you a rare honor. He makes you a 
+hatamoto, a high rank of samurai. This is a position of a special retainer to 
+his personal staff. You have his absolute protection. In return, you are 
+instructed to learn Japanese, and train a regiment of troops in European 
+tactics and the use of muskets.
+
+But best of all, he says he will return the Erasmus to you, but he won't say 
+when.
+
+
+What now?CONTINUE to next scene 
+SAVE this game position 
+QUIT this session of the game 
+Earthquake:
+Plateau
+Score:310
+Moves:376
+You sit cross-legged in front of Toranaga, swords in his sash. Mariko is 
+explaining something to you. "War is coming," she says. "When?" you ask. "Very 
+soon, so you are to leave at once with me. I'm going to Osaka, you are to 
+accompany me part of the way, but you're going on to Yedo to prepare your ship 
+for war."
+
+Plateau
+This is a plateau on a hillside. Beyond are the rising foothills of mountains 
+that soar to a clouded sky. Below in the valley is the samurai camp. The day is
+sultry.
+
+You see Toranaga and Mariko here.
+
+Suddenly, the silence is colossal. Then the earth begins to shake and you are 
+tumbled to the ground.
+
+377
+>wait
+Time passes...
+
+You feel your lungs about to burst, and every fiber of your being screams in 
+panic. Toranaga and Mariko hold onto the ground with their hands and feet. The 
+rumbling, catastrophic roar comes from earth and sky, surrounding you, building
+and building.
+
+An avalanche of rocks starts from the mountain to the north and howls down into
+the valley below. Part of the samurai camp vanishes.
+
+Then the tremor stops.
+
+378
+>wait
+Time passes...
+
+Again the earth cries out. The second quake begins. The earth rips open at the 
+north end of the plateau. A gaping fissure rushes toward you at an incredible 
+speed.
+
+379
+>move
+Desperately you scramble away from the onrushing chasm, grabbing at the ground,
+forcing yourself to move, and it passes you by.
+
+Toranaga and Mariko teeter on the brink of the cleft. As though in a nightmare 
+you see Toranaga, nearest the maw, begin to topple into it.
+
+380
+>grab Toranaga
+You come out of your stupor and lunge forward. Your left hand grabs Toranaga's 
+sash.
+
+Mud and rocks pour down, dragging you and Toranaga into the fissure. You fight 
+for a handhold and foothold, almost pulled down into the abyss. Still partially
+stunned, Toranaga hacks his toes into the face of the wall and half-dragged, 
+half-carried by you, claws his way out. You both lay gasping on the ground.
+
+Suddenly, there is another shock.
+
+315
+381
+>grab Mariko
+Crawling as fast as you can, you try to reach her, but there's no chance.
+
+The earth splits again, opening a side fissure away from the main cleft. Mariko
+screams as it swallows her.
+
+382
+>down
+You let yourself slide down, mud and stones crumbling off of the wall and 
+almost blinding you. You reach the narrow ledge on which Mariko is standing.
+
+There is a new shock. The ledge you and Mariko are on mostly gives way, only a 
+few tiny holds remaining as the rest falls downward.
+
+383
+>boost Mariko
+Your terror lends you inhuman strength and somehow you manage to rip Mariko out
+of the tomb and shove her upward. Toranaga clutches her wrist and hauls her 
+over the lip of the chasm.
+
+The chasm howls and begins to close. The far wall screeches sickeningly as it 
+approaches. Mud and stones tumble off it.
+
+320
+384
+>up
+You tear yourself free of the mud and crumbling walls and grope half out of 
+your grave. You lie on the shuddering brink, your lungs gulping air, unable to 
+crawl away.
+
+The gap is closing.
+
+385
+>wait
+Time passes...
+
+The gap stops -- six paces across the mouth, eight deep.
+
+A bird screeches out of a tree and takes to the air screaming. In the grass an 
+ant moves.
+
+386
+>wait
+Time passes...
+
+Toranaga points to the fissure that almost swallowed him, now only a narrow 
+ditch. He belches loudly, then hawks and spits. A torrent of abuse pours over 
+the ditch, Mariko translating with increasing amusement: "The pox on the karma,
+the pox on the quake, the pox on the ditch -- I've lost my swords and the pox 
+on that too!"
+
+387
+>inventory
+You are empty-handed. You are wearing swords, a kimono, a pair of sandals and 
+socks.
+
+388
+>give swords to Toranaga
+You kneel in front of Toranaga and offer your sword as a sword should be 
+offered. "Dozo, Toranaga-sama," you say. He accepts the sword and shoves it 
+into his sash. "Domo, Anjin-san." He smiles, leans forward, and claps you once 
+on the shoulder, hard. "Tomo, neh?" Friend, eh?
+
+Toranaga rises, straddles the now narrow ditch, hitches up his kimono, and 
+attempts to urinate into it. Nothing comes, and he laughs, inviting you to join
+him.
+
+325
+389
+>pee in fissure
+Nothing comes, not even a dribble. You and Toranaga laugh at the sheer joy of 
+being alive, which blocks you even more. At length you both succeed. You relax 
+and collect your strength.
+
+You lay full length on the ground and look up at the sky. A moment ago you were
+all almost dead, and all worry and heartache was wasted. Karma, you understand 
+karma now.
+330
+[Congratulations, you have finished this scene with a score of 20 out of a 
+possible 20.]
+
+
+[Type any key to continue]
+Earthquake:
+Interlude
+
+At the Hour of the Goat the sentries on the bridge stand aside. The cortege 
+begins to cross. First are the heralds carrying banners bedecked with the 
+all-powerful cipher of the Regents, then the rich palanquin, and finally more 
+guards.
+
+Villagers bow. All are on their knees, secretly agog at such richness and pomp.
+
+Saigawa Zataki, Lord of Shinano and Toranaga's half brother, rides in the 
+palanquin.
+
+"Welcome, brother." Toranaga steps off the dais and bows. He wears the simplest
+of kimonos and soldier's straw sandals. And swords. "Please excuse me for 
+receiving you so informally, but I came as quickly as I could."
+
+Zataki gets out of the palanquin and bows in return, beginning the 
+interminable, meticulous formalities of the ceremonial that now rules both of 
+them.
+
+At length they are seated opposite each other on the dais, two swords lengths 
+apart. Mariko serves ceremonial cha. Then Zataki says brusquely, "I bring 
+orders from the Council of Regents."
+
+A sudden hush falls on the square. Everyone, even his own men, is aghast at 
+Zataki's lack of manners, at the insolent way he said 'orders' and not 
+'message,' and at his failure to wait for Toranaga to ask, "How can I be of 
+service?" as the ceremonial demanded.
+
+Zataki rips two small scrolls out of his sleeve. He breaks the seal on the 
+first scroll and reads, in a loud, chilling voice: "By order of the Council of 
+Regents, in the name of the Emperor: We greet our vassal Yoshi Toranaga and 
+invite him to make obeisance before us in Osaka forthwith, and invite him to 
+inform our ambassador, the Regent Saigawa Zataki, if our invitation is accepted
+or refused -- forthwith."
+
+He places the scroll in front of him. Toranaga signals to Buntaro, who bows low
+to Zataki, picks up the scroll, and brings it to Toranaga.
+
+Toranaga studies the scroll interminably.
+
+"Give me your answer now. You've no more time! Forthwith, the message said. Of 
+course you refuse to obey, good, so it's done. Here!" Zataki puts the second 
+scroll on the tatamis. "Here's your formal impeachment and order to commit 
+seppuku, which you'll treat with equal contempt! The next time we meet will be 
+on a battlefield!"
+
+"How can I prove I'm not trying to overthrow the heir?" Toranaga asks his 
+brother.
+
+"Immediately abdicate all your titles and power to your son and heir, Lord 
+Sudara, and commit seppuku today! Then I and all my men will support him as 
+Lord of the Kwanto!"
+
+"I'll consider what you've said."
+
+"Is this another of your tricks? Buntaro-san, give your master the second 
+scroll!"
+
+"No!" Toranaga's voice reverberates around the square. Then, with great 
+ceremony, he adds loudly, "I agree to go to Osaka and to submit to the will of 
+the Council." He bows formally.
+
+"You're going to submit?," Zataki begins, his face twisting with disbelief.
+
+"Listen! I accept the invitation! I will leave today!"
+
+
+What now?CONTINUE to next scene 
+SAVE this game position 
+QUIT this session of the game 
+Journey to Yedo:
+Bath House
+Score:330
+Moves:389
+Toranaga tells everyone he will head up the east road toward Atami and Odawara,
+thence over the mountains to Yedo. Mariko is given permission to go to Osaka. 
+"But first you'll go directly from here to Mishima, then continue on to Yedo 
+with the Anjin-san. You're responsible for him until you arrive."
+
+Buntaro turns to Mariko. "Sayonara -- until I see you at Osaka. When we meet 
+there or when you return from there, then we begin again."
+
+"Sayonara, my Lord." Mariko bows. He swings into his saddle and is off toward 
+the head of the column.
+
+"Go with God," she says, and you watch her eyes following Buntaro.
+
+The journey to Mishima takes nine days, and every night, for part of the night,
+you are together. Secretly. Your escort, Captain Akira Yoshinaka, unwittingly 
+makes it easier by placing you in adjoining rooms.
+
+Tonight the group arrives at Yokose Spa, road-weary and dirty from the journey.
+Everyone is anxious for a bath and a night's sleep -- or other relaxation.
+
+Bath House
+This is the bath house outside the inn at Yokose. The first floor of the inn is
+to the west.
+
+There is a towel here.
+
+You see Yoshinaka, Chimmoko and Mariko here. Mariko has a robe.
+
+Mariko removes her thick cotton bathing robe with the assistance of Chimmoko, 
+her maid.
+
+390
+>remove sandals
+You're no longer wearing the pair of sandals.
+
+"Come, Anjin-san, the water chills!" Mariko laughs.
+
+391
+>remove socks
+You're no longer wearing the socks.
+
+"Come, Anjin-san, the water chills!" Mariko laughs.
+
+392
+>remove kimono
+You're no longer wearing the kimono.
+
+"I chill as well, Anjin-san, the air is cold!" Mariko says.
+
+393
+>drop all
+kimono: Dropped.
+pair of sandals: Dropped.
+socks: Dropped.
+
+Mariko climbs into the tub and begins bathing.
+
+394
+>enter tub
+You soap yourself up and rinse off by pouring buckets of water over your head. 
+You never enter a bathtub dirty! Now you are ready for the hot soak that makes 
+a bath a true bath!
+
+Mariko begins to soap herself.
+
+395
+>enter tub
+You climb gingerly up and over the side of the tub, and ease yourself in. The 
+water is scalding!
+
+396
+>ask Mariko to wash me
+You begin soaping away the filth of the road, and Mariko moves over to soap 
+your back. People are watching all around the room, undisturbed by a public 
+exhibition that would lead to prison or worse in England.
+
+As the bath finishes and you climb out, you try to hide your anticipation of 
+the night -- your anticipation and your fear of discovery.
+
+
+
+Blackthorne's Room
+This is your room at the spa at Yokose. The corridor is outside, and Mariko's 
+room is next to yours, but accessible only from the corridor.
+
+There is a Japanese dictionary here.
+
+Journey to Yedo:
+Blackthorne's Room
+Score:335
+Moves:397
+>take dictionary
+Taken.
+
+398
+>examine dictionary
+This book is a Portuguese-Latin-Japanese dictionary and grammar. The printing 
+is the best you have ever seen, the quality and detail staggering. Father 
+Alvito gave it to you at Toranaga's 'request.'  "Three of our Brethren spent 
+twenty-seven years preparing that."
+
+399
+>east
+South of Corridor
+This is the corridor outside the rooms. It continues north and there are rooms 
+to the east and west.
+
+You see Yoshinaka here.
+
+You see Yoshinaka knock politely on a guest's door and then enter the room.
+
+Journey to Yedo:
+South of Corridor
+Score:335
+Moves:400
+>wait
+Time passes...
+
+You can hear Yoshinaka talking to a guest.
+
+401
+>wait
+Time passes...
+
+You can hear Yoshinaka talking to a guest.
+
+402
+>wait
+Time passes...
+
+You can hear Yoshinaka talking to a guest.
+
+403
+>north
+Middle of Corridor
+This is the corridor outside the rooms. It continues north and south and there 
+are rooms to the east and west.
+
+You see Yoshinaka emerge from a guest's room.
+
+Journey to Yedo:
+Middle of Corridor
+Score:335
+Moves:404
+>wait
+Time passes...
+
+Yoshinaka walks north up the corridor, joining you.
+
+405
+>wait
+Time passes...
+
+Yoshinaka walks north up the corridor.
+
+406
+>wait
+Time passes...
+
+You see Yoshinaka knock politely on Gyoko's door and then enter the room.
+
+407
+>wait
+Time passes...
+
+You can hear Yoshinaka talking to Gyoko.
+
+408
+>wait
+Time passes...
+
+You see Yoshinaka emerge from Gyoko's room.
+
+409
+>wait
+Time passes...
+
+Yoshinaka walks south down the corridor, joining you.
+
+410
+>wait
+Time passes...
+
+You see Yoshinaka knock politely on Mariko's door and then enter the room.
+
+411
+>wait
+Time passes...
+
+You can hear Yoshinaka talking to Mariko.
+
+412
+>wait
+Time passes...
+
+You can hear Yoshinaka talking to Mariko.
+
+413
+>wait
+Time passes...
+
+You can hear Yoshinaka talking to Mariko.
+
+414
+>wait
+Time passes...
+
+You see Yoshinaka emerge from Mariko's room.
+
+415
+>wait
+Time passes...
+
+Yoshinaka walks south down the corridor.
+
+416
+>wait
+Time passes...
+
+Yoshinaka enters your room, checking to make sure all is as it should be.
+
+417
+>wait
+Time passes...
+
+Thanks to the thin shoji-screen walls, which are almost transparent to sound, 
+you can tell that Yoshinaka is still in your room.
+
+418
+>wait
+Time passes...
+
+You see Yoshinaka emerge from your room.
+
+419
+>wait
+Time passes...
+
+Yoshinaka walks north up the corridor, joining you.
+
+420
+>wait
+Time passes...
+
+You see Yoshinaka knock politely on a guest's door and then enter the room.
+
+421
+>wait
+Time passes...
+
+You can hear Yoshinaka talking to a guest.
+
+422
+>wait
+Time passes...
+
+You can hear Yoshinaka talking to a guest.
+
+423
+>wait
+Time passes...
+
+You can hear Yoshinaka talking to a guest.
+
+424
+>wait
+Time passes...
+
+You see Yoshinaka emerge from a guest's room.
+
+425
+>wait
+Time passes...
+
+Yoshinaka walks north up the corridor.
+
+426
+>wait
+Time passes...
+
+Yoshinaka returns to his room, evidently finished with this round of 
+inspection.
+
+427
+>west
+As you enter the room, Chimmoko slips silently out.
+
+Mariko's Room
+This is a room at the spa at Yokose. The corridor is outside.
+
+You see Mariko here.
+
+Journey to Yedo:
+Mariko's Room
+Score:335
+Moves:428
+>screw Mariko
+"Thou! At long last I know what love means," she murmurs in Latin, the language
+of lovers. "I love thee, so I'm afraid for thee." she whispers. "I've destroyed
+thee, my love, by beginning. We're doomed now. I've destroyed thee -- that is 
+the truth."
+
+"No, Mariko, somehow something will happen to make everything right."
+
+"I should never have begun. The fault is mine."
+
+"Do not worry, I beg thee. Karma is karma."
+
+At length she is persuaded and melts into your arms.
+
+340
+429
+>east
+Middle of Corridor
+
+You see Chimmoko here.
+
+Yoshinaka seems to still be in his room.
+
+Journey to Yedo:
+Middle of Corridor
+Score:340
+Moves:430
+>south
+South of Corridor
+
+Yoshinaka seems to still be in his room.
+
+Journey to Yedo:
+South of Corridor
+Score:340
+Moves:431
+>west
+You return to the safety and loneliness of your own room, remembering Mariko's 
+answer when you asked "After Mishima, what then?"
+
+"There's a pass that curls up through the mountains. After that the road falls 
+away to the city of Odawara. From there to Yedo is only a matter of time."
+
+"How much time?"
+
+"Not enough," she answered.
+
+"You're wrong, my love, so sorry," you said. "There's all the time in the 
+world."
+Journey to Yedo:
+Blackthorne's Room
+Score:345
+Moves:431
+[Congratulations, you have finished this scene with a score of 15 out of a 
+possible 15.]
+
+
+[Type any key to continue]
+Journey to Yedo:
+Interlude
+
+You continue on to Yedo, Toranaga's capital. Toranaga has delayed his departure
+for Osaka for weeks, complaining of the weather one day, and the need for 
+careful preparation another. He tells Hiro-matsu, "I never intended to go to 
+Osaka. Ishido took the bait. With no real concession whatsoever I've gained a 
+month, put Ishido and his filthy allies in turmoil!"
+
+After several days of waiting, Mariko receives from Toranaga the travel 
+documents she needs to go to Osaka, and you are given money to hire additional 
+crew for the Erasmus in Nagasaki. The survivors of the Erasmus have found a 
+place for themselves among the eta of Yedo and except for Vinck, are useless as
+crew and unwilling to accommodate to Japanese ways.
+
+You, Vinck, Mariko, and Yabu board a galley for Osaka. When you arrive, you 
+find the elaborate preparations for Toranaga's visit underway.
+
+"Of course, the Council will have no objections if I check the arrangements?" 
+Yabu asks Prince Ogaki, an intermediary between the Council and the Emperor. 
+"The ceremony must be worthy of the Council and occasion!"
+
+"Worthy of His Imperial Majesty!" responds Ogaki. "It's his summons, now. Here 
+is your invitation to the ceremony."
+
+Yabu quails as he sees the Imperial seal. No one, not even Toranaga, could 
+refuse such a summons. Nineteen days! That's all the time that's left! Feeling 
+weak, Yabu hears Ogaki say, "Tomorrow you are invited to a formal reception by 
+Lord Ishido to honor the birthday of the Lady Ochiba."
+
+
+What now?CONTINUE to next scene 
+SAVE this game position 
+QUIT this session of the game 
+Ochiba:
+Reception Room
+Score:345
+Moves:431
+Your feet take you under the final portcullis and your escorts lead you up to 
+the huge door. Here they leave you alone. Desperate for any distraction from 
+the ordeal to come, you admire the camellia blossom Mariko took from a vase in 
+your quarters and gave to you. The flower is reassuring. Not everyone here in 
+Osaka is an enemy.
+
+You stand rigid for a moment, petrified with nervousness. What if you disgrace 
+yourself? What if you slip or your swords fall or your limited Japanese fails 
+you. You take a deep breath and walk forward into the flare-lit maw.
+
+Reception Room
+It is an immense, high-raftered room with a golden ornamented ceiling. 
+Gold-paneled columns support the rafters, which are made of rare and polished 
+woods. Five hundred samurai and their ladies are here, wearing all the colors 
+of the rainbow. To one side is a line of guests who wait to bow before the 
+raised platform at the far end.
+
+On the platform, alone, is the Lady Ochiba.
+
+Ishido, tall, lean and autocratic, stands beside the platform.
+
+The procession of guests creeps forward, each politely bowing to Ochiba and 
+greeting her on her birthday.
+
+432
+>examine swords
+You quickly check your sword belt. It's loose, almost ready to fall off! What a
+stroke of luck you checked it! How embarrassing if it had fallen off!
+
+Ochiba is looking at you, and then Ishido is looking at you, too. Soon all 
+conversation dies and everyone is watching you. The men and women ahead of you 
+in line melt away and suddenly no one is between you and the platform.
+
+350
+433
+>bow to Ochiba
+In front of the platform, you kneel and bow formally as you have seen the 
+others do, once to Ochiba and once to Ishido. You then stand and walk forward.
+
+434
+>give camellia to Ochiba
+"In my land we are ruled by a Queen. We have the custom to always give a Lady a
+birthday gift. Even a Queen. Please excuse if this is not good manners." She 
+looks at the flower. Five hundred people wait to see how she will respond to 
+your gallantry and daring.
+
+"I am not a Queen, Anjin-san, only the mother of the Heir and widow of the Lord
+Taiko. I cannot accept your gift as a Queen, but as a Lady on her birthday, 
+perhaps I may ask everyone's permission to accept the gift?"
+
+The room bursts into applause.
+
+"Please wait, Anjin-san," says Ochiba. You feel the extraordinary sensuality 
+that surrounds her, without conscious effort on her part. "It is said that you 
+speak our language?"
+
+355
+435
+>yes
+"Please excuse me, Highness. I have to use short words and respectfully ask you
+to use simple words with me."
+
+436
+>wait
+Time passes...
+
+Ishido rudely interrupts. "When we last met, you were a madman. I hope you 
+won't get mad tonight or any other night."
+
+437
+>wait
+Time passes...
+
+"Such madness is usual among you barbarians, neh?" He emphasizes the word 
+'barbarians.'  Such public rudeness to a guest is very bad. Lady Ochiba seems 
+surprised.
+
+438
+>I am a samurai
+"Ah, Lord General, you are right. Barbarians are often mad. But, so sorry, now 
+I am samurai -- hatamoto. I am no longer a barbarian!  Now I understand 
+manners, please excuse me. Neh?" You know that the Japanese understand 
+masculinity and pride, and honor them.
+
+Ishido laughs nervously. "So, samurai Anjin-san, yes, I accept your apology. I 
+apologize also."
+
+"Mariko-san, your pupil does you credit, neh?" calls out Ochiba. Mariko is 
+coming through the guests. "I have done little, Ochiba-sama. It's all the 
+Anjin-san's work and the word book that the Christian fathers gave him."
+
+360
+439
+>wait
+Time passes...
+
+Ochiba turns to Mariko. "Now, Mariko-san, we must talk about the poetry 
+competition! It will be held in two days, when Lord Toranaga leaves his own 
+borders to journey here. What's the theme to be? And the first line of the 
+poem?" Mariko is renowned as a poetess.
+
+Mariko thinks a moment. "It should be about today, Lady Ochiba, and the first 
+line: 'On a leafless branch.'"
+
+Ishido compliments her on her choice. "Excellent, but we'll have to be very 
+good to compete with you, Mariko-san!"
+
+440
+>wait
+Time passes...
+
+Mariko continues, "So sorry, Sire, but I will not be there. I'm leaving Osaka 
+tomorrow with the Lady Kiritsubo and the Lady Sazuko, to meet Lord Toranaga."
+
+"Nonsense!" replies Ishido. "He will be here so soon that to go to meet him 
+isn't necessary."
+
+"So sorry, Sire, but those are the orders of my liege Lord. I must leave 
+tomorrow. Am I confined here? And if so, on whose orders?"
+
+Ishido keeps his eyes riveted on her. "No, you are not confined."
+
+441
+>wait
+Time passes...
+
+Many of the ladies in the room turn to their neighbors, and some whisper openly
+what all those held against their will in Osaka are thinking: 'If she can go, 
+so can I, so can you! I'll leave tomorrow, too!'
+
+442
+>wait
+Time passes...
+
+Mariko makes a half-bow to the room and leaves. Yabu steps forward with you and
+the two of you follow her out, very conscious that you are the only samurai 
+present wearing Toranaga's uniform.
+
+[Congratulations, you have finished this scene with a score of 15 out of a 
+possible 15.]
+
+What now?CONTINUE to next scene 
+SAVE this game position 
+QUIT this session of the game 
+Departure:
+Forecourt
+Score:360
+Moves:442
+Mariko walks up the crowded sunlit avenue toward the gates in the cul-de-sac. 
+Behind her is a bodyguard of Browns. Unlike the Grays lining the avenue and 
+watching from the battlements, none have armor or carry bows. Swords are their 
+only weapons.
+
+Mariko gets into her palanquin and sits. "Yoshinaka-san! Please begin."
+
+Forecourt
+This is the forecourt of Toranaga's keep. To the south is the maze of paths and
+walls that makes up the rest of the castle. To the north, through an arched 
+gateway with a fortified gate, is a courtyard. The forecourt is crowded with 
+Grays, other samurai and their women.
+
+Mariko's litter is here, and through the open curtains you can see Mariko.
+
+You see Brown-uniformed samurai, Gray-uniformed samurai, Kiritsubo and Sazuko 
+here.
+
+Twenty Browns form up as a vanguard and move off. Porters pick up Mariko's 
+palanquin and follow the Browns, Kiri and Lady Sazuko close behind.
+
+When Mariko's palanquin comes into the sunlight, a Captain of Grays steps 
+forward, standing directly in her way. "May I see your papers?" he inquires.
+
+Mariko says formally, "We require none. I am Toda Mariko-noh-Buntaro and I have
+been ordered by my leige Lord, Lord Toranaga, to escort his ladies to meet him.
+Kindly let us pass."
+
+"My name is Yamazaki Danzenji, Captain of the Fourth Legion, and my line is as 
+ancient as your own, my Lady. Please excuse me, but my leige Lord, Lord Ishido,
+says no one may leave Osaka Castle without papers."
+
+"So sorry, Captain, but if you do not move out of the way I will order you 
+killed."
+
+443
+>wait
+Time passes...
+
+"You will not pass without papers!" the Gray Captain replies proudly. Mariko 
+nods sadly. "Please kill him," she orders quietly, and at once the battle is 
+joined. It is terrifyingly fair and formal, one Gray for each Brown and one for
+yourself.
+
+444
+>attack Yamazaki
+You draw your sword, and the Captain bows to you and does the same.
+
+The Captain leaps forward, his sword a whirling arc directed at your head!
+
+Each time a Gray falls, another calmly walks out of the waiting pack to join 
+his comrades in the killing. It is now eighteen Browns versus as many Grays.
+
+445
+>attack Yamazaki
+You interpose your blade, and there is a ringing, almost bell-like crash as 
+they meet. You slide your blade around and manage to wound him. He seems almost
+surprised.
+
+The Captain swings his sword, chopping viciously at your knees.
+
+Each time a Gray falls, another calmly walks out of the waiting pack to join 
+his comrades in the killing. It is now sixteen Browns versus as many Grays.
+
+446
+>attack Yamazaki
+Leaping and yelling, you charge him, and in an astonishing flurry he fights 
+back, executing a daring turn and riposte, but he's off balance and you slice 
+the back of his calf.
+
+The Captain charges at you, his sword pointed straight at your belly.
+
+Each time a Gray falls, another calmly walks out of the waiting pack to join 
+his comrades in the killing. It is now fifteen Browns versus as many Grays.
+
+447
+>attack Yamazaki
+You hold the blade before you, stabbing almost wildly with it, wondering why 
+his attack is so formal. You see an opening and plunge madly forward, wounding 
+him in the chest.
+
+The Captain screams "Yaemon!" and begins an overhand blow toward your head.
+
+Each time a Gray falls, another calmly walks out of the waiting pack to join 
+his comrades in the killing. It is now eleven Browns versus as many Grays.
+
+448
+>attack Yamazaki
+You swing, wishing for luck, for good karma, for a pistol, by God! He parries, 
+but the force of your blow is strong, and the tip manages to carve into his 
+wrist.
+
+The captain, slowed by pain and loss of blood, cannot even parry your next 
+stroke, which skewers him like a lamb. He stares at you silently for a moment, 
+then his eyes glaze and he falls to the ground, dead.
+
+Each time a Gray falls, another calmly walks out of the waiting pack to join 
+his comrades in the killing. It is now six Browns versus as many Grays.
+
+365
+449
+>wait
+Time passes...
+
+Each time a Gray falls, another calmly walks out of the waiting pack to join 
+his comrades in the killing. It is now five Browns versus as many Grays.
+
+450
+>wait
+Time passes...
+
+Each time a Gray falls, another calmly walks out of the waiting pack to join 
+his comrades in the killing. It is now four Browns versus as many Grays.
+
+451
+>wait
+Time passes...
+
+It is now one to one, the last Brown, blood-stained and wounded, already the 
+victor of four duels. The fresh Gray dispatches him easily and stands alone 
+among the bodies.
+
+Almost immediately, twenty more Browns run forward to form a new vanguard. From
+up ahead twenty more Grays move silently out from the hundreds that are 
+waiting.
+
+"Wait," Mariko orders. She steps out of her palanquin and picks up a sword, 
+unsheaths it, and walks forward alone. She approaches the officer. "You know 
+who I am. Please get out of my way."
+
+"I am Kojima Harutomo, Captain of the Sixth Legion. Please excuse me, you may 
+not pass, Lady."
+
+452
+>wait
+Time passes...
+
+Mariko darts forward but her blow is contained. The Gray stays on the defensive
+although he could kill her without effort.
+
+Again Mariko tries to bring the Gray to battle, but he slides away, allowing 
+her to exhaust herself. But he does this gravely, giving her every courtesy, 
+giving her the honor that is her due. She knows she cannot last much longer. 
+She sees how easy it would be for the massed Grays to cut them all off if they 
+wish and leave them stranded and helpless. She breaks off the fight.
+
+453
+>wait
+Time passes...
+
+Lord Ishido emerges from the crowd of Grays. "Lady Toda, the castle orders must
+be obeyed. But if you wish, I will call a meeting of the Regents and ask for a 
+ruling."
+
+Mariko turns to Ishido and bows. "My orders are clear. If I am not permitted to
+obey, I will not be able to live with that shame."
+
+454
+>wait
+Time passes...
+
+"These men have prevented me from doing my duty, from obeying my leige Lord. I 
+cannot live with this shame, Sire. Unless we are allowed to obey our leige 
+Lord, as is our right, I will commit seppuku at sunset!"
+
+She bows and walks toward the gateway. All in the avenue and all on the 
+battlements bow to her in homage. She goes into the garden, her footsteps 
+taking her to the secluded, rustic little tea house. She goes inside and, once 
+there, she weeps silently for all the men who have died.
+
+[Congratulations, you have finished this scene with a score of 5 out of a 
+possible 5.]
+
+
+[Type any key to continue]
+Departure:
+Interlude
+
+Ishido and his supporters meet in Kiyama's opulent, overrich quarters.
+
+"It's impossible, Lord General," Ochiba says. "You can't let a lady of her rank
+commit seppuku. So sorry, but you've been trapped. The hostages will have to be
+freed, and then there's nothing to stop Toranaga."
+
+"I agree," Lord Kiyama says forcefully.
+
+"With due humility, Lady," Ishido replies, "whatever I said or didn't say, 
+doesn't matter an eta's turd to her. She's already decided, at least Toranaga 
+has. We are at war, Toranaga's not yet in our hands, and until he's dead the 
+Heir is in total danger."
+
+He walks over to the window. "Suppose she's disarmed? Capture her! Confine her 
+until Toranaga's in our hands, then the hostages don't matter. In eighteen days
+Toranaga has to be here!"
+
+"You really think Lady Toda could be captured?" Kiyama says.
+
+"Yes," replies Ishido.
+
+
+What now?CONTINUE to next scene 
+SAVE this game position 
+QUIT this session of the game 
+Seppuku:
+Formal Garden
+Score:365
+Moves:454
+In a sudden hush, Mariko's maid Chimmoko comes out of the small gates to the 
+garden and walks over to you and bows. "Anjin-san, please excuse me, my 
+Mistress wishes to see you. I will escort you."
+
+You get up, still deep in your reverie and your overpowering sense of doom. The
+shadows are long now.
+
+Chimmoko goes over to Sumiyori. "Please excuse me, Captain, but my Lady asks 
+you to please prepare everything."
+
+"Where does she want it done?"
+
+The maid points to the space in front of the arch. "There, Sire."
+
+Sumiyori is startled. "It's to be in public? She's doing it for all to see? 
+But, well ... what about her second?"
+
+"She believes Lord Kiyama will honor her."
+
+"And if he doesn't?"
+
+"I don't know, Captain. She hasn't told me." Chimmoko bows and then goes back 
+to the gates and beckons you. The Grays begin to follow but Chimmoko shakes her
+head and says her mistress had not bidden them. They allow you to leave and you
+follow the servant into the garden.
+
+Formal Garden
+It is like a different world within the garden gates, verdant and serene, the 
+sun on the treetops, birds chattering and insects foraging, the brook falling 
+sweetly into the lily pond. A tiny thatch-roofed tea house is beside the garden
+gate. The courtyard of the keep, a world away, is to the east.
+
+You see Chimmoko here.
+
+Chimmoko points to the little cha-no-yu house.
+
+455
+>enter house
+You go forward alone. You slip your feet out of your thongs and walk up the 
+three steps. You have to stoop, almost to your knees, to go through the tiny 
+screened doorway.
+
+Tea House
+
+Mariko kneels here, facing the doorway.
+
+"Thou," Mariko says in Latin, the language of love.
+
+Seppuku:
+Tea House
+Score:365
+Moves:456
+>kiss Mariko
+You kiss her gently and tenderly.
+
+Chimmoko approaches. "It's time, Mistress."
+
+"Is everything ready?" Mariko asks.
+
+"Yes, Mistress."
+
+"Wait for me beside the lily pond." The footsteps go away. Mariko turns back to
+you and kisses you gently. She bows to you and goes through the doorway.
+
+457
+>out
+Formal Garden
+
+There are a pair of sandals here.
+
+You see Mariko and Chimmoko here.
+
+Mariko stops by the lily pond and undoes her obi and lets it fall. Chimmoko 
+helps her out of her blue kimono. Beneath it Mariko wears the most brilliant 
+white kimono and obi you have ever seen. It is a formal death kimono. She 
+unties the green ribbon from her hair and casts it aside.
+
+Seppuku:
+Formal Garden
+Score:365
+Moves:458
+>east
+Courtyard
+
+Clad completely in white, Mariko walks from the garden into the courtyard, 
+never looking at you.
+
+Seppuku:
+Courtyard
+Score:365
+Moves:459
+>south
+Forecourt
+
+You see Sumiyori, Kiritsubo, Yabu, Brown-uniformed samurai, Gray-uniformed 
+samurai and Sazuko here.
+
+Mariko walks to the gateway, where eight tatamis have been laid out in the 
+center of the main gate.
+
+Seppuku:
+Forecourt
+Score:365
+Moves:460
+>wait
+Time passes...
+
+At a sign from Sumiyori everyone bows. Mariko bows to them. Four samurai come 
+forward and spread a crimson coverlet over the tatamis.
+
+Mariko goes to the crimson square and kneels in the center, in front of the 
+tiny white cushion. Her right hand brings out her stiletto dagger from her 
+white obi and she places it on the cushion in front of her. Mariko arranges the
+skirts of her kimono perfectly, Chimmoko helping her, tying a small white 
+blanket around her waist with the cord. You know that this is to prevent her 
+skirts being blooded and disarranged by her death throes.
+
+461
+>wait
+Time passes...
+
+Serene and prepared, Mariko looks up at the castle donjon. Sun still dominates 
+the upper story, glittering off the golden tiles. Rapidly the flaming light 
+mounts the spire. Then it disappears.
+
+Servants are lighting flares along the avenue. When they finish, they flee as 
+quickly and silently as they arrived.
+
+Mariko reaches forward and straightens the knife. She looks through the gateway
+to the far end of the avenue. It is as still and as empty as it had ever been.
+
+462
+>wait
+Time passes...
+
+Mariko looks once again at the knife. She says "Kasigi Yabu-sama! It seems Lord
+Kiyama has declined to assist me. Please, I would be honored if you would be my
+second.
+
+"It is my honor," Yabu replies. He bows, gets to his feet, and stands behind 
+her to her left. His sword sings as it slides from its scabbard. "I am ready, 
+Lady," he says.
+
+"Please wait until I make the second cut."
+
+463
+>wait
+Time passes...
+
+With her right hand, Mariko makes the sign of the cross, then leans forward and
+takes the knife and touches it to her lips as though to taste the polished 
+steel. She changes her grip and holds the knife firmly with her right hand 
+under the left side of her throat.
+
+Suddenly flares round the far end of the avenue. A retinue approaches. Ishido 
+is at their head.
+
+Mariko does not move the knife. Yabu is as still as a coiled spring. "Lady," he
+says, "do you wait or are you continuing? I wish to be perfect for you."
+
+464
+>wait
+Time passes...
+
+"I wait ... we ... I" Her hand lowers the knife. Yabu lowers his sword and it 
+hisses back into his scabbard.
+
+Ishido stands at the gateway. "It's not sunset yet, Lady. Are you so keen to 
+die?"
+
+"No, Lord General. Just to obey my Lord ... " She holds her hands together to 
+stop their shaking. A rumble of anger goes through the Browns at Ishido's 
+arrogant rudeness.
+
+Ishido says loudly, "The Lady Ochiba begged the Regents on behalf of the Heir 
+to make an exception in your case. Here are permits for you to leave at dawn 
+tomorrow." He shoves them into the hands of Sumiyori.
+
+"Sire?" Mariko says, without understanding, her voice threadbare.
+
+"You are free to leave. At dawn," barks Ishido.
+
+"And Kiritsubo-san and the Lady Sazuko?"
+
+"Isn't that also part of your 'duty?'  Their permits are there also."
+
+Ishido addresses the others. "Any ladies may apply, any samurai. I've said 
+before, it's stupid to leave for seventeen days, it's insulting to flout the 
+Heir's welcome ..." -- his ruthless gaze goes back to Mariko -- "or to pressure
+them with threats of seppuku!"
+
+465
+>wait
+Time passes...
+
+Ishido turns on his heel, shouts an order to the Grays, and walks off.
+
+466
+>wait
+Time passes...
+
+Yabu turns to Mariko. "Lady, it's over now. You've ... you've won. You've won."
+
+Mariko tries to grope to her feet. She fails. She tries a second time. Again 
+she fails. Her hands go to the crimson again, and this time she forces herself 
+upright. She wavers and almost falls, then her feet move and slowly she totters
+across the crimson, reeling helplessly toward the main door.
+
+467
+>help Mariko
+You decide that she has endured enough, proved enough, so you come forward and 
+catch her in your arms as she falls, lift her up just as her mind leaves her. 
+For a moment you stand there alone, proud that you alone decided. She rests 
+like a broken doll in your arms. Then you carry her inside. No one moves or 
+bars your path.
+370
+[Congratulations, you have finished this scene with a score of 5 out of a 
+possible 5.]
+
+What now?CONTINUE to next scene 
+SAVE this game position 
+QUIT this session of the game 
+Ninja:
+Mariko's Quarters
+Score:370
+Moves:467
+It is early in the morning of the day after Mariko's confrontation, two or 
+three hours before dawn. After she woke, you and Mariko had an hour alone 
+together. "I still cannot believe that Ishido gave in," she said. "I knew it 
+was my karma to bring the hostages out of Osaka. Only I could do that for Lord 
+Toranaga. And now it's done. But at what a cost, neh? Madonna forgive me."
+
+Now you, Mariko, Kiri, Lady Etsu, and Achiko, the granddaughter of Kiyama, are 
+together in Mariko's quarters. You are still suspicious enough of Ishido's 
+intentions to be carrying your pistol.
+
+Mariko's Quarters
+These are Lady Mariko's private quarters. Shojis screen a private room to the 
+west, your room to the east, and an outer room which leads to a corridor on the
+south.
+
+You see Kiritsubo, Mariko and Achiko here.
+
+Chimmoko, Mariko's servant, enters and bows. "Lord Yabu wishes to speak with 
+the Anjin-san," she says. "He is waiting in the outer room."
+
+468
+>east
+Your Quarters
+This is a small room in which you are quartered.
+
+There are swords and a powder horn here.
+
+Ninja:
+Your Quarters
+Score:370
+Moves:469
+>take all
+swords: You take the sword and shove it into your sash.
+powder horn: Taken.
+
+470
+>west
+Mariko's Quarters
+
+You see Chimmoko, Kiritsubo, Mariko and Achiko here.
+
+Ninja:
+Mariko's Quarters
+Score:370
+Moves:471
+>south
+You open the inner shoji and go through.
+
+As you enter, you see Yabu waiting impatiently. Beyond him you see a guard 
+watching curiously.
+
+Outer Room
+This is a waiting room outside Mariko's quarters. There are shoji screens all 
+around. One opens north to the private rooms, and one south to the inner 
+corridor.
+
+Yabu sits impatiently, facing you.
+
+"So sorry to disturb you, Anjin-san. I just want see -- make sure all right, 
+understand? Lady Toda all right? Not sick?" Yabu seems nervous. You are 
+reminded that this afternoon Yabu said something about a "plan."
+
+Ninja:
+Outer Room
+Score:370
+Moves:472
+>ask Yabu about plan
+"So sorry, Anjin-san. You misunderstood. Say only must have plan. Very 
+difficult escape Osaka, neh? Understand?" Yabu appears somewhat nervous.
+
+Yabu says, trying to keep his words simple so you will understand, "Just want 
+make sure all right. Understand?"
+
+375
+473
+>yes
+"Very good, Anjin-san," Yabu replies, looking much relieved.
+
+Yabu bows, very friendly, and leaves. His manner seems very suspicious. The 
+guard closes the shoji behind him.
+
+474
+>follow Yabu
+You begin following Yabu, hoping he won't lose you.
+
+Inner Corridor
+This inner corridor is between the Audience Chamber to the west, and the inner 
+apartments of the keep to the north. A sturdy iron-barred door separates the 
+Audience Chamber and the corridor.
+
+Yabu is walking away from you.
+
+Yabu walks through the audience chamber, checking that the guards are alert.
+
+Ninja:
+Inner Corridor
+Score:375
+Moves:475
+>follow Yabu
+You follow warily behind him, keeping out of sight.
+
+Audience Chamber
+This is the immense audience room. The room is forty paces square and ten high,
+the tatami mats the best quality, four fingers thick and impeccable. Near the 
+dais, in a niche, is a small earthenware vase with a single spray of cherry 
+blossom and this fills the room with color and fragrance. Doors lead east and 
+west to the outer and inner corridors, respectively.
+
+Yabu is walking away from you.
+
+Guards on watch stand here and there about the room.
+
+You see a Gray Captain here.
+
+Yabu leaves the audience chamber for the outer corridor, heading for the main 
+stairway.
+
+Ninja:
+Audience Chamber
+Score:375
+Moves:476
+>follow Yabu
+You follow behind him, bowing to the guards but keeping far enough behind Yabu 
+that he doesn't know he's being followed.
+
+Outer Corridor
+This outer corridor is where those who are about to be granted audience with 
+Toranaga wait. The great Audience Chamber is to the east and stairs down to the
+lower part of the keep are to the west.
+
+Yabu is walking away from you.
+
+Yabu goes down the stairs.
+
+Ninja:
+Outer Corridor
+Score:375
+Moves:477
+>follow Yabu
+You follow him, letting him get one turn ahead of you on the stairs.
+
+Winding Stairs
+This is the main staircase leading from the tower to the cellars of Toranaga's 
+keep at Osaka.
+
+Yabu is walking away from you.
+
+Yabu goes down the steps and enters the servants' quarters. The servants drag 
+themselves out of sleep and put their heads to the flagstones.
+
+Ninja:
+Winding Stairs
+Score:375
+Moves:478
+>follow Yabu
+You slip silently into the servants' quarters, and they stare at you but don't 
+move. Yabu is heading towards a stairway leading down.
+
+Servants' Quarters
+This is a crowded, narrow room full of servants. Many of them are asleep. 
+Others are kneeling, head to flagstones. A stairway leads down to the cellars 
+from here.
+
+Yabu is walking away from you.
+
+Yabu leads the way deeper into the bowels of the fortress, down steps, along 
+little-used corridors. There are no guards here.
+
+Ninja:
+Servants' Quarters
+Score:375
+Moves:479
+>look
+Servants' Quarters
+This is a crowded, narrow room full of servants. Many of them are asleep. 
+Others are kneeling, head to flagstones. A stairway leads down to the cellars 
+from here.
+
+480
+>down
+Cellars
+These are the cellars of the fortress. The stone walls are damp and mildewed, 
+though well-lit. Crates, boxes and barrels are everywhere.
+
+Yabu looks nervously into the shadows.
+
+Yabu rushes for a hardly noticed, heavily barred, small iron door. He fights 
+back the rusted bolts. A draught of cool air from outside, then a spear stabs 
+for his throat and stops just in time. Sinister black shapes stare in from the 
+darkness beyond the door.
+
+"I'm Kasigi Yabu," he says, and makes a sign with his hands. Instantly twenty 
+black-clad men pour out of the dark and rush for a long-forgotten back way to 
+the floors above. Yabu watches them intently, sweat beading on his brow.
+
+Ninja:
+Cellars
+Score:380
+Moves:481
+>hide
+Quietly, you conceal yourself behind one of the piles, and watch.
+
+Yabu nervously watches more ninja pour into the cellar. As soon as they are 
+gone, he closes the door and slips away.
+
+As quickly and quietly as possible you return to the living quarters, fearing 
+that anyone you encounter may be in on the plot.
+
+Outer Room
+
+Ninja:
+Outer Room
+Score:385
+Moves:482
+>north
+Mariko's Quarters
+
+You see Chimmoko, Kiritsubo, Mariko and Achiko here.
+
+Kiri asks you a question which you don't understand. Mariko translates for her.
+"Did you ask Yabu about the 'plan'?"
+
+Ninja:
+Mariko's Quarters
+Score:385
+Moves:483
+>tell Mariko about Yabu
+"Yabu has betrayed us, then. When this is over, Lord Toranaga must be told!"
+
+484
+>south
+Outer Room
+
+Ninja:
+Outer Room
+Score:385
+Moves:485
+>south
+You open the outer shoji and go through.
+
+Inner Corridor
+
+Ninja:
+Inner Corridor
+Score:385
+Moves:486
+>west
+Audience Chamber
+
+Guards on watch stand here and there about the room.
+
+You see a Gray Captain here.
+
+Ninja:
+Audience Chamber
+Score:385
+Moves:487
+>wait
+Time passes...
+
+490
+>wait
+Time passes...
+
+Suddenly, the quiet is shattered by the cry "Ninja!"
+
+491
+>wait
+Time passes...
+
+From below come the sounds of battle being joined. Furious cries, screams, and 
+the clash of swords fill the air.
+
+492
+>wait
+Time passes...
+
+The sounds of battle continue, a violent shouting melee. The frantic guards at 
+the fortified door to the outer corridor listen anxiously to the mounting 
+holocaust below.
+
+493
+>wait
+Time passes...
+
+The women come into the Inner Corridor.
+
+The officers of the Browns and Grays order their men to take up defensive 
+positions at the far end of the corridor, no longer able to stand the waiting. 
+Only the captain of the Grays remains, beside the door to the inner corridor.
+
+494
+>wait
+Time passes...
+
+Mariko comes from the Inner Corridor into the room. The rest of the women 
+follow her, curious about the commotion, but huddled together in some fear.
+
+Now the captain of the Grays leaves the audience chamber.
+
+495
+>Mariko, follow me
+"I'll stay close by, Anjin-san." she replies.
+
+Suddenly, a secret door on the south side of the room bursts open, and a 
+black-clad figure charges through the door, directly at you! Behind him the 
+rest of his men are crowding into the opening.
+
+390
+496
+>shoot ninja
+The pistol goes off, and the back of the ninja leader's head disappears, 
+momentarily stopping the charge. The shot alerts the Captain of the Grays.
+
+The Captain of the Grays charges back into the Audience Chamber, attacking with
+mindless ferocity. He cuts down one ninja, then the pack falls on him and he 
+dies.
+
+The ninja near you seem wary of your pistol, expecting another shot.
+
+The women, save Mariko, flee the room and crowd into the Inner Corridor.
+
+395
+497
+>east
+Inner Corridor
+
+You see Kiritsubo, Lady Etsu, Achiko and Chimmoko here.
+
+The ninja seem quiet, perhaps they are afraid of your pistol.
+
+The women flee the room and crowd into the Outer Room.
+
+Mariko follows quickly after you.
+
+Ninja:
+Inner Corridor
+Score:395
+Moves:498
+>close inner door
+The iron-barred inner door is now closed.
+
+The ninja seem quiet, perhaps they are afraid of your pistol.
+
+499
+>lock inner door
+You slide the bar into place.
+
+500
+>north
+Outer Room
+
+The sounds of fighting redouble in intensity.
+
+You can hear the sound of the ninja tearing at the inner door.
+
+Mariko follows quickly after you.
+
+Ninja:
+Outer Room
+Score:395
+Moves:501
+>north
+Mariko's Quarters
+
+You see Kiritsubo, Lady Etsu, Achiko and Chimmoko here.
+
+Kiri pulls a section of shoji on the north wall aside, revealing a hidden 
+iron-fortified door set into the stone wall beyond. The hinges are well oiled. 
+"This is my Master's secret haven," she pants.
+
+Mariko follows quickly after you.
+
+Ninja:
+Mariko's Quarters
+Score:395
+Moves:502
+>north
+You open the secret door and go through.
+
+Secret Redoubt
+This is Lord Toranaga's secret bolt hole. An iron-bound door, well-oiled and 
+well-maintained, is on the south wall. There are three iron bolts on the door, 
+but none of them are latched now. On the north wall is the door to the balcony,
+its bolts rusty and not so well-maintained.
+
+The women pour out of Mariko's Quarters, fleeing the ninja.
+
+Mariko follows quickly after you.
+
+Ninja:
+Secret Redoubt
+Score:395
+Moves:503
+>close secret door
+The secret door is now closed.
+
+504
+>lock secret door
+You close the first bolt. Two bolts are open.
+
+505
+>lock secret door
+You close the second bolt. One bolt is open.
+
+506
+>lock secret door
+You close the third bolt. All the bolts are now closed.
+
+507
+>open balcony door
+The door won't open. The rusty top and bottom catches hold it securely closed.
+
+508
+>hit top catch with pistol
+You pound on the top catch with all your might, small flakes of rust falling 
+like snow, but it only gives a little.
+
+The sounds of the fighting are getting closer.
+
+509
+>hit top catch with pistol
+You smash again and again, and finally the top catch clatters open.
+
+You can hear shojis bursting to shards; the ninja are probably in the reception
+room!
+
+510
+>hit bottom catch with pistol
+You pound on the bottom catch with all your might, small flakes of rust falling
+like snow, but it only gives a little.
+
+You can hear the ninja ransacking the private apartments.
+
+511
+>hit bottom catch with pistol
+You smash again and again, and finally the bottom catch clatters open.
+
+The ninja gather outside the door, scraping at the hinges and the floor.
+
+512
+>open balcony door
+You throw the door open. Sweet night air rushes in, and the women pour onto the
+veranda. Old Lady Etsu stumbles and you help her through, then turn to help 
+Mariko.
+
+There is a sudden hammering and a harsh muffled voice from outside. Mariko 
+licks her dry lips. "He said to open the door and surrender or he'd -- he'd 
+blow it up."
+
+513
+>load pistol
+You begin the laborious task of loading the pistol.
+
+First the powder, tamping it carefully.
+
+The muffled voice becomes angrier and more demanding. Mariko translates, "He 
+said, if we open the door and surrender, everyone will go free except for you. 
+He said they want you as a hostage, Anjin-san."
+
+514
+>wait
+Time passes...
+
+You continue loading the pistol. Next the paper plug to hold the charge tight.
+
+A ferocious pounding on the door, iron clanging on iron, then the voice begins,
+a short violent crescendo. All sound outside ceases. "Get away from the door," 
+Mariko shouts, "He's going to explode the door!"
+
+515
+>wait
+Time passes...
+
+You continue loading the pistol. Next the lead ball and another plug.
+
+516
+>wait
+Time passes...
+
+You continue loading the pistol. Next, blow the dust carefully away from the 
+flint. Finished!
+
+517
+>wait
+Time passes...
+
+Mariko presses back against the iron and calls out firmly, "I, Toda Mariko, 
+protest this shameful attack and by my death --" The explosion blows you aside 
+as the door wrenches loose from its hinges and blasts into the room and shrieks
+off a far wall. The detonation knocks you off your feet. Smoke gushes into the 
+room, the ninja following instantly. The door comes to rest in a corner.
+
+519
+>wait
+Time passes...
+
+A ninja goes to his knees beside Mariko, seeing at once that she is broken and 
+dying fast.
+
+520
+>wait
+Time passes...
+
+The ninja leader signals the retreat, and the ninja melt away into the night.
+
+522
+>wait
+Time passes...
+
+Yabu comes into the room, his face ashen. He looks over, sees you are still 
+alive, and much of the anxiety leaves him. He looks at Mariko, rasps an order, 
+then rips off his kimono and covers her to the neck.
+
+523
+>wait
+Time passes...
+
+Your eyes clear for a moment and you see Yabu, his image twisting drunkenly, 
+then you see Mariko. You can't tell if she is alive or dead.
+
+524
+>get up
+You lurch up, Yabu helping you, and painfully approach Mariko.
+
+525
+>bless Mariko
+You make the sign of the cross over her and say the sacred Latin words that are
+necessary, though no sound comes from your mouth. The others watch you. When 
+you are done, you fight to your feet again and stand upright.
+
+Your head seems to burst with red and purple light and you collapse. Kind hands
+catch you and help you to the floor.
+400
+[Congratulations, you have finished this scene with a score of 30 out of a 
+possible 30.]
+
+
+[Type any key to continue]
+Ninja:
+Interlude
+
+On the balcony, Lady Etsu stands, supported by her maid. "I, Maeda Etsu," she 
+says, her voice frail, "attest that Toda Mariko-sama cast away her life to save
+herself from dishonorable capture, and that but for the barbarian samurai's 
+bravery Lady Toda would have been captured and dishonored. I accuse Lord 
+General Ishido of mounting this dishonorable attack. I ask you all to bear 
+witness that I can no longer live with this shame."
+
+She mounts painfully to the battlement. Everyone bows to her.
+
+"I have told the truth. I attest to it by my death," she says. Then she closes 
+her eyes thankfully and lets herself fall forward to welcome death.
+
+
+What now?CONTINUE to next scene 
+SAVE this game position 
+QUIT this session of the game 
+Yokohama:
+Yokohama
+Score:400
+Moves:525
+You recuperate for a few days, and then, to your surprise, your guards are 
+gone. You are taken down to the dock, where you are met by the Captain-General 
+of the Black Ship, Ferriera, and dell'Aqua, the Father-Visitor of the Jesuits.
+
+Dell'Aqua says, "Pilot, I'm taking you to your galley. Are you all right?"
+
+"You're really letting me go? Why?"
+
+"Because the Lady Mariko asked us to protect you."
+
+"But that's no reason! You wouldn't do that just because she asked you."
+
+"I agree," Ferriera says. "Eminence, why not tell him the whole truth?"
+
+"It doesn't make sense. You know I'm going to destroy you. I'll take your Black
+Ship."
+
+Ferriera laughs scornfully. "With what, Ingeles? You have no ship!"
+
+Yokohama
+This is the harbor at Yokohama, the best harbor you have ever seen, a beautiful
+protected anchorage. The burned hulk of the Erasmus lies in the shallows just 
+off the beach. All around you are the grisly remains of the heads of the guards
+who failed in their duty when the Erasmus burned, more than a hundred. Seabirds
+ravage and quarrel over the feast.
+
+Vinck is here.
+
+"You should never have left her to them, Pilot! What are we going to do now? 
+How are we going to get home? You should have left her at Yedo safe, an' us 
+safe, with our eters." The whine in Vinck's voice irritates you. Everything 
+about him irritates you now. Three times in the last week you have almost told 
+your vassals to knife Vinck quietly and throw him overboard to put him out of 
+his misery. But you always curbed your temper and sought out Yabu. Near Yabu, 
+Vinck made no sound, petrified of him, and rightly.
+
+526
+>examine Vinck
+Johann Vinck is forty-three, toothless and hairless; the oldest man in the 
+Erasmus' crew. You've sailed with him before, and each of you knows the measure
+of the other. If there's any man of the crew you could call a friend, it's he.
+
+"We're marooned with these piss eaters for the rest of our lives! Eh?"
+
+"We're to grovel to these God-cursed heathens for the rest of our muck-eating 
+lives and how long'll that be when all they talk about's war war war?"
+
+527
+>wait
+Time passes...
+
+"It's your fault! You said to come to the Japans and we come and how many died 
+coming here? You're to blame."
+
+"How're we going to get home? That's your God-cursed job, to get us home! How 
+you going to do that? Eh?"
+
+"Another of our ships'll get here, Johann. We've just got to wait," you reply.
+
+528
+>wait
+Time passes...
+
+"Wait? Five muck-plagued years? Twenty?" Vinck's mind snaps. "They're going to 
+chop off our heads and stick them like those there and the birds'll eat us ... 
+" A paroxysm of insane laughter shakes him and he reaches into his shirt for 
+his pistol. Vinck waves the pistol in your face.
+
+529
+>wait
+Time passes...
+
+Vinck takes to his heels down the beach, the seabirds scudding into the air, 
+mewing and cawing out of his path. Vinck runs for a frantic hundred paces or 
+more, then collapses, ending up on his back, his legs still moving, arms 
+waving, mouthing obscenities. After a moment he turns on his belly with a last 
+shriek, facing you, and freezes.
+
+530
+>help Vinck
+You close his eyes and pick him up and sling him over your shoulder and walk 
+back. Samurai run toward you, Naga and Yabu at their head.
+
+"What happened, Anjin-san?"
+
+"He went mad."
+405
+[Congratulations, you have finished this scene with a score of 5 out of a 
+possible 5.]
+
+What now?CONTINUE to next scene 
+SAVE this game position 
+QUIT this session of the game 
+Aftermath:
+Stable
+Score:405
+Moves:530
+Toranaga is checking the girths of his saddle. Deftly he knees the horse in the
+belly, her stomach muscles relax, and he tightens the strap another two 
+notches. Rotten animal, he thinks, despising horses for their constant 
+trickeries and treacheries and ill-tempered dangerousness. He waits a moment 
+and knees the horse hard again. The horse grunts and rattles her bridle and he 
+tightens the straps completely.
+
+"Good, Sire! Very good," the Hunt Master says with admiration. "Many would have
+been satisfied the first time."
+
+Stable
+This is the stable area of the camp at Anjiro.
+
+You see Toranaga, Hiro-matsu, Omi and Yabu here.
+
+"Listen, Anjin-san, before Mariko-sama left Yedo, she gave me this. Mariko-sama
+said if you live after Osaka -- if you live, understand -- she asked me to give
+this to you." Toranaga hands you a sealed scroll.
+
+531
+>open scroll
+The sealed scroll is now open.
+
+"Please read the message, Anjin-san."
+
+532
+>read scroll
+Mariko has written in Latin "Thou. I love thee. If this is read by thee then I 
+am dead in Osaka and perhaps, because of me, thy ship is dead too. I may 
+sacrifice this most prized part of thy life because of my Faith, to safeguard 
+my Church, but more to save thy life which is more precious to me than 
+everything -- even the interest of my Lord Toranaga. It may come to a choice, 
+my love: thee or thy ship. So sorry, but I choose life for thee. This ship is 
+doomed anyway -- with or without thee. I will concede thy ship to thine enemy 
+so that thou may live. This ship is nothing. Build another.  I believe Lord 
+Toranaga will give thee all the craftsmen and carpenters necessary. Build 
+another ship and build another life, my love. Forgive me -- but thy life is all
+important. I love thee."
+
+"What did the message say, Anjin-san?"
+
+410
+533
+>tell Toranaga about scroll
+"Mariko-sama say this ship is not necessary. Say build new ship. Say -- "
+
+"Ah! Possible? Possible? Anjin-san?"
+
+"Yes," you reply, "Yes!" And you think, by next year, a new ship, a ship like 
+her, trim and miniature like a Yoshitomo blade, and just as dangerous. Next 
+year she'll take the Black Ship, a prize twenty times her own weight, like 
+Mariko did at Osaka. "The Lady will be her name," you say aloud.
+
+Toranaga salutes you warmly, for the first time as an equal.
+
+Toranaga turns to the watchers. "So, Hiro-matsu-san, how's the training of the 
+musket regiment?"
+
+Hiro-matsu scowls. "I still think this is all dishonorable and unnecessary. 
+Soon we'll be able to forget it. We'll piss all over Ishido without this sort 
+of treachery."
+
+534
+>wait
+Time passes...
+
+Yabu says, "Please excuse me, but without these guns, we'll lose. This is a 
+modern war, this way we've a chance to win." He looks back at Toranaga. "I 
+heard in the night that Jikkyu's dead. My informant reports he died two days 
+ago. He's been sick for some time. Doesn't this open up the southern route? We 
+could slice into Ishido's underbelly!"
+
+"What did Jikkyu die of?" asks Toranaga.
+
+"Sickness, Sire."
+
+"A five-hundred-koku sickness?"
+
+Yabu laughs nervously, wondering how Toranaga could have breached his security 
+net. "Yes, I would assume so. Cheap, neh? Five hundred koku for the southern 
+route."
+
+Hiro-matsu says stiffly to Toranaga, "Please excuse me but I think that's a 
+disgusting story."
+
+"Treachery's a weapon of war. Jikkyu was an enemy and a fool. Yabu-sama has 
+served me well. Here and at Osaka. Neh, Yabu-san?"
+
+"I always try to serve you loyally, Sire."
+
+"Yes, it is true." Toranaga turns to you. "Isn't it true, Anjin-san, that Yabu 
+served me loyally at Osaka?"
+
+535
+>Yabu betrayed you
+"No, Toranaga-sama, Yabu was not loyal to you at Osaka," you reply. Yabu 
+starts, but Toranaga merely nods.
+
+Calmly and genially, Toranaga asks "What did Yabu do, then, to betray me?"
+
+536
+>Yabu let in the ninja
+"Yabu betrayed you, Sire. I followed him to the cellars of the keep where he 
+let in a force of ninja." Yabu is turning red with barely suppressed rage.
+
+Toranaga, steel in his voice, but still very quiet, asks "What did he say to 
+the ninja?"
+
+415
+537
+>I am Kasigi Yabu
+"He said to them, 'I am Kasigi Yabu,' and they poured through the door into the
+keep. I returned as fast as I could to protect Mariko, Kiritsubo and the rest, 
+knowing I would be killed if I tried to fight them there."
+
+"Thank you, Anjin-san. You have confirmed what was said by a servant who 
+survived the attack. I wanted the word of a samurai as well."
+
+"What am I accused of, Sire? Helping ninja? Ridiculous! What have the fantasies
+of servants and barbarians to do with me? They're liars!"
+
+"Yabu-sama, did you do these things?" Hiro-matsu asks.
+
+"Of course not!"
+
+Toranaga says, "But I think you did, so all your lands are forfeit. Please slit
+your belly today. Before noon. What arrangements do you want made?"
+
+"Just some paper and ink and a brush for my will and death poem, and two 
+tatamis -- there's no reason to hurt my knees or to kneel in the dirt like a 
+stinking peasant. Neh?" Yabu adds with bravado.
+
+Buntaro and a party of samurai warily lead Yabu away, looking from one to the 
+other with suppressed excitement.
+
+420
+538
+>wait
+Time passes...
+
+Just after noon, Omi returns and unwraps Yabu's head. "Lord Kasigi Yabu obeyed,
+Sire, just before noon." Toranaga inspects his enemy as he has done ten 
+thousand times before, wondering how his head would look after death, viewed by
+his conqueror, and whether terror would show, or agony or anger or horror or 
+all of them or none of them. Or dignity.
+
+539
+>wait
+Time passes...
+
+"Did he die well?"
+
+"The best I have ever seen, Sire." He pauses. "Do you wish me to bury it, or 
+display it?"
+
+"Put it on a spear, facing the wreck of the Anjin-san's ship."
+
+"Yes, Sire."
+
+"What was his death poem?"
+
+Omi says,
+	"'What are clouds
+	But an excuse for the sky?
+	What is life
+	But an escape from death?'"
+
+Toranaga smiles.
+
+[Congratulations, you have finished this scene with a score of 15 out of a 
+possible 15.]
+
+
+[Type any key to continue]
+Aftermath:
+Interlude
+
+Before long, you and a hundred samurai are working to raise the keel of the 
+Erasmus. One day, you notice Father Alvito standing on a dune overlooking the 
+beach. You join him.
+
+"You really believe you can float the hulk?" he asks. "No matter. It will all 
+be a waste, all that labor."
+
+"There'll be another 'Act of God?'  Another sabotage? Then I'll build another, 
+and if that fails, another. I'll get back to England and then I'm coming back, 
+with a privateer!"
+
+"Yes. I know. That's why you will never leave. You know too much, Anjin-san. 
+You're a fine adversary, one to respect. Surely we can have a truce, and make 
+peace. I ask it because of Mariko-sama."
+
+"I'll offer you a truce, not peace. In her memory."
+
+
+What now?CONTINUE to next scene 
+SAVE this game position 
+QUIT this session of the game 
+Epilogue:
+Sekigahara
+Score:420
+Moves:539
+Sekigahara
+That year, at dawn on the twenty-first day of the tenth month, the Month 
+without Gods, the main armies clashed. It was in the mountains near Sekigahara,
+astride the North Road, the weather foul -- fog, then sleet. By late afternoon 
+Toranaga had won the battle and the slaughter began. Forty thousand heads were 
+taken.
+
+Three days later Ishido was captured alive and Toranaga genially reminded him 
+of the prophecy and sent him in chains to Osaka for public viewing, ordering 
+the eta to plant the General Lord Ishido's feet firm in the earth, with only 
+his head outside the earth, and to invite passersby to saw at the most famous 
+neck in the realm with a bamboo saw. Ishido lingered three days and died very 
+old.
+
+[Type any key to continue]
+Your score is 0 of a possible 0 in this scene, and 420 out of 420 overall, in 
+539 moves. You have now achieved a rank of Shogun.
+
+What now?RESTORE a saved game position 
+RESTART the game from the beginning 
+QUIT this session of the game 
+HINT for something confusing 

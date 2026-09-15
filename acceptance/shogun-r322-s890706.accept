@@ -1,0 +1,679 @@
+! SEED=24
+! GAME=../entharion/zcode-infocom/shogun-r322-s890706.z6
+
+start
+>
+
+straighten the wheel
+lash the wheel
+specz, take the wheel
+down
+fore
+examine the crew
+vinck, go on deck
+ginsel, go on deck
+maetsukker, go on deck
+grab maetsukker
+aft
+aft
+port
+examine the desk
+open the desk
+take the quill and the key
+unlock the chest with the key
+open it
+take my rutter
+read it
+write in it
+put my rutter and the quill in the chest
+close the chest
+lock it with the key
+starboard
+starboard
+ask roper about my apple
+examine roper
+take my apple
+port
+eat the apple
+aft
+examine the desk
+open the desk
+take the flagon
+give water to the captain
+fore
+fore
+up
+unlash the wheel
+
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+
+turn the wheel to port
+straighten the wheel
+
+wait
+wait
+wait
+wait
+wait
+
+ring the bell
+wait
+raise the foresails
+wait
+wait
+wait
+wait
+
+turn the wheel to starboard
+turn the wheel to port
+turn the wheel to port
+straighten the wheel
+turn the wheel to starboard
+vinck, help me
+straighten the wheel
+
+wait
+wait
+wait
+wait
+wait
+turn the wheel to port
+
+# Each scene ends at the game's own menu, where a bare > takes the
+# bolded CONTINUE, or at a "[Type any key to continue]" pause, which a
+# bare > also answers. The scene menus read a key, not a line.
+
+# The Erasmus: through the pass into the bay, 55 of 55.
+>
+
+# Anjiro. Mura's wife brings food; pointing at the tray asks for more.
+# Boots on, then east to the village, where the priest's men grab you
+# on the third turn: a punch, and Omi's arrival. English, Holland, and
+# yes for the questions; a bow to Omi. The boat out to the Erasmus,
+# and the guards turn you away from your rutters, which ends the
+# scene at 20 of 20.
+eat food
+examine crucifix
+point to tray
+wait
+eat food
+wear clothes
+open door
+east
+wear boots
+east
+wait
+wait
+wait
+hit men
+wait
+wait
+wait
+English
+Holland
+yes
+bow to Omi
+east
+enter boat
+take oar
+row east
+row east
+up
+aft
+
+>
+
+# Yabu in the village square: name, port, calling, and the passage;
+# then the priest's crucifix, snatched and broken, and a bow. 10 of 10.
+John Blackthorne
+Holland
+Pilot
+Straits of Magellan
+grab crucifix
+break crucifix
+bow to Yabu
+
+>
+
+# The pit. Yelling brings the fish offal; Omi's terms; and the straws,
+# where on this seed Blackthorne draws the short one, so the wait is
+# his own. The samurai come down, Pieterzoon is taken, and the
+# unconscious one is drowned by morning. Up to Omi: hai, lie down, and
+# the bath house, where everything comes off before the tub. 25 of 25.
+yell
+examine Omi
+wait
+take straw
+wait
+wait
+attack samurai
+attack samurai
+wait
+kill samurai
+up
+hai
+lie down
+get up
+north
+remove boots
+remove clothes
+drop all
+enter tub
+wash
+
+>
+>
+
+# Rodrigues. Two waits bring him down the gangway; yes, Trinity House,
+# and the Lizard's latitude make him a friend. The boat to the
+# Erasmus, the archer watched and reported, and the cabin. 20 of 20.
+examine Yabu
+east
+wait
+wait
+yes
+Trinity House
+50 degrees north
+tell Rodrigues about Erasmus
+enter boat
+examine archer
+examine archer
+tell Rodrigues about archer
+up
+wait
+aft
+port
+
+>
+>
+
+# The voyage to Osaka. The storm: the lifeline off, forward to the oar
+# deck, the gunwale caught, the oars shipped and the rowing restarted.
+# The helm, starboard for the bay against Rodrigues's nerve, and the
+# wave that takes him; the oar goes to him. Anchor and skiff, three
+# tries to board it, ashore and along the cliff path to Rodrigues,
+# Yabu's climb, the kimono rope lengthened with loincloths, and the
+# ledge that saves them both. 55 of 55.
+examine Rodrigues
+untie line
+fore
+grab gunwale
+ship oars
+row
+aft
+take helm
+straighten helm
+turn helm to starboard
+straighten helm
+take oar
+take ring
+throw oar to Rodrigues
+wait
+fore
+lower anchor
+lower skiff
+enter skiff
+enter skiff
+enter skiff
+row east
+exit skiff
+south
+south
+south
+north
+look down
+point to Rodrigues
+down
+wait
+wait
+wait
+wait
+take kimono
+tear kimono
+tie strips together
+lower rope
+point to loincloths
+search for ledge
+point to ledge
+wait
+wait
+
+>
+>
+
+# Toranaga. A bow but no kneeling, a seat, a look at the lord and at
+# Hiro-matsu, Latin from Alvito, and "teki" pointed at him. The door
+# is named in full when the noise comes, and Ishido is looked at
+# before the cell. 15 of 15.
+bow
+sit down
+examine Toranaga
+examine Hiro-Matsu
+tell Alvito to speak Latin
+point to Alvito
+teki
+examine Alvito
+move away from outer door
+examine Ishido
+
+>
+>
+
+# Prison. The thug and his three blows, the gruel from the bulldog
+# man, and Friar Domingo: Spanish, his story, and the lessons. Ten
+# waits pass the days to the courtyard; into the line, the clean
+# clothes, the ambush in the woods, west, duck, and Yabu's palanquin.
+# 30 of 30.
+examine apelike man
+attack man
+attack man
+attack man
+take gruel
+bow to bulldog-like man
+eat gruel
+wait
+examine old priest
+speak Spanish to priest
+ask priest about himself
+ask priest to teach me Japanese
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+get in line
+wait
+wear clothes
+wait
+wait
+wait
+wait
+west
+duck
+wait
+enter palanquin
+
+>
+>
+
+# Mariko. The greeting is typed as its own line; then Domingo, a look
+# at her, a smile for the Heir, Ishido's news over three waits, and
+# the prophecy. 15 of 15.
+konnichi wa
+tell Mariko about Domingo
+examine Mariko
+smile at Yaemon
+wait
+wait
+wait
+ask Mariko about prediction
+
+>
+>
+
+# The escape. Kiri in the tea house, sandals, and the wait by the
+# gate; two moves south to the last portcullis, where Ishido's
+# parchment is grabbed and thrust through the curtains and singing
+# three times sees the madman through. Out over the bridge, into
+# Mariko's litter, and east into the city.
+west
+enter tea house
+examine Kiri
+exit
+wear sandals
+east
+wait
+examine Kiri
+wait
+south
+south
+wait
+wait
+act crazy
+take parchment
+give parchment to Kiri
+sing
+sing
+sing
+south
+south
+south
+get up
+enter litter
+east
+
+>
+
+# The streets of Osaka are a maze the game builds on entry, drawn on
+# a picture the stream cannot show, and a step runs along an alley to
+# its next junction. This route was found by searching every turning
+# under the seed. The arrows come partway along it; the ambush is
+# handled where it falls (out of the litter, Mariko under cover, the
+# messenger knocked down twice before Buntaro kills him, and a key
+# for the pause), and the way goes on past the fish gate, where the
+# ronin join, to the warehouse by the dock.
+south
+east
+north
+east
+north
+west
+north
+west
+south
+east
+south
+east
+north
+east
+north
+east
+south
+east
+north
+east
+south
+east
+north
+west
+north
+east
+north
+east
+north
+exit litter
+grab Mariko
+wait
+wait
+get up
+attack man
+attack man
+wait
+wait
+>
+west
+north
+west
+south
+west
+north
+west
+south
+west
+north
+west
+north
+east
+north
+east
+south
+east
+south
+west
+south
+east
+south
+west
+south
+east
+north
+east
+north
+east
+south
+east
+south
+east
+
+
+# The wharf: yes to the plan, up the gangway, yes to the ship, and
+# Mariko's faint. Water is "mizu". The large knife takes the Gray
+# leader, a duck, the knife back, and the second throw for Mariko's
+# attacker. 65 of 65.
+yes
+east
+east
+yes
+help Mariko
+mizu
+inventory
+throw knife at man
+duck
+take knife
+throw knife at Gray
+get up
+
+>
+>
+
+# The earthquake: two waits, move, Toranaga by the sash, Mariko lost
+# to the side fissure, down to her ledge, boost her up, up, and the
+# swords offered when Toranaga mourns his own. 20 of 20.
+wait
+wait
+move
+grab Toranaga
+grab Mariko
+down
+boost Mariko
+up
+wait
+wait
+inventory
+give swords to Toranaga
+pee in fissure
+
+>
+>
+
+# The road to Yedo. The bath at Yokose, twice into the tub with Mariko
+# soaping your back, the dictionary, and the corridor. Yoshinaka's
+# rounds are the danger: while Blackthorne is in Mariko's room, any
+# step of his from a corridor into a room is fatal, and so is
+# opening the door with him in the middle corridor. His rest in his
+# own room, ten turns long, comes twenty-three waits after reaching
+# the middle of the corridor, and the visit fits inside it. 15 of 15.
+remove sandals
+remove socks
+remove kimono
+drop all
+enter tub
+enter tub
+ask Mariko to wash me
+take dictionary
+examine dictionary
+east
+wait
+wait
+wait
+north
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+west
+screw Mariko
+east
+south
+west
+
+>
+>
+
+# Ochiba's birthday: the sword belt checked, the bow, the camellia,
+# yes to the question, two waits for Ishido's rudeness, "I am a
+# samurai", and four waits to the end. 15 of 15.
+examine swords
+bow to Ochiba
+give camellia to Ochiba
+yes
+wait
+wait
+I am a samurai
+wait
+wait
+wait
+wait
+
+>
+
+# The departure: the Gray captain falls to the fifth blow, and the
+# duels play out over six waits to Mariko's vow. 5 of 5.
+wait
+attack Yamazaki
+attack Yamazaki
+attack Yamazaki
+attack Yamazaki
+attack Yamazaki
+wait
+wait
+wait
+wait
+wait
+wait
+
+>
+>
+
+# Seppuku. The tea house, a kiss, out, east and south to the gateway,
+# and seven waits through Ishido's permits until she totters; then
+# the catch. 5 of 5.
+enter house
+kiss Mariko
+out
+east
+south
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+help Mariko
+
+>
+
+# Ninja. The pistol from the next room, Yabu's evasions, and five
+# turns of following him down to the cellars, where hiding shows the
+# ninja let in. Back up to warn Mariko, then west to the audience
+# chamber: six waits bring her in, she follows, the leader is shot,
+# and the inner door is closed and barred behind her. Three norths
+# reach the redoubt Kiri reveals; three bolts, the rusty catches
+# beaten open, the balcony door, and the pistol reloaded over four
+# waits. The door blows; four more waits until Yabu comes, then up,
+# and the blessing. 30 of 30.
+east
+take all
+west
+south
+ask Yabu about plan
+yes
+follow Yabu
+follow Yabu
+follow Yabu
+follow Yabu
+follow Yabu
+look
+down
+hide
+north
+tell Mariko about Yabu
+south
+south
+west
+wait
+wait
+wait
+wait
+wait
+wait
+Mariko, follow me
+shoot ninja
+east
+close inner door
+lock inner door
+north
+north
+north
+close secret door
+lock secret door
+lock secret door
+lock secret door
+open balcony door
+hit top catch with pistol
+hit top catch with pistol
+hit bottom catch with pistol
+hit bottom catch with pistol
+open balcony door
+load pistol
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+get up
+bless Mariko
+
+>
+>
+
+# Yokohama: Vinck, three waits, and the body carried back. 5 of 5.
+# The aftermath: Mariko's scroll, the new ship, and the three answers
+# that condemn Yabu; two waits for his head. 15 of 15, 420 in all.
+# The epilogue is read with two keys, and the script ends at the
+# game's closing menu, rank of Shogun, without choosing from it.
+examine Vinck
+wait
+wait
+wait
+help Vinck
+
+>
+
+open scroll
+read scroll
+tell Toranaga about scroll
+wait
+Yabu betrayed you
+Yabu let in the ninja
+I am Kasigi Yabu
+wait
+wait
+
+>
+>
+>
