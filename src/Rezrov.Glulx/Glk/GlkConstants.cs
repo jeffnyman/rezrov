@@ -181,3 +181,61 @@ public enum EventType : uint
     Hyperlink = 8,
     VolumeNotify = 9,
 }
+
+/// <summary>
+/// [glk op:image_draw_scaled_ext] How a drawn picture is sized: a width
+/// rule and a height rule, combined with or.
+/// </summary>
+/// <remarks>
+/// The width is settled first and the height after it, since
+/// <see cref="AspectRatio"/> measures the height against the width
+/// that was arrived at.
+///
+/// The header's imagerule_WidthMask and imagerule_HeightMask are not
+/// members here: their values are the same as WidthRatio and
+/// AspectRatio, the largest of each set, and an enum cannot name a
+/// value twice. The masks are applied where the rules are read.
+/// </remarks>
+[Flags]
+public enum ImageRule : uint
+{
+    /// <summary>The picture's own width; the argument is ignored.</summary>
+    WidthOrig = 0x01,
+
+    /// <summary>The width given, in pixels.</summary>
+    WidthFixed = 0x02,
+
+    /// <summary>
+    /// The width as a fraction of the window's, the argument being a
+    /// fixed-point fraction where 0x10000 is the whole width.
+    /// </summary>
+    WidthRatio = 0x03,
+
+    /// <summary>
+    /// The picture's own height; the argument is ignored.
+    /// </summary>
+    HeightOrig = 0x04,
+
+    /// <summary>The height given, in pixels.</summary>
+    HeightFixed = 0x08,
+
+    /// <summary>
+    /// The height as a fraction of the picture's own shape, the
+    /// argument being a fixed-point fraction where 0x10000 keeps the
+    /// picture's proportions.
+    /// </summary>
+    AspectRatio = 0x0C,
+}
+
+/// <summary>
+/// [glk #graphics_textbuf] Where a picture drawn in a text buffer sits
+/// in the run of text.
+/// </summary>
+public enum ImageAlign : uint
+{
+    InlineUp = 0x01,
+    InlineDown = 0x02,
+    InlineCenter = 0x03,
+    MarginLeft = 0x04,
+    MarginRight = 0x05,
+}

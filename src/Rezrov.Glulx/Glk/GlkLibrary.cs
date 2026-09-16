@@ -202,8 +202,9 @@ public sealed partial class GlkLibrary
             case 0x0025: // window_get_size
                 if (Window(call, 0) is { } measured)
                 {
-                    call.Out(1, (uint)measured.Width);
-                    call.Out(2, (uint)measured.Height);
+                    var reported = measured.ReportedSize;
+                    call.Out(1, (uint)reported.Width);
+                    call.Out(2, (uint)reported.Height);
                 }
 
                 break;
@@ -634,8 +635,11 @@ public sealed partial class GlkLibrary
                 break;
 
             case 0x00E8: // window_flow_break
-                // [glk #graphics_textbuf] A hint about where a margin
-                // image ends, which a display with no images ignores.
+                if (Window(call, 0) is { } flowed)
+                {
+                    FlowBreak(flowed);
+                }
+
                 break;
             case 0x0100: // set_hyperlink
                 SetHyperlink(CurrentStream, call.Arg(0));
@@ -645,23 +649,55 @@ public sealed partial class GlkLibrary
                 break;
 
             case 0x00E0: // image_get_info
+                if (ImageInfo(call.Arg(0)) is { } measurement)
+                {
+                    call.Out(1, (uint)measurement.Width);
+                    call.Out(2, (uint)measurement.Height);
+                    call.Result = 1;
+                }
+                else
+                {
+                    call.Result = 0;
+                }
+
+                break;
             case 0x00E1: // image_draw
+                // [glk op:image_draw_scaled_ext] The plain draw is the
+                // picture's own size, bounded by the window's width.
+                call.Result = Window(call, 0) is { } drawn
+                    && DrawImage(drawn, call.Arg(1), (int)call.Arg(2), (int)call.Arg(3), ImageRule.WidthOrig | ImageRule.HeightOrig, 0, 0, Whole)
+                    ? 1u : 0u;
+                break;
             case 0x00E2: // image_draw_scaled
+                call.Result = Window(call, 0) is { } scaled
+                    && DrawImage(scaled, call.Arg(1), (int)call.Arg(2), (int)call.Arg(3), ImageRule.WidthFixed | ImageRule.HeightFixed, call.Arg(4), call.Arg(5), Whole)
+                    ? 1u : 0u;
+                break;
             case 0x00EC: // image_draw_scaled_ext
-                // [glk #graphics_testing] gestalt_Graphics answers zero,
-                // which tells a game not to call these. Several call
-                // them at startup anyway, so they are answered the way
-                // a text-only library answers: nothing drawn, a false
-                // result, and a note of it, rather than a stop.
-                Warn($"{call.Function.Name}: graphics are not supported.");
-                call.Result = 0;
+                call.Result = Window(call, 0) is { } ruled
+                    && DrawImage(ruled, call.Arg(1), (int)call.Arg(2), (int)call.Arg(3), (ImageRule)call.Arg(6), call.Arg(4), call.Arg(5), call.Arg(7))
+                    ? 1u : 0u;
                 break;
             case 0x00E9: // window_erase_rect
+                if (Window(call, 0) is { } erased)
+                {
+                    EraseRect(erased, (int)call.Arg(1), (int)call.Arg(2), call.Arg(3), call.Arg(4));
+                }
+
+                break;
             case 0x00EA: // window_fill_rect
+                if (Window(call, 0) is { } painted)
+                {
+                    FillRect(painted, call.Arg(1), (int)call.Arg(2), (int)call.Arg(3), call.Arg(4), call.Arg(5));
+                }
+
+                break;
             case 0x00EB: // window_set_background_color
-                // [glk #graphics_graphics] The same for painting a
-                // graphics window, of which there are none to paint.
-                Warn($"{call.Function.Name}: graphics are not supported.");
+                if (Window(call, 0) is { } colored)
+                {
+                    SetBackgroundColor(colored, call.Arg(1));
+                }
+
                 break;
 
             case 0x0120: // buffer_to_lower_case_uni
@@ -763,6 +799,30 @@ public sealed partial class GlkLibrary
                 // [glk #mouse_events] Which kinds of window a click can
                 // be reported in is the display's to say.
                 return _display.CanReportMouse((WindowType)value) ? 1u : 0u;
+
+            case GestaltSelector.Graphics:
+                // [glk #graphics_testing] The whole suite, which stands
+                // or falls with the display being able to show a
+                // picture somewhere.
+                return CanDrawImages ? 1u : 0u;
+
+            case GestaltSelector.DrawImage:
+            case GestaltSelector.DrawImageScale:
+                // [glk #graphics_testing] Asked of one kind of window at
+                // a time, since a library may show pictures in one and
+                // not the other. Everything that can draw at all can
+                // draw at a size, so both selectors answer alike.
+                return _display.CanDrawImages((WindowType)value) ? 1u : 0u;
+
+            case GestaltSelector.GraphicsTransparency:
+                // [glk #graphics_testing] A picture's alpha is honored
+                // rather than ignored, wherever it can be drawn.
+                return CanDrawImages ? 1u : 0u;
+
+            case GestaltSelector.GraphicsCharInput:
+                // [glk #window_graphics] A graphics window takes keys,
+                // as long as there can be one.
+                return _display.CanDrawImages(WindowType.Graphics) ? 1u : 0u;
 
             case GestaltSelector.Hyperlinks:
                 // [glk #link_testing] The four functions are all here,
@@ -1020,10 +1080,16 @@ public sealed partial class GlkLibrary
             case WindowType.TextGrid:
                 return new TextGridWindow(rock);
             case WindowType.Graphics:
-                // [glk #graphics_testing] Not supported, as gestalt says,
-                // so the open fails as the specification allows.
-                Warn("window_open: graphics windows are not supported.");
-                return null;
+                if (!_display.CanDrawImages(WindowType.Graphics))
+                {
+                    // [glk #graphics_testing] A display that cannot show
+                    // pictures gets no graphics window, which is what
+                    // gestalt_Graphics answering zero promised.
+                    Warn("window_open: graphics windows are not supported.");
+                    return null;
+                }
+
+                return new GraphicsWindow(rock, _display);
             default:
                 Warn($"window_open: unknown window type {(uint)type}.");
                 return null;
@@ -1057,7 +1123,7 @@ public sealed partial class GlkLibrary
         Windows.Remove(window);
     }
 
-    private static void Layout(GlkWindow window, int left, int top, int width, int height)
+    private void Layout(GlkWindow window, int left, int top, int width, int height)
     {
         window.Place(left, top);
         if (window is not PairWindow pair)
@@ -1075,7 +1141,15 @@ public sealed partial class GlkLibrary
         int sized;
         if (pair.Division == WindowMethod.Fixed)
         {
-            sized = pair.Key is { HasSize: true } ? (int)Math.Min(pair.Size, int.MaxValue) : 0;
+            sized = pair.Key switch
+            {
+                // [glk #window_graphics] A graphics window's units are
+                // pixels, so a fixed size given in them is as many whole
+                // cells as it takes to hold them.
+                GraphicsWindow => Cells(pair.Size, pair.IsVertical ? _display.CellHeight : _display.CellWidth),
+                { HasSize: true } => (int)Math.Min(pair.Size, int.MaxValue),
+                _ => 0,
+            };
         }
         else
         {
@@ -1099,6 +1173,12 @@ public sealed partial class GlkLibrary
             Layout(pair.Second, left + first, top, width - first, height);
         }
     }
+
+    /// <summary>
+    /// How many whole character cells hold a size given in pixels.
+    /// </summary>
+    private static int Cells(uint pixels, int cell) =>
+        cell <= 1 ? (int)Math.Min(pixels, int.MaxValue) : (int)Math.Min((pixels + (uint)cell - 1) / (uint)cell, int.MaxValue);
 
     // ----- Events -----
 
@@ -1155,7 +1235,10 @@ public sealed partial class GlkLibrary
     {
         ArgumentNullException.ThrowIfNull(window);
 
-        if (window.Type is not (WindowType.TextBuffer or WindowType.TextGrid))
+        // [glk #window_graphics] Graphics windows take keys too, which
+        // gestalt_GraphicsCharInput says; only blank and pair windows
+        // take nothing.
+        if (window.Type is not (WindowType.TextBuffer or WindowType.TextGrid or WindowType.Graphics))
         {
             Warn("request_char_event: the window does not take character input.");
             return;

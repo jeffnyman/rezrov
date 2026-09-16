@@ -88,7 +88,7 @@ public sealed class AcceptanceScript
         ["<space>"] = 32,
     };
 
-    private AcceptanceScript(string scriptPath, string gamePath, string? blorbPath, string? interpreter, bool tandy, bool upper, int seed, IReadOnlyList<string> commands, IReadOnlyList<int> commandLines, IReadOnlyDictionary<int, int> seedChanges)
+    private AcceptanceScript(string scriptPath, string gamePath, string? blorbPath, string? interpreter, bool tandy, bool upper, bool graphics, int seed, IReadOnlyList<string> commands, IReadOnlyList<int> commandLines, IReadOnlyDictionary<int, int> seedChanges)
     {
         ScriptPath = scriptPath;
         GamePath = gamePath;
@@ -96,6 +96,7 @@ public sealed class AcceptanceScript
         Interpreter = interpreter;
         Tandy = tandy;
         Upper = upper;
+        Graphics = graphics;
         Seed = seed;
         Commands = commands;
         CommandLines = commandLines;
@@ -131,6 +132,15 @@ public sealed class AcceptanceScript
     /// console.
     /// </summary>
     public bool Upper { get; }
+
+    /// <summary>
+    /// [glk #graphics_testing] Whether the game is told it may open a
+    /// graphics window and draw in it. What it draws cannot be shown as
+    /// text, so the play records what the game says about its drawing
+    /// rather than the drawing; off, the game is told there are no
+    /// graphics at all.
+    /// </summary>
+    public bool Graphics { get; }
 
     /// <summary>The seed for the game's random numbers at the start.</summary>
     public int Seed { get; }
@@ -189,6 +199,7 @@ public sealed class AcceptanceScript
         string? interpreter = null;
         var tandy = false;
         var upper = false;
+        var graphics = false;
         int? seed = null;
         var commands = new List<string>();
         var commandLines = new List<int>();
@@ -303,6 +314,14 @@ public sealed class AcceptanceScript
                         _ => throw new InvalidDataException($"{name}, line {i + 1}: UPPER must be yes or no"),
                     };
                     break;
+                case "GRAPHICS":
+                    graphics = value.ToUpperInvariant() switch
+                    {
+                        "1" or "YES" or "ON" or "TRUE" => true,
+                        "0" or "NO" or "OFF" or "FALSE" => false,
+                        _ => throw new InvalidDataException($"{name}, line {i + 1}: GRAPHICS must be yes or no"),
+                    };
+                    break;
                 case "SEED":
                     if (!int.TryParse(value, out var parsed) || parsed < 1)
                     {
@@ -324,7 +343,7 @@ public sealed class AcceptanceScript
 
                     break;
                 default:
-                    throw new InvalidDataException($"{name}, line {i + 1}: there is no {key} directive; the directives are GAME, SEED, BLORB, INTERPRETER, TANDY, and UPPER");
+                    throw new InvalidDataException($"{name}, line {i + 1}: there is no {key} directive; the directives are GAME, SEED, BLORB, INTERPRETER, TANDY, UPPER, and GRAPHICS");
             }
         }
 
@@ -338,6 +357,6 @@ public sealed class AcceptanceScript
             throw new InvalidDataException($"{name}: no SEED directive gives the random number seed");
         }
 
-        return new AcceptanceScript(fullPath, game, blorb, interpreter, tandy, upper, seed.Value, commands, commandLines, seedChanges);
+        return new AcceptanceScript(fullPath, game, blorb, interpreter, tandy, upper, graphics, seed.Value, commands, commandLines, seedChanges);
     }
 }

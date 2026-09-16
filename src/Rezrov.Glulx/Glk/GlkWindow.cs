@@ -1,3 +1,5 @@
+using Rezrov.Core.Graphics;
+
 namespace Rezrov.Glulx.Glk;
 
 /// <summary>
@@ -59,10 +61,17 @@ public abstract class GlkWindow : GlkObject
     public int Top { get; private set; }
 
     /// <summary>
+    /// [glk op:window_get_size] The size the game is told the window
+    /// is, in the window's own units: characters for a text window and
+    /// pixels for a graphics one.
+    /// </summary>
+    public virtual (int Width, int Height) ReportedSize => (Width, Height);
+
+    /// <summary>
     /// Whether this window can show a size: blank and pair windows have
     /// none.
     /// </summary>
-    public bool HasSize => Type is WindowType.TextBuffer or WindowType.TextGrid;
+    public bool HasSize => Type is WindowType.TextBuffer or WindowType.TextGrid or WindowType.Graphics;
 
     /// <summary>
     /// [glk #line_events] The pending line input request, or null.
@@ -247,6 +256,78 @@ public sealed class BlankWindow : GlkWindow
 
     public override void Clear()
     {
+    }
+}
+
+/// <summary>
+/// [glk #window_graphics] A graphics window: a rectangle of pixels the
+/// game paints and the display shows.
+/// </summary>
+/// <remarks>
+/// [glk #window_graphics] The canvas is kept here rather than by a
+/// frontend, so that what a game drew survives whatever the frontend
+/// does and can be shown again at any time. That is the backing store
+/// the specification allows a library to have, and it is why no
+/// evtype_Redraw event is ever sent: there is nothing a game could
+/// usefully redraw that is not already held.
+///
+/// The window's size is in pixels, unlike a text window's, so the
+/// layout's units are turned into pixels by the display's cell size
+/// when the window is resized.
+/// </remarks>
+public sealed class GraphicsWindow : GlkWindow
+{
+    private readonly IGlkDisplay _display;
+
+    internal GraphicsWindow(uint rock, IGlkDisplay display)
+        : base(rock, WindowType.Graphics)
+    {
+        _display = display;
+        Canvas = new Canvas(0, 0);
+    }
+
+    /// <summary>What the game has painted.</summary>
+    public Canvas Canvas { get; }
+
+    /// <summary>The width of the canvas in pixels.</summary>
+    public int PixelWidth => Canvas.Width;
+
+    /// <summary>The height of the canvas in pixels.</summary>
+    public int PixelHeight => Canvas.Height;
+
+    /// <summary>
+    /// [glk #window_graphics] A graphics window's size is in pixels,
+    /// not in the characters a text window counts.
+    /// </summary>
+    public override (int Width, int Height) ReportedSize => (PixelWidth, PixelHeight);
+
+    /// <summary>
+    /// [glk op:window_clear] Paints the whole window its background
+    /// color.
+    /// </summary>
+    public override void Clear()
+    {
+        Canvas.Clear();
+        _display.Clear(this);
+    }
+
+    /// <summary>
+    /// [glk #window_graphics] Graphics windows take no text output, so
+    /// a character printed to one goes nowhere.
+    /// </summary>
+    internal override void Put(uint character, GlkStyle style, uint link)
+    {
+    }
+
+    /// <summary>
+    /// [glk #window_graphics] A resize keeps the part of the canvas the
+    /// old size and the new have in common and fills the rest with the
+    /// background color.
+    /// </summary>
+    protected override void Resized(int oldWidth, int oldHeight)
+    {
+        Canvas.Resize(Width * _display.CellWidth, Height * _display.CellHeight);
+        _display.Drawn(this);
     }
 }
 

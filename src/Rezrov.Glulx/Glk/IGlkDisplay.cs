@@ -49,6 +49,49 @@ public interface IGlkDisplay
     /// </summary>
     bool CanReportHyperlinks(WindowType type) => false;
 
+    /// <summary>
+    /// [glk #graphics_testing] Whether pictures can be drawn in a window
+    /// of this kind, which gestalt_Graphics, gestalt_DrawImage, and
+    /// gestalt_DrawImageScale all pass on to the game. A display that
+    /// says no for <see cref="WindowType.Graphics"/> cannot have a
+    /// graphics window opened on it at all. The default here is no, as
+    /// for a display made of characters.
+    /// </summary>
+    bool CanDrawImages(WindowType type) => false;
+
+    /// <summary>
+    /// The width of a character cell in the pixels a graphics window is
+    /// measured in.
+    /// </summary>
+    /// <remarks>
+    /// [glk #window_graphics] A graphics window's size is in pixels
+    /// while a text window's is in characters, and the layout divides
+    /// the display in one set of units. These say how the two relate,
+    /// so a graphics window's canvas is as many pixels as the cells it
+    /// was given are wide. A display whose unit is the pixel already,
+    /// and the default here, says one.
+    ///
+    /// A consequence worth knowing: a graphics window can only be a
+    /// whole number of cells across, so a game asking for a window of
+    /// 200 pixels on a display of 8 pixel cells gets 200 rounded to a
+    /// multiple of 8. [glk #window_opening] The game is expected to ask
+    /// what size it actually got, which is why the specification says
+    /// to call glk_window_get_size rather than assume.
+    /// </remarks>
+    int CellWidth => 1;
+
+    /// <summary>The height of a cell in the same pixels.</summary>
+    int CellHeight => 1;
+
+    /// <summary>
+    /// [glk #window_graphics] A graphics window's canvas changed and
+    /// should be shown again. A display that paints when it pleases may
+    /// do nothing.
+    /// </summary>
+    void Drawn(GlkWindow window)
+    {
+    }
+
     /// <summary>[glk op:window_clear] A window was cleared.</summary>
     void Clear(GlkWindow window);
 
@@ -90,6 +133,7 @@ public sealed class TextWriterGlkDisplay : IGlkDisplay
     private readonly TextWriter _writer;
     private readonly TextReader _reader;
     private readonly bool _hasPointer;
+    private readonly bool _hasGraphics;
     private GlkWindow? _root;
 
     /// <param name="writer">Where text buffer output goes.</param>
@@ -106,15 +150,42 @@ public sealed class TextWriterGlkDisplay : IGlkDisplay
     /// console has no pointer and the default is false; a script that
     /// means to exercise a game's links says otherwise.
     /// </param>
-    public TextWriterGlkDisplay(TextWriter writer, TextReader? reader = null, int width = 80, int height = 24, bool hasPointer = false)
+    /// <param name="hasGraphics">
+    /// [glk #graphics_testing] Whether graphics windows can be opened.
+    /// Nothing drawn in one can be shown as text, so a console says no
+    /// and the default is false; a script that means to exercise a
+    /// game's drawing says otherwise, and what it draws is kept and can
+    /// be read back from the window.
+    /// </param>
+    public TextWriterGlkDisplay(TextWriter writer, TextReader? reader = null, int width = 80, int height = 24, bool hasPointer = false, bool hasGraphics = false)
     {
         ArgumentNullException.ThrowIfNull(writer);
         _writer = writer;
         _reader = reader ?? TextReader.Null;
         _hasPointer = hasPointer;
+        _hasGraphics = hasGraphics;
         Width = width;
         Height = height;
     }
+
+    /// <summary>
+    /// [glk #graphics_testing] Pictures can be drawn in a graphics
+    /// window, where the library keeps them, but not in a text buffer,
+    /// where placing one among the text is the display's work and this
+    /// display has no way to do it.
+    /// </summary>
+    public bool CanDrawImages(WindowType type) => _hasGraphics && type == WindowType.Graphics;
+
+    /// <summary>
+    /// [glk #window_graphics] How many pixels a character cell stands
+    /// for. A display made of characters has no pixels of its own, so
+    /// it names a size that an ordinary fixed-width font would have,
+    /// which gives a graphics window a believable scale to be measured
+    /// in.
+    /// </summary>
+    public int CellWidth => 8;
+
+    public int CellHeight => 16;
 
     public int Width { get; }
 

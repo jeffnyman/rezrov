@@ -76,6 +76,22 @@ public class InterpreterNumberTests
         Assert.Throws<InvalidDataException>(() => AcceptanceScript.Parse("! SEED=1\n! GAME=zork1.z3\n! UPPER=sometimes\nlook\n", Path.Combine(Path.GetTempPath(), "t.accept")));
     }
 
+    [Theory]
+    [InlineData("yes", true)]
+    [InlineData("no", false)]
+    public void AScriptCanAskForGraphics(string value, bool expected)
+    {
+        // [glk #graphics_testing] A play of a game that draws has to say
+        // so, since a display of characters says it has no graphics
+        // unless a script wants them exercised.
+        var script = AcceptanceScript.Parse($"! SEED=1\n! GAME=zork1.z3\n! GRAPHICS={value}\nlook\n", Path.Combine(Path.GetTempPath(), "t.accept"));
+
+        Assert.Equal(expected, script.Graphics);
+
+        var e = Assert.Throws<InvalidDataException>(() => AcceptanceScript.Parse("! SEED=1\n! GAME=zork1.z3\n! GRAPHICS=perhaps\nlook\n", Path.Combine(Path.GetTempPath(), "t.accept")));
+        Assert.Contains("line 3: GRAPHICS must be yes or no", e.Message, StringComparison.Ordinal);
+    }
+
     [Fact]
     public void AScriptCanNameTheKeysAMenuIsWorkedWith()
     {

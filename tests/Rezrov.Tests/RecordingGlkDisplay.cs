@@ -42,6 +42,30 @@ internal sealed class RecordingGlkDisplay : IGlkDisplay
     /// </summary>
     public bool Pointer { get; init; }
 
+    /// <summary>
+    /// Whether this display claims it can show pictures, which the
+    /// graphics gestalt answers follow and without which no graphics
+    /// window can be opened.
+    /// </summary>
+    public bool Graphics { get; init; }
+
+    /// <summary>
+    /// How many pixels a character cell stands for, which is what a
+    /// graphics window's size is worked out from.
+    /// </summary>
+    public int Cell { get; init; } = 1;
+
+    /// <summary>Every window whose canvas was reported changed.</summary>
+    public List<GlkWindow> Drawings { get; } = [];
+
+    public bool CanDrawImages(WindowType type) => Graphics && type == WindowType.Graphics;
+
+    public int CellWidth => Cell;
+
+    public int CellHeight => Cell;
+
+    public void Drawn(GlkWindow window) => Drawings.Add(window);
+
     public List<GlkWindow> Cleared { get; } = [];
 
     public int ArrangedCount { get; private set; }
