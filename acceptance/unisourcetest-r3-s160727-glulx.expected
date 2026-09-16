@@ -1,7 +1,7 @@
 
 UniSourceTest: Not a game.
 Release 3 / Serial number 160727 / Inform v6.34, compiler options S
-Interpreter version 0.3.0 / VM 3.1.3 / game file format 3.0.0
+Interpreter version 0.3.1 / VM 3.1.3 / game file format 3.0.0
 
 NOTE: This test will only pass if compiled with the new "inform -Cu" switch. If you try to compile it with any other source-text encoding, you will get a big pile of test failures.
 
