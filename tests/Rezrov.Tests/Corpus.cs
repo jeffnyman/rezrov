@@ -86,6 +86,42 @@ internal static class Corpus
     }
 
     /// <summary>
+    /// Every file that may carry resources, across both machines: the
+    /// Blorb files beside the Z-code stories and the packaged Glulx
+    /// games, sorted, or empty if the submodule is not populated.
+    /// </summary>
+    /// <remarks>
+    /// Most of the corpus's pictures and sounds are in the Glulx games
+    /// rather than the Z-code ones, so a test about resources wants
+    /// this rather than <see cref="BlorbFiles"/>.
+    /// </remarks>
+    public static List<string> ResourceFiles()
+    {
+        var root = FindRepositoryRoot();
+        if (root is null)
+        {
+            return [];
+        }
+
+        var files = new List<string>();
+
+        foreach (var directory in StoryDirectories.Concat(GlulxDirectories))
+        {
+            var path = Path.Combine(root, "entharion", directory);
+            if (!Directory.Exists(path))
+            {
+                continue;
+            }
+
+            files.AddRange(Directory.EnumerateFiles(path)
+                .Where(f => Path.GetExtension(f) is ".blb" or ".blorb" or ".zblorb" or ".gblorb"));
+        }
+
+        files.Sort(StringComparer.Ordinal);
+        return files;
+    }
+
+    /// <summary>
     /// The directories that hold Glulx files, relative to the submodule
     /// root: the games, and the conformance tests.
     /// </summary>
