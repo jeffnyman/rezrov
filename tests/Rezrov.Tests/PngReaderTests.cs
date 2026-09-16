@@ -169,7 +169,7 @@ public class PngReaderTests
     [Fact]
     public void EveryPictureInTheCorpusDecodes()
     {
-        var files = Corpus.BlorbFiles();
+        var files = Corpus.ResourceFiles();
         Assert.SkipUnless(files.Count > 0, "The entharion submodule is not populated.");
 
         var decoded = 0;
@@ -189,7 +189,7 @@ public class PngReaderTests
             }
         }
 
-        Assert.True(decoded > 2000, $"Only {decoded} pictures were decoded.");
+        Assert.True(decoded > 2900, $"Only {decoded} pictures were decoded.");
     }
 
     /// <summary>

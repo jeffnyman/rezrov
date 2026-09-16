@@ -1,5 +1,6 @@
 using Rezrov.Core;
 using Rezrov.Core.Blorb;
+using Rezrov.Core.Graphics;
 using Rezrov.Glulx;
 // The two machines have an InstructionDecoder each, so the Glulx
 // types are named individually rather than imported as a namespace.
@@ -240,6 +241,8 @@ internal static class Program
             Console.WriteLine($"  by {blorb.Author}");
         }
 
+        DescribePictures(blorb);
+
         // [blorb 5] The packaged game, described as its own file would
         // be, whichever machine it is for.
         if (blorb.Executable is { } executable)
@@ -255,6 +258,46 @@ internal static class Program
         }
 
         return 0;
+    }
+
+    /// <summary>
+    /// [blorb 2] The pictures a resource file carries, and how many of
+    /// them can actually be turned into pixels, which is what a
+    /// frontend that draws them will be working from.
+    /// </summary>
+    private static void DescribePictures(BlorbFile blorb)
+    {
+        var catalog = BlorbPictures.From(blorb);
+        if (catalog.Count == 0)
+        {
+            return;
+        }
+
+        var kinds = catalog.Pictures
+            .GroupBy(p => p.Kind)
+            .OrderByDescending(g => g.Count())
+            .Select(g => $"{g.Count()} {g.Key.ToString().ToLowerInvariant()}");
+
+        Console.WriteLine($"  pictures: {string.Join(", ", kinds)}");
+
+        // [blorb 2.3] A placeholder rectangle has a size and nothing to
+        // draw, so it is left out of the count of what decodes.
+        var drawable = catalog.Pictures.Where(p => p.Kind != PictureKind.Rectangle).ToList();
+        if (drawable.Count > 0)
+        {
+            var read = drawable.Count(p => PictureReader.Decode(p) is not null);
+            var widest = drawable.Max(p => p.Width);
+            var tallest = drawable.Max(p => p.Height);
+
+            Console.WriteLine($"  {read} of {drawable.Count} decoded, the largest {widest} by {tallest}");
+        }
+
+        // [blorb 11.2] The window the author drew for, which is what the
+        // scaling rules measure a real screen against.
+        if (catalog.StandardWindow is { } window)
+        {
+            Console.WriteLine($"  drawn for a window of {window.Width} by {window.Height}");
+        }
     }
 
     /// <summary>
