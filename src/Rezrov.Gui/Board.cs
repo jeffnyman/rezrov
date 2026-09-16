@@ -115,12 +115,66 @@ internal sealed class Board : Control
         base.OnTextInput(e);
     }
 
+    /// <summary>
+    /// [glk #window_textbuf] The wheel scrolls the text buffer under the
+    /// pointer, which is the only way back to what has gone off the top.
+    /// </summary>
+    protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
+    {
+        ArgumentNullException.ThrowIfNull(e);
+
+        if (Display is { Root: { } root } display)
+        {
+            lock (display.Sync)
+            {
+                if (WindowAt(root, e.GetPosition(this)) is { Type: WindowType.TextBuffer } window)
+                {
+                    // Three lines to a notch of the wheel, which is what
+                    // everything else that scrolls text does.
+                    var place = Place(window);
+                    var text = display.Text(window);
+                    text.ScrollBy(e.Delta.Y * _glyphs.LineHeight(GlkStyle.Normal) * 3, place.Width, place.Height);
+                    e.Handled = true;
+                }
+            }
+
+            InvalidateVisual();
+        }
+
+        base.OnPointerWheelChanged(e);
+    }
+
     protected override void OnSizeChanged(SizeChangedEventArgs e)
     {
         ArgumentNullException.ThrowIfNull(e);
 
         Display?.Resize(e.NewSize.Width, e.NewSize.Height);
         base.OnSizeChanged(e);
+    }
+
+    /// <summary>
+    /// Where a window sits on the screen. The library lays the tree out
+    /// in character cells and this is the same rectangle in pixels.
+    /// </summary>
+    private Rect Place(GlkWindow window) => new(
+        window.Left * _glyphs.CellWidth,
+        window.Top * _glyphs.CellHeight,
+        window.Width * _glyphs.CellWidth,
+        window.Height * _glyphs.CellHeight);
+
+    /// <summary>
+    /// Which window a point on the screen falls in, or null for none.
+    /// A pair window is only the space its children share, so the answer
+    /// is always one of the windows that shows something.
+    /// </summary>
+    private GlkWindow? WindowAt(GlkWindow window, Point at)
+    {
+        if (window is PairWindow pair)
+        {
+            return WindowAt(pair.First, at) ?? WindowAt(pair.Second, at);
+        }
+
+        return Place(window).Contains(at) ? window : null;
     }
 
     private void Paint(DrawingContext context, GlkWindow window)
@@ -134,11 +188,7 @@ internal sealed class Board : Control
             return;
         }
 
-        var place = new Rect(
-            window.Left * _glyphs.CellWidth,
-            window.Top * _glyphs.CellHeight,
-            window.Width * _glyphs.CellWidth,
-            window.Height * _glyphs.CellHeight);
+        var place = Place(window);
 
         switch (window.Type)
         {

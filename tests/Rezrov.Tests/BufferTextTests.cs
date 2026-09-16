@@ -202,6 +202,83 @@ public class BufferTextTests
     }
 
     [Fact]
+    public void ScrollingBackBringsWhatWentOffTheTopIntoView()
+    {
+        // Seven lines of twenty in a window of a hundred: five fit, and
+        // the other forty pixels have gone off the top.
+        var text = Lines(7);
+
+        Assert.Equal(140.0, text.Height(1000));
+        Assert.Equal(40.0, text.Furthest(1000, 100));
+        Assert.Equal(100.0, text.Bottom(1000, 100));
+
+        // Scrolling back moves the whole of it down, which is what
+        // brings the earlier lines into view.
+        text.ScrollBy(20, 1000, 100);
+        Assert.Equal(120.0, text.Bottom(1000, 100));
+
+        // And it stops once the first line is showing, however much
+        // further it is asked to go.
+        text.ScrollBy(500, 1000, 100);
+        Assert.Equal(40.0, text.Scroll);
+        Assert.Equal(140.0, text.Bottom(1000, 100));
+
+        // Forward again, and it stops at the end of the text.
+        text.ScrollBy(-500, 1000, 100);
+        Assert.Equal(0.0, text.Scroll);
+        Assert.Equal(100.0, text.Bottom(1000, 100));
+    }
+
+    [Fact]
+    public void TextThatAllFitsCannotBeScrolled()
+    {
+        var text = Lines(3);
+
+        Assert.Equal(0.0, text.Furthest(1000, 100));
+
+        text.ScrollBy(50, 1000, 100);
+
+        Assert.Equal(0.0, text.Scroll);
+        Assert.Equal(60.0, text.Bottom(1000, 100));
+    }
+
+    [Fact]
+    public void AnythingNewToReadBringsTheEndBackIntoView()
+    {
+        // Scrolled back, and then the game says something: what it said
+        // is what the player wants to see, so the view follows it.
+        var text = Lines(7);
+        text.ScrollBy(40, 1000, 100);
+        Assert.Equal(40.0, text.Scroll);
+
+        Print(text, "and then");
+        Assert.Equal(0.0, text.Scroll);
+
+        // So does typing, which happens at the end of the text.
+        text.ScrollBy(40, 1000, 100);
+        text.Pending = "l";
+        Assert.Equal(0.0, text.Scroll);
+
+        // And so does asking outright.
+        text.ScrollBy(40, 1000, 100);
+        text.ScrollToEnd();
+        Assert.Equal(0.0, text.Scroll);
+    }
+
+    [Fact]
+    public void AWindowMadeTallerDoesNotLeaveTheTextScrolledPastItsStart()
+    {
+        // Scrolled all the way back in a short window, then the window
+        // is made tall enough to hold everything: the scroll that was
+        // reasonable before would now show blank above the first line.
+        var text = Lines(7);
+        text.ScrollBy(500, 1000, 100);
+
+        Assert.Equal(40.0, text.Scroll);
+        Assert.Equal(140.0, text.Bottom(1000, 200));
+    }
+
+    [Fact]
     public void ClearingThrowsEverythingAway()
     {
         var text = new BufferText(new Ruler());
@@ -212,6 +289,23 @@ public class BufferTextTests
         Assert.Single(text.Lines(100));
         Assert.Empty(text.Lines(100)[0].Pieces);
         Assert.Equal(20.0, text.Height(100));
+    }
+
+    /// <summary>A buffer of so many lines, one word to each.</summary>
+    private static BufferText Lines(int count)
+    {
+        var text = new BufferText(new Ruler());
+        for (var i = 0; i < count; i++)
+        {
+            if (i > 0)
+            {
+                text.Put('\n', GlkStyle.Normal, 0);
+            }
+
+            Print(text, $"line{i}");
+        }
+
+        return text;
     }
 
     private static void Print(BufferText text, string what, GlkStyle style = GlkStyle.Normal, uint link = 0)

@@ -62,6 +62,7 @@ public sealed class BufferText(IGlyphs glyphs)
         {
             field = value;
             _width = -1;
+            Scroll = 0;
         }
     }
 
@@ -92,6 +93,10 @@ public sealed class BufferText(IGlyphs glyphs)
 
         Length += text.Length;
         _width = -1;
+
+        // Something new to read means the player wants to see it, so
+        // anything they had scrolled back to is left behind.
+        Scroll = 0;
     }
 
     /// <summary>[glk op:window_clear] Throws all of it away.</summary>
@@ -101,6 +106,7 @@ public sealed class BufferText(IGlyphs glyphs)
         _lines = [];
         Length = 0;
         _width = -1;
+        Scroll = 0;
     }
 
     /// <summary>
@@ -132,6 +138,28 @@ public sealed class BufferText(IGlyphs glyphs)
     }
 
     /// <summary>
+    /// How far back the player has scrolled, in pixels, with zero
+    /// meaning the end of the text is in view.
+    /// </summary>
+    public double Scroll { get; private set; }
+
+    /// <summary>
+    /// The furthest back it is worth scrolling: enough to bring the
+    /// first line into view and no further.
+    /// </summary>
+    public double Furthest(double width, double height) => Math.Max(Height(width) - height, 0);
+
+    /// <summary>
+    /// Moves the view back by so many pixels, or forward for a negative
+    /// number, as far as there is text to see.
+    /// </summary>
+    public void ScrollBy(double pixels, double width, double height) =>
+        Scroll = Math.Clamp(Scroll + pixels, 0, Furthest(width, height));
+
+    /// <summary>Brings the end of the text back into view.</summary>
+    public void ScrollToEnd() => Scroll = 0;
+
+    /// <summary>
     /// Where the bottom of the last line sits, measured down from the
     /// top of a window of the given height.
     /// </summary>
@@ -141,8 +169,15 @@ public sealed class BufferText(IGlyphs glyphs)
     /// does. Once there is more of it than fits, the last line sits
     /// against the bottom edge and the earlier part runs off the top,
     /// so that what the game printed last is always the part in view.
+    ///
+    /// Scrolling back moves the whole of it down, which brings the
+    /// earlier part into view and takes the last line off the bottom.
+    /// The amount is clamped here as well as where it is set, since a
+    /// window made taller can leave a scroll that was reasonable at the
+    /// old size further back than there is now text to show.
     /// </remarks>
-    public double Bottom(double width, double height) => Math.Min(height, Height(width));
+    public double Bottom(double width, double height) =>
+        Math.Min(height, Height(width)) + Math.Clamp(Scroll, 0, Furthest(width, height));
 
     private List<Line> Wrap(double width)
     {
