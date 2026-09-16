@@ -125,6 +125,20 @@ public sealed class GuiGlkDisplay : IGlkDisplay
         _repaint();
     }
 
+    /// <summary>
+    /// [glk #graphics_testing] Pictures can be drawn in a graphics
+    /// window, whose canvas this paints. A picture in the run of a text
+    /// buffer's text has to be placed by whatever lays the text out,
+    /// which is not built yet, so the gestalt says no for one.
+    /// </summary>
+    public bool CanDrawImages(WindowType type) => type == WindowType.Graphics;
+
+    /// <summary>
+    /// [glk #window_graphics] The game painted on a canvas, so the
+    /// control has something new to show.
+    /// </summary>
+    public void Drawn(GlkWindow window) => _repaint();
+
     public void Arranged(GlkWindow? root)
     {
         lock (Sync)

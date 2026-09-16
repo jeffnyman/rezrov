@@ -99,6 +99,35 @@ public class CanvasTests
     }
 
     [Fact]
+    public void TheCanvasCountsWhatHasBeenDoneToIt()
+    {
+        // A frontend keeps a bitmap of the canvas and would rather not
+        // fill it again on every repaint, so the canvas says when there
+        // is something new to copy.
+        var canvas = new Canvas(4, 4);
+        var start = canvas.Changes;
+
+        canvas.Fill(0, 0, 2, 2, Red);
+        Assert.True(canvas.Changes > start);
+
+        var filled = canvas.Changes;
+        canvas.Draw(Solid(2, 2, 0, 255, 0), 0, 0, 2, 2);
+        Assert.True(canvas.Changes > filled);
+
+        var drawn = canvas.Changes;
+        canvas.Clear();
+        canvas.Resize(8, 8);
+        Assert.True(canvas.Changes > drawn);
+
+        // Asking about it changes nothing, and neither does a rectangle
+        // that draws nothing.
+        var quiet = canvas.Changes;
+        _ = canvas.At(0, 0);
+        canvas.Fill(0, 0, 0, 0, Blue);
+        Assert.Equal(quiet, canvas.Changes);
+    }
+
+    [Fact]
     public void APictureIsDrawnWhereItIsPutAndNowhereElse()
     {
         var canvas = new Canvas(4, 4);

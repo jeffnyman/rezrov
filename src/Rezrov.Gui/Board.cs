@@ -1,8 +1,11 @@
 using System.Globalization;
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Rezrov.Glulx.Glk;
 
 namespace Rezrov.Gui;
@@ -27,6 +30,8 @@ internal sealed class Board : Control
     private static readonly IBrush GridPaper = new SolidColorBrush(Color.FromRgb(0x22, 0x22, 0x22));
     private static readonly IBrush GridInk = new SolidColorBrush(Color.FromRgb(0xEE, 0xEE, 0xEE));
 
+    private readonly Dictionary<GlkWindow, Painting> _canvases = [];
+    private readonly HashSet<GlkWindow> _seen = [];
     private readonly Glyphs _glyphs;
     private GuiGlkDisplay? _display;
 
@@ -64,7 +69,23 @@ internal sealed class Board : Control
 
         lock (Display.Sync)
         {
+            _seen.Clear();
             Paint(context, root);
+            Forget();
+        }
+    }
+
+    /// <summary>
+    /// Lets go of the bitmap of any graphics window that has been
+    /// closed, which would otherwise be held for as long as the game
+    /// runs.
+    /// </summary>
+    private void Forget()
+    {
+        foreach (var window in _canvases.Keys.Where(w => !_seen.Contains(w)).ToList())
+        {
+            _canvases[window].Bitmap.Dispose();
+            _canvases.Remove(window);
         }
     }
 
@@ -104,6 +125,8 @@ internal sealed class Board : Control
 
     private void Paint(DrawingContext context, GlkWindow window)
     {
+        _seen.Add(window);
+
         if (window is PairWindow pair)
         {
             Paint(context, pair.First);
@@ -124,6 +147,9 @@ internal sealed class Board : Control
                 break;
             case WindowType.TextGrid when window is TextGridWindow grid:
                 PaintGrid(context, grid, place);
+                break;
+            case WindowType.Graphics when window is GraphicsWindow canvas:
+                PaintCanvas(context, canvas, place);
                 break;
             default:
                 break;
@@ -161,6 +187,79 @@ internal sealed class Board : Control
                 context.DrawText(formatted, new Point(place.X + piece.Left, top));
             }
         }
+    }
+
+    /// <summary>
+    /// [glk #window_graphics] A graphics window is the canvas the
+    /// library has been painting on, shown a pixel for a pixel.
+    /// </summary>
+    /// <remarks>
+    /// The canvas is painted on the interpreter's thread and read here
+    /// on the toolkit's, so the pixels are taken hold of once and used
+    /// as they were at that moment. [glk #window_graphics] A resize
+    /// makes a whole new set of them rather than changing the ones in
+    /// hand, so what is drawn is always a canvas of one consistent
+    /// size, at worst one that has since been painted on again. The
+    /// paint that came after it brings its own repaint with it.
+    ///
+    /// The bitmap is kept between paints and filled again only when the
+    /// canvas says it has changed, since a game that fills a rectangle
+    /// asks for a repaint each time and copying a megabyte for each
+    /// would be felt.
+    /// </remarks>
+    private void PaintCanvas(DrawingContext context, GraphicsWindow window, Rect place)
+    {
+        var pixels = window.Canvas.Pixels;
+        var changes = window.Canvas.Changes;
+
+        if (pixels.Width <= 0 || pixels.Height <= 0)
+        {
+            return;
+        }
+
+        if (!_canvases.TryGetValue(window, out var painting)
+            || painting.Bitmap.PixelSize.Width != pixels.Width
+            || painting.Bitmap.PixelSize.Height != pixels.Height)
+        {
+            painting?.Bitmap.Dispose();
+
+            // [glk #graphics_testing] Red, green, blue, and alpha, one
+            // byte each and the color not multiplied by the alpha,
+            // which is the shape the decoders and the canvas already
+            // keep pixels in, so the copy below is a copy and nothing
+            // more.
+            painting = new Painting(
+                new WriteableBitmap(
+                    new PixelSize(pixels.Width, pixels.Height),
+                    new Vector(96, 96),
+                    PixelFormat.Rgba8888,
+                    AlphaFormat.Unpremul),
+                changes - 1);
+
+            _canvases[window] = painting;
+        }
+
+        if (painting.Changes != changes)
+        {
+            using (var locked = painting.Bitmap.Lock())
+            {
+                for (var y = 0; y < pixels.Height; y++)
+                {
+                    Marshal.Copy(
+                        pixels.Rgba,
+                        y * pixels.Width * 4,
+                        locked.Address + (y * locked.RowBytes),
+                        pixels.Width * 4);
+                }
+            }
+
+            _canvases[window] = painting with { Changes = changes };
+        }
+
+        context.DrawImage(
+            painting.Bitmap,
+            new Rect(0, 0, pixels.Width, pixels.Height),
+            new Rect(place.X, place.Y, pixels.Width, pixels.Height));
     }
 
     // [glk #window_textgrid] A grid's cells belong to the library, so
@@ -201,4 +300,10 @@ internal sealed class Board : Control
             }
         }
     }
+
+    /// <summary>
+    /// A graphics window's bitmap, and which change of the canvas it was
+    /// last filled from.
+    /// </summary>
+    private sealed record Painting(WriteableBitmap Bitmap, int Changes);
 }

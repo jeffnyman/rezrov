@@ -51,6 +51,13 @@ public sealed class Canvas
     /// </summary>
     public uint Background { get; set; }
 
+    /// <summary>
+    /// How many times the canvas has been painted on, which a frontend
+    /// watches so that it copies the pixels out only when there is
+    /// something new in them rather than on every repaint.
+    /// </summary>
+    public int Changes { get; private set; }
+
     /// <summary>One pixel, as red, green, blue, and alpha.</summary>
     public (byte Red, byte Green, byte Blue, byte Alpha) At(int x, int y) => Pixels.At(x, y);
 
@@ -76,6 +83,7 @@ public sealed class Canvas
         }
 
         var kept = Pixels;
+        Changes++;
         Pixels = new Pixels(width, height, new byte[width * height * 4]);
         Fill(0, 0, width, height, Background);
 
@@ -112,6 +120,7 @@ public sealed class Canvas
             return;
         }
 
+        Changes++;
         var red = (byte)(color >> 16);
         var green = (byte)(color >> 8);
         var blue = (byte)color;
@@ -153,6 +162,7 @@ public sealed class Canvas
             return;
         }
 
+        Changes++;
         var right = Clip(left + (long)width, Width);
         var bottom = Clip(top + (long)height, Height);
         var from = Clip(left, Width);
