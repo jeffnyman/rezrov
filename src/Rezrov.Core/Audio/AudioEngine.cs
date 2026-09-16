@@ -42,9 +42,23 @@ public sealed class AudioEngine : IDisposable
     /// </summary>
     public static AudioEngine? Create()
     {
-        // Windows is the only platform with an output built so far;
-        // elsewhere there is no sound, which is what a game is told.
-        var device = OperatingSystem.IsWindows() ? WaveOutDevice.TryOpen() : null;
+        // Each platform has its own way of making noise, and a machine
+        // with none, or with none this knows, has no engine at all,
+        // which is what a game is told.
+        IAudioDevice? device = null;
+        if (OperatingSystem.IsWindows())
+        {
+            device = WaveOutDevice.TryOpen();
+        }
+        else if (OperatingSystem.IsLinux())
+        {
+            device = PulseAudioDevice.TryOpen();
+        }
+        else if (OperatingSystem.IsMacOS())
+        {
+            device = AudioQueueDevice.TryOpen();
+        }
+
         return device is null ? null : new AudioEngine(device);
     }
 

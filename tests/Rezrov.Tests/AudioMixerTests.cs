@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Rezrov.Core.Audio;
 
 namespace Rezrov.Tests;
@@ -233,6 +234,29 @@ public class AudioMixerTests
         Assert.Equal(0, mixer.VoiceCount);
         Assert.Equal(new short[4], Fill(mixer, 4));
         Assert.Equal(0, ended);
+    }
+
+    [Fact]
+    [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Calling each backend away from its own platform is what this checks: it must answer with no device rather than fail.")]
+    public void EachPlatformBackendRefusesAMachineThatIsNotItsOwn()
+    {
+        // A machine with no output this knows has no engine, and the
+        // gestalt answers and the header bit tell the game so rather
+        // than a call failing somewhere deeper.
+        if (!OperatingSystem.IsWindows())
+        {
+            Assert.Null(WaveOutDevice.TryOpen());
+        }
+
+        if (!OperatingSystem.IsLinux())
+        {
+            Assert.Null(PulseAudioDevice.TryOpen());
+        }
+
+        if (!OperatingSystem.IsMacOS())
+        {
+            Assert.Null(AudioQueueDevice.TryOpen());
+        }
     }
 
     [Fact]
