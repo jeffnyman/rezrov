@@ -242,7 +242,7 @@ public static class AcceptanceRun
         // [glk #mouse_events] A script may touch a window or select a
         // link, which a player at a console cannot, so this display
         // says it has a pointer where the console program does not.
-        var glk = new GlkLibrary(new TextWriterGlkDisplay(sink, commands, hasPointer: true), new MemoryGlkFileSystem()) { Resources = story.Resources };
+        var glk = new GlkLibrary(new TextWriterGlkDisplay(sink, commands, hasPointer: true, hasGraphics: script.Graphics), new MemoryGlkFileSystem()) { Resources = story.Resources };
 
         GlulxMachine machine;
         try

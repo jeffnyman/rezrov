@@ -1,0 +1,94 @@
+
+GraphWinTest
+Not a game.
+Release 5 / Serial number 170213 / Inform v6.34 Library 6/11 S
+
+Image Room
+A voice booooms out: Try "split NUMBER fixed" or "split NUMBER percent" to adjust the graphics window height. Type "show" to show the current height, or "close" to close the graphics window entirely.
+
+Type "color COLOR" to set the default color; "fill COLOR X,Y WxH" to fill a rectangle; "erase X,Y WxH" to erase a rectangle to the default color. (No space after the comma.) "clear" will erase the entire graphics window.
+
+Type "image", or "image NUMBER", or "image NUMBER X,Y" to display an image. Adding a "WxH" term will scale the image to those dimensions.
+
+You can also type "size NUMBER" to check an image size. Images that should be available (imported from Sensory Jam): 0, 1, 2, 5, 10, 11.
+
+>show
+The current graphics window is above, 200 (fixed). Its size is 640 by 208 pixels.
+
+>size 0
+Image 0 size: 125 by 180.
+
+>size 1
+Image 1 size: 150 by 180.
+
+>size 2
+Image 2 size: 155 by 180.
+
+>size 5
+Image 5 size: 47 by 62.
+
+>size 10
+Image 10 size: 128 by 128.
+
+>size 11
+Image 11 size: 128 by 128.
+
+>size 3
+There is no image 3.
+
+>image 1
+Image 1 at 0,0.
+
+>image 2 40,20
+Image 2 at 40,20.
+
+>image 5 10,10 120x60
+Image 5 at 10,10 120x60.
+
+>image 11 -20,-10
+Image 11 at -20,-10.
+
+>image 1 900,900
+Image 1 at 900,900.
+
+>color blue
+Set default window color to $0000FF.
+
+>fill red 10,10 60x40
+Filled rectangle with color $FF0000 at 10,10 60x40.
+
+>fill 00ff00 30,20 40x30
+Filled rectangle with color $00FF00 at 30,20 40x30.
+
+>erase 20,20 15x15
+Erased rectangle at 20,20 15x15.
+
+>clear
+You erase the window.
+
+>color black
+Set default window color to $000000.
+
+>clear
+You erase the window.
+
+>split 100 fixed
+Changed window to 100 pixels high.
+
+>show
+The current graphics window is above, 100 (fixed). Its size is 640 by 112 pixels.
+
+>split 40 percent
+Changed window to 40 percent of the screen.
+
+>show
+The current graphics window is above, 40 (percent). Its size is 640 by 144 pixels.
+
+>close
+Graphics window closed.
+
+>show
+There is no graphics window.
+
+>quit
+Are you sure you want to quit? y

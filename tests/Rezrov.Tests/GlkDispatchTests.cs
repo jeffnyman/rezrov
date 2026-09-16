@@ -94,8 +94,8 @@ public class GlkDispatchTests
         // play goes on.
         Assert.Equal(0u, machine.Ram(4));
         Assert.Equal("", display.Output);
-        Assert.Contains("image_draw: graphics are not supported.", machine.Glk.Warnings);
-        Assert.Contains("window_fill_rect: graphics are not supported.", machine.Glk.Warnings);
+        Assert.Contains("image_draw: a window of type TextBuffer cannot show pictures.", machine.Glk.Warnings);
+        Assert.Contains("window_fill_rect: a window of type TextBuffer cannot be painted.", machine.Glk.Warnings);
     }
 
     [Fact]

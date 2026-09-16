@@ -1,0 +1,61 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/graphwintest-r5-s170213.gblorb
+! GRAPHICS=yes
+
+# Andrew Plotkin's graphics window explorer: it opens a graphics window
+# beside its text, then paints rectangles and pictures into it on
+# command and reports what the library made of each one. A stream of
+# text cannot show pixels, so what this recording proves is the
+# library's side: the sizes it works out, the pictures it finds and
+# agrees to draw, and the arrangement it settles on. That is the side
+# the checker is asking about.
+
+# [glk #window_graphics] The window the game opened at startup, asking
+# for 200 pixels of height. A display of characters can only give a
+# whole number of them, so what comes back is the nearest that holds
+# 200, and the game is expected to read the size rather than assume it.
+show
+
+# [glk op:image_get_info] The pictures the game says are there, and one
+# that is not.
+size 0
+size 1
+size 2
+size 5
+size 10
+size 11
+size 3
+
+# [glk #graphics_graphics] Drawing: at the corner, at a place, and at a
+# size of its own choosing. The coordinates are the window's own pixels.
+image 1
+image 2 40,20
+image 5 10,10 120x60
+image 11 -20,-10
+
+# A picture drawn wholly past the edge is still drawn, with none of it
+# landing on the canvas.
+image 1 900,900
+
+# [glk op:window_fill_rect] Rectangles of color, then one erased back to
+# the background, then the whole window cleared to a new background.
+color blue
+fill red 10,10 60x40
+fill 00ff00 30,20 40x30
+erase 20,20 15x15
+clear
+
+color black
+clear
+
+# [glk #window_graphics] Rearranging it: a fixed height in pixels, a
+# proportional one, and then closing it altogether.
+split 100 fixed
+show
+split 40 percent
+show
+close
+show
+
+quit
+y
