@@ -48,10 +48,27 @@
   </ItemGroup>
 
   <!--
-    Deliberately not declared yet: Avalonia (GUI). It is pinned only when
-    a project actually references it, since declaring a version months
-    before first use just guarantees it is stale on arrival. For reference,
-    the current release as of the date above is Avalonia 12.1.2.
+    The graphical frontend.
+
+    Avalonia 12.1.2 is the current stable release as of 2026-09-16. It
+    compiles and publishes under NativeAOT with no trim warnings, but it
+    cannot be a single file: Skia and HarfBuzz are native libraries that
+    have to sit beside the executable, and SkiaSharp ships no static
+    build. The published program is therefore a folder, unlike the
+    command line and terminal programs, which stay single files.
+
+    Avalonia.Angle.Windows.Natives is not used directly. It is the ANGLE
+    build behind Avalonia's GPU path on Windows, and Rezrov.Gui
+    references it only to exclude its native asset, which takes five
+    megabytes out of the published folder. Its version is pinned here
+    because central package management requires a version for every
+    reference.
   -->
+
+  <ItemGroup>
+    <PackageVersion Include="Avalonia" Version="12.1.2" />
+    <PackageVersion Include="Avalonia.Desktop" Version="12.1.2" />
+    <PackageVersion Include="Avalonia.Angle.Windows.Natives" Version="2.1.27548.20260419" />
+  </ItemGroup>
 
 </Project>

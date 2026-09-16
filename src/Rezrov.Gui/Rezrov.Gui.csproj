@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The graphical frontend: the same interpreter as the other two, shown
+    in a window that owns its own pixels. That buys what a terminal
+    cannot give: a proportional font for a Glk text buffer, pictures in
+    graphics windows, and the artwork of the Version 6 games.
+    AssemblyName is lowercase for the same reason as the CLI's.
+  -->
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>rezrov-gui</AssemblyName>
+
+    <!--
+      A NativeAOT publish, as for the other two programs, though this one
+      cannot be a single file: Skia and HarfBuzz are native libraries
+      that sit beside the executable.
+    -->
+    <PublishAot>true</PublishAot>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Rezrov.Core\Rezrov.Core.csproj" />
+    <ProjectReference Include="..\Rezrov.Glulx\Rezrov.Glulx.csproj" />
+    <ProjectReference Include="..\Rezrov.ZMachine\Rezrov.ZMachine.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+
+    <!--
+      ANGLE is Avalonia's GPU path on Windows. The window renders through
+      the software fallback without it, which is ample for text and the
+      occasional picture, and leaving its native asset out takes five
+      megabytes off the published folder. The rendering mode is set
+      explicitly in Program.cs rather than left to the absence of a file.
+    -->
+    <PackageReference Include="Avalonia.Angle.Windows.Natives" ExcludeAssets="native" />
+  </ItemGroup>
+
+</Project>
