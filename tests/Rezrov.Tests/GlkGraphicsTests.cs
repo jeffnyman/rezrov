@@ -157,6 +157,125 @@ public class GlkGraphicsTests
     }
 
     [Fact]
+    public void TheBoundOnTheWidthReducesAPictureAndKeepsItsShape()
+    {
+        // [glk op:image_draw_scaled_ext] A picture of four by two,
+        // asked for at 800 by 50, in a window 640 pixels across. With
+        // no bound it is drawn at the size that was asked for.
+        var big = new ImageSizing(Fixed, 800, 50, 0);
+        Assert.Equal((800, 50), big.For(640, 4, 2));
+
+        // The bound is a fraction of the window's width, and a picture
+        // wider than it comes down in both directions together, so its
+        // shape is kept rather than the excess cut off.
+        Assert.Equal((640, 40), (big with { Maximum = Whole }).For(640, 4, 2));
+        Assert.Equal((320, 20), (big with { Maximum = Whole / 2 }).For(640, 4, 2));
+
+        // A picture already inside the bound is left as it is.
+        Assert.Equal((100, 50), new ImageSizing(Fixed, 100, 50, Whole).For(640, 4, 2));
+
+        // A width that is itself a fraction of the window's meets
+        // whichever of the two is narrower, which is what the
+        // specification means by saying that naming both is pointless.
+        var ratio = new ImageSizing(ImageRule.WidthRatio | ImageRule.HeightOrig, Whole, 0, Whole / 2);
+        Assert.Equal((320, 1), ratio.For(640, 4, 2));
+    }
+
+    [Fact]
+    public void TheBoundOnTheWidthIsIgnoredOnACanvas()
+    {
+        // [glk op:image_draw_scaled_ext] The specification says the
+        // bound is ignored in a graphics window. The canvas is 80
+        // pixels across, so a picture asked for at 120 covers all of
+        // it and the rest falls off the edge; were the bound honored
+        // it would be 40 wide and half the canvas would be white.
+        var (glk, _) = Library();
+        var canvas = Canvas(glk);
+
+        Assert.True(glk.DrawImage(canvas, 1, 0, 0, Fixed, 120, 4, Whole / 2));
+        Assert.Equal((80, 4), Extent(canvas));
+    }
+
+    [Fact]
+    public void APictureInATextBufferIsHandedToTheDisplayToPlace()
+    {
+        var (glk, display) = Library(inText: true);
+        var story = glk.OpenWindow(null, 0, 0, WindowType.TextBuffer, 1)!;
+
+        // [glk #graphics_testing] Both kinds of window can show a
+        // picture now, and the game is told about them one at a time.
+        Assert.Equal(1u, glk.Gestalt((uint)GestaltSelector.DrawImage, (uint)WindowType.TextBuffer, null));
+
+        var rule = ImageRule.WidthRatio | ImageRule.AspectRatio;
+        Assert.True(glk.DrawImage(story, 1, (int)ImageAlign.MarginLeft, 0, rule, Whole / 2, Whole, 0));
+
+        // [glk #graphics_textbuf] The rules go over unresolved, since
+        // the size depends on the width the text is laid out at, and
+        // the picture goes over decoded, since placing it is the
+        // display's work and decoding it is not.
+        var placed = Assert.Single(display.Placed);
+        Assert.Equal(story, placed.Window);
+        Assert.Equal(1u, placed.Image);
+        Assert.Equal(ImageAlign.MarginLeft, placed.Align);
+        Assert.Equal(new ImageSizing(rule, Whole / 2, Whole, 0), placed.Sizing);
+        Assert.Equal((4, 2), (placed.Picture.Width, placed.Picture.Height));
+
+        // [glk #graphics_textbuf] And an alignment that is none of the
+        // five puts the picture in the run of the text rather than
+        // losing it.
+        Assert.True(glk.DrawImage(story, 1, 9, 0, Original, 0, 0, Whole));
+        Assert.Equal(ImageAlign.InlineUp, display.Placed[1].Align);
+        Assert.Contains("image_draw: picture 1 was given alignment 9, which is not one of the five.", glk.Warnings);
+    }
+
+    [Fact]
+    public void AFlowBreakReachesATextBufferAndNothingElse()
+    {
+        var (glk, display) = Library(inText: true);
+        var story = glk.OpenWindow(null, 0, 0, WindowType.TextBuffer, 1)!;
+        var canvas = glk.OpenWindow(story, WindowMethod.Above | WindowMethod.Fixed, 8, WindowType.Graphics, 2)!;
+
+        glk.FlowBreak(story);
+        glk.FlowBreak(canvas);
+
+        // [glk #graphics_textbuf] A flow break has no effect in any
+        // window but a text buffer, so only the one reaches the
+        // display at all.
+        Assert.Equal([story], display.Breaks);
+    }
+
+    [Fact]
+    public void AStreamOfTextWritesDownThePictureItCannotShow()
+    {
+        // [glk #graphics_textbuf] A console has no pixels, but the
+        // size the rules worked out is worth writing down: it is
+        // measured against the window's width, which here is 80
+        // characters of eight pixels each.
+        var writer = new StringWriter();
+        var glk = new GlkLibrary(new TextWriterGlkDisplay(writer, hasGraphics: true))
+        {
+            Resources = BlorbFile.Read(TestBlorb.Build([(1, "PNG ", TestPng.Solid(4, 2, 255, 0, 0))])),
+        };
+
+        var story = glk.OpenWindow(null, 0, 0, WindowType.TextBuffer, 1)!;
+        var rule = ImageRule.WidthRatio | ImageRule.AspectRatio;
+
+        Assert.True(glk.DrawImage(story, 1, (int)ImageAlign.MarginLeft, 0, rule, Whole / 2, Whole, 0));
+        Assert.Equal("[image 1 left 320x160]", writer.ToString());
+
+        // [glk #graphics_textbuf] Two pictures may share a margin, so
+        // a margin picture leaves the line still unstarted. An inline
+        // one counts as text, and a margin picture after it is refused
+        // outright, which is what the specification says becomes of a
+        // margin picture that is not at the start of a line.
+        Assert.True(glk.DrawImage(story, 1, (int)ImageAlign.MarginRight, 0, Original, 0, 0, 0));
+        Assert.True(glk.DrawImage(story, 1, (int)ImageAlign.InlineCenter, 0, Original, 0, 0, 0));
+        Assert.False(glk.DrawImage(story, 1, (int)ImageAlign.MarginLeft, 0, Original, 0, 0, 0));
+
+        Assert.Equal("[image 1 left 320x160][image 1 right 4x2][image 1 center 4x2]", writer.ToString());
+    }
+
+    [Fact]
     public void WhatCannotBeDrawnIsRefusedRatherThanDrawnWrong()
     {
         var (glk, _) = Library();
@@ -242,9 +361,9 @@ public class GlkGraphicsTests
     /// square, with a resource file of two pictures: a solid red one of
     /// four by two, and a placeholder rectangle of ten by twenty.
     /// </summary>
-    private static (GlkLibrary Glk, RecordingGlkDisplay Display) Library(bool graphics = true)
+    private static (GlkLibrary Glk, RecordingGlkDisplay Display) Library(bool graphics = true, bool inText = false)
     {
-        var display = new RecordingGlkDisplay(20, 6) { Graphics = graphics, Cell = 4 };
+        var display = new RecordingGlkDisplay(20, 6) { Graphics = graphics, BufferGraphics = inText, Cell = 4 };
         var blorb = TestBlorb.Build(
         [
             (1, "PNG ", TestPng.Solid(4, 2, 255, 0, 0)),

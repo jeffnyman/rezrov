@@ -1,0 +1,77 @@
+! SEED=1
+! GAME=../entharion/glulx-checkers/imagetest-r5-s250524.gblorb
+! GRAPHICS=yes
+
+# Andrew Plotkin's checker for pictures drawn in the run of a text
+# buffer's text. A stream of text has no pixels to show, so each
+# picture is written down instead: which one it is, where it was put,
+# and what size the rules worked out. That last is what the checker is
+# really asking about, since the sizes are the part the specification
+# pins down, and this recording pins them here.
+
+# [glk op:image_get_info] The pictures the game says are there, and one
+# that is not.
+size 0
+size 1
+size 2
+size 5
+size 10
+size 11
+size 3
+
+# [glk #graphics_textbuf] The three inline alignments in a row, which
+# is what a bare "image" shows.
+image
+
+# Then each alignment on its own, at the picture's own size.
+image 1 up
+image 1 down
+image 1 center
+image 1 left
+image 1 right
+
+# A caption puts text on the line beside the picture, which is what
+# tells an inline picture from a margin one: the text runs on after an
+# inline picture and [glk #graphics_textbuf] flows around a margin one.
+image 1 caption
+image 1 caption right
+
+# [glk op:window_flow_break] Back down below the margin pictures.
+break
+
+# [glk op:image_draw_scaled] A size in pixels, and then one wider than
+# the window, which comes down to fit it.
+image 1 100x200
+image 1 800x50
+
+# [glk op:image_draw_scaled_ext] The checker's own sample of the width
+# rules, the height rules, and the bound.
+scales
+
+# And each rule named on its own, with the game saying what it asked
+# for so the recording holds both the ask and the answer.
+image 1 verbose worig horig
+image 1 verbose wfix hfix 300x100
+image 1 verbose wratio horig 1/2x1/1
+image 1 verbose wfix hratio 300x1/1
+image 1 verbose wfix hratio 300x1/4
+image 1 verbose wratio hratio 1/4x1/1
+image 1 verbose wfix hfix 800x50 maxwidth
+image 1 verbose wfix hfix 800x50 halfwidth
+image 1 verbose worig horig halfwidth
+image 1 verbose wratio horig 1/1x1/1 halfwidth
+
+# [glk #link_creating] A picture the game makes a hyperlink of, which
+# is a value set around the drawing of it.
+image 1 link
+
+# And a number that names no picture at all, which is refused.
+image 3
+
+# [glk op:window_clear] A paragraph of text, and then the window
+# emptied of all of it.
+text
+clear
+
+quit
+y

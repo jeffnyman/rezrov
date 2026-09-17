@@ -1,7 +1,15 @@
 using System.Text;
+using Rezrov.Core.Graphics;
 using Rezrov.Glulx.Glk;
 
 namespace Rezrov.Tests;
+
+/// <summary>
+/// [glk #graphics_textbuf] A picture the library asked to have put in
+/// the run of a text buffer's text, kept as it was handed over so that
+/// a test can see what the display was told rather than what it did.
+/// </summary>
+internal sealed record PlacedImage(GlkWindow Window, uint Image, Pixels Picture, ImageAlign Align, ImageSizing Sizing);
 
 /// <summary>
 /// A Glk display for tests: a fixed size, a record of everything
@@ -50,6 +58,13 @@ internal sealed class RecordingGlkDisplay : IGlkDisplay
     public bool Graphics { get; init; }
 
     /// <summary>
+    /// [glk #graphics_textbuf] Whether this display also claims it can
+    /// put a picture in the run of a text buffer's text, which only
+    /// something that lays text out can do.
+    /// </summary>
+    public bool BufferGraphics { get; init; }
+
+    /// <summary>
     /// How many pixels a character cell stands for, which is what a
     /// graphics window's size is worked out from.
     /// </summary>
@@ -58,7 +73,22 @@ internal sealed class RecordingGlkDisplay : IGlkDisplay
     /// <summary>Every window whose canvas was reported changed.</summary>
     public List<GlkWindow> Drawings { get; } = [];
 
-    public bool CanDrawImages(WindowType type) => Graphics && type == WindowType.Graphics;
+    /// <summary>Every picture put in a text buffer, in order.</summary>
+    public List<PlacedImage> Placed { get; } = [];
+
+    /// <summary>Every window a flow break reached.</summary>
+    public List<GlkWindow> Breaks { get; } = [];
+
+    public bool CanDrawImages(WindowType type) => Graphics
+        && (type == WindowType.Graphics || (BufferGraphics && type == WindowType.TextBuffer));
+
+    public bool DrawImage(GlkWindow window, uint image, Pixels picture, ImageAlign align, ImageSizing sizing)
+    {
+        Placed.Add(new PlacedImage(window, image, picture, align, sizing));
+        return true;
+    }
+
+    public void FlowBreak(GlkWindow window) => Breaks.Add(window);
 
     public int CellWidth => Cell;
 

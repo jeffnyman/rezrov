@@ -1,3 +1,5 @@
+using Rezrov.Core.Graphics;
+
 namespace Rezrov.Glulx.Glk;
 
 /// <summary>
@@ -84,6 +86,37 @@ public interface IGlkDisplay
     int CellHeight => 1;
 
     /// <summary>
+    /// [glk #graphics_textbuf] A picture to be put in the run of a text
+    /// buffer's text, at the alignment the game asked for, and at a
+    /// size the rules work out against the width of the window it lands
+    /// in. The answer says whether it was placed.
+    /// </summary>
+    /// <remarks>
+    /// The size arrives as rules rather than as a number because [glk
+    /// #graphics_textbuf] a picture whose width is a fraction of the
+    /// window's is measured again every time the text is laid out, and
+    /// resizes when the window does. Only something that lays text out
+    /// can place one at all, so the default here is to place none.
+    ///
+    /// [glk #graphics_textbuf] A margin picture may only be placed at
+    /// the start of a line, and the answer for one that is not is
+    /// false, since the specification says no picture appears at all in
+    /// that case.
+    /// </remarks>
+    bool DrawImage(GlkWindow window, uint image, Pixels picture, ImageAlign align, ImageSizing sizing) => false;
+
+    /// <summary>
+    /// [glk op:window_flow_break] A mark in the run of a text buffer's
+    /// text: where the text beside it is indented around a margin
+    /// picture, it moves down past every such picture, and where it is
+    /// not, it does nothing. A display with no margins to break out of,
+    /// and the default here, has nothing to do.
+    /// </summary>
+    void FlowBreak(GlkWindow window)
+    {
+    }
+
+    /// <summary>
     /// [glk #window_graphics] A graphics window's canvas changed and
     /// should be shown again. A display that paints when it pleases may
     /// do nothing.
@@ -135,6 +168,7 @@ public sealed class TextWriterGlkDisplay : IGlkDisplay
     private readonly bool _hasPointer;
     private readonly bool _hasGraphics;
     private GlkWindow? _root;
+    private bool _lineStart = true;
 
     /// <param name="writer">Where text buffer output goes.</param>
     /// <param name="reader">
@@ -151,11 +185,13 @@ public sealed class TextWriterGlkDisplay : IGlkDisplay
     /// means to exercise a game's links says otherwise.
     /// </param>
     /// <param name="hasGraphics">
-    /// [glk #graphics_testing] Whether graphics windows can be opened.
-    /// Nothing drawn in one can be shown as text, so a console says no
-    /// and the default is false; a script that means to exercise a
-    /// game's drawing says otherwise, and what it draws is kept and can
-    /// be read back from the window.
+    /// [glk #graphics_testing] Whether pictures can be drawn. Nothing
+    /// drawn in a graphics window can be shown as text, so a console
+    /// says no and the default is false; a script that means to
+    /// exercise a game's drawing says otherwise, and what is drawn in a
+    /// graphics window is kept and can be read back from it, while
+    /// [glk #graphics_textbuf] a picture among the text is written into
+    /// the text as a note of what it is and how large it came out.
     /// </param>
     public TextWriterGlkDisplay(TextWriter writer, TextReader? reader = null, int width = 80, int height = 24, bool hasPointer = false, bool hasGraphics = false)
     {
@@ -170,11 +206,46 @@ public sealed class TextWriterGlkDisplay : IGlkDisplay
 
     /// <summary>
     /// [glk #graphics_testing] Pictures can be drawn in a graphics
-    /// window, where the library keeps them, but not in a text buffer,
-    /// where placing one among the text is the display's work and this
-    /// display has no way to do it.
+    /// window, where the library keeps them, and in a text buffer,
+    /// where a stream of text has no pixels to show but can say what
+    /// was asked for and how large it came out.
     /// </summary>
-    public bool CanDrawImages(WindowType type) => _hasGraphics && type == WindowType.Graphics;
+    public bool CanDrawImages(WindowType type) =>
+        _hasGraphics && type is WindowType.Graphics or WindowType.TextBuffer;
+
+    /// <summary>
+    /// [glk #graphics_textbuf] A picture among the text, written as a
+    /// note of which picture it is, where it was put, and what size the
+    /// rules worked out.
+    /// </summary>
+    /// <remarks>
+    /// The size is the part worth writing down. It is measured against
+    /// the width of the window the picture landed in, which for a
+    /// stream of text is its width in characters at the size a
+    /// character stands for here, so a recording shows what a game
+    /// asked for and what it was given.
+    ///
+    /// [glk #graphics_textbuf] A margin picture must be at the start of
+    /// a line. One that is not is refused, as the specification says,
+    /// and an inline picture counts as text for that rule while a
+    /// margin one does not, since two may share a margin.
+    /// </remarks>
+    public bool DrawImage(GlkWindow window, uint image, Pixels picture, ImageAlign align, ImageSizing sizing)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+        ArgumentNullException.ThrowIfNull(picture);
+
+        var margin = align is ImageAlign.MarginLeft or ImageAlign.MarginRight;
+        if (margin && !_lineStart)
+        {
+            return false;
+        }
+
+        var (width, height) = sizing.For(window.Width * CellWidth, picture.Width, picture.Height);
+        _writer.Write($"[image {image} {Placing(align)} {width}x{height}]");
+        _lineStart = _lineStart && margin;
+        return true;
+    }
 
     /// <summary>
     /// [glk #window_graphics] How many pixels a character cell stands
@@ -200,6 +271,7 @@ public sealed class TextWriterGlkDisplay : IGlkDisplay
             // [glk #link_creating] A stream of text has no way to show
             // that a run of it is a link, and no way to select one.
             _writer.Write(GlkText.ToString(character));
+            _lineStart = character == '\n';
         }
     }
 
@@ -213,10 +285,21 @@ public sealed class TextWriterGlkDisplay : IGlkDisplay
         if (window.Type == WindowType.TextBuffer)
         {
             _writer.WriteLine();
+            _lineStart = true;
         }
     }
 
     public void Arranged(GlkWindow? root) => _root = root;
+
+    /// <summary>[glk #graphics_textbuf] Where a picture was put.</summary>
+    private static string Placing(ImageAlign align) => align switch
+    {
+        ImageAlign.InlineDown => "down",
+        ImageAlign.InlineCenter => "center",
+        ImageAlign.MarginLeft => "left",
+        ImageAlign.MarginRight => "right",
+        _ => "up",
+    };
 
     public bool CanReportMouse(WindowType type) => _hasPointer && type == WindowType.TextGrid;
 
@@ -234,6 +317,14 @@ public sealed class TextWriterGlkDisplay : IGlkDisplay
         if (lineRequests.Count > 0)
         {
             var line = _reader.ReadLine();
+
+            // [glk #line_events] A library echoes the typed line into
+            // the window along with the newline that ended it, so the
+            // text is at the start of a line afterwards. This display
+            // leaves the echo to whatever is reading, but the place the
+            // text has reached is the same, and [glk #graphics_textbuf]
+            // a margin picture is only placed at the start of a line.
+            _lineStart = true;
             return line is null ? GlkInput.Ended : Pointer(line) ?? GlkInput.Line(lineRequests[0], line);
         }
 
