@@ -1,9 +1,7 @@
-using Rezrov.ZMachine.Screen;
-
-namespace Rezrov.Tui;
+namespace Rezrov.ZMachine.Screen;
 
 /// <summary>
-/// The terminal's picture of the screen: a grid of cells holding the
+/// A picture of the whole screen: a grid of cells holding the
 /// status line, the upper window, and the scrolling lower window.
 /// </summary>
 /// <remarks>
@@ -14,7 +12,7 @@ namespace Rezrov.Tui;
 /// row in Versions 1 to 3, [zm 8.7.2.1] the upper window on the rows
 /// below it, and [zm 8.7.3.1] the lower window filling the rest and
 /// scrolling upward when text reaches the bottom. It knows nothing of
-/// Terminal.Gui, so it can be tested without a terminal.
+/// any toolkit, so it can be tested without a terminal.
 /// </remarks>
 public sealed class ScreenBuffer
 {
