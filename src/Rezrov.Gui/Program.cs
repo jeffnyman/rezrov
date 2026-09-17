@@ -7,6 +7,11 @@ using Rezrov.Core.Blorb;
 using Rezrov.Glulx;
 using Rezrov.Glulx.Execution;
 using Rezrov.Glulx.Glk;
+using Rezrov.ZMachine;
+using Rezrov.ZMachine.Execution;
+using Rezrov.ZMachine.Input;
+using Rezrov.ZMachine.Screen;
+using ZMemory = Rezrov.ZMachine.ZMemory;
 
 namespace Rezrov.Gui;
 
@@ -29,6 +34,7 @@ internal static class Program
 
     private static string _path = "";
     private static byte[] _bytes = [];
+    private static StoryFormat _format;
     private static BlorbFile? _resources;
     private static int? _seed;
     private static int _result;
@@ -162,20 +168,22 @@ internal static class Program
         if (StoryFormatDetector.Detect(bytes) == StoryFormat.Blorb)
         {
             var packaged = ReadBlorb(bytes);
-            if (packaged?.Executable is not { } executable || executable.ChunkType != "GLUL")
+            if (packaged?.Executable is not { } executable)
             {
-                Console.Error.WriteLine($"rezrov-gui: {_path}: this program plays Glulx games so far.");
+                Console.Error.WriteLine($"rezrov-gui: {_path}: the resource file has no game in it.");
                 return false;
             }
 
             _bytes = executable.Data.ToArray();
             _resources = packaged;
+            _format = executable.ChunkType == "GLUL" ? StoryFormat.Glulx : StoryFormat.ZMachine;
             return true;
         }
 
-        if (StoryFormatDetector.Detect(bytes) != StoryFormat.Glulx)
+        _format = StoryFormatDetector.Detect(bytes);
+        if (_format is not (StoryFormat.Glulx or StoryFormat.ZMachine))
         {
-            Console.Error.WriteLine($"rezrov-gui: {_path}: this program plays Glulx games so far; use rezrov or rezrov-tui.");
+            Console.Error.WriteLine($"rezrov-gui: {_path}: this is not a story file this can play.");
             return false;
         }
 
@@ -219,8 +227,8 @@ internal static class Program
               --probe           print what the fonts measure and leave
               --help            print this and leave
 
-            Glulx games only so far, from a .ulx or a .gblorb. The command
-            line and terminal programs play the Z-machine as well.
+            Both machines: a Z-machine game from a .z3 to a .z8 or a
+            .zblorb, and a Glulx game from a .ulx or a .gblorb.
             """);
     }
 
@@ -229,6 +237,12 @@ internal static class Program
     /// </summary>
     private static void Start(Window window, Board board, Glyphs glyphs)
     {
+        if (_format == StoryFormat.ZMachine)
+        {
+            StartZMachine(window, board, glyphs);
+            return;
+        }
+
         var memory = new GlulxMemory(_bytes);
         var display = new GuiGlkDisplay(
             glyphs,
@@ -269,6 +283,94 @@ internal static class Program
             finally
             {
                 library.CloseFiles();
+            }
+
+            Dispatcher.UIThread.Post(window.Close);
+        })
+        {
+            IsBackground = true,
+            Name = "interpreter",
+        };
+
+        worker.Start();
+    }
+
+    /// <summary>
+    /// [zm 8] The other machine: one grid of cells, which the screen
+    /// model wraps and pages for, and whose size is the window's own
+    /// divided by a character.
+    /// </summary>
+    private static void StartZMachine(Window window, Board board, Glyphs glyphs)
+    {
+        var memory = new ZMemory(_bytes);
+        var header = new StoryHeader(memory);
+
+        var columns = Math.Max((int)(board.Bounds.Width / glyphs.CellWidth), 1);
+        var rows = Math.Max((int)(board.Bounds.Height / glyphs.CellHeight), 1);
+
+        // The screen needs the input for the [MORE] key and the input
+        // needs the screen for its echo, so each reaches the other
+        // through a variable filled in a moment later.
+        BufferedInput? input = null;
+        var screen = new BufferedScreen(
+            columns,
+            rows,
+            cursorStartsAtBottom: header.Version <= ZMachineVersion.V4,
+            repaint: () => Dispatcher.UIThread.Post(board.InvalidateVisual),
+            waitForKey: () => input!.WaitForAnyKey(),
+
+            // [zm 8.8.1] A screen of pixels measures in pixels, so a
+            // unit is a pixel and a character is as many of them as the
+            // font makes it. That is what the Version 6 games were drawn
+            // for, though they are not told there are pictures yet.
+            fontWidth: (int)glyphs.CellWidth,
+            fontHeight: (int)glyphs.CellHeight,
+
+            // [zm 16] The character graphics font is shown as the
+            // nearest Unicode characters, as on the terminal.
+            capabilities: ScreenCapabilities.StatusLine | ScreenCapabilities.UpperWindow
+                | ScreenCapabilities.Colors | ScreenCapabilities.Bold | ScreenCapabilities.Italic
+                | ScreenCapabilities.FixedPitch | ScreenCapabilities.FixedGrid
+                | ScreenCapabilities.CharacterGraphicsFont);
+
+        // [zm 10.3.2] Clicks are reported in screen units, which are
+        // cells before Version 6 and the font's size in Version 6.
+        input = header.Version == ZMachineVersion.V6
+            ? new BufferedInput(screen, screen.FontWidth, screen.FontHeight)
+            : new BufferedInput(screen);
+
+        board.Screen = screen;
+        board.Keys = input;
+
+        var interpreter = new Interpreter(
+            memory,
+            screen,
+            input,
+            _seed is { } s ? new RandomGenerator(s) : null);
+
+        if (_resources is not null)
+        {
+            try
+            {
+                interpreter.UseResources(_resources);
+            }
+            catch (InvalidDataException e)
+            {
+                // [blorb 6] Complain righteously, then carry on without.
+                Console.Error.WriteLine($"rezrov-gui: {e.Message}");
+            }
+        }
+
+        var worker = new Thread(() =>
+        {
+            try
+            {
+                interpreter.Run();
+            }
+            catch (Exception e) when (e is NotSupportedException or InvalidDataException)
+            {
+                Console.Error.WriteLine($"rezrov-gui: stopped: {e.Message}");
+                _result = 3;
             }
 
             Dispatcher.UIThread.Post(window.Close);
