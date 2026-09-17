@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Input.Platform;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
@@ -99,17 +100,23 @@ internal sealed class Board : Control
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        context.FillRectangle(Paper, new Rect(Bounds.Size));
-
         if (Screen is { } screen)
         {
+            // [zm 8.4] A window is rarely a whole number of characters
+            // across and down, so a strip is left over at the right and
+            // the bottom. It is the screen's own color rather than the
+            // page behind it, or the game appears to be sitting on a
+            // sheet of paper a little too small for it.
             lock (screen.Sync)
             {
+                context.FillRectangle(Brush(screen.DefaultBackground), new Rect(Bounds.Size));
                 PaintScreen(context, screen);
             }
 
             return;
         }
+
+        context.FillRectangle(Paper, new Rect(Bounds.Size));
 
         if (Display is not { Root: { } root })
         {
@@ -141,6 +148,17 @@ internal sealed class Board : Control
     protected override void OnKeyDown(KeyEventArgs e)
     {
         ArgumentNullException.ThrowIfNull(e);
+
+        // Pasted text is typed for the player a character at a time, so
+        // a command copied from a walkthrough runs on arrival. The
+        // modifier is the one the machine uses for copying and pasting
+        // everywhere else on it.
+        if (e.Key == Key.V && (e.KeyModifiers.HasFlag(KeyModifiers.Control) || e.KeyModifiers.HasFlag(KeyModifiers.Meta)))
+        {
+            _ = Paste();
+            e.Handled = true;
+            return;
+        }
 
         if (Keys is { } keys && GuiKeyMap.ToZscii(e.Key) is { } zscii)
         {
@@ -187,6 +205,57 @@ internal sealed class Board : Control
         }
 
         base.OnTextInput(e);
+    }
+
+    /// <summary>
+    /// Types whatever is on the clipboard into the game.
+    /// </summary>
+    /// <remarks>
+    /// The clipboard is only read on the toolkit's thread and only after
+    /// waiting, so this is left to finish on its own while the key press
+    /// that asked for it returns. The text lands on the same queue as
+    /// anything typed, so a line ending in it ends the line exactly as
+    /// pressing enter would.
+    /// </remarks>
+    private async Task Paste()
+    {
+        if (TopLevel.GetTopLevel(this)?.Clipboard is not { } clipboard)
+        {
+            return;
+        }
+
+        var text = await clipboard.TryGetTextAsync();
+        if (string.IsNullOrEmpty(text))
+        {
+            return;
+        }
+
+        if (Keys is { } keys)
+        {
+            foreach (var character in text)
+            {
+                // [zm 3.8] A line ending is the return key however the
+                // clipboard spells it, and a carriage return before a
+                // newline would otherwise end the line twice.
+                if (character == '\r')
+                {
+                    continue;
+                }
+
+                var zscii = character == '\n'
+                    ? Zscii.Newline
+                    : Zscii.FromUnicode(character, UnicodeTranslationTable.Default);
+
+                if (zscii is { } code)
+                {
+                    keys.Enqueue(code);
+                }
+            }
+
+            return;
+        }
+
+        Display?.Typed(text);
     }
 
     /// <summary>
