@@ -1,12 +1,11 @@
 using Rezrov.Core.Audio;
 using Rezrov.Core.Blorb;
-using Rezrov.Glulx.Glk;
 
-namespace Rezrov.Tui;
+namespace Rezrov.Glulx.Glk;
 
 /// <summary>
-/// Glk sound on a terminal: each channel's sound played as a voice on
-/// the machine's audio output.
+/// Glk sound through an audio engine: each channel's sound played as a
+/// voice on the machine's audio output.
 /// </summary>
 /// <remarks>
 /// [glk #sound] The channels, what each call means, and the events the
@@ -21,7 +20,7 @@ namespace Rezrov.Tui;
 /// answers tell the game there is no sound rather than playing
 /// nothing.
 /// </remarks>
-public sealed class TerminalGlkSound : IGlkSound
+public sealed class EngineGlkSound : IGlkSound
 {
     private readonly AudioEngine? _engine;
     private readonly Dictionary<uint, AudioVoice> _playing = [];
@@ -29,7 +28,7 @@ public sealed class TerminalGlkSound : IGlkSound
     /// <param name="engine">
     /// The machine's audio output, or null for a terminal with none.
     /// </param>
-    public TerminalGlkSound(AudioEngine? engine = null)
+    public EngineGlkSound(AudioEngine? engine = null)
     {
         _engine = engine;
     }

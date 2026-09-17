@@ -11,7 +11,7 @@ namespace Rezrov.Tests;
 /// Z-machine's sound effects and Glk's sound channels, each playing
 /// the same kind of resource through the same mixer.
 /// </summary>
-public class TerminalAudioTests
+public class EngineAudioTests
 {
     // The loudest an 8-bit sample goes each way, which is one step
     // short of the top of the range going up and exactly the bottom
@@ -32,8 +32,8 @@ public class TerminalAudioTests
     [Fact]
     public void WithNoAudioOutputNeitherFrontendCanPlay()
     {
-        var zmachine = new TerminalSound();
-        var glk = new TerminalGlkSound();
+        var zmachine = new EngineSound();
+        var glk = new EngineGlkSound();
 
         // [zm 9.1.2] and [glk #sound_testing] Both say so, and the
         // bleeps still work, or are silently skipped.
@@ -51,7 +51,7 @@ public class TerminalAudioTests
     public void AZMachineSoundPlaysAtTheVolumeTheGameAsked()
     {
         var (engine, device) = Engine();
-        var frontend = new TerminalSound(engine);
+        var frontend = new EngineSound(engine);
         var sound = new SoundResource(3, "AIFF", Loud);
         var ended = 0;
 
@@ -83,7 +83,7 @@ public class TerminalAudioTests
     public void AZMachineSoundRepeatsAndIsForgottenWhenFinished()
     {
         var (engine, device) = Engine();
-        var frontend = new TerminalSound(engine);
+        var frontend = new EngineSound(engine);
         var sound = new SoundResource(3, "AIFF", Loud);
         var cycles = 0;
 
@@ -107,7 +107,7 @@ public class TerminalAudioTests
     public void AGlkChannelPlaysWithItsVolumeAndPause()
     {
         var (engine, device) = Engine();
-        var frontend = new TerminalGlkSound(engine);
+        var frontend = new EngineGlkSound(engine);
         var glk = new GlkLibrary(new RecordingGlkDisplay(), sound: frontend)
         {
             Resources = BlorbFile.Read(TestBlorb.Build([], sounds: [(7, "FORM", Resource)])),
@@ -136,7 +136,7 @@ public class TerminalAudioTests
     public void AGlkChannelReportsTheEndOnlyAfterTheLastRepetition()
     {
         var (engine, device) = Engine();
-        var frontend = new TerminalGlkSound(engine);
+        var frontend = new EngineGlkSound(engine);
         var glk = new GlkLibrary(new RecordingGlkDisplay(), sound: frontend)
         {
             Resources = BlorbFile.Read(TestBlorb.Build([], sounds: [(7, "FORM", Resource)])),
@@ -166,7 +166,7 @@ public class TerminalAudioTests
     public void AGlkVolumeSlideOnASilentChannelFinishesAtOnce()
     {
         var (engine, _) = Engine();
-        var frontend = new TerminalGlkSound(engine);
+        var frontend = new EngineGlkSound(engine);
         var glk = new GlkLibrary(new RecordingGlkDisplay(), sound: frontend)
         {
             Resources = BlorbFile.Read(TestBlorb.Build([], sounds: [(7, "FORM", Resource)])),

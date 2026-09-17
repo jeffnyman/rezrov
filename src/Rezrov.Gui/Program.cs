@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using Rezrov.Core;
+using Rezrov.Core.Audio;
 using Rezrov.Core.Blorb;
 using Rezrov.Glulx;
 using Rezrov.Glulx.Execution;
@@ -11,6 +12,7 @@ using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
 using Rezrov.ZMachine.Input;
 using Rezrov.ZMachine.Screen;
+using Rezrov.ZMachine.Sound;
 using ZMemory = Rezrov.ZMachine.ZMemory;
 
 namespace Rezrov.Gui;
@@ -39,6 +41,7 @@ internal static class Program
     private static int? _seed;
     private static int _result;
     private static string? _trouble;
+    private static AudioEngine? _audio;
 
     [STAThread]
     internal static int Main(string[] args)
@@ -271,7 +274,13 @@ internal static class Program
         var directory = Path.GetDirectoryName(Path.GetFullPath(_path)) ?? Directory.GetCurrentDirectory();
         var dialogs = new GuiFiles(window, directory);
         var files = new DiskGlkFileSystem(directory, dialogs.AskForGlkFile);
-        var library = new GlkLibrary(display, files) { Resources = _resources };
+
+        // [glk #sound] The machine's audio output, or nothing on a
+        // machine with none, which the gestalt answers then report.
+        var library = new GlkLibrary(display, files, sound: new EngineGlkSound(_audio))
+        {
+            Resources = _resources,
+        };
         var machine = new GlulxMachine(memory, _seed is { } s ? new GlulxRandom((uint)s) : null, library);
 
         var worker = new Thread(() =>
@@ -368,7 +377,11 @@ internal static class Program
             screen,
             input,
             _seed is { } s ? new RandomGenerator(s) : null,
-            files: new GuiFiles(window, directory));
+            files: new GuiFiles(window, directory),
+
+            // [zm 9.1] The machine's audio output, or nothing on a
+            // machine with none, which the header then tells the game.
+            sound: new EngineSound(_audio));
 
         if (_resources is not null)
         {
@@ -441,7 +454,14 @@ internal static class Program
                 window.Opened += (_, _) =>
                 {
                     board.Focus();
+                    _audio = AudioEngine.Create();
                     Start(window, board, glyphs);
+                };
+
+                window.Closed += (_, _) =>
+                {
+                    _audio?.Dispose();
+                    _audio = null;
                 };
 
                 playing.MainWindow = window;

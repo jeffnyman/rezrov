@@ -1,11 +1,10 @@
 using Rezrov.Core.Audio;
-using Rezrov.ZMachine.Sound;
 
-namespace Rezrov.Tui;
+namespace Rezrov.ZMachine.Sound;
 
 /// <summary>
-/// Sound on a terminal: the game's sound effects played through the
-/// machine's audio output, and a bleep where there is none.
+/// Sound through an audio engine: the game's sound effects played on
+/// the machine's audio output, and a bleep where there is none.
 /// </summary>
 /// <remarks>
 /// [zm 9.1] What is left to a frontend is making the noise: which
@@ -21,7 +20,7 @@ namespace Rezrov.Tui;
 /// short tone through the mixer where there is one, and the console's
 /// own beep on Windows where there is not.
 /// </remarks>
-public sealed class TerminalSound : ISound
+public sealed class EngineSound : ISound
 {
     private readonly AudioEngine? _engine;
     private readonly Dictionary<int, AudioVoice> _playing = [];
@@ -29,7 +28,7 @@ public sealed class TerminalSound : ISound
     /// <param name="engine">
     /// The machine's audio output, or null for a terminal with none.
     /// </param>
-    public TerminalSound(AudioEngine? engine = null)
+    public EngineSound(AudioEngine? engine = null)
     {
         _engine = engine;
     }
