@@ -1,3 +1,4 @@
+using Rezrov.Core.Graphics;
 using Rezrov.Glulx.Glk;
 using Rezrov.Gui;
 
@@ -18,6 +19,10 @@ namespace Rezrov.Tests;
 /// </remarks>
 public class BufferTextTests
 {
+    /// <summary>[glk op:image_draw] The picture's own size.</summary>
+    private static readonly ImageSizing Natural =
+        new(ImageRule.WidthOrig | ImageRule.HeightOrig, 0, 0, 0);
+
     [Fact]
     public void TextArrivesACharacterAtATimeAndComesOutAsLines()
     {
@@ -289,6 +294,203 @@ public class BufferTextTests
         Assert.Single(text.Lines(100));
         Assert.Empty(text.Lines(100)[0].Pieces);
         Assert.Equal(20.0, text.Height(100));
+    }
+
+    [Fact]
+    public void AnInlinePictureTakesItsPlaceAmongTheWords()
+    {
+        var text = new BufferText(new Ruler());
+        Print(text, "a");
+        Assert.True(text.Draw(Picture(30, 50), ImageAlign.InlineUp, Natural));
+        Print(text, "b");
+
+        var line = text.Lines(1000)[0];
+
+        // The picture is thirty wide, so the letter after it starts
+        // forty along.
+        Assert.Equal(["a", "b"], Words(line));
+        Assert.Equal(40.0, line.Pieces[1].Left);
+
+        // [glk #graphics_textbuf] Its bottom edge is on the baseline,
+        // so it reaches fifty above it and the line grows to hold it:
+        // fifty above the baseline and the font's four below.
+        var inset = Assert.Single(line.Images);
+        Assert.Equal((10.0, 30.0, 50.0), (inset.Left, inset.Width, inset.Height));
+        Assert.Equal((50.0, 54.0), (line.Baseline, line.Height));
+        Assert.Equal(0.0, inset.Top);
+    }
+
+    [Fact]
+    public void EachInlineAlignmentSitsWhereTheSpecificationSaysItDoes()
+    {
+        // [glk #graphics_textbuf] The font's baseline is sixteen down
+        // and a line of it twenty tall. A picture ten tall standing on
+        // the baseline starts six down; hanging from the top of the
+        // line it starts at the top; centered between the two it starts
+        // three down.
+        Assert.Equal(6.0, Sits(ImageAlign.InlineUp));
+        Assert.Equal(0.0, Sits(ImageAlign.InlineDown));
+        Assert.Equal(3.0, Sits(ImageAlign.InlineCenter));
+
+        static double Sits(ImageAlign align)
+        {
+            var text = new BufferText(new Ruler());
+            Print(text, "x");
+            text.Draw(Picture(10, 10), align, Natural);
+            return text.Lines(1000)[0].Images[0].Top;
+        }
+    }
+
+    [Fact]
+    public void AMarginPictureStandsTheTextAsideUntilItHasPassed()
+    {
+        // [glk #graphics_textbuf] A picture thirty wide and fifty tall
+        // in the left margin, in a window a hundred across: the lines
+        // beside it start thirty along and hold seven characters where
+        // they would otherwise hold ten.
+        var text = new BufferText(new Ruler());
+        Assert.True(text.Draw(Picture(30, 50), ImageAlign.MarginLeft, Natural));
+        Print(text, "one two three four");
+
+        var lines = text.Lines(100);
+
+        Assert.Equal(3, lines.Count);
+        Assert.Equal([30.0, 30.0, 30.0], lines.Select(l => l.Pieces[0].Left).ToArray());
+        Assert.Equal(["one", " ", "two", " "], Words(lines[0]));
+
+        // The picture goes in every line it reaches down through, since
+        // painting starts at the bottom of the window and works up, and
+        // one kept only in the line it began at would be lost as soon
+        // as that line had gone off the top.
+        Assert.Equal([0.0, -20.0, -40.0], lines.Select(l => l.Images[0].Top).ToArray());
+        Assert.Equal((0.0, 30.0, 50.0), Shape(lines[0].Images[0]));
+
+        // And the line below it has the whole width back.
+        Print(text, " five");
+        lines = text.Lines(100);
+
+        Assert.Equal(4, lines.Count);
+        Assert.Equal(0.0, lines[3].Pieces[0].Left);
+        Assert.Empty(lines[3].Images);
+    }
+
+    [Fact]
+    public void APictureInTheRightMarginTakesTheRoomFromThatEdge()
+    {
+        var text = new BufferText(new Ruler());
+        Assert.True(text.Draw(Picture(30, 50), ImageAlign.MarginRight, Natural));
+        Print(text, "one two three");
+
+        var lines = text.Lines(100);
+
+        // [glk #graphics_textbuf] The text still starts at the left
+        // edge and runs out seven characters along instead of ten.
+        Assert.Equal(0.0, lines[0].Pieces[0].Left);
+        Assert.Equal(["one", " ", "two", " "], Words(lines[0]));
+        Assert.Equal((70.0, 30.0, 50.0), Shape(lines[0].Images[0]));
+    }
+
+    [Fact]
+    public void AMarginPictureIsOnlyPlacedAtTheStartOfALine()
+    {
+        var text = new BufferText(new Ruler());
+        Print(text, "words");
+
+        // [glk #graphics_textbuf] No picture appears at all, which is
+        // what the specification says becomes of one asked for where
+        // text has already been printed on the line.
+        Assert.False(text.Draw(Picture(30, 50), ImageAlign.MarginLeft, Natural));
+        Assert.Empty(text.Lines(1000)[0].Images);
+
+        // A line ending puts the text back at the start of a line, and
+        // two pictures may share a margin, so the first of them leaves
+        // the line still unstarted and the second goes beside it. An
+        // inline picture counts as text, and the margin picture after
+        // it is refused.
+        Print(text, "\n");
+        Assert.True(text.Draw(Picture(30, 50), ImageAlign.MarginLeft, Natural));
+        Assert.True(text.Draw(Picture(10, 10), ImageAlign.MarginLeft, Natural));
+        Assert.True(text.Draw(Picture(10, 10), ImageAlign.InlineUp, Natural));
+        Assert.False(text.Draw(Picture(10, 10), ImageAlign.MarginRight, Natural));
+
+        var second = text.Lines(1000)[1];
+        Assert.Equal([0.0, 30.0, 40.0], second.Images.Select(i => i.Left).ToArray());
+    }
+
+    [Fact]
+    public void AFlowBreakTakesTheTextDownPastTheMarginPictures()
+    {
+        var text = new BufferText(new Ruler());
+        text.Draw(Picture(30, 50), ImageAlign.MarginLeft, Natural);
+        Print(text, "one\n");
+        text.FlowBreak();
+        Print(text, "two");
+
+        var lines = text.Lines(100);
+
+        // [glk op:window_flow_break] One line of text beside the
+        // picture, then the gap down to its bottom edge as a line of
+        // its own, then the text again at the left edge.
+        Assert.Equal(3, lines.Count);
+        Assert.Equal(["one"], Words(lines[0]));
+        Assert.Equal(30.0, lines[0].Pieces[0].Left);
+        Assert.Empty(lines[1].Pieces);
+        Assert.Equal(30.0, lines[1].Height);
+        Assert.Equal(["two"], Words(lines[2]));
+        Assert.Equal(0.0, lines[2].Pieces[0].Left);
+
+        // [glk #graphics_textbuf] And where the text is beside no
+        // picture at all it does nothing, which is also what the
+        // specification says.
+        var plain = new BufferText(new Ruler());
+        Print(plain, "one\n");
+        plain.FlowBreak();
+        Print(plain, "two");
+
+        Assert.Equal(2, plain.Lines(100).Count);
+    }
+
+    [Fact]
+    public void ATallMarginPictureLeavesRoomBelowTheLastLine()
+    {
+        // A picture fifty tall beside one line of twenty: the space it
+        // still needs is part of how tall the text is, or it would hang
+        // below the window where it could not be seen.
+        var text = new BufferText(new Ruler());
+        text.Draw(Picture(30, 50), ImageAlign.MarginLeft, Natural);
+        Print(text, "one");
+
+        Assert.Equal(50.0, text.Height(100));
+        Assert.Equal(2, text.Lines(100).Count);
+        Assert.Equal(30.0, text.Lines(100)[1].Height);
+    }
+
+    [Fact]
+    public void APictureMeasuredAgainstTheWindowIsMeasuredAgainWhenItChanges()
+    {
+        // [glk #graphics_textbuf] Half the window's width, keeping the
+        // picture's own shape, which is a different size in a window of
+        // a different size. This is why the rules are kept rather than
+        // the answer.
+        var text = new BufferText(new Ruler());
+        var half = new ImageSizing(ImageRule.WidthRatio | ImageRule.AspectRatio, 0x8000, 0x10000, 0);
+        text.Draw(Picture(40, 20), ImageAlign.InlineUp, half);
+
+        Assert.Equal((100.0, 50.0), Grown(text.Lines(200)[0].Images[0]));
+        Assert.Equal((200.0, 100.0), Grown(text.Lines(400)[0].Images[0]));
+
+        static (double Width, double Height) Grown(Inset inset) => (inset.Width, inset.Height);
+    }
+
+    private static (double Left, double Width, double Height) Shape(Inset inset) =>
+        (inset.Left, inset.Width, inset.Height);
+
+    /// <summary>A picture of the given size, all of it opaque.</summary>
+    private static Pixels Picture(int width, int height)
+    {
+        var rgba = new byte[width * height * 4];
+        Array.Fill(rgba, (byte)255);
+        return new Pixels(width, height, rgba);
     }
 
     /// <summary>A buffer of so many lines, one word to each.</summary>

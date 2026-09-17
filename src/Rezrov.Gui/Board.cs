@@ -5,8 +5,10 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Media;
+using Avalonia.Media.Immutable;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Rezrov.Core.Graphics;
 using Rezrov.Glulx.Glk;
 using Rezrov.ZMachine.Input;
 using Rezrov.ZMachine.Screen;
@@ -37,6 +39,14 @@ internal sealed class Board : Control
     private static readonly IBrush GridInk = new SolidColorBrush(Color.FromRgb(0xEE, 0xEE, 0xEE));
 
     private readonly Dictionary<GlkWindow, Painting> _canvases = [];
+
+    // [glk #graphics_textbuf] The pictures a game puts among its text,
+    // each turned into a bitmap once. The library decodes each picture
+    // once and hands the same pixels over every time it is drawn, so
+    // the pixels themselves are the key.
+    private readonly Dictionary<Pixels, WriteableBitmap> _inline =
+        new(ReferenceEqualityComparer.Instance);
+
     private readonly HashSet<GlkWindow> _seen = [];
     private readonly Glyphs _glyphs;
     private GuiGlkDisplay? _display;
@@ -55,6 +65,11 @@ internal sealed class Board : Control
         // scale draws a cross-hatch over the whole window. Text keeps
         // its own smoothing; this is about the geometry only.
         RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);
+
+        // [glk #graphics_textbuf] A picture among the text is drawn at
+        // whatever size the image rules worked out, which is rarely the
+        // size it was stored at, so it is worth sampling well.
+        RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.HighQuality);
     }
 
     /// <summary>
@@ -303,11 +318,42 @@ internal sealed class Board : Control
     /// Where a window sits on the screen. The library lays the tree out
     /// in character cells and this is the same rectangle in pixels.
     /// </summary>
-    private Rect Place(GlkWindow window) => new(
-        window.Left * _glyphs.CellWidth,
-        window.Top * _glyphs.CellHeight,
-        window.Width * _glyphs.CellWidth,
-        window.Height * _glyphs.CellHeight);
+    /// <remarks>
+    /// [glk #window_arrangement] The layout is a whole number of cells
+    /// across and down, and the window it is drawn in is rarely a whole
+    /// number of them, so a strip is left over at the right and at the
+    /// bottom. The windows along those two edges are stretched over it,
+    /// which fills it with whatever the window beside it is filled
+    /// with rather than leaving the page behind showing through.
+    ///
+    /// Only the rectangle is stretched, not the layout: the game is
+    /// still told the size it was given, and a text grid's cells still
+    /// fall where the library put them. What changes is where the
+    /// window's own background reaches, and which window a click in the
+    /// strip belongs to.
+    /// </remarks>
+    private Rect Place(GlkWindow window)
+    {
+        var left = window.Left * _glyphs.CellWidth;
+        var top = window.Top * _glyphs.CellHeight;
+        var right = (window.Left + window.Width) * _glyphs.CellWidth;
+        var bottom = (window.Top + window.Height) * _glyphs.CellHeight;
+
+        if (Display is { } display)
+        {
+            if (window.Left + window.Width >= display.Width)
+            {
+                right = Math.Max(right, Bounds.Width);
+            }
+
+            if (window.Top + window.Height >= display.Height)
+            {
+                bottom = Math.Max(bottom, Bounds.Height);
+            }
+        }
+
+        return new Rect(left, top, right - left, bottom - top);
+    }
 
     /// <summary>
     /// Which window a point on the screen falls in, or null for none.
@@ -364,9 +410,21 @@ internal sealed class Board : Control
 
         for (var i = lines.Count - 1; i >= 0 && top > place.Top - lines[i].Height; i--)
         {
-            top -= lines[i].Height;
+            var line = lines[i];
+            top -= line.Height;
 
-            foreach (var piece in lines[i].Pieces)
+            foreach (var inset in line.Images)
+            {
+                if (Inline(inset.Picture) is { } bitmap)
+                {
+                    context.DrawImage(
+                        bitmap,
+                        new Rect(bitmap.Size),
+                        new Rect(place.X + inset.Left, top + inset.Top, inset.Width, inset.Height));
+                }
+            }
+
+            foreach (var piece in line.Pieces)
             {
                 if (piece.Text == " ")
                 {
@@ -381,9 +439,33 @@ internal sealed class Board : Control
                     _glyphs.Size(piece.Style),
                     Ink);
 
-                context.DrawText(formatted, new Point(place.X + piece.Left, top));
+                // Pieces are placed on the line's baseline rather than
+                // hung from its top, so that a heading and the prose
+                // beside it sit on the same line.
+                var above = line.Baseline - _glyphs.Baseline(piece.Style);
+                context.DrawText(formatted, new Point(place.X + piece.Left, top + above));
             }
         }
+    }
+
+    /// <summary>
+    /// [glk #graphics_textbuf] A picture from the run of a text
+    /// buffer's text, as a bitmap, kept from one paint to the next.
+    /// </summary>
+    private WriteableBitmap? Inline(Pixels picture)
+    {
+        if (_inline.TryGetValue(picture, out var known))
+        {
+            return known;
+        }
+
+        if (GuiPictures.ToBitmap(picture) is not { } bitmap)
+        {
+            return null;
+        }
+
+        _inline[picture] = bitmap;
+        return bitmap;
     }
 
     /// <summary>
@@ -452,6 +534,14 @@ internal sealed class Board : Control
 
             _canvases[window] = painting with { Changes = changes };
         }
+
+        // [glk #window_graphics] The canvas is exactly as many pixels
+        // as the cells the window was given, so the strip the window
+        // was stretched over is beyond it. It is the canvas's own
+        // background color, which is what the specification says a
+        // resize leaves behind, rather than the canvas stretched to
+        // cover it.
+        context.FillRectangle(Brush(window.Canvas.Background), place);
 
         context.DrawImage(
             painting.Bitmap,
@@ -671,6 +761,13 @@ internal sealed class Board : Control
     /// <summary>
     /// [zm 8.3.1] A Z-machine color as something to paint with.
     /// </summary>
+    /// <summary>
+    /// [glk #graphics_graphics] A Glk color, whose top eight bits are
+    /// zero and whose other three are red, green, and blue.
+    /// </summary>
+    private static ImmutableSolidColorBrush Brush(uint color) => new(
+        Color.FromRgb((byte)(color >> 16), (byte)(color >> 8), (byte)color));
+
     private static IBrush Brush(ScreenColor color) => color switch
     {
         ScreenColor.Black or ScreenColor.Default => Brushes.Black,

@@ -61,21 +61,25 @@ internal sealed class GuiPictures
         return bitmap;
     }
 
-    private WriteableBitmap? Read(int number)
+    /// <summary>
+    /// A decoded picture as a bitmap ready to draw, or null for one
+    /// with no pixels in it at all.
+    /// </summary>
+    /// <remarks>
+    /// Red, green, blue, and alpha, one byte each and the color not
+    /// multiplied by the alpha, which is the shape the decoders and the
+    /// canvas already keep pixels in, so this is a copy and nothing
+    /// more.
+    /// </remarks>
+    public static WriteableBitmap? ToBitmap(Pixels pixels)
     {
-        if (_catalog?.Find(number) is not { } picture || PictureReader.Decode(picture) is not { } pixels)
-        {
-            return null;
-        }
+        ArgumentNullException.ThrowIfNull(pixels);
 
         if (pixels.Width <= 0 || pixels.Height <= 0)
         {
             return null;
         }
 
-        // Red, green, blue, and alpha, one byte each and the color not
-        // multiplied by the alpha, which is the shape the decoders
-        // already keep pixels in.
         var bitmap = new WriteableBitmap(
             new PixelSize(pixels.Width, pixels.Height),
             new Vector(96, 96),
@@ -96,4 +100,9 @@ internal sealed class GuiPictures
 
         return bitmap;
     }
+
+    private WriteableBitmap? Read(int number) =>
+        _catalog?.Find(number) is { } picture && PictureReader.Decode(picture) is { } pixels
+            ? ToBitmap(pixels)
+            : null;
 }

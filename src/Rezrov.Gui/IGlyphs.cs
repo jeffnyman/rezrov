@@ -27,6 +27,23 @@ public interface IGlyphs
     double LineHeight(GlkStyle style);
 
     /// <summary>
+    /// How far below the top of a line of the given style its baseline
+    /// sits, in pixels.
+    /// </summary>
+    /// <remarks>
+    /// A line is laid out around its baseline rather than around its
+    /// top edge, so that a heading and the prose beside it sit on the
+    /// same line instead of hanging from the same top. [glk
+    /// #graphics_textbuf] The inline alignments of a picture are
+    /// defined against the baseline and the top of the line as well,
+    /// which is the other reason the layout has to know where it is.
+    ///
+    /// A font that cannot say gives four fifths of the way down, which
+    /// is about where a Latin face puts it.
+    /// </remarks>
+    double Baseline(GlkStyle style) => LineHeight(style) * 0.8;
+
+    /// <summary>
     /// [glk #window_textgrid] The width of one cell of the fixed font, in
     /// pixels, which is what a text grid is measured in and what the
     /// library divides the display into.
