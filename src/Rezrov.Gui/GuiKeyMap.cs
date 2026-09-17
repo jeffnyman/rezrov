@@ -1,5 +1,6 @@
 using Avalonia.Input;
 using Rezrov.Glulx.Glk;
+using Rezrov.ZMachine.Text;
 
 namespace Rezrov.Gui;
 
@@ -37,6 +38,26 @@ internal static class GuiKeyMap
         // [glk #character_input] The function keys run downward from
         // Func1, so the twelfth is eleven below the first.
         >= Key.F1 and <= Key.F12 => GlkKeyCode.Func1 - (uint)(key - Key.F1),
+        _ => null,
+    };
+
+    /// <summary>
+    /// [zm 3.8] The ZSCII code for a key, or null for one the Z-machine
+    /// does not name. The function keys run upward from F1, unlike
+    /// Glk's, and the keypad digits are their own codes.
+    /// </summary>
+    public static ushort? ToZscii(Key key) => key switch
+    {
+        Key.Enter or Key.Return => Zscii.Newline,
+        Key.Back or Key.Delete => Zscii.Delete,
+        Key.Escape => Zscii.Escape,
+        Key.Tab => Zscii.Tab,
+        Key.Up => Zscii.CursorUp,
+        Key.Down => Zscii.CursorDown,
+        Key.Left => Zscii.CursorLeft,
+        Key.Right => Zscii.CursorRight,
+        >= Key.F1 and <= Key.F12 => (ushort)(Zscii.F1 + (key - Key.F1)),
+        >= Key.NumPad0 and <= Key.NumPad9 => (ushort)(Zscii.Keypad0 + (key - Key.NumPad0)),
         _ => null,
     };
 }

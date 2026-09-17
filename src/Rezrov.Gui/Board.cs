@@ -7,6 +7,11 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Rezrov.Glulx.Glk;
+using Rezrov.ZMachine.Input;
+using Rezrov.ZMachine.Screen;
+using Rezrov.ZMachine.Text;
+using ZCell = Rezrov.ZMachine.Screen.Cell;
+using ZStyle = Rezrov.ZMachine.Screen.TextStyle;
 
 namespace Rezrov.Gui;
 
@@ -34,6 +39,7 @@ internal sealed class Board : Control
     private readonly HashSet<GlkWindow> _seen = [];
     private readonly Glyphs _glyphs;
     private GuiGlkDisplay? _display;
+    private BufferedScreen? _screen;
 
     public Board(Glyphs glyphs)
     {
@@ -41,6 +47,13 @@ internal sealed class Board : Control
 
         _glyphs = glyphs;
         Focusable = true;
+
+        // The cells of a screen are filled as rectangles that share
+        // their edges. Antialiasing those edges leaves a pale hairline
+        // between every pair of them, which at a fractional display
+        // scale draws a cross-hatch over the whole window. Text keeps
+        // its own smoothing; this is about the geometry only.
+        RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);
     }
 
     /// <summary>
@@ -56,11 +69,42 @@ internal sealed class Board : Control
         }
     }
 
+    /// <summary>
+    /// The Z-machine screen to paint, for a game of that machine. A
+    /// frontend shows one machine or the other, never both, so whichever
+    /// of this and <see cref="Display"/> was set is what is drawn.
+    /// </summary>
+    public BufferedScreen? Screen
+    {
+        get => _screen;
+        set
+        {
+            _screen = value;
+            InvalidateVisual();
+        }
+    }
+
+    /// <summary>
+    /// [zm 10] Where the Z-machine's keys go, for a game of that
+    /// machine.
+    /// </summary>
+    public BufferedInput? Keys { get; set; }
+
     public override void Render(DrawingContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
 
         context.FillRectangle(Paper, new Rect(Bounds.Size));
+
+        if (Screen is { } screen)
+        {
+            lock (screen.Sync)
+            {
+                PaintScreen(context, screen);
+            }
+
+            return;
+        }
 
         if (Display is not { Root: { } root })
         {
@@ -93,7 +137,12 @@ internal sealed class Board : Control
     {
         ArgumentNullException.ThrowIfNull(e);
 
-        if (Display is { } display && GuiKeyMap.ToGlk(e.Key) is { } key)
+        if (Keys is { } keys && GuiKeyMap.ToZscii(e.Key) is { } zscii)
+        {
+            keys.Enqueue(zscii);
+            e.Handled = true;
+        }
+        else if (Display is { } display && GuiKeyMap.ToGlk(e.Key) is { } key)
         {
             display.Key(key);
             e.Handled = true;
@@ -106,7 +155,27 @@ internal sealed class Board : Control
     {
         ArgumentNullException.ThrowIfNull(e);
 
-        if (Display is { } display && e.Text is { Length: > 0 } text)
+        if (e.Text is not { Length: > 0 } text)
+        {
+            base.OnTextInput(e);
+            return;
+        }
+
+        if (Keys is { } keys)
+        {
+            // [zm 3.8] Only what ZSCII has a code for can be typed at a
+            // Z-machine game; anything else is not a key it knows.
+            foreach (var character in text)
+            {
+                if (Zscii.FromUnicode(character, UnicodeTranslationTable.Default) is { } zscii)
+                {
+                    keys.Enqueue(zscii);
+                }
+            }
+
+            e.Handled = true;
+        }
+        else if (Display is { } display)
         {
             display.Typed(text);
             e.Handled = true;
@@ -149,6 +218,10 @@ internal sealed class Board : Control
         ArgumentNullException.ThrowIfNull(e);
 
         Display?.Resize(e.NewSize.Width, e.NewSize.Height);
+        Screen?.Resize(
+            Math.Max((int)(e.NewSize.Width / _glyphs.CellWidth), 1),
+            Math.Max((int)(e.NewSize.Height / _glyphs.CellHeight), 1));
+
         base.OnSizeChanged(e);
     }
 
@@ -350,6 +423,146 @@ internal sealed class Board : Control
             }
         }
     }
+
+    /// <summary>
+    /// [zm 8] The Z-machine's screen: one grid of cells, every one of
+    /// them carrying its own style and colors.
+    /// </summary>
+    private void PaintScreen(DrawingContext context, BufferedScreen screen)
+    {
+        // The whole screen is the color it starts in, and then only the
+        // stretches that differ are painted over it. Most screens are
+        // one color throughout, so this is usually a single rectangle
+        // where filling every cell would be thousands of them.
+        var plain = Brush(screen.DefaultBackground);
+        context.FillRectangle(
+            plain,
+            new Rect(0, 0, screen.Width * _glyphs.CellWidth, screen.Height * _glyphs.CellHeight));
+
+        for (var row = 0; row < screen.Height; row++)
+        {
+            PaintBackgrounds(context, screen, row, plain);
+
+            for (var column = 0; column < screen.Width; column++)
+            {
+                PaintCell(context, screen[row, column], row, column);
+            }
+        }
+
+        // The cursor, drawn as a line under the character it is on, so
+        // that it does not hide what is already there.
+        if (screen.Cursor is { } cursor)
+        {
+            context.FillRectangle(
+                Brush(ScreenColor.White),
+                new Rect(
+                    cursor.Column * _glyphs.CellWidth,
+                    ((cursor.Row + 1) * _glyphs.CellHeight) - 2,
+                    _glyphs.CellWidth,
+                    2));
+        }
+    }
+
+    /// <summary>
+    /// Paints the stretches of one row whose background is not the
+    /// color the screen starts in, each stretch in one piece so that no
+    /// seam is left between the cells of it.
+    /// </summary>
+    private void PaintBackgrounds(DrawingContext context, BufferedScreen screen, int row, IBrush plain)
+    {
+        var from = 0;
+
+        while (from < screen.Width)
+        {
+            var brush = Behind(screen[row, from]);
+            var to = from + 1;
+
+            while (to < screen.Width && ReferenceEquals(Behind(screen[row, to]), brush))
+            {
+                to++;
+            }
+
+            if (!ReferenceEquals(brush, plain))
+            {
+                context.FillRectangle(
+                    brush,
+                    new Rect(
+                        from * _glyphs.CellWidth,
+                        row * _glyphs.CellHeight,
+                        (to - from) * _glyphs.CellWidth,
+                        _glyphs.CellHeight));
+            }
+
+            from = to;
+        }
+    }
+
+    /// <summary>
+    /// [zm 8.7.1] What is behind a cell. Reverse video swaps the two
+    /// colors rather than being a color of its own.
+    /// </summary>
+    private static IBrush Behind(ZCell cell) =>
+        Brush(cell.Attributes.Style.HasFlag(ZStyle.ReverseVideo)
+            ? cell.Attributes.Foreground
+            : cell.Attributes.Background);
+
+    private void PaintCell(DrawingContext context, ZCell cell, int row, int column)
+    {
+        var attributes = cell.Attributes;
+
+        var reversed = attributes.Style.HasFlag(ZStyle.ReverseVideo);
+        var ink = Brush(reversed ? attributes.Background : attributes.Foreground);
+
+        var place = new Rect(
+            column * _glyphs.CellWidth,
+            row * _glyphs.CellHeight,
+            _glyphs.CellWidth,
+            _glyphs.CellHeight);
+
+        // [zm 16] The character graphics font is shown as the nearest
+        // Unicode box drawing, block, arrow, and runic characters, as
+        // far as the font has them.
+        var character = attributes.Font == TextAttributes.CharacterGraphicsFont
+            ? CharacterGraphics.ToUnicode(cell.Character)
+            : cell.Character;
+
+        if (character is '\0' or ' ')
+        {
+            return;
+        }
+
+        var face = attributes.Style.HasFlag(ZStyle.Bold)
+            ? _glyphs.Grid(GlkStyle.Header)
+            : attributes.Style.HasFlag(ZStyle.Italic)
+                ? _glyphs.Grid(GlkStyle.Emphasized)
+                : _glyphs.Grid(GlkStyle.Preformatted);
+
+        var formatted = new FormattedText(
+            character.ToString(),
+            CultureInfo.InvariantCulture,
+            FlowDirection.LeftToRight,
+            face,
+            _glyphs.Size(GlkStyle.Preformatted),
+            ink);
+
+        context.DrawText(formatted, place.TopLeft);
+    }
+
+    /// <summary>
+    /// [zm 8.3.1] A Z-machine color as something to paint with.
+    /// </summary>
+    private static IBrush Brush(ScreenColor color) => color switch
+    {
+        ScreenColor.Black or ScreenColor.Default => Brushes.Black,
+        ScreenColor.Red => Brushes.Firebrick,
+        ScreenColor.Green => Brushes.ForestGreen,
+        ScreenColor.Yellow => Brushes.Goldenrod,
+        ScreenColor.Blue => Brushes.RoyalBlue,
+        ScreenColor.Magenta => Brushes.Orchid,
+        ScreenColor.Cyan => Brushes.CadetBlue,
+        ScreenColor.White => Brushes.Gainsboro,
+        _ => Brushes.Gainsboro,
+    };
 
     /// <summary>
     /// A graphics window's bitmap, and which change of the canvas it was
