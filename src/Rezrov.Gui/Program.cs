@@ -266,11 +266,11 @@ internal static class Program
 
         board.Display = display;
 
-        // [glk op:fileref_create_by_prompt] Asking the player for a file
-        // waits for the dialogs, so until then a game that asks is told
-        // no file was chosen and carries on.
+        // [glk op:fileref_create_by_prompt] The player is asked for a
+        // file through the toolkit's own dialogs.
         var directory = Path.GetDirectoryName(Path.GetFullPath(_path)) ?? Directory.GetCurrentDirectory();
-        var files = new DiskGlkFileSystem(directory, (_, _) => null);
+        var dialogs = new GuiFiles(window, directory);
+        var files = new DiskGlkFileSystem(directory, dialogs.AskForGlkFile);
         var library = new GlkLibrary(display, files) { Resources = _resources };
         var machine = new GlulxMachine(memory, _seed is { } s ? new GlulxRandom((uint)s) : null, library);
 
@@ -362,11 +362,13 @@ internal static class Program
         board.Keys = input;
         board.Pictures = new GuiPictures(_resources);
 
+        var directory = Path.GetDirectoryName(Path.GetFullPath(_path)) ?? Directory.GetCurrentDirectory();
         var interpreter = new Interpreter(
             memory,
             screen,
             input,
-            _seed is { } s ? new RandomGenerator(s) : null);
+            _seed is { } s ? new RandomGenerator(s) : null,
+            files: new GuiFiles(window, directory));
 
         if (_resources is not null)
         {
