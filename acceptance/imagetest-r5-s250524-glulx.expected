@@ -1,0 +1,132 @@
+
+ImageTest
+Not a game.
+Release 5 / Serial number 250524 / Inform v6.43 Library 6/11 S
+
+Image Room
+A voice booooms out: Try "image" for a sample of alignments, or "image NUMBER", or "image NUMBER ALIGN". Alignments are "up", "down", "center", "left", "right". Throw in the word "caption" to mix some text on the line. Throw in "link" to make the image a hyperlink. Adding a term like "100x200" will scale the image to those dimensions.
+
+Try "scales" for a sample of scaling options. For more control, use "image" with "wfix", "worig", "wratio", "hfix", "horig", "hratio". Ratio scales are written like "1/1x3/2". (Note that "1/1" is interpreted as $10000, not 1 -- ratios are 16x16 fixed-point.)
+
+You can set the width max with "maxwidth" (100% window width) or "halfwidth" (50%). These are the only options at present.
+
+You can also type "size NUMBER" to check an image size. Type "text" for a long text paragraph, "clear" to clear the text buffer, and "break" for a flow break.
+
+Images that should be available (imported from Sensory Jam): 0, 1, 2, 5, 10, 11.
+
+>size 0
+Image 0 size: 125 by 180.
+
+>size 1
+Image 1 size: 150 by 180.
+
+>size 2
+Image 2 size: 155 by 180.
+
+>size 5
+Image 5 size: 47 by 62.
+
+>size 10
+Image 10 size: 128 by 128.
+
+>size 11
+Image 11 size: 128 by 128.
+
+>size 3
+There is no image 3.
+
+>image
+Here are several images in a row:
+With inlineup: [image 0 up 125x180] With inlinedown: [image 10 down 128x128] With inlinecenter: [image 5 center 47x62]
+
+>image 1 up
+[image 1 up 150x180]
+>image 1 down
+[image 1 down 150x180]
+>image 1 center
+[image 1 center 150x180]
+>image 1 left
+[image 1 left 150x180]
+>image 1 right
+[image 1 right 150x180]
+>image 1 caption
+[image 1 up 150x180] -- that is an image.
+
+>image 1 caption right
+[image 1 right 150x180] -- that is an image.
+
+>break
+
+>image 1 100x200
+[image 1 up 100x200]
+>image 1 800x50
+[image 1 up 640x40]
+>scales
+50x50 fixed, no maxwidth:
+[image 1 up 50x50]
+
+800x50 fixed, no maxwidth:
+[image 1 up 800x50]
+
+800x50 fixed, 100% maxwidth:
+[image 1 up 640x40]
+
+800x50 fixed, 50% maxwidth:
+[image 1 up 320x20]
+
+50% width, 100 fixed height, no maxwidth:
+[image 1 up 320x100]
+
+300 fixed width, orig aspect ratio, no maxwidth:
+[image 1 up 300x360]
+
+300 fixed width, 25% orig aspect ratio, no maxwidth:
+[image 1 up 300x90]
+
+25% width, orig aspect ratio, no maxwidth:
+[image 1 up 160x192]
+
+>image 1 verbose worig horig
+Drawing image 1 align 1 size 0x0 flags $5 maxwidth $0.
+[image 1 up 150x180]
+>image 1 verbose wfix hfix 300x100
+Drawing image 1 align 1 size 300x100 flags $A maxwidth $0.
+[image 1 up 300x100]
+>image 1 verbose wratio horig 1/2x1/1
+Drawing image 1 align 1 size $8000x$10000 flags $7 maxwidth $0.
+[image 1 up 320x180]
+>image 1 verbose wfix hratio 300x1/1
+Drawing image 1 align 1 size 300x$10000 flags $E maxwidth $0.
+[image 1 up 300x360]
+>image 1 verbose wfix hratio 300x1/4
+Drawing image 1 align 1 size 300x16384 flags $E maxwidth $0.
+[image 1 up 300x90]
+>image 1 verbose wratio hratio 1/4x1/1
+Drawing image 1 align 1 size 16384x$10000 flags $F maxwidth $0.
+[image 1 up 160x192]
+>image 1 verbose wfix hfix 800x50 maxwidth
+Drawing image 1 align 1 size 800x50 flags $A maxwidth $10000.
+[image 1 up 640x40]
+>image 1 verbose wfix hfix 800x50 halfwidth
+Drawing image 1 align 1 size 800x50 flags $A maxwidth $8000.
+[image 1 up 320x20]
+>image 1 verbose worig horig halfwidth
+Drawing image 1 align 1 size 0x0 flags $5 maxwidth $8000.
+[image 1 up 150x180]
+>image 1 verbose wratio horig 1/1x1/1 halfwidth
+Drawing image 1 align 1 size $10000x$10000 flags $7 maxwidth $8000.
+[image 1 up 320x90]
+>image 1 link
+[image 1 up 150x180]
+>image 3
+
+>text
+Here is some mixed-up mixed-up mixed-up fool mixed-up mixed-up wacky mixed-up arbitrary arbitrary wacky random fool wacky mixed-up wacky fool mixed-up fool random mixed-up arbitrary random mixed-up mixed-up arbitrary wacky arbitrary mixed-up mixed-up mixed-up random arbitrary fool wacky fool fool mixed-up random mixed-up fool fool fool random fool wacky wacky wacky wacky wacky fool random random wacky fool arbitrary arbitrary fool mixed-up mixed-up arbitrary arbitrary mixed-up random arbitrary wacky wacky random random mixed-up mixed-up arbitrary arbitrary random wacky random random mixed-up mixed-up random fool wacky arbitrary fool arbitrary fool wacky wacky random fool arbitrary mixed-up random fool fool arbitrary arbitrary arbitrary fool arbitrary text.
+
+>clear
+
+You erase history.
+
+>quit
+Are you sure you want to quit? y
+[rezrov: glk: image_draw: there is no picture 3.]

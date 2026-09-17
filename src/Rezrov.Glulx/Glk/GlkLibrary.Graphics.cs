@@ -16,13 +16,13 @@ namespace Rezrov.Glulx.Glk;
 /// defines: which picture, at what size, and where.
 ///
 /// [glk #graphics_graphics] Drawing into a graphics window is done in
-/// full here, since the window's canvas is the library's. Drawing into
-/// a text buffer window is not: a picture in a run of text has to be
-/// placed by whatever lays the text out, so that is a frontend's to do
-/// and waits for a frontend that can. gestalt_DrawImage answers for
-/// each kind of window separately, which is exactly the case the
-/// specification has in mind when it says a library may implement one
-/// and not the other.
+/// full here, since the window's canvas is the library's. [glk
+/// #graphics_textbuf] Drawing into a text buffer window is handed to
+/// the display, since a picture in a run of text has to be placed by
+/// whatever lays the text out, and its size settled again every time
+/// that happens. gestalt_DrawImage answers for each kind of window
+/// separately, which is exactly the case the specification has in mind
+/// when it says a library may implement one and not the other.
 /// </remarks>
 public sealed partial class GlkLibrary
 {
@@ -30,16 +30,7 @@ public sealed partial class GlkLibrary
     /// [glk op:image_draw_scaled_ext] The fixed-point fraction that
     /// stands for the whole of something.
     /// </summary>
-    private const uint Whole = 0x10000;
-
-    /// <summary>
-    /// The largest size a picture may be asked to be drawn at. A canvas
-    /// is a few thousand pixels at most and anything past its edge is
-    /// clipped away, so this changes nothing a game can see; it keeps
-    /// the arithmetic of a ratio rule from running off the end of what
-    /// a number holds.
-    /// </summary>
-    private const long LargestDrawn = 1 << 20;
+    private const uint Whole = ImageSizing.Whole;
 
     private readonly Dictionary<uint, Pixels?> _images = [];
     private BlorbPictures? _pictures;
@@ -146,13 +137,7 @@ public sealed partial class GlkLibrary
             return false;
         }
 
-        if (window is not GraphicsWindow graphics)
-        {
-            Warn($"image_draw: pictures in a window of type {window.Type} are not placed yet.");
-            return false;
-        }
-
-        if (Pictures?.Find((int)image) is not { } picture)
+        if (Pictures?.Find((int)image) is null)
         {
             Warn($"image_draw: there is no picture {image}.");
             return false;
@@ -167,17 +152,53 @@ public sealed partial class GlkLibrary
             return false;
         }
 
-        var (across, down) = Sized(rule, picture, graphics.PixelWidth, width, height);
+        var sizing = new ImageSizing(rule, width, height, maximum);
 
-        // [glk op:image_draw_scaled] A picture of no width or height
-        // draws nothing, which is not a failure to draw it.
-        if (across > 0 && down > 0)
+        if (window is GraphicsWindow graphics)
         {
-            graphics.Canvas.Draw(pixels, first, second, across, down);
-            _display.Drawn(graphics);
+            // [glk op:image_draw_scaled_ext] The bound on the width is
+            // a text buffer's business and is ignored here.
+            var (across, down) = (sizing with { Maximum = 0 })
+                .For(graphics.PixelWidth, pixels.Width, pixels.Height);
+
+            // [glk op:image_draw_scaled] A picture of no width or
+            // height draws nothing, which is not a failure to draw it.
+            if (across > 0 && down > 0)
+            {
+                graphics.Canvas.Draw(pixels, first, second, across, down);
+                _display.Drawn(graphics);
+            }
+
+            return true;
         }
 
-        return true;
+        // [glk #graphics_textbuf] In a text buffer the first argument
+        // is the alignment rather than a coordinate, and the second is
+        // unused. The size is not settled here: it is measured against
+        // the width of the window the text is laid out in, which is the
+        // display's to know and to work out again whenever it changes.
+        return _display.DrawImage(window, image, pixels, Alignment(image, first), sizing);
+    }
+
+    /// <summary>
+    /// [glk #graphics_textbuf] The alignment a picture in a text buffer
+    /// was given, of which only five values mean anything.
+    /// </summary>
+    /// <remarks>
+    /// Anything else is placed in the run of the text, which is what
+    /// the reference library does. The game has asked for a picture and
+    /// named a place for it that does not exist; showing it somewhere
+    /// is closer to what was asked for than showing it nowhere.
+    /// </remarks>
+    private ImageAlign Alignment(uint image, int given)
+    {
+        if (given is >= (int)ImageAlign.InlineUp and <= (int)ImageAlign.MarginRight)
+        {
+            return (ImageAlign)given;
+        }
+
+        Warn($"image_draw: picture {image} was given alignment {given}, which is not one of the five.");
+        return ImageAlign.InlineUp;
     }
 
     /// <summary>
@@ -240,12 +261,21 @@ public sealed partial class GlkLibrary
     /// </summary>
     /// <remarks>
     /// [glk #graphics_textbuf] This has no effect in any window but a
-    /// text buffer, and no picture can be in a text buffer's margin
-    /// yet, so there is never anything to break past. It is here so
-    /// that a game which calls it, as the specification advises before
-    /// every margin picture, goes on rather than stopping.
+    /// text buffer, and what effect it has there depends on where the
+    /// margin pictures fall once the text has been laid out, which the
+    /// display knows and this does not. The specification describes it
+    /// as an invisible mark in the stream of text, which works out how
+    /// many newlines it needs each time the text is formatted.
     /// </remarks>
-    public static void FlowBreak(GlkWindow window) => ArgumentNullException.ThrowIfNull(window);
+    public void FlowBreak(GlkWindow window)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+
+        if (window.Type == WindowType.TextBuffer)
+        {
+            _display.FlowBreak(window);
+        }
+    }
 
     /// <summary>
     /// The decoded picture, read once and kept, since a game draws the
@@ -261,37 +291,6 @@ public sealed partial class GlkLibrary
         var pixels = Pictures?.Find((int)image) is { } picture ? PictureReader.Decode(picture) : null;
         _images[image] = pixels;
         return pixels;
-    }
-
-    /// <summary>
-    /// [glk op:image_draw_scaled_ext] The size to draw a picture at:
-    /// the width first, then the height, since a height given as an
-    /// aspect ratio is measured against the width that was settled on.
-    /// </summary>
-    private static (int Width, int Height) Sized(ImageRule rule, PictureInfo picture, int windowWidth, uint width, uint height)
-    {
-        // The masks are applied here rather than named in the enum,
-        // where their values would collide with the last rule of each
-        // set.
-        var across = (ImageRule)((uint)rule & 0x03) switch
-        {
-            ImageRule.WidthFixed => width,
-            ImageRule.WidthRatio => (long)windowWidth * width / Whole,
-            _ => picture.Width,
-        };
-
-        across = Math.Clamp(across, 0, LargestDrawn);
-
-        var down = (ImageRule)((uint)rule & 0x0C) switch
-        {
-            ImageRule.HeightFixed => height,
-            ImageRule.AspectRatio when picture.Width > 0 =>
-                across * picture.Height / picture.Width * height / Whole,
-            ImageRule.AspectRatio => 0,
-            _ => picture.Height,
-        };
-
-        return ((int)across, (int)Math.Clamp(down, 0, LargestDrawn));
     }
 
     /// <summary>
