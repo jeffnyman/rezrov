@@ -38,6 +38,7 @@ internal static class Program
     private static BlorbFile? _resources;
     private static int? _seed;
     private static int _result;
+    private static string? _trouble;
 
     [STAThread]
     internal static int Main(string[] args)
@@ -88,7 +89,7 @@ internal static class Program
         _path = args[0];
         if (!Load(blorb))
         {
-            return 1;
+            _result = 1;
         }
 
         AppBuilder.Configure<GameApp>()
@@ -157,8 +158,7 @@ internal static class Program
     {
         if (!File.Exists(_path))
         {
-            Console.Error.WriteLine($"rezrov-gui: {_path}: no such file.");
-            return false;
+            return Trouble($"{_path}: no such file.");
         }
 
         var bytes = File.ReadAllBytes(_path);
@@ -170,8 +170,7 @@ internal static class Program
             var packaged = ReadBlorb(bytes);
             if (packaged?.Executable is not { } executable)
             {
-                Console.Error.WriteLine($"rezrov-gui: {_path}: the resource file has no game in it.");
-                return false;
+                return Trouble($"{Path.GetFileName(_path)} is a resource file with no game in it. The game is the story file beside it, and this finds the resources from that.");
             }
 
             _bytes = executable.Data.ToArray();
@@ -183,8 +182,7 @@ internal static class Program
         _format = StoryFormatDetector.Detect(bytes);
         if (_format is not (StoryFormat.Glulx or StoryFormat.ZMachine))
         {
-            Console.Error.WriteLine($"rezrov-gui: {_path}: this is not a story file this can play.");
-            return false;
+            return Trouble($"{Path.GetFileName(_path)} is not a story file this can play.");
         }
 
         _bytes = bytes;
@@ -201,6 +199,22 @@ internal static class Program
                 .FirstOrDefault(File.Exists);
 
         return named is not null && File.Exists(named) ? ReadBlorb(File.ReadAllBytes(named)) : null;
+    }
+
+    /// <summary>
+    /// Remembers what went wrong and says so on the error stream.
+    /// </summary>
+    /// <remarks>
+    /// A window program on Windows has no console to write to when it
+    /// is started from one, so a complaint printed here and nowhere
+    /// else would leave the player with a program that did nothing at
+    /// all. It is shown in a window as well.
+    /// </remarks>
+    private static bool Trouble(string what)
+    {
+        _trouble = what;
+        Console.Error.WriteLine($"rezrov-gui: {what}");
+        return false;
     }
 
     private static BlorbFile? ReadBlorb(byte[] bytes)
@@ -322,16 +336,21 @@ internal static class Program
             // [zm 8.8.1] A screen of pixels measures in pixels, so a
             // unit is a pixel and a character is as many of them as the
             // font makes it. That is what the Version 6 games were drawn
-            // for, though they are not told there are pictures yet.
+            // for.
             fontWidth: (int)glyphs.CellWidth,
             fontHeight: (int)glyphs.CellHeight,
 
             // [zm 16] The character graphics font is shown as the
-            // nearest Unicode characters, as on the terminal.
+            // nearest Unicode characters, as on the terminal, and
+            // [zm 8.8.6] pictures are drawn, which is what a Version 6
+            // game has been waiting to hear. Saying so sends Infocom's
+            // Version 6 games down their graphical paths instead of
+            // their text-only ones, and [zm 11.1.3.1] makes the
+            // interpreter report a machine that had pictures.
             capabilities: ScreenCapabilities.StatusLine | ScreenCapabilities.UpperWindow
                 | ScreenCapabilities.Colors | ScreenCapabilities.Bold | ScreenCapabilities.Italic
                 | ScreenCapabilities.FixedPitch | ScreenCapabilities.FixedGrid
-                | ScreenCapabilities.CharacterGraphicsFont);
+                | ScreenCapabilities.CharacterGraphicsFont | ScreenCapabilities.Pictures);
 
         // [zm 10.3.2] Clicks are reported in screen units, which are
         // cells before Version 6 and the font's size in Version 6.
@@ -341,6 +360,7 @@ internal static class Program
 
         board.Screen = screen;
         board.Keys = input;
+        board.Pictures = new GuiPictures(_resources);
 
         var interpreter = new Interpreter(
             memory,
@@ -388,7 +408,23 @@ internal static class Program
     {
         public override void OnFrameworkInitializationCompleted()
         {
-            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop && _trouble is { } trouble)
+            {
+                desktop.MainWindow = new Window
+                {
+                    Title = "rezrov",
+                    SizeToContent = SizeToContent.WidthAndHeight,
+                    CanResize = false,
+                    Content = new TextBlock
+                    {
+                        Text = trouble,
+                        Margin = new Thickness(24),
+                        MaxWidth = 460,
+                        TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+                    },
+                };
+            }
+            else if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime playing)
             {
                 var glyphs = new Glyphs();
                 var board = new Board(glyphs);
@@ -406,7 +442,7 @@ internal static class Program
                     Start(window, board, glyphs);
                 };
 
-                desktop.MainWindow = window;
+                playing.MainWindow = window;
             }
 
             base.OnFrameworkInitializationCompleted();

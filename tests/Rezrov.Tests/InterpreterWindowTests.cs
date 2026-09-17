@@ -285,7 +285,10 @@ public partial class InterpreterTests
         Assert.Equal((6, 24), (memory.ReadWord(Table + 4), memory.ReadWord(Table + 6)));
         Assert.Equal(0, run.Global(G1));
         Assert.Equal(1, run.Global(G2));
-        Assert.Equal(new PicturePlacement(1, 1, 2, 6, 24), windows.Pictures.Single());
+        // [zm 8.8.1] The cells it covers, and then where it really is in
+        // units, which on this screen of one unit to a cell is the same
+        // place counted from one rather than from zero.
+        Assert.Equal(new PicturePlacement(1, 1, 2, 6, 24, 2, 3, 6, 24), windows.Pictures.Single());
         Assert.Contains("no picture 2 to draw", run.Interpreter.RuntimeErrors.Single());
     }
 
