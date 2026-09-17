@@ -1,13 +1,13 @@
 using System.Collections.Concurrent;
-using Rezrov.ZMachine.Input;
+using Rezrov.ZMachine.Screen;
 using Rezrov.ZMachine.Text;
 
-namespace Rezrov.Tui;
+namespace Rezrov.ZMachine.Input;
 
 /// <summary>
-/// The keyboard and mouse of the terminal, as the interpreter sees
-/// them: a queue of keys fed from the UI thread and drained on the
-/// interpreter's, with line editing done here and echoed to the
+/// A frontend's keyboard and mouse, as the interpreter sees them: a
+/// queue of keys fed from whatever thread the frontend uses and drained
+/// on the interpreter's, with line editing done here and echoed to the
 /// screen.
 /// </summary>
 /// <remarks>
@@ -17,10 +17,10 @@ namespace Rezrov.Tui;
 /// click characters the standard defines, with their position kept
 /// for the interpreter to pass on.
 /// </remarks>
-public sealed class TerminalInput : IInput
+public sealed class BufferedInput : IInput
 {
     private readonly BlockingCollection<(ushort Zscii, MouseClick? Click)> _keys = [];
-    private readonly TerminalScreen _screen;
+    private readonly BufferedScreen _screen;
     private readonly int _unitsPerColumn;
     private readonly int _unitsPerRow;
 
@@ -31,7 +31,7 @@ public sealed class TerminalInput : IInput
     /// the frontend's font width in Version 6.
     /// </param>
     /// <param name="unitsPerRow">How many units a cell is high.</param>
-    public TerminalInput(TerminalScreen screen, int unitsPerColumn = 1, int unitsPerRow = 1)
+    public BufferedInput(BufferedScreen screen, int unitsPerColumn = 1, int unitsPerRow = 1)
     {
         ArgumentNullException.ThrowIfNull(screen);
         _screen = screen;
@@ -60,7 +60,7 @@ public sealed class TerminalInput : IInput
         _keys.Add((doubleClick ? Zscii.DoubleClick : Zscii.SingleClick, click));
     }
 
-    /// <summary>Waits for any key at all, for [MORE] and the ending.</summary>
+    /// <summary>Waits for any key, for [MORE] and the ending.</summary>
     public ushort WaitForAnyKey() => Take().Zscii;
 
     public LineInput ReadLine(LineInputRequest request)

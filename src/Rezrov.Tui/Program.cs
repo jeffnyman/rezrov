@@ -6,6 +6,7 @@ using Rezrov.Glulx.Execution;
 using Rezrov.Glulx.Glk;
 using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
+using Rezrov.ZMachine.Input;
 using Rezrov.ZMachine.Text;
 using Terminal.Gui.App;
 using Terminal.Gui.Views;
@@ -167,7 +168,7 @@ internal static class Program
             // The screen needs the input for the [MORE] key and the input
             // needs the screen for its echo, so each reaches the other
             // through a variable filled in a moment later.
-            TerminalInput? input = null;
+            BufferedInput? input = null;
             var screen = new TerminalScreen(
                 width,
                 height,
@@ -178,8 +179,8 @@ internal static class Program
             // are cells before Version 6 and the frontend's font size in
             // Version 6.
             input = header.Version == ZMachineVersion.V6
-                ? new TerminalInput(screen, screen.FontWidth, screen.FontHeight)
-                : new TerminalInput(screen);
+                ? new BufferedInput(screen, screen.FontWidth, screen.FontHeight)
+                : new BufferedInput(screen);
             view.Picture = screen;
             view.KeyPressed = key =>
             {
