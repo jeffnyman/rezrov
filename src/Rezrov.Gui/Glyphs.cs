@@ -81,6 +81,8 @@ internal sealed class Glyphs : IGlyphs
 
     public double LineHeight(GlkStyle style) => Math.Ceiling(Measure("Mg", Face(style), Size(style)).Height);
 
+    public double Baseline(GlkStyle style) => Measure("Mg", Face(style), Size(style)).Baseline;
+
     /// <summary>The face a style is drawn in.</summary>
     public Typeface Face(GlkStyle style) => style switch
     {

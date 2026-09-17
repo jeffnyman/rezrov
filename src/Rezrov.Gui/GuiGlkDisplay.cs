@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Text;
+using Rezrov.Core.Graphics;
 using Rezrov.Glulx.Glk;
 
 namespace Rezrov.Gui;
@@ -127,11 +128,50 @@ public sealed class GuiGlkDisplay : IGlkDisplay
 
     /// <summary>
     /// [glk #graphics_testing] Pictures can be drawn in a graphics
-    /// window, whose canvas this paints. A picture in the run of a text
-    /// buffer's text has to be placed by whatever lays the text out,
-    /// which is not built yet, so the gestalt says no for one.
+    /// window, whose canvas this paints, and [glk #graphics_textbuf] in
+    /// the run of a text buffer's text, which this lays out.
     /// </summary>
-    public bool CanDrawImages(WindowType type) => type == WindowType.Graphics;
+    public bool CanDrawImages(WindowType type) => type is WindowType.Graphics or WindowType.TextBuffer;
+
+    /// <summary>
+    /// [glk #graphics_textbuf] A picture in the run of a text buffer's
+    /// text, which goes into the text and is laid out with it.
+    /// </summary>
+    /// <remarks>
+    /// The size is settled when the text is laid out rather than here,
+    /// since a picture measured against the window's width is a
+    /// different size in a window of a different size, and the
+    /// specification says it resizes when the window does.
+    /// </remarks>
+    public bool DrawImage(GlkWindow window, uint image, Pixels picture, ImageAlign align, ImageSizing sizing)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+
+        bool placed;
+        lock (Sync)
+        {
+            placed = Text(window).Draw(picture, align, sizing);
+        }
+
+        _repaint();
+        return placed;
+    }
+
+    /// <summary>
+    /// [glk op:window_flow_break] A mark in the text that takes it down
+    /// below whatever margin pictures it is standing aside for.
+    /// </summary>
+    public void FlowBreak(GlkWindow window)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+
+        lock (Sync)
+        {
+            Text(window).FlowBreak();
+        }
+
+        _repaint();
+    }
 
     /// <summary>
     /// [glk #window_graphics] The game painted on a canvas, so the

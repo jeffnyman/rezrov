@@ -22,10 +22,15 @@ namespace Rezrov.Gui;
 /// toolkit on the main one, and the Glk display between them.
 /// </summary>
 /// <remarks>
-/// What is here so far is the text of a Glk game. Graphics windows, the
-/// pictures a text buffer can hold, the Z-machine screen and its
-/// Version 6 windows, sound, and the file dialogs all come after, each
-/// against the seam the core already has for it.
+/// Both machines play here, each against the seam the core already has
+/// for it: a Glulx game through the Glk library's windows, graphics,
+/// and sound, and a Z-machine game through the screen model and its
+/// Version 6 windows. The same control draws either of them.
+///
+/// The interpreter waits on the toolkit when it asks the player for a
+/// file, and the toolkit never waits on the interpreter, so the
+/// dependency runs one way and neither can be left holding the other
+/// up.
 /// </remarks>
 internal static class Program
 {
@@ -140,11 +145,22 @@ internal static class Program
             // A space has to be worth something, and the whole has to be
             // the sum of its parts, or the words will not line up.
             var adds = Math.Abs(word + space + fox - both) < 0.5;
+
+            // [glk #graphics_textbuf] The baseline is what the pieces
+            // of a line are stood on and what a picture in the run of
+            // the text is aligned against, so it has to fall somewhere
+            // inside the line rather than at the top of it or past the
+            // bottom.
+            var height = glyphs.LineHeight(style);
+            var baseline = glyphs.Baseline(style);
+            var sits = baseline > 0 && baseline <= height;
+
             Console.WriteLine(
-                $"{style}: space {space:F2}, line {glyphs.LineHeight(style):F2}, "
+                $"{style}: space {space:F2}, line {height:F2}, "
+                + $"baseline {baseline:F2}, "
                 + $"\"brown fox\" {both:F2}, parts add up {adds}");
 
-            if (space <= 0 || !adds)
+            if (space <= 0 || !adds || !sits)
             {
                 Console.Error.WriteLine($"rezrov-gui: the {style} font does not measure sensibly.");
                 return 1;
