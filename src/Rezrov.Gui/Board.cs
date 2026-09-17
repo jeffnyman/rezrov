@@ -90,6 +90,11 @@ internal sealed class Board : Control
     /// </summary>
     public BufferedInput? Keys { get; set; }
 
+    /// <summary>
+    /// [zm 8.8.6] The pictures a Version 6 game draws.
+    /// </summary>
+    public GuiPictures? Pictures { get; set; }
+
     public override void Render(DrawingContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -442,7 +447,15 @@ internal sealed class Board : Control
         for (var row = 0; row < screen.Height; row++)
         {
             PaintBackgrounds(context, screen, row, plain);
+        }
 
+        // [zm 8.8.6] The pictures go over the backgrounds and under the
+        // text, which is the order a Version 6 game draws them in: it
+        // paints a picture and then writes over it.
+        PaintPictures(context, screen);
+
+        for (var row = 0; row < screen.Height; row++)
+        {
             for (var column = 0; column < screen.Width; column++)
             {
                 PaintCell(context, screen[row, column], row, column);
@@ -460,6 +473,44 @@ internal sealed class Board : Control
                     ((cursor.Row + 1) * _glyphs.CellHeight) - 2,
                     _glyphs.CellWidth,
                     2));
+        }
+    }
+
+    /// <summary>
+    /// [zm op:draw_picture] Every picture the game has drawn, at the
+    /// place and the size it asked for.
+    /// </summary>
+    /// <remarks>
+    /// [zm 8.8.1] The placement carries both the cells it covers and
+    /// where it really is in units. A unit is a pixel on this screen, so
+    /// the unit rectangle is used: rounding to whole characters would
+    /// shift artwork drawn to the pixel by as much as a character, which
+    /// on the Infocom games is plainly visible.
+    /// </remarks>
+    private void PaintPictures(DrawingContext context, BufferedScreen screen)
+    {
+        if (Pictures is not { } pictures)
+        {
+            return;
+        }
+
+        foreach (var placement in screen.Pictures)
+        {
+            if (pictures.Bitmap(placement.Number) is not { } bitmap
+                || placement.UnitWidth <= 0
+                || placement.UnitHeight <= 0)
+            {
+                continue;
+            }
+
+            context.DrawImage(
+                bitmap,
+                new Rect(0, 0, bitmap.PixelSize.Width, bitmap.PixelSize.Height),
+                new Rect(
+                    placement.UnitLeft,
+                    placement.UnitTop,
+                    placement.UnitWidth,
+                    placement.UnitHeight));
         }
     }
 

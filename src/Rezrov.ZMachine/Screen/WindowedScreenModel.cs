@@ -10,7 +10,31 @@ namespace Rezrov.ZMachine.Screen;
 /// Where a picture was drawn on the screen, in cells, so that a
 /// frontend can mark the place.
 /// </summary>
-public sealed record PicturePlacement(int Number, int Row, int Column, int Rows, int Columns);
+/// <param name="Number">Which picture was drawn.</param>
+/// <param name="Row">The first row of cells it covers.</param>
+/// <param name="Column">The first column.</param>
+/// <param name="Rows">How many rows of cells it covers.</param>
+/// <param name="Columns">How many columns.</param>
+/// <param name="UnitTop">
+/// [zm 8.8.1] Where its top edge really is, in units, which is what a
+/// frontend measuring in pixels wants: the rows and columns above are
+/// the same place rounded out to whole characters, which is all a
+/// screen of characters can use but would shift artwork drawn to the
+/// pixel.
+/// </param>
+/// <param name="UnitLeft">Where its left edge really is.</param>
+/// <param name="UnitHeight">How tall it really is, in units.</param>
+/// <param name="UnitWidth">How wide it really is.</param>
+public sealed record PicturePlacement(
+    int Number,
+    int Row,
+    int Column,
+    int Rows,
+    int Columns,
+    int UnitTop,
+    int UnitLeft,
+    int UnitHeight,
+    int UnitWidth);
 
 /// <summary>
 /// The screen model of [zm 8.8], for Version 6: eight windows over one
@@ -453,6 +477,10 @@ public sealed class WindowedScreenModel : IScreenModel
                     var target = Resolve(window)!;
                     var (top, left, rows, columns) = CellRect(target);
                     FillCells(top, left, rows, columns, Cell.Blank(BlankFor(target)));
+
+                    // [zm op:erase_window] Erasing a window takes with it
+                    // whatever was drawn in it, pictures included.
+                    _pictures.RemoveAll(p => Within(p, top, rows));
                     ResetCursor(target);
                     break;
                 }
@@ -877,8 +905,11 @@ public sealed class WindowedScreenModel : IScreenModel
         FlushWord();
         if (PictureCells(size, y, x) is { } rect)
         {
+            var origin = PictureOrigin(y, x);
             FillCells(rect.Top, rect.Left, rect.Rows, rect.Columns, Cell.Blank(BlankFor(Current)));
-            _pictures.Add(new PicturePlacement(number, rect.Top, rect.Left, rect.Rows, rect.Columns));
+            _pictures.Add(new PicturePlacement(
+                number, rect.Top, rect.Left, rect.Rows, rect.Columns,
+                origin.Y, origin.X, size.Height, size.Width));
             _changed = true;
         }
 
@@ -1257,8 +1288,11 @@ public sealed class WindowedScreenModel : IScreenModel
         if (Math.Abs(by) >= rows)
         {
             FillCells(top, left, rows, columns, blank);
+            _pictures.RemoveAll(p => Within(p, top, rows));
             return;
         }
+
+        ScrollPictures(units, by, top, rows);
 
         if (by > 0)
         {
@@ -1283,11 +1317,23 @@ public sealed class WindowedScreenModel : IScreenModel
 
     // A picture's cells: at (y,x) in the current window, or at the
     // cursor for a zero coordinate, clipped to the window and screen.
+    /// <summary>
+    /// [zm op:draw_picture] Where a picture's top left corner goes, in
+    /// units: the place given, or the cursor for a coordinate of zero,
+    /// taken from the current window's own corner.
+    /// </summary>
+    private (int Y, int X) PictureOrigin(int y, int x)
+    {
+        var window = Current;
+        return (
+            window.Y + (y == 0 ? window.CursorY : y) - 1,
+            window.X + (x == 0 ? window.CursorX : x) - 1);
+    }
+
     private (int Top, int Left, int Rows, int Columns)? PictureCells((int Height, int Width) size, int y, int x)
     {
         var window = Current;
-        var absoluteY = window.Y + (y == 0 ? window.CursorY : y) - 1;
-        var absoluteX = window.X + (x == 0 ? window.CursorX : x) - 1;
+        var (absoluteY, absoluteX) = PictureOrigin(y, x);
 
         var top = Math.Max(RowOf(absoluteY), RowOf(window.Y));
         var left = Math.Max(ColumnOf(absoluteX), ColumnOf(window.X));
@@ -1362,6 +1408,51 @@ public sealed class WindowedScreenModel : IScreenModel
 
         _cells = cells;
         _changed = true;
+    }
+
+    /// <summary>
+    /// Whether a picture is in the rows a window covers.
+    /// </summary>
+    private static bool Within(PicturePlacement picture, int top, int rows) =>
+        picture.Row < top + rows && picture.Row + picture.Rows > top;
+
+    /// <summary>
+    /// [zm 8.8.3] Moves the pictures of a scrolling window along with
+    /// the text, and forgets the ones that have gone past its edge.
+    /// </summary>
+    /// <remarks>
+    /// A picture is drawn where the game put it and stays there until
+    /// something takes it away. In a window that scrolls, what takes it
+    /// away is the scrolling: Zork Zero draws an illuminated capital at
+    /// the start of a paragraph, and the capital has to travel up the
+    /// screen with the paragraph it belongs to rather than hang in the
+    /// air while the text moves out from under it.
+    /// </remarks>
+    private void ScrollPictures(int units, int by, int top, int rows)
+    {
+        for (var i = _pictures.Count - 1; i >= 0; i--)
+        {
+            var picture = _pictures[i];
+            if (!Within(picture, top, rows))
+            {
+                continue;
+            }
+
+            var moved = picture with
+            {
+                Row = picture.Row - by,
+                UnitTop = picture.UnitTop - units,
+            };
+
+            if (Within(moved, top, rows))
+            {
+                _pictures[i] = moved;
+            }
+            else
+            {
+                _pictures.RemoveAt(i);
+            }
+        }
     }
 
     private void FillCells(int top, int left, int rows, int columns, Cell cell)

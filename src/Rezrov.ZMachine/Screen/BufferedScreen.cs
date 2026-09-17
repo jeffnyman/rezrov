@@ -74,6 +74,13 @@ public class BufferedScreen : IScreen
     /// <summary>The lock the buffer is read and written under.</summary>
     public object Sync { get; } = new();
 
+    /// <summary>
+    /// [zm 8.8.6] The pictures the game has drawn and where they went,
+    /// to be read under <see cref="Sync"/>. Empty for a game that draws
+    /// none, and for every game before Version 6.
+    /// </summary>
+    public IReadOnlyList<PicturePlacement> Pictures { get; private set; } = [];
+
     public int Width => Buffer.Width;
 
     public int Height => Buffer.Height;
@@ -202,9 +209,16 @@ public class BufferedScreen : IScreen
 
     public void UpdateWindows(WindowedScreenModel model)
     {
+        ArgumentNullException.ThrowIfNull(model);
+
         lock (Sync)
         {
             Buffer.UpdateWindows(model);
+
+            // [zm op:draw_picture] Where every picture went, kept for
+            // whatever is showing the screen. A frontend of characters
+            // has nothing to do with these; one with pixels draws them.
+            Pictures = model.Pictures;
         }
 
         _repaint();
