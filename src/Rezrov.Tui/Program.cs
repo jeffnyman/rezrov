@@ -7,6 +7,7 @@ using Rezrov.Glulx.Glk;
 using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
 using Rezrov.ZMachine.Input;
+using Rezrov.ZMachine.Sound;
 using Rezrov.ZMachine.Text;
 using Terminal.Gui.App;
 using Terminal.Gui.Views;
@@ -212,7 +213,7 @@ internal static class Program
                 input,
                 seed is { } s ? new RandomGenerator(s) : null,
                 files: new TerminalFiles(app, presets),
-                sound: new TerminalSound(audio),
+                sound: new EngineSound(audio),
                 interpreterNumber: machine,
                 tandy: tandy);
 
@@ -378,7 +379,7 @@ internal static class Program
                 files.NamedFiles[FileUsage.SavedGame] = Path.GetFullPath(presets.Save);
             }
 
-            var library = new GlkLibrary(display, files, sound: new TerminalGlkSound(audio)) { Resources = resources };
+            var library = new GlkLibrary(display, files, sound: new EngineGlkSound(audio)) { Resources = resources };
             glk = library;
             var machine = new GlulxMachine(memory, seed is { } s ? new GlulxRandom((uint)s) : null, library);
 
