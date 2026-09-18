@@ -52,6 +52,8 @@ internal static class Program
     private static StoryFormat _format;
     private static BlorbFile? _resources;
     private static int? _seed;
+    private static InterpreterNumber? _machine;
+    private static bool _tandy;
     private static string _prose = Glyphs.ProseFamily;
     private static string _fixed = Glyphs.FixedFamily;
     private static double _size = Glyphs.OrdinarySize;
@@ -132,6 +134,13 @@ internal static class Program
                 case "--seed" when i + 1 < args.Length && int.TryParse(args[i + 1], out var seed) && seed >= 1:
                     _seed = seed;
                     i++;
+                    break;
+                case "--interpreter" when i + 1 < args.Length && InterpreterNumbers.TryParse(args[i + 1], out var number):
+                    _machine = number;
+                    i++;
+                    break;
+                case "--tandy":
+                    _tandy = true;
                     break;
                 case "--font" when i + 1 < args.Length:
                     _prose = args[++i];
@@ -320,18 +329,24 @@ internal static class Program
 
     private static void Help(TextWriter to)
     {
-        to.WriteLine("""
+        var names = InterpreterNumbers.AllNames.ToList();
+        to.WriteLine($"""
             usage: rezrov-gui <story file> [options]
 
-              --blorb <file>    take the pictures and sounds from this resource file
-              --seed <number>   start the game's random numbers from here
-              --font <family>   set the prose in this family
-              --fixed <family>  set the grids and preformatted text in this one
-              --size <pixels>   the size of ordinary text, from 6 to 72
-              --smoothing <s>   subpixel, grayscale, or none
-              --version         print the version and leave
-              --probe           print what the fonts measure and leave
-              --help            print this and leave
+              --blorb <file>           take the pictures and sounds from this resource file
+              --seed <number>          start the game's random numbers from here
+              --interpreter <machine>  tell the game which machine it is running on
+              --tandy                  set the Tandy bit for a Version 1 to 3 game
+              --font <family>          set the prose in this family
+              --fixed <family>         set the grids and preformatted text in this one
+              --size <pixels>          the size of ordinary text, from 6 to 72
+              --smoothing <s>          subpixel, grayscale, or none
+              --version                print the version and leave
+              --probe                  print what the fonts measure and leave
+              --help                   print this and leave
+
+            machines: {string.Join(", ", names.Take(6))},
+                      {string.Join(", ", names.Skip(6))}, or a number from 1 to 11
 
             A family may be a list, in which case the first of them the
             machine actually has is the one used. The defaults are:
@@ -440,6 +455,16 @@ internal static class Program
         {
             StartZMachine(window, board, glyphs);
             return;
+        }
+
+        if (_machine is not null)
+        {
+            Console.Error.WriteLine("rezrov-gui: the interpreter option does not apply to Glulx");
+        }
+
+        if (_tandy)
+        {
+            Console.Error.WriteLine("rezrov-gui: the tandy option does not apply to Glulx");
         }
 
         var memory = new GlulxMemory(_bytes);
@@ -563,7 +588,13 @@ internal static class Program
 
             // [zm 9.1] The machine's audio output, or nothing on a
             // machine with none, which the header then tells the game.
-            sound: new EngineSound(_audio));
+            sound: new EngineSound(_audio),
+
+            // [zm 11.1.3] The machine the game is told it is running on
+            // and [zm 11.1] the Tandy bit, for the games that read one
+            // or the other and behave differently.
+            interpreterNumber: _machine,
+            tandy: _tandy);
 
         if (_resources is not null)
         {

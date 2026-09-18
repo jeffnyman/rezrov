@@ -117,7 +117,7 @@ This opens a window and plays either machine in it, which is what finally lets a
 
 The window opens in the middle of the screen, large enough for a hundred and twenty characters by forty in whatever font is in use, or as much of that as the screen has room for. A Version 6 game says what shape of screen its pictures were drawn for, and the window is brought into that shape, so Shogun's title screen and the side panels of all four of them fill the window rather than stopping short in a band of background. Resizing it tells the game, so a Glk game lays its windows out again and a Z-machine game hears that its screen changed.
 
-The `--blorb` and `--seed` options work here as elsewhere. Four more settle how the text looks:
+The `--blorb`, `--seed`, `--interpreter`, and `--tandy` options work here as elsewhere, the last two for the Z-machine games that read them, among them Beyond Zork, which picks how to draw its map by which machine it is told it is on. Four more settle how the text looks:
 
 ```sh
 dotnet run --project src/Rezrov.Gui -- game.gblorb --font "Iowan Old Style, Charter, Georgia, serif" --size 18
