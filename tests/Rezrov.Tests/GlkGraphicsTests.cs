@@ -219,6 +219,14 @@ public class GlkGraphicsTests
         Assert.Equal(ImageAlign.MarginLeft, placed.Align);
         Assert.Equal(new ImageSizing(rule, Whole / 2, Whole, 0), placed.Sizing);
         Assert.Equal((4, 2), (placed.Picture.Width, placed.Picture.Height));
+        Assert.Equal(0u, placed.Link);
+
+        // [glk #link_creating] A picture takes the link value in force
+        // on the window's stream, exactly as the text around it does.
+        story.Stream.SetLink(5);
+        Assert.True(glk.DrawImage(story, 1, (int)ImageAlign.InlineUp, 0, Original, 0, 0, Whole));
+        Assert.Equal(5u, display.Placed[^1].Link);
+        story.Stream.SetLink(0);
 
         // [glk #graphics_textbuf] And an alignment that is none of the
         // five puts the picture in the run of the text rather than

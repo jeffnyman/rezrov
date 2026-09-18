@@ -270,6 +270,107 @@ internal sealed class Board : Control
     }
 
     /// <summary>
+    /// [glk #mouse_events] and [glk #link_events] Touching a window,
+    /// which for a window waiting on a link means selecting the link
+    /// under the pointer.
+    /// </summary>
+    /// <remarks>
+    /// The specification asks that a player be told to touch a window
+    /// rather than to click, double-click, or control-click it, since
+    /// every library chooses differently. An ordinary press is the
+    /// choice here, this being a frontend with no text selection of
+    /// its own to get in the way.
+    /// </remarks>
+    protected override void OnPointerPressed(PointerPressedEventArgs e)
+    {
+        ArgumentNullException.ThrowIfNull(e);
+
+        // A press puts the keyboard back in the board, which is where
+        // the game is waiting for it.
+        Focus();
+
+        if (Display is { Root: { } root } display)
+        {
+            var at = e.GetPosition(this);
+
+            lock (display.Sync)
+            {
+                if (WindowAt(root, at) is { } window && Touched(window, at) is { } input)
+                {
+                    display.Point(input);
+                    e.Handled = true;
+                }
+            }
+        }
+
+        base.OnPointerPressed(e);
+    }
+
+    /// <summary>
+    /// What touching a window at a point means to the game, or nothing
+    /// where the window was not waiting to be touched.
+    /// </summary>
+    /// <remarks>
+    /// [glk #link_events] A link goes before a touch. The
+    /// specification says a game should avoid asking for both at once
+    /// precisely because a library has no intuitive way to tell them
+    /// apart; where one does both, the link is the more particular of
+    /// the two and wins where there is a link under the pointer.
+    /// </remarks>
+    private GlkInput? Touched(GlkWindow window, Point at)
+    {
+        var place = Place(window);
+        var x = at.X - place.X;
+        var y = at.Y - place.Y;
+
+        if (window.HyperlinkRequest && Selected(window, x, y, place) is { } link && link != 0)
+        {
+            return GlkInput.LinkSelected(window, link);
+        }
+
+        if (!window.MouseRequest)
+        {
+            return null;
+        }
+
+        // [glk #mouse_events] A text grid answers in characters and a
+        // graphics window in pixels, each counted from its own top left
+        // corner. The strip a window was stretched over is past its
+        // last cell, so a touch there belongs to the last one.
+        return window switch
+        {
+            TextGridWindow grid => GlkInput.MouseClick(
+                window,
+                (uint)Math.Clamp((int)(x / _glyphs.CellWidth), 0, Math.Max(grid.Width - 1, 0)),
+                (uint)Math.Clamp((int)(y / _glyphs.CellHeight), 0, Math.Max(grid.Height - 1, 0))),
+            GraphicsWindow canvas => GlkInput.MouseClick(
+                window,
+                (uint)Math.Clamp((int)x, 0, Math.Max(canvas.PixelWidth - 1, 0)),
+                (uint)Math.Clamp((int)y, 0, Math.Max(canvas.PixelHeight - 1, 0))),
+            _ => null,
+        };
+    }
+
+    /// <summary>
+    /// [glk #link_events] The link under a point in a window, or zero
+    /// where there is none there.
+    /// </summary>
+    private uint? Selected(GlkWindow window, double x, double y, Rect place) => window switch
+    {
+        TextGridWindow grid when x >= 0 && y >= 0 => Inside(grid, x, y),
+        { Type: WindowType.TextBuffer } => Display!.Text(window).LinkAt(x, y, place.Width, place.Height),
+        _ => null,
+    };
+
+    private uint? Inside(TextGridWindow grid, double x, double y)
+    {
+        var column = (int)(x / _glyphs.CellWidth);
+        var row = (int)(y / _glyphs.CellHeight);
+
+        return column < grid.Width && row < grid.Height ? grid.LinkAt(column, row) : null;
+    }
+
+    /// <summary>
     /// [glk #window_textbuf] The wheel scrolls the text buffer under the
     /// pointer, which is the only way back to what has gone off the top.
     /// </summary>
@@ -451,13 +552,7 @@ internal sealed class Board : Control
                 }
 
                 var look = fonts.Look(piece.Style);
-                var formatted = new FormattedText(
-                    piece.Text,
-                    CultureInfo.InvariantCulture,
-                    FlowDirection.LeftToRight,
-                    _glyphs.Face(look),
-                    look.Size,
-                    Brush(look.Colors.Ink));
+                var formatted = Written(piece.Text, look, piece.Link);
 
                 // Pieces are placed on the line's baseline rather than
                 // hung from its top, so that a heading and the prose
@@ -466,6 +561,35 @@ internal sealed class Board : Control
                 context.DrawText(formatted, new Point(place.X + piece.Left, top + above));
             }
         }
+    }
+
+    /// <summary>
+    /// A piece of text ready to draw, in the color and face its style
+    /// calls for.
+    /// </summary>
+    /// <remarks>
+    /// [glk #link_creating] A piece that belongs to a link is drawn in
+    /// the color links are drawn in and underlined, whatever the style
+    /// said, since the specification asks that links be shown in some
+    /// distinctive way whether or not the game has asked for link
+    /// input at all.
+    /// </remarks>
+    private FormattedText Written(string text, GlkAppearance look, uint link)
+    {
+        var formatted = new FormattedText(
+            text,
+            CultureInfo.InvariantCulture,
+            FlowDirection.LeftToRight,
+            _glyphs.Face(look),
+            look.Size,
+            Brush(link == 0 ? look.Colors.Ink : GlkLook.Linked));
+
+        if (link != 0)
+        {
+            formatted.SetTextDecorations(TextDecorations.Underline);
+        }
+
+        return formatted;
     }
 
     /// <summary>
@@ -642,13 +766,7 @@ internal sealed class Board : Control
             }
 
             var look = fonts.Look(grid.StyleAt(x, y));
-            var formatted = new FormattedText(
-                row[x].ToString(),
-                CultureInfo.InvariantCulture,
-                FlowDirection.LeftToRight,
-                _glyphs.Face(look),
-                look.Size,
-                Brush(look.Colors.Ink));
+            var formatted = Written(row[x].ToString(), look, grid.LinkAt(x, y));
 
             context.DrawText(
                 formatted,

@@ -177,7 +177,9 @@ public sealed partial class GlkLibrary
         // unused. The size is not settled here: it is measured against
         // the width of the window the text is laid out in, which is the
         // display's to know and to work out again whenever it changes.
-        return _display.DrawImage(window, image, pixels, Alignment(image, first), sizing);
+        // [glk #link_creating] A picture takes the link value of the
+        // stream it was printed to, as the text around it does.
+        return _display.DrawImage(window, image, pixels, Alignment(image, first), sizing, window.Stream.Link);
     }
 
     /// <summary>

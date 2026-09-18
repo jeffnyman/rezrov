@@ -28,6 +28,19 @@ public sealed class GlkLook
     /// <summary>The color of the page behind it.</summary>
     public const uint Paper = 0x00FAFAF7;
 
+    /// <summary>
+    /// [glk #link_creating] The color a link is drawn in, whatever
+    /// style it was printed in.
+    /// </summary>
+    /// <remarks>
+    /// The specification asks a library to show links in some
+    /// distinctive way, whether or not the game has asked for link
+    /// input, and says blue underlined text is most likely. It is not
+    /// a style hint and a game cannot change it, which is the point:
+    /// a link looks like a link wherever it appears.
+    /// </remarks>
+    public const uint Linked = 0x00215FA6;
+
     private readonly Dictionary<GlkStyle, GlkAppearance> _looks = [];
     private readonly WindowType _type;
     private readonly GlkStyles _styles;

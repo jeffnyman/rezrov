@@ -117,8 +117,12 @@ public interface IGlkDisplay
     /// the start of a line, and the answer for one that is not is
     /// false, since the specification says no picture appears at all in
     /// that case.
+    ///
+    /// [glk #link_creating] A picture takes the link value in force
+    /// where it was printed, exactly as the text around it does, so the
+    /// player can select a picture in a link.
     /// </remarks>
-    bool DrawImage(GlkWindow window, uint image, Pixels picture, ImageAlign align, ImageSizing sizing) => false;
+    bool DrawImage(GlkWindow window, uint image, Pixels picture, ImageAlign align, ImageSizing sizing, uint link) => false;
 
     /// <summary>
     /// [glk op:window_flow_break] A mark in the run of a text buffer's
@@ -245,7 +249,7 @@ public sealed class TextWriterGlkDisplay : IGlkDisplay
     /// and an inline picture counts as text for that rule while a
     /// margin one does not, since two may share a margin.
     /// </remarks>
-    public bool DrawImage(GlkWindow window, uint image, Pixels picture, ImageAlign align, ImageSizing sizing)
+    public bool DrawImage(GlkWindow window, uint image, Pixels picture, ImageAlign align, ImageSizing sizing, uint link)
     {
         ArgumentNullException.ThrowIfNull(window);
         ArgumentNullException.ThrowIfNull(picture);
@@ -256,8 +260,12 @@ public sealed class TextWriterGlkDisplay : IGlkDisplay
             return false;
         }
 
+        // [glk #link_creating] A picture in a link is written down as
+        // one, since a stream of text cannot show that it is one and a
+        // recording is the only place it would otherwise be lost.
+        var linked = link == 0 ? "" : $" link {link}";
         var (width, height) = sizing.For(window.Width * CellWidth, picture.Width, picture.Height);
-        _writer.Write($"[image {image} {Placing(align)} {width}x{height}]");
+        _writer.Write($"[image {image} {Placing(align)} {width}x{height}{linked}]");
         _lineStart = _lineStart && margin;
         return true;
     }

@@ -301,7 +301,7 @@ public class BufferTextTests
     {
         var text = new BufferText(new Ruler());
         Print(text, "a");
-        Assert.True(text.Draw(Picture(30, 50), ImageAlign.InlineUp, Natural));
+        Assert.True(text.Draw(Picture(30, 50), ImageAlign.InlineUp, Natural, 0));
         Print(text, "b");
 
         var line = text.Lines(1000)[0];
@@ -336,7 +336,7 @@ public class BufferTextTests
         {
             var text = new BufferText(new Ruler());
             Print(text, "x");
-            text.Draw(Picture(10, 10), align, Natural);
+            text.Draw(Picture(10, 10), align, Natural, 0);
             return text.Lines(1000)[0].Images[0].Top;
         }
     }
@@ -349,7 +349,7 @@ public class BufferTextTests
         // beside it start thirty along and hold seven characters where
         // they would otherwise hold ten.
         var text = new BufferText(new Ruler());
-        Assert.True(text.Draw(Picture(30, 50), ImageAlign.MarginLeft, Natural));
+        Assert.True(text.Draw(Picture(30, 50), ImageAlign.MarginLeft, Natural, 0));
         Print(text, "one two three four");
 
         var lines = text.Lines(100);
@@ -378,7 +378,7 @@ public class BufferTextTests
     public void APictureInTheRightMarginTakesTheRoomFromThatEdge()
     {
         var text = new BufferText(new Ruler());
-        Assert.True(text.Draw(Picture(30, 50), ImageAlign.MarginRight, Natural));
+        Assert.True(text.Draw(Picture(30, 50), ImageAlign.MarginRight, Natural, 0));
         Print(text, "one two three");
 
         var lines = text.Lines(100);
@@ -399,7 +399,7 @@ public class BufferTextTests
         // [glk #graphics_textbuf] No picture appears at all, which is
         // what the specification says becomes of one asked for where
         // text has already been printed on the line.
-        Assert.False(text.Draw(Picture(30, 50), ImageAlign.MarginLeft, Natural));
+        Assert.False(text.Draw(Picture(30, 50), ImageAlign.MarginLeft, Natural, 0));
         Assert.Empty(text.Lines(1000)[0].Images);
 
         // A line ending puts the text back at the start of a line, and
@@ -408,10 +408,10 @@ public class BufferTextTests
         // inline picture counts as text, and the margin picture after
         // it is refused.
         Print(text, "\n");
-        Assert.True(text.Draw(Picture(30, 50), ImageAlign.MarginLeft, Natural));
-        Assert.True(text.Draw(Picture(10, 10), ImageAlign.MarginLeft, Natural));
-        Assert.True(text.Draw(Picture(10, 10), ImageAlign.InlineUp, Natural));
-        Assert.False(text.Draw(Picture(10, 10), ImageAlign.MarginRight, Natural));
+        Assert.True(text.Draw(Picture(30, 50), ImageAlign.MarginLeft, Natural, 0));
+        Assert.True(text.Draw(Picture(10, 10), ImageAlign.MarginLeft, Natural, 0));
+        Assert.True(text.Draw(Picture(10, 10), ImageAlign.InlineUp, Natural, 0));
+        Assert.False(text.Draw(Picture(10, 10), ImageAlign.MarginRight, Natural, 0));
 
         var second = text.Lines(1000)[1];
         Assert.Equal([0.0, 30.0, 40.0], second.Images.Select(i => i.Left).ToArray());
@@ -421,7 +421,7 @@ public class BufferTextTests
     public void AFlowBreakTakesTheTextDownPastTheMarginPictures()
     {
         var text = new BufferText(new Ruler());
-        text.Draw(Picture(30, 50), ImageAlign.MarginLeft, Natural);
+        text.Draw(Picture(30, 50), ImageAlign.MarginLeft, Natural, 0);
         Print(text, "one\n");
         text.FlowBreak();
         Print(text, "two");
@@ -457,7 +457,7 @@ public class BufferTextTests
         // still needs is part of how tall the text is, or it would hang
         // below the window where it could not be seen.
         var text = new BufferText(new Ruler());
-        text.Draw(Picture(30, 50), ImageAlign.MarginLeft, Natural);
+        text.Draw(Picture(30, 50), ImageAlign.MarginLeft, Natural, 0);
         Print(text, "one");
 
         Assert.Equal(50.0, text.Height(100));
@@ -474,7 +474,7 @@ public class BufferTextTests
         // the answer.
         var text = new BufferText(new Ruler());
         var half = new ImageSizing(ImageRule.WidthRatio | ImageRule.AspectRatio, 0x8000, 0x10000, 0);
-        text.Draw(Picture(40, 20), ImageAlign.InlineUp, half);
+        text.Draw(Picture(40, 20), ImageAlign.InlineUp, half, 0);
 
         Assert.Equal((100.0, 50.0), Grown(text.Lines(200)[0].Images[0]));
         Assert.Equal((200.0, 100.0), Grown(text.Lines(400)[0].Images[0]));
@@ -523,6 +523,55 @@ public class BufferTextTests
         var wrapped = new BufferText(new Ruler());
         Print(wrapped, "abc abcdefghij", GlkStyle.Note);
         Assert.Equal(35.0, wrapped.Lines(100)[0].Pieces[0].Left);
+    }
+
+    [Fact]
+    public void TheLinkUnderAPointIsTheOneThatWasSelected()
+    {
+        // [glk #link_events] Two lines, the second of which is a link.
+        // The text sits at the top of the window while it fits, so the
+        // first line is the top twenty pixels and the second the twenty
+        // below it.
+        var text = new BufferText(new Ruler());
+        Print(text, "plain\n");
+        Print(text, "go north", GlkStyle.Normal, 7);
+
+        Assert.Equal(0u, text.LinkAt(10, 10, 100, 60));
+        Assert.Equal(7u, text.LinkAt(10, 30, 100, 60));
+
+        // Past the end of the words on a line, and past the text
+        // altogether, there is no link to select.
+        Assert.Equal(0u, text.LinkAt(95, 30, 100, 60));
+        Assert.Equal(0u, text.LinkAt(10, 55, 100, 60));
+    }
+
+    [Fact]
+    public void APictureTakesTheLinkOfTheTextAroundIt()
+    {
+        // [glk #link_creating] Which the specification is explicit
+        // about, margin pictures included, so a player can select a
+        // picture in a link as readily as the words in one.
+        var text = new BufferText(new Ruler());
+        text.Draw(Picture(30, 50), ImageAlign.MarginLeft, Natural, 9);
+        Print(text, "beside it");
+
+        Assert.Equal(9u, text.Lines(100)[0].Images[0].Link);
+        Assert.Equal(9u, text.LinkAt(10, 10, 100, 200));
+
+        // And the words beside it carry no link of their own.
+        Assert.Equal(0u, text.LinkAt(40, 10, 100, 200));
+
+        // The same in the right margin, which is where the one game in
+        // the corpus that puts a picture in a link puts it: the picture
+        // is thirty wide against the far edge of a hundred, so it holds
+        // the last thirty pixels of every line it reaches down through.
+        var right = new BufferText(new Ruler());
+        right.Draw(Picture(30, 50), ImageAlign.MarginRight, Natural, 9);
+        Print(right, "beside it");
+
+        Assert.Equal(9u, right.LinkAt(80, 10, 100, 200));
+        Assert.Equal(9u, right.LinkAt(80, 30, 100, 200));
+        Assert.Equal(0u, right.LinkAt(10, 10, 100, 200));
     }
 
     private static (double Left, double Width, double Height) Shape(Inset inset) =>

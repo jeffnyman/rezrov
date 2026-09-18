@@ -117,7 +117,9 @@ Drawing image 1 align 1 size 0x0 flags $5 maxwidth $8000.
 Drawing image 1 align 1 size $10000x$10000 flags $7 maxwidth $8000.
 [image 1 up 320x90]
 >image 1 link
-[image 1 up 150x180]
+[image 1 up 150x180 link 1001]
+>[link 1001]
+Clicked hyperlink: 1001.
 >image 3
 
 >text

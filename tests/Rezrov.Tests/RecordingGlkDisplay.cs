@@ -9,7 +9,7 @@ namespace Rezrov.Tests;
 /// the run of a text buffer's text, kept as it was handed over so that
 /// a test can see what the display was told rather than what it did.
 /// </summary>
-internal sealed record PlacedImage(GlkWindow Window, uint Image, Pixels Picture, ImageAlign Align, ImageSizing Sizing);
+internal sealed record PlacedImage(GlkWindow Window, uint Image, Pixels Picture, ImageAlign Align, ImageSizing Sizing, uint Link);
 
 /// <summary>
 /// A Glk display for tests: a fixed size, a record of everything
@@ -121,9 +121,9 @@ internal sealed class RecordingGlkDisplay : IGlkDisplay
     public bool CanDrawImages(WindowType type) => Graphics
         && (type == WindowType.Graphics || (BufferGraphics && type == WindowType.TextBuffer));
 
-    public bool DrawImage(GlkWindow window, uint image, Pixels picture, ImageAlign align, ImageSizing sizing)
+    public bool DrawImage(GlkWindow window, uint image, Pixels picture, ImageAlign align, ImageSizing sizing, uint link)
     {
-        Placed.Add(new PlacedImage(window, image, picture, align, sizing));
+        Placed.Add(new PlacedImage(window, image, picture, align, sizing, link));
         return true;
     }
 
