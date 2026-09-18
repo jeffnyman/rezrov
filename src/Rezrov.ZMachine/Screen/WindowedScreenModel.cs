@@ -1521,10 +1521,11 @@ public sealed class WindowedScreenModel : IScreenModel
     /// </remarks>
     private void ScrollPictures(int units, int by, int top, int left, int rows, int columns)
     {
+
         for (var i = _pictures.Count - 1; i >= 0; i--)
         {
             var picture = _pictures[i];
-            if (!Holds(picture, top, left, rows, columns))
+            if (!Touches(picture, top, left, rows, columns))
             {
                 continue;
             }
