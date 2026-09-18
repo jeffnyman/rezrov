@@ -41,6 +41,24 @@ internal static class Program
     /// </summary>
     private static readonly string[] Extensions = [".blb", ".blorb"];
 
+    /// <summary>
+    /// How wide a page of text the window opens to, in characters. Wide
+    /// but still a readable measure for prose.
+    /// </summary>
+    private const int Columns = 120;
+
+    /// <summary>
+    /// How tall, in lines: a screenful of text under [zm 8.8.6] the
+    /// artwork a Version 6 game draws above it.
+    /// </summary>
+    private const int Rows = 40;
+
+    /// <summary>
+    /// How much of the screen to leave around the window when there is
+    /// not room for the size the text would like.
+    /// </summary>
+    private const double Margin = 64;
+
     private static string _path = "";
     private static byte[] _bytes = [];
     private static StoryFormat _format;
@@ -192,7 +210,11 @@ internal static class Program
         Console.WriteLine($"prose: {_prose}");
         Console.WriteLine($"fixed: {_fixed}");
         Console.WriteLine($"size: {_size}, smoothing: {_smoothing}");
+        var page = Page(glyphs);
         Console.WriteLine($"cell: {glyphs.CellWidth} by {glyphs.CellHeight}");
+        Console.WriteLine(
+            $"page: {Columns} by {Rows} characters, {page.Width} by {page.Height} pixels, "
+            + $"or as much of that as the screen has room for");
 
         foreach (var style in new[] { GlkStyle.Normal, GlkStyle.Emphasized, GlkStyle.Preformatted, GlkStyle.Header })
         {
@@ -334,6 +356,54 @@ internal static class Program
             .zblorb, and a Glulx game from a .ulx or a .gblorb.
             """);
     }
+
+    /// <summary>
+    /// How large to open the window: a comfortable page of text, or as
+    /// much of one as the screen has room for.
+    /// </summary>
+    /// <remarks>
+    /// The size is worked out in characters rather than in pixels,
+    /// since characters are what the window holds. A hundred and twenty
+    /// columns is a wide but readable measure for prose, and forty rows
+    /// leaves a screenful of it under [zm 8.8.6] the artwork a Version 6
+    /// game draws above. A screen with less room than that gives what it
+    /// has, less a margin so the window does not open edge to edge, and
+    /// the floor is the smallest the games are playable in rather than
+    /// the smallest a window can be.
+    ///
+    /// A player who wants another size resizes the window, and both
+    /// machines are told about it: [glk #arrange_events] a Glk game
+    /// lays its windows out again, and [zm 8.4] a Z-machine game is
+    /// told its screen changed.
+    /// </remarks>
+    private static (double Width, double Height) Opening(Window window, Glyphs glyphs)
+    {
+        var wanted = Page(glyphs);
+        var least = (Width: glyphs.CellWidth * (Columns / 2), Height: glyphs.CellHeight * (Rows / 2));
+
+        if (window.Screens?.Primary is not { } screen)
+        {
+            return wanted;
+        }
+
+        // The working area is in the screen's own pixels and a window is
+        // measured in the toolkit's, which are the same pixels divided
+        // by whatever the display is scaled by.
+        var scaling = screen.Scaling > 0 ? screen.Scaling : 1;
+        var room = (
+            Width: (screen.WorkingArea.Width / scaling) - Margin,
+            Height: (screen.WorkingArea.Height / scaling) - Margin);
+
+        return (
+            Math.Max(Math.Min(wanted.Width, room.Width), least.Width),
+            Math.Max(Math.Min(wanted.Height, room.Height), least.Height));
+    }
+
+    /// <summary>
+    /// The size a page of text comes to, before the screen has a say.
+    /// </summary>
+    private static (double Width, double Height) Page(Glyphs glyphs) =>
+        (glyphs.CellWidth * Columns, glyphs.CellHeight * Rows);
 
     /// <summary>
     /// Starts the game once the window is up and its size is known.
@@ -532,10 +602,13 @@ internal static class Program
                 var window = new Window
                 {
                     Title = $"{Path.GetFileName(_path)} - rezrov",
-                    Width = 800,
-                    Height = 600,
                     Content = board,
+                    WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 };
+
+                var (width, height) = Opening(window, glyphs);
+                window.Width = width;
+                window.Height = height;
 
                 window.Opened += (_, _) =>
                 {
