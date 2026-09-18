@@ -48,12 +48,26 @@ internal sealed class Board : Control
     private GuiGlkDisplay? _display;
     private BufferedScreen? _screen;
 
-    public Board(Glyphs glyphs)
+    /// <param name="glyphs">The fonts to draw with.</param>
+    /// <param name="smoothing">
+    /// How the glyphs themselves are rasterized, which is the one thing
+    /// about the look of the text that the font cannot settle.
+    /// </param>
+    public Board(Glyphs glyphs, TextRenderingMode smoothing)
     {
         ArgumentNullException.ThrowIfNull(glyphs);
 
         _glyphs = glyphs;
         Focusable = true;
+
+        // Text is smoothed by whatever the platform prefers unless it
+        // is told otherwise, and what the software renderer prefers is
+        // gray antialiasing, which leaves a serif face at reading size
+        // looking thinner and paler than every other window on the
+        // machine. Saying subpixel asks for the same rendering the rest
+        // of the desktop uses; a display that cannot do it falls back
+        // to gray, which is where it started.
+        TextOptions.SetTextRenderingMode(this, smoothing);
 
         // The cells of a screen are filled as rectangles that share
         // their edges. Antialiasing those edges leaves a pale hairline
