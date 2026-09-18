@@ -35,7 +35,7 @@ public class CharacterGraphicsTests
     public void CodesOutsideTheFontComeBackAsTheyAre()
     {
         Assert.Equal('é', CharacterGraphics.ToUnicode('é'));
-        Assert.Equal('', CharacterGraphics.ToUnicode(''));
+        Assert.Equal('\u007F', CharacterGraphics.ToUnicode('\u007F'));
     }
 }
 
