@@ -1,6 +1,6 @@
 FloatConstTest: Not a game.
 Release 1 / Serial number 100815 / Inform v6.31, compiler options S
-Interpreter version 0.3.1 / VM 3.1.3 / game file format 2.0.0
+Interpreter version 0.4.0 / VM 3.1.3 / game file format 2.0.0
 
 +Inf: $7F800000
 -Inf: $FF800000
