@@ -538,10 +538,22 @@ public sealed partial class GlkLibrary
                 ClearStyleHint((WindowType)call.Arg(0), (GlkStyle)call.Arg(1), (StyleHint)call.Arg(2));
                 break;
             case 0x00B2: // style_distinguish
+                call.Result = Window(call, 0) is { } compared
+                    && Distinguish(compared, (GlkStyle)call.Arg(1), (GlkStyle)call.Arg(2))
+                    ? 1u : 0u;
+                break;
             case 0x00B3: // style_measure
-                // [glk #stream_style_check] The display shows no styles
-                // apart, and can measure none, so both answer no.
-                call.Result = 0;
+                if (Window(call, 0) is { } examined
+                    && Measure(examined, (GlkStyle)call.Arg(1), (StyleHint)call.Arg(2)) is { } attribute)
+                {
+                    call.Out(3, attribute);
+                    call.Result = 1;
+                }
+                else
+                {
+                    call.Result = 0;
+                }
+
                 break;
 
             // [glk #event] Waiting for the player, and the requests that
@@ -888,6 +900,10 @@ public sealed partial class GlkLibrary
         {
             return null;
         }
+
+        // [glk #stream_style_hints] The hints in force are the window's
+        // from here on, and nothing the game sets afterwards reaches it.
+        window.Styles = Frozen(type);
 
         Windows.Add(window);
         Streams.Add(window.Stream);
@@ -1932,6 +1948,64 @@ public sealed partial class GlkLibrary
         _styleHints.TryGetValue((type, style, hint), out var value) || _styleHints.TryGetValue((WindowType.AllTypes, style, hint), out value)
             ? value
             : null;
+
+    /// <summary>
+    /// [glk op:style_measure] One attribute of how a style comes out in
+    /// a window, or null where the display cannot say.
+    /// </summary>
+    public uint? Measure(GlkWindow window, GlkStyle style, StyleHint hint)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+        return _display.Appearance(window, style)?.Measure(hint);
+    }
+
+    /// <summary>
+    /// [glk op:style_distinguish] Whether two styles come out looking
+    /// different in a window. A display that cannot say what a style
+    /// looks like says they do not, since it has nothing to tell them
+    /// apart by.
+    /// </summary>
+    public bool Distinguish(GlkWindow window, GlkStyle first, GlkStyle second)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+
+        return _display.Appearance(window, first) is { } one
+            && _display.Appearance(window, second) is { } other
+            && one.DiffersFrom(other);
+    }
+
+    /// <summary>
+    /// [glk #stream_style_hints] The hints that apply to a window of
+    /// the given type, taken down as it opens.
+    /// </summary>
+    /// <remarks>
+    /// A hint set for all types is the ground, and one set for this
+    /// type in particular is laid over it, since the specification
+    /// offers wintype_AllTypes as a way of saying "unless I say
+    /// otherwise" rather than as a rule that outranks the rest.
+    /// </remarks>
+    private GlkStyles Frozen(WindowType type)
+    {
+        Dictionary<(GlkStyle Style, StyleHint Hint), int> hints = [];
+
+        foreach (var ((kind, style, hint), value) in _styleHints)
+        {
+            if (kind == WindowType.AllTypes)
+            {
+                hints[(style, hint)] = value;
+            }
+        }
+
+        foreach (var ((kind, style, hint), value) in _styleHints)
+        {
+            if (kind == type)
+            {
+                hints[(style, hint)] = value;
+            }
+        }
+
+        return hints.Count == 0 ? GlkStyles.None : new GlkStyles(hints);
+    }
 
     // ----- Characters -----
 

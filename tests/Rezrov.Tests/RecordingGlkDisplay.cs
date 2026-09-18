@@ -65,6 +65,45 @@ internal sealed class RecordingGlkDisplay : IGlkDisplay
     public bool BufferGraphics { get; init; }
 
     /// <summary>
+    /// [glk #stream_style_check] Whether this display can say what a
+    /// style comes out looking like. One that cannot is what every
+    /// display was before there were styles to show, and both of the
+    /// style calls then answer that nothing could be told.
+    /// </summary>
+    public bool Styled { get; init; }
+
+    /// <summary>
+    /// [glk #stream_style_check] The plainest possible answer: the
+    /// window's own hints where it has them and one fixed default
+    /// everywhere else, so that a test can see which hints reached the
+    /// window rather than what a frontend made of them.
+    /// </summary>
+    public GlkAppearance? Appearance(GlkWindow window, GlkStyle style)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+
+        if (!Styled)
+        {
+            return null;
+        }
+
+        return new GlkAppearance(
+            Indentation: Hint(window, style, StyleHint.Indentation) ?? 0,
+            ParaIndentation: Hint(window, style, StyleHint.ParaIndentation) ?? 0,
+            Justification: (Justification)(Hint(window, style, StyleHint.Justification) ?? 0),
+            Size: Hint(window, style, StyleHint.Size) ?? 10,
+            Weight: Hint(window, style, StyleHint.Weight) ?? 0,
+            Oblique: Hint(window, style, StyleHint.Oblique) is not (null or 0),
+            Proportional: Hint(window, style, StyleHint.Proportional) is not 0,
+            TextColor: (uint)(Hint(window, style, StyleHint.TextColor) ?? 0x000000),
+            BackColor: (uint)(Hint(window, style, StyleHint.BackColor) ?? 0x00FFFFFF),
+            Reverse: Hint(window, style, StyleHint.ReverseColor) is not (null or 0));
+
+        static int? Hint(GlkWindow window, GlkStyle style, StyleHint hint) =>
+            window.Styles.Hint(style, hint);
+    }
+
+    /// <summary>
     /// How many pixels a character cell stands for, which is what a
     /// graphics window's size is worked out from.
     /// </summary>

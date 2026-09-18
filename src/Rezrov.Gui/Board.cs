@@ -33,11 +33,7 @@ namespace Rezrov.Gui;
 /// </remarks>
 internal sealed class Board : Control
 {
-    private static readonly IBrush Paper = new SolidColorBrush(Color.FromRgb(0xFA, 0xFA, 0xF7));
-    private static readonly IBrush Ink = new SolidColorBrush(Color.FromRgb(0x1A, 0x1A, 0x1A));
-    private static readonly IBrush GridPaper = new SolidColorBrush(Color.FromRgb(0x22, 0x22, 0x22));
-    private static readonly IBrush GridInk = new SolidColorBrush(Color.FromRgb(0xEE, 0xEE, 0xEE));
-
+    private readonly Dictionary<uint, ImmutableSolidColorBrush> _colors = [];
     private readonly Dictionary<GlkWindow, Painting> _canvases = [];
 
     // [glk #graphics_textbuf] The pictures a game puts among its text,
@@ -131,7 +127,7 @@ internal sealed class Board : Control
             return;
         }
 
-        context.FillRectangle(Paper, new Rect(Bounds.Size));
+        context.FillRectangle(Brush(GlkLook.Paper), new Rect(Bounds.Size));
 
         if (Display is not { Root: { } root })
         {
@@ -401,8 +397,15 @@ internal sealed class Board : Control
 
     private void PaintBuffer(DrawingContext context, GlkWindow window, Rect place)
     {
+        var fonts = Display!.Glyphs(window);
         var text = Display!.Text(window);
         var lines = text.Lines(place.Width);
+
+        // [glk #stream_style_hints] The page itself is whatever the
+        // ordinary style is printed on, which a game may have asked to
+        // be something other than white.
+        var paper = fonts.Look(GlkStyle.Normal).Colors.Paper;
+        context.FillRectangle(Brush(paper), place);
 
         using var clip = context.PushClip(place);
 
@@ -412,6 +415,22 @@ internal sealed class Board : Control
         {
             var line = lines[i];
             top -= line.Height;
+
+            // [glk #stream_style_hints] A style printed on a color of
+            // its own, or a reversed one, is painted behind its own
+            // pieces and nothing else, so a run of it shows as a band
+            // across exactly the words it covers. The spaces between
+            // words are pieces too, so the band has no gaps in it.
+            foreach (var piece in line.Pieces)
+            {
+                var behind = fonts.Look(piece.Style).Colors.Paper;
+                if (behind != paper)
+                {
+                    context.FillRectangle(
+                        Brush(behind),
+                        new Rect(place.X + piece.Left, top, piece.Width, line.Height));
+                }
+            }
 
             foreach (var inset in line.Images)
             {
@@ -431,18 +450,19 @@ internal sealed class Board : Control
                     continue;
                 }
 
+                var look = fonts.Look(piece.Style);
                 var formatted = new FormattedText(
                     piece.Text,
                     CultureInfo.InvariantCulture,
                     FlowDirection.LeftToRight,
-                    _glyphs.Face(piece.Style),
-                    _glyphs.Size(piece.Style),
-                    Ink);
+                    _glyphs.Face(look),
+                    look.Size,
+                    Brush(look.Colors.Ink));
 
                 // Pieces are placed on the line's baseline rather than
                 // hung from its top, so that a heading and the prose
                 // beside it sit on the same line.
-                var above = line.Baseline - _glyphs.Baseline(piece.Style);
+                var above = line.Baseline - fonts.Baseline(piece.Style);
                 context.DrawText(formatted, new Point(place.X + piece.Left, top + above));
             }
         }
@@ -554,37 +574,85 @@ internal sealed class Board : Control
     // put it.
     private void PaintGrid(DrawingContext context, TextGridWindow grid, Rect place)
     {
-        context.FillRectangle(GridPaper, place);
+        var fonts = Display!.Glyphs(grid);
+        var paper = fonts.Look(GlkStyle.Normal).Colors.Paper;
+
+        context.FillRectangle(Brush(paper), place);
 
         using var clip = context.PushClip(place);
 
         for (var y = 0; y < grid.Height; y++)
         {
-            var row = grid.Row(y).TrimEnd();
-            if (row.Length == 0)
+            PaintRow(context, grid, fonts, place, y, paper);
+        }
+    }
+
+    /// <summary>
+    /// One row of a text grid: the backgrounds that are not the page's
+    /// own, and then the characters.
+    /// </summary>
+    /// <remarks>
+    /// [glk #window_textgrid] The backgrounds go down in runs of cells
+    /// that share one, since a game that reverses a whole status line
+    /// would otherwise have eighty rectangles filled where one would
+    /// do, and the grid is repainted on every character printed.
+    /// A blank cell is painted too: a reversed style shows as a band
+    /// whether or not there is a letter standing on it.
+    /// </remarks>
+    private void PaintRow(DrawingContext context, TextGridWindow grid, IGlyphs fonts, Rect place, int y, uint paper)
+    {
+        if (grid.Width <= 0)
+        {
+            return;
+        }
+
+        var from = 0;
+        var behind = fonts.Look(grid.StyleAt(0, y)).Colors.Paper;
+
+        for (var x = 1; x <= grid.Width; x++)
+        {
+            var next = x < grid.Width ? fonts.Look(grid.StyleAt(x, y)).Colors.Paper : (uint?)null;
+            if (next == behind)
             {
                 continue;
             }
 
-            for (var x = 0; x < row.Length; x++)
+            if (behind != paper)
             {
-                if (row[x] == ' ')
-                {
-                    continue;
-                }
-
-                var formatted = new FormattedText(
-                    row[x].ToString(),
-                    CultureInfo.InvariantCulture,
-                    FlowDirection.LeftToRight,
-                    _glyphs.Grid(grid.StyleAt(x, y)),
-                    _glyphs.Size(GlkStyle.Preformatted),
-                    GridInk);
-
-                context.DrawText(
-                    formatted,
-                    new Point(place.X + (x * _glyphs.CellWidth), place.Y + (y * _glyphs.CellHeight)));
+                context.FillRectangle(
+                    Brush(behind),
+                    new Rect(
+                        place.X + (from * _glyphs.CellWidth),
+                        place.Y + (y * _glyphs.CellHeight),
+                        (x - from) * _glyphs.CellWidth,
+                        _glyphs.CellHeight));
             }
+
+            from = x;
+            behind = next ?? behind;
+        }
+
+        var row = grid.Row(y).TrimEnd();
+
+        for (var x = 0; x < row.Length; x++)
+        {
+            if (row[x] == ' ')
+            {
+                continue;
+            }
+
+            var look = fonts.Look(grid.StyleAt(x, y));
+            var formatted = new FormattedText(
+                row[x].ToString(),
+                CultureInfo.InvariantCulture,
+                FlowDirection.LeftToRight,
+                _glyphs.Face(look),
+                look.Size,
+                Brush(look.Colors.Ink));
+
+            context.DrawText(
+                formatted,
+                new Point(place.X + (x * _glyphs.CellWidth), place.Y + (y * _glyphs.CellHeight)));
         }
     }
 
@@ -741,11 +809,9 @@ internal sealed class Board : Control
             return;
         }
 
-        var face = attributes.Style.HasFlag(ZStyle.Bold)
-            ? _glyphs.Grid(GlkStyle.Header)
-            : attributes.Style.HasFlag(ZStyle.Italic)
-                ? _glyphs.Grid(GlkStyle.Emphasized)
-                : _glyphs.Grid(GlkStyle.Preformatted);
+        var face = _glyphs.Fixed(
+            attributes.Style.HasFlag(ZStyle.Bold),
+            attributes.Style.HasFlag(ZStyle.Italic));
 
         var formatted = new FormattedText(
             character.ToString(),
@@ -762,11 +828,26 @@ internal sealed class Board : Control
     /// [zm 8.3.1] A Z-machine color as something to paint with.
     /// </summary>
     /// <summary>
-    /// [glk #graphics_graphics] A Glk color, whose top eight bits are
-    /// zero and whose other three are red, green, and blue.
+    /// [glk #stream_style_hints] A color, whose top eight bits are zero
+    /// and whose other three are red, green, and blue, as something to
+    /// paint with.
     /// </summary>
-    private static ImmutableSolidColorBrush Brush(uint color) => new(
-        Color.FromRgb((byte)(color >> 16), (byte)(color >> 8), (byte)color));
+    /// <remarks>
+    /// The brushes are kept, since a page of text asks for the same few
+    /// colors over and over and the whole of it is painted again on
+    /// every character the game prints.
+    /// </remarks>
+    private ImmutableSolidColorBrush Brush(uint color)
+    {
+        if (!_colors.TryGetValue(color, out var brush))
+        {
+            brush = new ImmutableSolidColorBrush(
+                Color.FromRgb((byte)(color >> 16), (byte)(color >> 8), (byte)color));
+            _colors[color] = brush;
+        }
+
+        return brush;
+    }
 
     private static IBrush Brush(ScreenColor color) => color switch
     {

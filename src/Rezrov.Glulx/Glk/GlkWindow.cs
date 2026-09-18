@@ -40,6 +40,13 @@ public abstract class GlkWindow : GlkObject
     public GlkStream? EchoStream { get; set; }
 
     /// <summary>
+    /// [glk #stream_style_hints] The style hints that were in force
+    /// when this window was opened, which are the only ones that can
+    /// ever reach it.
+    /// </summary>
+    public GlkStyles Styles { get; internal set; } = GlkStyles.None;
+
+    /// <summary>
     /// [glk #window_changing] The width the layout gave the window, in
     /// its own units, which are character cells for text windows and
     /// nothing at all for blank and pair windows.

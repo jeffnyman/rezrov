@@ -86,6 +86,21 @@ public interface IGlkDisplay
     int CellHeight => 1;
 
     /// <summary>
+    /// [glk #stream_style_check] What a style comes out looking like in
+    /// a window: the display's own idea of the style with the window's
+    /// hints laid over it, or null from a display that shows no styles
+    /// apart.
+    /// </summary>
+    /// <remarks>
+    /// [glk #stream_style_hints] A hint is a suggestion and the display
+    /// is what becomes of it, so this is the display's answer to give.
+    /// The hints the window was opened with are on the window itself.
+    /// The default here is that nothing can be told, which is what
+    /// glk_style_measure and glk_style_distinguish then report.
+    /// </remarks>
+    GlkAppearance? Appearance(GlkWindow window, GlkStyle style) => null;
+
+    /// <summary>
     /// [glk #graphics_textbuf] A picture to be put in the run of a text
     /// buffer's text, at the alignment the game asked for, and at a
     /// size the rules work out against the width of the window it lands

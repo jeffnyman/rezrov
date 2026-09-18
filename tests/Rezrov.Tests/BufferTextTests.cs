@@ -482,6 +482,49 @@ public class BufferTextTests
         static (double Width, double Height) Grown(Inset inset) => (inset.Width, inset.Height);
     }
 
+    [Fact]
+    public void AnIndentedStyleSetsItsLinesInFromTheEdge()
+    {
+        // [glk #stream_style_hints] The block quote is set in twenty
+        // and its first line ten further again, so the paragraph starts
+        // at thirty and every line after it at twenty.
+        var text = new BufferText(new Ruler());
+        Print(text, "one two three four", GlkStyle.BlockQuote);
+
+        var lines = text.Lines(100);
+
+        Assert.Equal(3, lines.Count);
+        Assert.Equal([30.0, 20.0, 20.0], lines.Select(l => l.Pieces[0].Left).ToArray());
+
+        // A line that is here because the one above it ran out of room
+        // is a continuation, so the paragraph indentation comes back
+        // only after a line ending of the game's own.
+        Print(text, "\nfive");
+        Assert.Equal(0.0, text.Lines(100)[3].Pieces[0].Left);
+    }
+
+    [Fact]
+    public void ACenteredStyleSitsBetweenTheEdgesAndAFlushOneAgainstTheFar()
+    {
+        // Three characters are thirty wide in a window of a hundred, so
+        // centering leaves thirty-five on each side and setting it
+        // against the far edge leaves seventy before it.
+        var centered = new BufferText(new Ruler());
+        Print(centered, "abc", GlkStyle.Note);
+        Assert.Equal(35.0, centered.Lines(100)[0].Pieces[0].Left);
+
+        var flush = new BufferText(new Ruler());
+        Print(flush, "abc", GlkStyle.Alert);
+        Assert.Equal(70.0, flush.Lines(100)[0].Pieces[0].Left);
+
+        // [glk #stream_style_hints] The space a line wrapped after is
+        // not part of what is being moved, or a centered line would sit
+        // half a space to the left of where it belongs.
+        var wrapped = new BufferText(new Ruler());
+        Print(wrapped, "abc abcdefghij", GlkStyle.Note);
+        Assert.Equal(35.0, wrapped.Lines(100)[0].Pieces[0].Left);
+    }
+
     private static (double Left, double Width, double Height) Shape(Inset inset) =>
         (inset.Left, inset.Width, inset.Height);
 
@@ -524,6 +567,13 @@ public class BufferTextTests
     /// A font of exact numbers: ten wide and twenty tall, except the
     /// header style, which is twice both.
     /// </summary>
+    /// <remarks>
+    /// [glk #stream_style_hints] Three more styles carry a look of
+    /// their own, so that a test can state exactly what the layout does
+    /// with one: the block quote is set in two characters with its
+    /// first line one further, the note is centered, and the alert is
+    /// set against the far edge.
+    /// </remarks>
     private sealed class Ruler : IGlyphs
     {
         public double CellWidth => 10;
@@ -534,5 +584,22 @@ public class BufferTextTests
             text.Length * (style == GlkStyle.Header ? 20 : 10);
 
         public double LineHeight(GlkStyle style) => style == GlkStyle.Header ? 40 : 20;
+
+        public GlkAppearance Look(GlkStyle style) => new(
+            Indentation: style == GlkStyle.BlockQuote ? 20 : 0,
+            ParaIndentation: style == GlkStyle.BlockQuote ? 10 : 0,
+            Justification: style switch
+            {
+                GlkStyle.Note => Justification.Centered,
+                GlkStyle.Alert => Justification.RightFlush,
+                _ => Justification.LeftFlush,
+            },
+            Size: LineHeight(style),
+            Weight: 0,
+            Oblique: false,
+            Proportional: true,
+            TextColor: 0x00000000,
+            BackColor: 0x00FFFFFF,
+            Reverse: false);
     }
 }
