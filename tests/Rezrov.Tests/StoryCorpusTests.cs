@@ -57,6 +57,44 @@ public class StoryCorpusTests
     }
 
     [Fact]
+    public void BeyondZorkIsTheOnlyStoryThatAsksForATitlePicture()
+    {
+        var files = Corpus.StoryFiles();
+        Assert.SkipUnless(files.Count > 0, SubmoduleAbsent);
+
+        var asked = new List<string>();
+
+        foreach (var file in files)
+        {
+            if (TitleScreen.Picture(new StoryHeader(new ZMemory(File.ReadAllBytes(file)))) != 0)
+            {
+                asked.Add(Path.GetFileName(file));
+            }
+        }
+
+        // Across every real story here, and there are well over a
+        // hundred, the recognition picks out that one game and nothing
+        // else that happens to share a release number with it.
+        Assert.All(asked, name => Assert.StartsWith("beyondzork", name, StringComparison.Ordinal));
+        Assert.NotEmpty(asked);
+
+        // And the picture it asks for is really in the resource file
+        // beside it, which is the whole of that file: one title screen
+        // of 320 by 200 and nothing more.
+        foreach (var name in asked)
+        {
+            var blorb = Path.ChangeExtension(files.First(f => Path.GetFileName(f) == name), ".blb");
+            Assert.True(File.Exists(blorb), $"{name} has no resource file beside it.");
+
+            var pictures = BlorbPictures.From(BlorbFile.Read(File.ReadAllBytes(blorb)));
+            var title = pictures.Find(1);
+
+            Assert.NotNull(title);
+            Assert.Equal((320, 200), (title.Width, title.Height));
+        }
+    }
+
+    [Fact]
     public void EveryStoryFileWithAChecksumVerifies()
     {
         var files = Corpus.StoryFiles();
