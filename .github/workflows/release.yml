@@ -79,29 +79,16 @@ jobs:
             dotnet publish src/Rezrov.Tui -c Release -r "$rid" -p:ContinuousIntegrationBuild=true -o "out/$rid"
             dotnet publish src/Rezrov.Gui -c Release -r "$rid" -p:ContinuousIntegrationBuild=true -o "out/$rid/gui"
           done
-          mkdir -p out/osx-universal/gui
+          mkdir -p out/osx-universal
           for program in rezrov rezrov-tui; do
             lipo -create -output "out/osx-universal/$program" "out/osx-arm64/$program" "out/osx-x64/$program"
             lipo -info "out/osx-universal/$program"
           done
 
-          # The graphical program's own executable is built for one
-          # architecture and is joined like the other two. The native
-          # libraries beside it come from their NuGet packages and are
-          # usually universal already, in which case joining them would
-          # fail and either copy will do.
-          for file in out/osx-arm64/gui/*; do
-            name="$(basename "$file")"
-            case "$name" in *.pdb|*.dbg) continue;; esac
-            if lipo -info "$file" 2>/dev/null | grep -q '^Architectures in the fat file'; then
-              cp "$file" "out/osx-universal/gui/$name"
-            elif lipo -info "$file" > /dev/null 2>&1; then
-              lipo -create -output "out/osx-universal/gui/$name" "$file" "out/osx-x64/gui/$name"
-            else
-              cp "$file" "out/osx-universal/gui/$name"
-            fi
-          done
-          lipo -info out/osx-universal/gui/* 2>/dev/null || true
+          # The graphical program is joined by the same script the
+          # continuous integration runs on every pull request, so that
+          # a tag is never the first time the joining is tried.
+          bash .github/scripts/join-mac-gui.sh out/osx-arm64/gui out/osx-x64/gui out/osx-universal/gui
 
       # Only what runs ships: no symbol files, no build leftovers. The
       # version comes from the tag, so the package names match the

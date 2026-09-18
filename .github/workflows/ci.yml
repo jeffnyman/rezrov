@@ -94,6 +94,29 @@ jobs:
           done
           exit "$missing"
 
+      # A release joins the two Mac publishes of the graphical program
+      # into one universal directory, and the only thing that ever runs
+      # that script is a tag, which is a poor place to find out it is
+      # broken. So it runs here as well, over a real pair of publishes.
+      - name: Join both Mac architectures as a release would
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          dotnet publish src/Rezrov.Gui -c Release -r osx-x64 -p:ContinuousIntegrationBuild=true -o out/gui-x64
+          bash .github/scripts/join-mac-gui.sh out/gui out/gui-x64 out/gui-universal
+
+          for name in rezrov-gui libSkiaSharp libHarfBuzzSharp; do
+            if ! ls out/gui-universal/"${name}"* > /dev/null 2>&1; then
+              echo "The joined directory has no ${name}." >&2
+              exit 1
+            fi
+          done
+
+          # And the program really does run on either kind of Mac.
+          lipo -info out/gui-universal/rezrov-gui
+          lipo -info out/gui-universal/rezrov-gui | grep -q x86_64
+          lipo -info out/gui-universal/rezrov-gui | grep -q arm64
+
       # A window needs a display and a runner has none, but the font
       # measuring does not, and it is what the whole layout is built on.
       - name: Measure the fonts
