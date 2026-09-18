@@ -81,6 +81,12 @@ public sealed class BlorbPictures
     public (int Width, int Height)? StandardWindow { get; private set; }
 
     /// <summary>
+    /// [blorb 11.3] The pictures that take their colors from the last
+    /// ordinary picture plotted before them.
+    /// </summary>
+    public IReadOnlySet<int> Adaptive { get; private set; } = new HashSet<int>();
+
+    /// <summary>
     /// Reads the pictures out of a Blorb file.
     /// </summary>
     /// <exception cref="InvalidDataException">
@@ -90,7 +96,11 @@ public sealed class BlorbPictures
     {
         ArgumentNullException.ThrowIfNull(blorb);
 
-        var pictures = new BlorbPictures { Release = blorb.ReleaseNumber };
+        var pictures = new BlorbPictures
+        {
+            Release = blorb.ReleaseNumber,
+            Adaptive = blorb.AdaptivePictures,
+        };
         var list = new List<PictureInfo>();
 
         foreach (var resource in blorb.Resources)

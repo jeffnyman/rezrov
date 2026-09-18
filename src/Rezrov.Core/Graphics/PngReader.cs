@@ -44,7 +44,21 @@ public static class PngReader
     /// Decodes a PNG, or returns null if the bytes are not one, or are
     /// one this cannot decode.
     /// </summary>
-    public static Pixels? Read(ReadOnlySpan<byte> file)
+    public static Pixels? Read(ReadOnlySpan<byte> file) => Read(file, default);
+
+    /// <summary>
+    /// Decodes a PNG with a palette of the caller's choosing in place
+    /// of the one the file carries.
+    /// </summary>
+    /// <remarks>
+    /// [blorb 11.3] A resource file may say that a picture takes its
+    /// colors from whatever was plotted before it rather than from the
+    /// palette it carries, which is how two of the Infocom Version 6
+    /// games shade the same artwork differently as the game goes on.
+    /// Only an indexed picture has a palette to replace; every other
+    /// kind ignores it.
+    /// </remarks>
+    public static Pixels? Read(ReadOnlySpan<byte> file, ReadOnlySpan<byte> replacement)
     {
         if (file.Length < 8 || !file[..8].SequenceEqual(Signature))
         {
@@ -123,6 +137,11 @@ public static class PngReader
             return null;
         }
 
+        if (header.ColorType == 3 && !replacement.IsEmpty)
+        {
+            palette = replacement.ToArray();
+        }
+
         byte[] samples;
         try
         {
@@ -143,6 +162,50 @@ public static class PngReader
         return header.Interlaced
             ? Interlaced(header, samples, colors, picture)
             : Straight(header, samples, colors, picture);
+    }
+
+    /// <summary>
+    /// [png 11.2.3] The palette of an indexed picture, three bytes to
+    /// an entry, or null where the file has none to read.
+    /// </summary>
+    /// <remarks>
+    /// [blorb 11.3] This is the half of the adaptive palette rule that
+    /// does not need the picture decoded: an ordinary picture hands its
+    /// colors on to the adaptive pictures that follow it, and this is
+    /// where they are read from.
+    /// </remarks>
+    public static byte[]? Palette(ReadOnlySpan<byte> file)
+    {
+        if (file.Length < 8 || !file[..8].SequenceEqual(Signature))
+        {
+            return null;
+        }
+
+        for (var at = 8; at + 8 <= file.Length;)
+        {
+            var length = BinaryPrimitives.ReadUInt32BigEndian(file[at..]);
+            if (length > int.MaxValue || at + 12 + (int)length > file.Length)
+            {
+                break;
+            }
+
+            var name = file.Slice(at + 4, 4);
+            if (name.SequenceEqual("PLTE"u8))
+            {
+                return file.Slice(at + 8, (int)length).ToArray();
+            }
+
+            // [png 5.6] The palette comes before the picture's data, so
+            // there is no reason to read past it.
+            if (name.SequenceEqual("IDAT"u8) || name.SequenceEqual("IEND"u8))
+            {
+                break;
+            }
+
+            at += 12 + (int)length;
+        }
+
+        return null;
     }
 
     // [png 4.1.1] A picture written in one piece: every row in order,

@@ -67,6 +67,41 @@ internal static class TestPng
         return [.. file];
     }
 
+    /// <summary>
+    /// [png 11.2.3] An indexed picture: a palette of colors, three
+    /// bytes to an entry, and one byte an index for every pixel. This
+    /// is the shape [blorb 11.3] the adaptive palette rule is written
+    /// for, since only an indexed picture has a palette to adapt.
+    /// </summary>
+    public static byte[] Indexed(int width, int height, byte[] palette, byte[][] rows)
+    {
+        var header = new byte[13];
+        BinaryPrimitives.WriteUInt32BigEndian(header, (uint)width);
+        BinaryPrimitives.WriteUInt32BigEndian(header.AsSpan(4), (uint)height);
+        header[8] = 8;
+        header[9] = 3;
+
+        var raw = new List<byte>();
+        foreach (var row in rows)
+        {
+            raw.Add(0);
+            raw.AddRange(row);
+        }
+
+        var squeezed = new MemoryStream();
+        using (var deflating = new ZLibStream(squeezed, CompressionLevel.Optimal, leaveOpen: true))
+        {
+            deflating.Write(raw.ToArray());
+        }
+
+        var file = new List<byte> { 0x89, (byte)'P', (byte)'N', (byte)'G', 0x0D, 0x0A, 0x1A, 0x0A };
+        Chunk(file, "IHDR", header);
+        Chunk(file, "PLTE", palette);
+        Chunk(file, "IDAT", squeezed.ToArray());
+        Chunk(file, "IEND", []);
+        return [.. file];
+    }
+
     private static void Chunk(List<byte> file, string name, byte[] body)
     {
         var length = new byte[4];

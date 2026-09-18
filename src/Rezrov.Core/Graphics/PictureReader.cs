@@ -19,19 +19,38 @@ public static class PictureReader
     /// [blorb 2.3] a placeholder rectangle, or a file this cannot
     /// decode.
     /// </summary>
-    public static Pixels? Decode(PictureInfo picture)
+    public static Pixels? Decode(PictureInfo picture) => Decode(picture, default);
+
+    /// <summary>
+    /// The pixels of a picture, plotted with a palette of the caller's
+    /// choosing in place of the one it carries.
+    /// </summary>
+    /// <remarks>
+    /// [blorb 11.3] Only an indexed PNG has a palette to replace, and
+    /// only a resource file with an adaptive palette chunk ever asks,
+    /// so anything else ignores the palette and decodes as it would
+    /// have anyway.
+    /// </remarks>
+    public static Pixels? Decode(PictureInfo picture, ReadOnlySpan<byte> palette)
     {
         ArgumentNullException.ThrowIfNull(picture);
 
-        return Decode(picture.Kind, picture.Data.Span);
+        return Decode(picture.Kind, picture.Data.Span, palette);
     }
 
     /// <summary>
     /// The pixels of a picture of the given kind.
     /// </summary>
-    public static Pixels? Decode(PictureKind kind, ReadOnlySpan<byte> data) => kind switch
+    public static Pixels? Decode(PictureKind kind, ReadOnlySpan<byte> data) =>
+        Decode(kind, data, default);
+
+    /// <summary>
+    /// The pixels of a picture of the given kind, with a palette of the
+    /// caller's choosing.
+    /// </summary>
+    public static Pixels? Decode(PictureKind kind, ReadOnlySpan<byte> data, ReadOnlySpan<byte> palette) => kind switch
     {
-        PictureKind.Png => PngReader.Read(data),
+        PictureKind.Png => PngReader.Read(data, palette),
         PictureKind.Jpeg => JpegReader.Read(data),
         _ => null,
     };
