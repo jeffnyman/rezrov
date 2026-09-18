@@ -100,6 +100,37 @@ public class PicturePlacementTests
         Assert.Equal(4, inside.Row);
     }
 
+    [Fact]
+    public void ScrollingMovesAPictureThatHangsOverTheWindowsEdge()
+    {
+        // [zm 8.8.3] Zork Zero draws an illuminated capital at the
+        // start of a paragraph, taller than the line it stands on, so
+        // it hangs above the top of the text window as its paragraph
+        // reaches the top. It has to keep travelling with its text:
+        // moving only the pictures the window holds outright left it
+        // stuck on the top line with the text sliding out from under
+        // it, which is what the player sees as text written over the
+        // capital.
+        var model = Model();
+
+        Assert.True(model.MoveWindow(3, 6, 11));
+        Assert.True(model.WindowSize(3, 5, 10));
+
+        // The capital sits one row above the window's first row.
+        Assert.True(model.DrawPicture(3, 5, 12));
+        Assert.Equal(4, model.Pictures.Single().Row);
+
+        model.SetWindow(3);
+        model.ScrollWindow(3, 1);
+
+        Assert.Equal(3, model.Pictures.Single().Row);
+
+        // And it is forgotten once no part of it is left in the window
+        // rather than the moment it is no longer wholly inside.
+        model.ScrollWindow(3, 2);
+        Assert.Empty(model.Pictures);
+    }
+
     /// <summary>
     /// A screen of forty by twenty cells, one unit to a cell, with four
     /// pictures: two borders one cell wide and ten tall, one small
