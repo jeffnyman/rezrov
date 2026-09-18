@@ -42,18 +42,6 @@ internal static class Program
     private static readonly string[] Extensions = [".blb", ".blorb"];
 
     /// <summary>
-    /// How wide a page of text the window opens to, in characters. Wide
-    /// but still a readable measure for prose.
-    /// </summary>
-    private const int Columns = 120;
-
-    /// <summary>
-    /// How tall, in lines: a screenful of text under [zm 8.8.6] the
-    /// artwork a Version 6 game draws above it.
-    /// </summary>
-    private const int Rows = 40;
-
-    /// <summary>
     /// How much of the screen to leave around the window when there is
     /// not room for the size the text would like.
     /// </summary>
@@ -213,7 +201,7 @@ internal static class Program
         var page = Page(glyphs);
         Console.WriteLine($"cell: {glyphs.CellWidth} by {glyphs.CellHeight}");
         Console.WriteLine(
-            $"page: {Columns} by {Rows} characters, {page.Width} by {page.Height} pixels, "
+            $"page: {Screenful.Columns} by {Screenful.Rows} characters, {page.Width} by {page.Height} pixels, "
             + $"or as much of that as the screen has room for");
 
         foreach (var style in new[] { GlkStyle.Normal, GlkStyle.Emphasized, GlkStyle.Preformatted, GlkStyle.Header })
@@ -379,31 +367,69 @@ internal static class Program
     private static (double Width, double Height) Opening(Window window, Glyphs glyphs)
     {
         var wanted = Page(glyphs);
-        var least = (Width: glyphs.CellWidth * (Columns / 2), Height: glyphs.CellHeight * (Rows / 2));
+        var least = (
+            Width: glyphs.CellWidth * (Screenful.Columns / 2),
+            Height: glyphs.CellHeight * (Screenful.Rows / 2));
 
-        if (window.Screens?.Primary is not { } screen)
+        if (window.Screens?.Primary is { } screen)
         {
-            return wanted;
+            // The working area is in the screen's own pixels and a
+            // window is measured in the toolkit's, which are the same
+            // pixels divided by whatever the display is scaled by.
+            var scaling = screen.Scaling > 0 ? screen.Scaling : 1;
+            var room = (
+                Width: (screen.WorkingArea.Width / scaling) - Margin,
+                Height: (screen.WorkingArea.Height / scaling) - Margin);
+
+            wanted = (
+                Math.Max(Math.Min(wanted.Width, room.Width), least.Width),
+                Math.Max(Math.Min(wanted.Height, room.Height), least.Height));
         }
 
-        // The working area is in the screen's own pixels and a window is
-        // measured in the toolkit's, which are the same pixels divided
-        // by whatever the display is scaled by.
-        var scaling = screen.Scaling > 0 ? screen.Scaling : 1;
-        var room = (
-            Width: (screen.WorkingArea.Width / scaling) - Margin,
-            Height: (screen.WorkingArea.Height / scaling) - Margin);
+        var (columns, rows) = Screenful.Fit(
+            wanted.Width,
+            wanted.Height,
+            glyphs.CellWidth,
+            glyphs.CellHeight,
+            Drawn());
 
-        return (
-            Math.Max(Math.Min(wanted.Width, room.Width), least.Width),
-            Math.Max(Math.Min(wanted.Height, room.Height), least.Height));
+        return (columns * glyphs.CellWidth, rows * glyphs.CellHeight);
+    }
+
+    /// <summary>
+    /// [blorb 11.2] The shape of screen a game's artwork was drawn for,
+    /// as a width divided by a height, or null for a game that says
+    /// nothing about it.
+    /// </summary>
+    private static double? Drawn()
+    {
+        if (_format != StoryFormat.ZMachine
+            || _bytes.Length == 0
+            || _bytes[0] != (byte)ZMachineVersion.V6
+            || _resources is not { } resources)
+        {
+            return null;
+        }
+
+        try
+        {
+            return BlorbPictures.From(resources).StandardWindow is { Height: > 0 } standard
+                ? (double)standard.Width / standard.Height
+                : null;
+        }
+        catch (InvalidDataException)
+        {
+            // A malformed picture header is the catalog's problem to
+            // complain about later, not a reason to fail to open.
+            return null;
+        }
     }
 
     /// <summary>
     /// The size a page of text comes to, before the screen has a say.
     /// </summary>
     private static (double Width, double Height) Page(Glyphs glyphs) =>
-        (glyphs.CellWidth * Columns, glyphs.CellHeight * Rows);
+        (glyphs.CellWidth * Screenful.Columns, glyphs.CellHeight * Screenful.Rows);
 
     /// <summary>
     /// Starts the game once the window is up and its size is known.
