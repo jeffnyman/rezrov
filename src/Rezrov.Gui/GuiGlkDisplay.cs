@@ -428,19 +428,28 @@ public sealed class GuiGlkDisplay : IGlkDisplay
             {
                 lock (Sync)
                 {
-                    foreach (var character in press.Text)
+                    for (var at = 0; at < press.Text.Length; at++)
                     {
-                        // A pasted line ending is the end of the line,
-                        // and anything after it waits for the next one.
-                        if (character is '\n' or '\r')
+                        var character = press.Text[at];
+                        if (character is not ('\n' or '\r'))
                         {
-                            return Complete(window);
+                            if (!char.IsControl(character))
+                            {
+                                _typing.Append(character);
+                            }
+
+                            continue;
                         }
 
-                        if (!char.IsControl(character))
-                        {
-                            _typing.Append(character);
-                        }
+                        // [glk #line_events] A pasted line ending is the
+                        // end of the line, and what follows it is the
+                        // next line and the ones after that, so it goes
+                        // back on the queue to be read when the game
+                        // asks again. Letting it go would run the first
+                        // command of a pasted walkthrough and lose the
+                        // rest of it.
+                        Waiting(press.Text, at, character);
+                        return Complete(window);
                     }
 
                     Show(window);
@@ -507,6 +516,10 @@ public sealed class GuiGlkDisplay : IGlkDisplay
                     return pointed;
 
                 case PressKind.Text when press.Text.Length > 0:
+                    // [glk #char_events] One key of a paste is one key,
+                    // and the rest of it waits for whatever the game
+                    // asks for next, a key or a line alike.
+                    Waiting(press.Text, 0, press.Text[0]);
                     return GlkInput.KeyPress(window, press.Text[0]);
 
                 case PressKind.Key:
@@ -555,6 +568,30 @@ public sealed class GuiGlkDisplay : IGlkDisplay
     {
         _interrupted = window;
         Finish(window);
+    }
+
+    /// <summary>
+    /// Puts whatever is left of a pasted run of text back on the queue,
+    /// to be read when the game next asks for something.
+    /// </summary>
+    /// <remarks>
+    /// A carriage return and the newline after it are one line ending
+    /// rather than two, or a walkthrough pasted from a file written on
+    /// Windows would type a blank command between every pair of real
+    /// ones.
+    /// </remarks>
+    private void Waiting(string text, int at, char ending)
+    {
+        var from = at + 1;
+        if (ending == '\r' && from < text.Length && text[from] == '\n')
+        {
+            from++;
+        }
+
+        if (from < text.Length)
+        {
+            _presses.Add(new Press(PressKind.Text, 0, text[from..]));
+        }
     }
 
     private void Finish(GlkWindow window)
