@@ -38,6 +38,69 @@ jobs:
       # separate formatting job.
       - run: dotnet build -p:ContinuousIntegrationBuild=true
 
+  # The graphical program is the one that cannot be published as a
+  # single file: Skia and HarfBuzz are native libraries that sit beside
+  # it, so it publishes as a directory, and that publish is the part of
+  # a release which an ordinary build does not exercise at all. Doing it
+  # here means a platform where it cannot be built is found on a pull
+  # request rather than on a tag, when the release is already half made.
+  package:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            rid: linux-x64
+          - os: windows-latest
+            rid: win-x64
+          - os: macos-latest
+            rid: osx-arm64
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      # The Linux runners have clang but not always the zlib headers the
+      # native linker wants.
+      - name: Install the Linux linker prerequisites
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang zlib1g-dev
+
+      - name: Publish the graphical program
+        shell: bash
+        run: dotnet publish src/Rezrov.Gui -c Release -r ${{ matrix.rid }} -p:ContinuousIntegrationBuild=true -o out/gui
+
+      # The executable and the two native libraries beside it are what
+      # the archive carries, so their absence is exactly what would
+      # break a release.
+      - name: Check that the archive would have what it needs
+        shell: bash
+        run: |
+          cd out/gui
+          ls -la
+          missing=0
+          for name in rezrov-gui libSkiaSharp libHarfBuzzSharp; do
+            if ! ls "${name}"* > /dev/null 2>&1; then
+              echo "The publish has no ${name}." >&2
+              missing=1
+            fi
+          done
+          exit "$missing"
+
+      # A window needs a display and a runner has none, but the font
+      # measuring does not, and it is what the whole layout is built on.
+      - name: Measure the fonts
+        if: runner.os == 'Windows'
+        shell: bash
+        run: out/gui/rezrov-gui.exe --probe
+
   test:
     strategy:
       # Run every platform even after one fails. Knowing that a failure is

@@ -6,11 +6,11 @@ Rezrov is an interpreter for interactive fiction written in C#. The most common 
 
 ## Installing
 
-Each release on the [releases page](https://github.com/jeffnyman/rezrov/releases) carries one archive per platform, named for the version and the platform: `rezrov-0.1.0-win-x64.zip`, `rezrov-0.1.0-linux-x64.tar.gz`, `rezrov-0.1.0-linux-arm64.tar.gz`, and `rezrov-0.1.0-osx-universal.tar.gz`, the last a universal binary that runs natively on both Intel and Apple silicon Macs. Inside are the two command line programs, `rezrov` and `rezrov-tui`, as native executables that need nothing installed beside them, not even .NET. The graphical program, `rezrov-gui`, is not in the archives yet and is run from a checkout for now, as described below. Unpack the archive somewhere on your path and they are ready; `rezrov --version` says which release you have. A `SHA256SUMS` file beside the archives lets you check a download.
+Each release on the [releases page](https://github.com/jeffnyman/rezrov/releases) carries one archive per platform, named for the version and the platform: `rezrov-0.1.0-win-x64.zip`, `rezrov-0.1.0-linux-x64.tar.gz`, `rezrov-0.1.0-linux-arm64.tar.gz`, and `rezrov-0.1.0-osx-universal.tar.gz`, the last a universal binary that runs natively on both Intel and Apple silicon Macs. Inside are the two text programs, `rezrov` and `rezrov-tui`, as native executables that need nothing installed beside them, not even .NET. The graphical program comes in an archive of its own beside them, named the same way with `rezrov-gui` in front: `rezrov-gui-0.1.0-win-x64.zip` and so on. It holds a directory rather than a single file, because the drawing and text shaping libraries have to sit beside the program, and it is separate so that someone who wants only the two text programs is not left holding those libraries with nothing to say what they are for. Unpack the archive somewhere on your path and they are ready; `rezrov --version` says which release you have. A `SHA256SUMS` file beside the archives lets you check a download.
 
-Two platform notes. The macOS executables are not signed. Unpacked with `tar` they run as they are, on Intel and Apple silicon alike; if an archive unpacked through the Finder is refused as being from an unidentified developer, clear the quarantine mark with `xattr -d com.apple.quarantine rezrov rezrov-tui`, or allow it in System Settings under Privacy and Security. On Linux, `tar` keeps the executable permission, but if a download loses it, `chmod +x rezrov rezrov-tui` restores it.
+Two platform notes. The macOS executables are not signed. Unpacked with `tar` they run as they are, on Intel and Apple silicon alike; if an archive unpacked through the Finder is refused as being from an unidentified developer, clear the quarantine mark with `xattr -d com.apple.quarantine rezrov rezrov-tui`, or `xattr -dr com.apple.quarantine .` inside the graphical program's directory, or allow it in System Settings under Privacy and Security. On Linux, `tar` keeps the executable permission, but if a download loses it, `chmod +x rezrov rezrov-tui` restores it.
 
-The archives carry a short readme of their own, kept in the repository's `release` directory, with just what someone who has downloaded the programs needs.
+Each archive carries a short readme of its own, kept in the repository's `release` directory, with just what someone who has downloaded that archive needs.
 
 ## Using
 
@@ -243,7 +243,7 @@ Both program projects have `PublishAot` set, so the command is only `dotnet publ
 
 ## Releasing
 
-A release is a version tag. The release workflow builds both programs with NativeAOT on Windows, Linux for x64 and arm64, and macOS for both Intel and Apple silicon joined into a universal binary with `lipo`, packages each platform's pair with the README and license, and publishes a GitHub Release with the archives and their checksums attached. The steps:
+A release is a version tag. The release workflow builds all three programs with NativeAOT on Windows, Linux for x64 and arm64, and macOS for both Intel and Apple silicon joined into a universal binary with `lipo`. It makes two archives per platform, one holding the two text programs and one holding the graphical program with the native libraries that must sit beside it, each with its own readme and the license, and publishes a GitHub Release with the archives and their checksums attached. The steps:
 
 1. Set `Version` in `Directory.Build.props` to the new number and merge that change through a pull request as usual. The programs report this version through `--version`.
 2. Tag the merge on `main` and push the tag, for example `git tag v0.1.0 && git push origin v0.1.0`.
