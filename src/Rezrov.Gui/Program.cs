@@ -576,7 +576,9 @@ internal static class Program
 
         board.Screen = screen;
         board.Keys = input;
-        board.Pictures = new GuiPictures(_resources);
+
+        var pictures = new GuiPictures(_resources);
+        board.Pictures = pictures;
 
         var directory = Path.GetDirectoryName(Path.GetFullPath(_path)) ?? Directory.GetCurrentDirectory();
         var interpreter = new Interpreter(
@@ -595,6 +597,24 @@ internal static class Program
             // or the other and behave differently.
             interpreterNumber: _machine,
             tandy: _tandy);
+
+        // The title screen of the one story that has one the game
+        // never draws: the picture fills the window until the player
+        // presses a key. Nothing is offered when the resource file it
+        // lives in is missing, since the game would then wait for a key
+        // with nothing on the screen to explain why.
+        var title = TitleScreen.Picture(interpreter.Header);
+        if (title != 0 && pictures.Has(title))
+        {
+            interpreter.ShowTitle = picture =>
+            {
+                board.Title = picture;
+                Dispatcher.UIThread.Post(board.InvalidateVisual);
+                input.WaitForAnyKey();
+                board.Title = 0;
+                Dispatcher.UIThread.Post(board.InvalidateVisual);
+            };
+        }
 
         if (_resources is not null)
         {

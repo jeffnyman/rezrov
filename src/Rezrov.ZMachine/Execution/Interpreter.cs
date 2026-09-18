@@ -83,6 +83,7 @@ public sealed class Interpreter
 
         ResetMouse();
         DescribeInterpreterInHeader();
+        _titlePicture = TitleScreen.Picture(Header);
 
         // [zm 8.3] A Version 6 interpreter going under the Amiga number
         // must give all windows one pair of colors when running
@@ -227,10 +228,24 @@ public sealed class Interpreter
     /// </summary>
     public IReadOnlyList<string> RuntimeErrors => _runtimeErrors;
 
+    /// <summary>
+    /// Puts up the story's title picture and waits for a key, for the
+    /// one story whose title screen is the interpreter's to show.
+    /// </summary>
+    /// <remarks>
+    /// A frontend that cannot draw leaves this alone and is never asked
+    /// for a picture. The call happens on the thread running the game,
+    /// so it may block until the player has pressed a key, which is
+    /// what showing a title screen means.
+    /// </remarks>
+    public Action<int>? ShowTitle { get; set; }
+
     private readonly List<string> _runtimeErrors = [];
     private readonly HashSet<string> _reportedKinds = [];
     private readonly InterpreterNumber? _interpreterNumber;
     private readonly bool _tandy;
+    private readonly int _titlePicture;
+    private bool _begun;
     private CommandFile? _commandFile;
 
     // The read_char whose timer last ended a replayed read, by address:
@@ -316,9 +331,31 @@ public sealed class Interpreter
     /// </summary>
     public void Run(long limit = long.MaxValue)
     {
+        // The title screen goes up before the first instruction of the
+        // game and not again, however many times running is picked up
+        // and put down. A frontend that steps through instructions
+        // itself, as tracing does, never sees one.
+        if (!_begun)
+        {
+            _begun = true;
+            ShowTitlePicture();
+        }
+
         while (!HasQuit && limit-- > 0)
         {
             Step();
+        }
+    }
+
+    /// <summary>
+    /// Shows the story's title picture, if it has one and the frontend
+    /// can draw it.
+    /// </summary>
+    private void ShowTitlePicture()
+    {
+        if (_titlePicture != 0)
+        {
+            ShowTitle?.Invoke(_titlePicture);
         }
     }
 
@@ -783,6 +820,11 @@ public sealed class Interpreter
                 Sound.StopAll();
                 ResetMouse();
                 DescribeInterpreterInHeader();
+
+                // The title screen again, now that the screen behind
+                // it has been cleared, which is what every Frotz does
+                // and what the original interpreters did.
+                ShowTitlePicture();
                 break;
             case Opcode.Nop:
                 // [zm op:nop] Never used by any Infocom game, apparently.

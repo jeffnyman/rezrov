@@ -250,6 +250,55 @@ public partial class InterpreterTests
         return new Run(story, writer.ToString(), interpreter);
     }
 
+    /// <summary>
+    /// A machine over the given code, ready at the start address rather
+    /// than run, for a test that wants to stop partway through.
+    /// </summary>
+    private static Interpreter Machine(Assembler code, Action<Story>? setup = null)
+    {
+        var story = new Story(ZMachineVersion.V5);
+        story.Put(Code, code.ToArray());
+        setup?.Invoke(story);
+
+        return new Interpreter(
+            new ZMemory(story.Bytes),
+            new TextWriterScreen(new StringWriter()),
+            new ScriptedInput());
+    }
+
+    [Fact]
+    public void ShowsTheTitlePictureBeforeTheGameAndAgainWhenItRestarts()
+    {
+        // Beyond Zork's release and serial number. The code does
+        // nothing and then restarts, so three instructions are one
+        // start and one restart.
+        var shown = new List<int>();
+        var machine = Machine(
+            new Assembler().Short0(Op.Nop).Short0(Op.Restart),
+            story =>
+            {
+                story.PutWord(0x02, 57);
+                story.Put(0x12, "871221"u8.ToArray());
+            });
+
+        machine.ShowTitle = shown.Add;
+        machine.Run(3);
+
+        Assert.Equal([1, 1], shown);
+    }
+
+    [Fact]
+    public void ShowsNoTitlePictureForAStoryWithoutOne()
+    {
+        var shown = new List<int>();
+        var machine = Machine(new Assembler().Short0(Op.Nop).Short0(Op.Restart));
+
+        machine.ShowTitle = shown.Add;
+        machine.Run(3);
+
+        Assert.Empty(shown);
+    }
+
     // A branch that skips a three-byte instruction, such as a long-form
     // store of a small constant, needs an offset of 5: [zm 4.7.2] the
     // target is the address after the branch data plus the offset minus 2.

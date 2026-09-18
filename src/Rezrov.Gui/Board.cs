@@ -121,9 +121,29 @@ internal sealed class Board : Control
     /// </summary>
     public GuiPictures? Pictures { get; set; }
 
+    /// <summary>
+    /// A title picture the interpreter is showing before the game
+    /// begins, or zero when the game itself has the window.
+    /// </summary>
+    /// <remarks>
+    /// This is set from the thread running the game and read here on
+    /// the toolkit's, which is why it is a number and not a bitmap:
+    /// reading a whole word is not something the two threads can catch
+    /// halfway, and the picture is decoded on this side.
+    /// </remarks>
+    public int Title { get; set; }
+
     public override void Render(DrawingContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
+
+        // A title screen covers the window, since the game behind it
+        // has not started yet.
+        if (Title != 0 && Pictures?.Bitmap(Title) is { } title)
+        {
+            PaintTitle(context, title);
+            return;
+        }
 
         if (Screen is { } screen)
         {
@@ -833,6 +853,39 @@ internal sealed class Board : Control
                     _glyphs.CellWidth,
                     2));
         }
+    }
+
+    /// <summary>
+    /// The title screen, over a black window, as large as it will go
+    /// with its own shape kept, in the middle of the window.
+    /// </summary>
+    /// <remarks>
+    /// [blorb 11.2] This is the scaling rule of a Version 6 game, which
+    /// fits a picture to the screen it was drawn for and so runs out of
+    /// room in one direction first. The artwork is 320 by 200 and a
+    /// window is rarely that shape, so a band of black is left over.
+    /// Frotz leaves the picture in the corner and the whole band along
+    /// one edge; halving the band and putting it on both sides looks
+    /// like a picture shown on purpose rather than one that fell short.
+    /// </remarks>
+    private void PaintTitle(DrawingContext context, WriteableBitmap picture)
+    {
+        context.FillRectangle(Brush(ScreenColor.Black), new Rect(Bounds.Size));
+
+        var size = picture.PixelSize;
+        if (size.Width <= 0 || size.Height <= 0)
+        {
+            return;
+        }
+
+        var scale = Math.Min(Bounds.Width / size.Width, Bounds.Height / size.Height);
+        var width = size.Width * scale;
+        var height = size.Height * scale;
+
+        context.DrawImage(
+            picture,
+            new Rect(0, 0, size.Width, size.Height),
+            new Rect((Bounds.Width - width) / 2, (Bounds.Height - height) / 2, width, height));
     }
 
     /// <summary>

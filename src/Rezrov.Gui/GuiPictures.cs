@@ -49,6 +49,13 @@ internal sealed class GuiPictures
     }
 
     /// <summary>
+    /// Whether the resource file has a picture of that number at all,
+    /// which can be asked from any thread since nothing is decoded and
+    /// nothing is kept.
+    /// </summary>
+    public bool Has(int number) => _catalog?.Contains(number) == true;
+
+    /// <summary>
     /// The picture as a bitmap, or null for one that is not there,
     /// cannot be decoded, or [blorb 2.3] is a placeholder rectangle
     /// with nothing in it.
