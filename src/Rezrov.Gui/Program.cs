@@ -1,6 +1,8 @@
+using System.Globalization;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Media;
 using Avalonia.Threading;
 using Rezrov.Core;
 using Rezrov.Core.Audio;
@@ -44,6 +46,11 @@ internal static class Program
     private static StoryFormat _format;
     private static BlorbFile? _resources;
     private static int? _seed;
+    private static string _prose = Glyphs.ProseFamily;
+    private static string _fixed = Glyphs.FixedFamily;
+    private static double _size = Glyphs.OrdinarySize;
+    private static TextRenderingMode _smoothing = TextRenderingMode.SubpixelAntialias;
+    private static string? _blorb;
     private static int _result;
     private static string? _trouble;
     private static AudioEngine? _audio;
@@ -63,39 +70,27 @@ internal static class Program
             return 0;
         }
 
-        if (args is ["--probe"])
+        // The probe takes the same font options as a game does, so a
+        // player can measure a family before playing in it.
+        if (args.Length > 0 && args[0] == "--probe")
         {
+            if (!Options(args, 1))
+            {
+                Help(Console.Error);
+                return 2;
+            }
+
             return Probe();
         }
 
-        string? blorb = null;
-        var usage = args.Length < 1;
-
-        for (var i = 1; i < args.Length && !usage; i++)
-        {
-            switch (args[i])
-            {
-                case "--blorb" when i + 1 < args.Length:
-                    blorb = args[++i];
-                    break;
-                case "--seed" when i + 1 < args.Length && int.TryParse(args[i + 1], out var parsed) && parsed >= 1:
-                    _seed = parsed;
-                    i++;
-                    break;
-                default:
-                    usage = true;
-                    break;
-            }
-        }
-
-        if (usage)
+        if (args.Length < 1 || !Options(args, 1))
         {
             Help(Console.Error);
             return 2;
         }
 
         _path = args[0];
-        if (!Load(blorb))
+        if (!Load(_blorb))
         {
             _result = 1;
         }
@@ -116,6 +111,67 @@ internal static class Program
     }
 
     /// <summary>
+    /// Reads the options that follow the first argument, and says
+    /// whether they all made sense.
+    /// </summary>
+    private static bool Options(string[] args, int from)
+    {
+        for (var i = from; i < args.Length; i++)
+        {
+            switch (args[i])
+            {
+                case "--blorb" when i + 1 < args.Length:
+                    _blorb = args[++i];
+                    break;
+                case "--seed" when i + 1 < args.Length && int.TryParse(args[i + 1], out var seed) && seed >= 1:
+                    _seed = seed;
+                    i++;
+                    break;
+                case "--font" when i + 1 < args.Length:
+                    _prose = args[++i];
+                    break;
+                case "--fixed" when i + 1 < args.Length:
+                    _fixed = args[++i];
+                    break;
+                case "--size" when i + 1 < args.Length && Pixels(args[i + 1]) is { } size:
+                    _size = size;
+                    i++;
+                    break;
+                case "--smoothing" when i + 1 < args.Length && Smoothing(args[i + 1]) is { } mode:
+                    _smoothing = mode;
+                    i++;
+                    break;
+                default:
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// A size in pixels, which has to be large enough to read and small
+    /// enough to leave room for a line of it.
+    /// </summary>
+    private static double? Pixels(string value) =>
+        double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var size)
+        && size is >= 6 and <= 72
+            ? size
+            : null;
+
+    /// <summary>
+    /// How the glyphs are rasterized, which is the one part of the look
+    /// of the text that choosing a font cannot settle.
+    /// </summary>
+    private static TextRenderingMode? Smoothing(string value) => value switch
+    {
+        "subpixel" => TextRenderingMode.SubpixelAntialias,
+        "grayscale" or "greyscale" => TextRenderingMode.Antialias,
+        "none" => TextRenderingMode.Alias,
+        _ => null,
+    };
+
+    /// <summary>
     /// Prints what the fonts measure and leaves, with no window.
     /// </summary>
     /// <remarks>
@@ -131,8 +187,11 @@ internal static class Program
         // The font manager comes from the builder, so it has to be set
         // up even though no window is ever shown.
         AppBuilder.Configure<GameApp>().UsePlatformDetect().SetupWithoutStarting();
-        var glyphs = new Glyphs();
+        var glyphs = new Glyphs(_size, _prose, _fixed);
 
+        Console.WriteLine($"prose: {_prose}");
+        Console.WriteLine($"fixed: {_fixed}");
+        Console.WriteLine($"size: {_size}, smoothing: {_smoothing}");
         Console.WriteLine($"cell: {glyphs.CellWidth} by {glyphs.CellHeight}");
 
         foreach (var style in new[] { GlkStyle.Normal, GlkStyle.Emphasized, GlkStyle.Preformatted, GlkStyle.Header })
@@ -256,9 +315,20 @@ internal static class Program
 
               --blorb <file>    take the pictures and sounds from this resource file
               --seed <number>   start the game's random numbers from here
+              --font <family>   set the prose in this family
+              --fixed <family>  set the grids and preformatted text in this one
+              --size <pixels>   the size of ordinary text, from 6 to 72
+              --smoothing <s>   subpixel, grayscale, or none
               --version         print the version and leave
               --probe           print what the fonts measure and leave
               --help            print this and leave
+
+            A family may be a list, in which case the first of them the
+            machine actually has is the one used. The defaults are:
+
+              --font "Georgia, Palatino, Times New Roman, serif"
+              --fixed "Consolas, Menlo, DejaVu Sans Mono, monospace"
+              --size 16 --smoothing subpixel
 
             Both machines: a Z-machine game from a .z3 to a .z8 or a
             .zblorb, and a Glulx game from a .ulx or a .gblorb.
@@ -457,8 +527,8 @@ internal static class Program
             }
             else if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime playing)
             {
-                var glyphs = new Glyphs();
-                var board = new Board(glyphs);
+                var glyphs = new Glyphs(_size, _prose, _fixed);
+                var board = new Board(glyphs, _smoothing);
                 var window = new Window
                 {
                     Title = $"{Path.GetFileName(_path)} - rezrov",

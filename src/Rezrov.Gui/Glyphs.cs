@@ -27,15 +27,19 @@ internal sealed class Fonts
     private readonly FontFamily _mono;
 
     /// <param name="size">The size of ordinary text, in pixels.</param>
-    public Fonts(double size)
+    /// <param name="prose">The family the prose is set in.</param>
+    /// <param name="fixedWidth">The family fixed text is set in.</param>
+    public Fonts(double size, string prose, string fixedWidth)
     {
         Size = size;
 
         // A list of families rather than one: the first that the
         // machine actually has is used, and the generic name at the end
-        // is always there.
-        _body = new FontFamily("Georgia, Palatino, Times New Roman, serif");
-        _mono = new FontFamily("Consolas, Menlo, DejaVu Sans Mono, monospace");
+        // is always there, which is why the defaults are written that
+        // way and why a name a player gives is passed through as it
+        // stands.
+        _body = new FontFamily(prose);
+        _mono = new FontFamily(fixedWidth);
 
         // [glk #window_textgrid] The cell of the fixed font, which the
         // library divides the whole display into. It is rounded to whole
@@ -116,13 +120,31 @@ internal sealed class Fonts
 /// </remarks>
 internal sealed class Glyphs : IGlyphs
 {
+    /// <summary>
+    /// [glk #stream_style] The family a text buffer's prose is set in
+    /// where the player names no other.
+    /// </summary>
+    public const string ProseFamily = "Georgia, Palatino, Times New Roman, serif";
+
+    /// <summary>
+    /// [glk #window_textgrid] The family a text grid and the
+    /// preformatted style are set in, whose characters all have the
+    /// same width, which is what a grid is made of.
+    /// </summary>
+    public const string FixedFamily = "Consolas, Menlo, DejaVu Sans Mono, monospace";
+
+    /// <summary>The size of ordinary text, in pixels.</summary>
+    public const double OrdinarySize = 16;
+
     private readonly Fonts _fonts;
     private readonly GlkLook _look;
 
     /// <param name="size">The size of ordinary text, in pixels.</param>
-    public Glyphs(double size = 16)
+    /// <param name="prose">The family the prose is set in.</param>
+    /// <param name="fixedWidth">The family fixed text is set in.</param>
+    public Glyphs(double size = OrdinarySize, string prose = ProseFamily, string fixedWidth = FixedFamily)
     {
-        _fonts = new Fonts(size);
+        _fonts = new Fonts(size, prose, fixedWidth);
         _look = new GlkLook(WindowType.TextBuffer, GlkStyles.None, size, _fonts.CellWidth);
     }
 
