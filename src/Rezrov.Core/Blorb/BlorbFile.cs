@@ -69,6 +69,21 @@ public sealed class BlorbFile
 
                     LoopingSounds = loops;
                     break;
+                case "APal":
+                    // [blorb 11.3] The pictures that take their colors
+                    // from whatever was plotted before them rather than
+                    // from the palette they carry. Journey and Shogun
+                    // have the chunk with nothing in it, which says
+                    // their graphics are of that kind without any of
+                    // their pictures actually adapting.
+                    var adaptive = new HashSet<int>();
+                    for (var at = 0; at + 4 <= data.Length; at += 4)
+                    {
+                        adaptive.Add((int)BinaryPrimitives.ReadUInt32BigEndian(data.Slice(at)));
+                    }
+
+                    AdaptivePictures = adaptive;
+                    break;
                 case "IFmd":
                     // [blorb 10] XML, in UTF-8.
                     Metadata = Encoding.UTF8.GetString(data);
@@ -122,6 +137,13 @@ public sealed class BlorbFile
     /// sound plays once.
     /// </summary>
     public IReadOnlyDictionary<int, bool> LoopingSounds { get; } = new Dictionary<int, bool>();
+
+    /// <summary>
+    /// [blorb 11.3] The pictures whose colors come from the last
+    /// ordinary picture plotted before them. Empty where the file has
+    /// no adaptive palette chunk, and where it has an empty one.
+    /// </summary>
+    public IReadOnlySet<int> AdaptivePictures { get; } = new HashSet<int>();
 
     /// <summary>[blorb 10] The metadata document, if any.</summary>
     public string? Metadata { get; }

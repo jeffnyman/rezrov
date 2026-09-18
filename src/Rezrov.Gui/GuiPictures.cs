@@ -21,7 +21,11 @@ namespace Rezrov.Gui;
 /// </remarks>
 internal sealed class GuiPictures
 {
-    private readonly Dictionary<int, WriteableBitmap?> _bitmaps = [];
+    // [blorb 11.3] A picture that takes its colors from another is a
+    // different picture under each set of them, so the colors are part
+    // of what a kept bitmap is kept under. An ordinary picture has no
+    // palette of its own here and is kept under none.
+    private readonly Dictionary<(int Number, byte[]? Palette), WriteableBitmap?> _bitmaps = [];
     private readonly BlorbPictures? _catalog;
 
     public GuiPictures(BlorbFile? resources)
@@ -49,15 +53,15 @@ internal sealed class GuiPictures
     /// cannot be decoded, or [blorb 2.3] is a placeholder rectangle
     /// with nothing in it.
     /// </summary>
-    public WriteableBitmap? Bitmap(int number)
+    public WriteableBitmap? Bitmap(int number, byte[]? palette = null)
     {
-        if (_bitmaps.TryGetValue(number, out var known))
+        if (_bitmaps.TryGetValue((number, palette), out var known))
         {
             return known;
         }
 
-        var bitmap = Read(number);
-        _bitmaps[number] = bitmap;
+        var bitmap = Read(number, palette);
+        _bitmaps[(number, palette)] = bitmap;
         return bitmap;
     }
 
@@ -101,8 +105,8 @@ internal sealed class GuiPictures
         return bitmap;
     }
 
-    private WriteableBitmap? Read(int number) =>
-        _catalog?.Find(number) is { } picture && PictureReader.Decode(picture) is { } pixels
+    private WriteableBitmap? Read(int number, byte[]? palette) =>
+        _catalog?.Find(number) is { } picture && PictureReader.Decode(picture, palette) is { } pixels
             ? ToBitmap(pixels)
             : null;
 }

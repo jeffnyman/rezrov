@@ -1,6 +1,7 @@
 using System.Text;
 
 using Rezrov.Core.Blorb;
+using Rezrov.Core.Graphics;
 using Rezrov.ZMachine.Input;
 using Rezrov.ZMachine.Text;
 
@@ -25,6 +26,13 @@ namespace Rezrov.ZMachine.Screen;
 /// <param name="UnitLeft">Where its left edge really is.</param>
 /// <param name="UnitHeight">How tall it really is, in units.</param>
 /// <param name="UnitWidth">How wide it really is.</param>
+/// <param name="Palette">
+/// [blorb 11.3] The colors to draw it with, for a picture that takes
+/// them from whatever was plotted before it, or null for one that
+/// carries its own. It is settled here rather than where the picture
+/// is drawn, because which colors a picture gets depends on what was
+/// plotted before it and only the model knows that order.
+/// </param>
 public sealed record PicturePlacement(
     int Number,
     int Row,
@@ -34,7 +42,8 @@ public sealed record PicturePlacement(
     int UnitTop,
     int UnitLeft,
     int UnitHeight,
-    int UnitWidth);
+    int UnitWidth,
+    byte[]? Palette = null);
 
 /// <summary>
 /// The screen model of [zm 8.8], for Version 6: eight windows over one
@@ -79,6 +88,7 @@ public sealed class WindowedScreenModel : IScreenModel
     private readonly ZWindow[] _windows = new ZWindow[WindowCount];
     private readonly List<(char Character, TextAttributes Attributes)> _word = [];
     private readonly List<PicturePlacement> _pictures = [];
+    private AdaptivePalette? _palette;
     private readonly StringBuilder _streamRun = new();
     private TextAttributes _streamAttributes;
     private int _streamRow = -1;
@@ -294,6 +304,11 @@ public sealed class WindowedScreenModel : IScreenModel
     {
         ArgumentNullException.ThrowIfNull(pictures);
         _catalog = pictures;
+
+        // [blorb 11.3] Which colors an adaptive picture gets depends on
+        // what was plotted before it, so the order pictures are drawn
+        // in has to be watched, and this is where that order is known.
+        _palette = new AdaptivePalette(pictures.Adaptive);
     }
 
     /// <summary>
@@ -480,7 +495,7 @@ public sealed class WindowedScreenModel : IScreenModel
 
                     // [zm op:erase_window] Erasing a window takes with it
                     // whatever was drawn in it, pictures included.
-                    _pictures.RemoveAll(p => Within(p, top, rows));
+                    _pictures.RemoveAll(p => Holds(p, top, left, rows, columns));
                     ResetCursor(target);
                     break;
                 }
@@ -903,13 +918,20 @@ public sealed class WindowedScreenModel : IScreenModel
         }
 
         FlushWord();
+
+        // [blorb 11.3] Plotting is what moves the colors along, so this
+        // happens whether or not the picture lands anywhere the screen
+        // can show.
+        var palette = _palette?.Plot(picture);
+        Recolor();
+
         if (PictureCells(size, y, x) is { } rect)
         {
             var origin = PictureOrigin(y, x);
             FillCells(rect.Top, rect.Left, rect.Rows, rect.Columns, Cell.Blank(BlankFor(Current)));
             _pictures.Add(new PicturePlacement(
                 number, rect.Top, rect.Left, rect.Rows, rect.Columns,
-                origin.Y, origin.X, size.Height, size.Width));
+                origin.Y, origin.X, size.Height, size.Width, palette));
             _changed = true;
         }
 
@@ -1288,11 +1310,11 @@ public sealed class WindowedScreenModel : IScreenModel
         if (Math.Abs(by) >= rows)
         {
             FillCells(top, left, rows, columns, blank);
-            _pictures.RemoveAll(p => Within(p, top, rows));
+            _pictures.RemoveAll(p => Holds(p, top, left, rows, columns));
             return;
         }
 
-        ScrollPictures(units, by, top, rows);
+        ScrollPictures(units, by, top, left, rows, columns);
 
         if (by > 0)
         {
@@ -1411,10 +1433,79 @@ public sealed class WindowedScreenModel : IScreenModel
     }
 
     /// <summary>
-    /// Whether a picture is in the rows a window covers.
+    /// [blorb 11.3 deviates] Gives every picture already on the screen
+    /// that takes its colors from another the colors in force now.
     /// </summary>
-    private static bool Within(PicturePlacement picture, int top, int rows) =>
-        picture.Row < top + rows && picture.Row + picture.Rows > top;
+    /// <remarks>
+    /// The specification would rather a picture kept the colors it was
+    /// plotted with, and calls changing them afterwards the behavior of
+    /// the Amiga and IBM machines rather than the preferred rendering.
+    /// Arthur needs it all the same: it draws its frame and its two
+    /// side borders once, at the start, and never again, and expects
+    /// them to take on each scene's colors as the game moves from the
+    /// churchyard to the church. Left in the colors they were plotted
+    /// with they stay the wrong ones for the rest of the session, which
+    /// is the only thing either rendering can be judged by.
+    /// </remarks>
+    private void Recolor()
+    {
+        if (_palette is not { Adapts: true } palette || _catalog is null)
+        {
+            return;
+        }
+
+        for (var i = 0; i < _pictures.Count; i++)
+        {
+            if (_catalog.Find(_pictures[i].Number) is not { } picture
+                || palette.Colors(picture) is not { } colors
+                || ReferenceEquals(colors, _pictures[i].Palette))
+            {
+                continue;
+            }
+
+            _pictures[i] = _pictures[i] with { Palette = colors };
+            _changed = true;
+        }
+    }
+
+    /// <summary>
+    /// Whether a rectangle of cells holds the whole of a picture.
+    /// </summary>
+    /// <remarks>
+    /// [zm 8.8.3] Windows lie on top of one another and a picture
+    /// belongs to the screen rather than to any of them, so what
+    /// decides whether an erase or a scroll takes a picture with it is
+    /// where the picture is, not which window drew it.
+    ///
+    /// The whole of it, because a real interpreter draws onto a canvas
+    /// and an erase blanks the cells it covers and no more, while a
+    /// list of placements can only keep a picture or lose it. Arthur
+    /// shows why either half of this matters. Its frame is one picture
+    /// across the whole top of the screen, and it erases a box in the
+    /// middle of that frame to make a hole for the room's illustration:
+    /// taking the frame away because part of it was erased leaves the
+    /// screen bare. Its two side borders are pictures one character
+    /// wide down the edges, and the same box shares rows with them
+    /// without coming near them, so the columns count as much as the
+    /// rows do.
+    /// </remarks>
+    private static bool Holds(PicturePlacement picture, int top, int left, int rows, int columns) =>
+        picture.Row >= top && picture.Row + picture.Rows <= top + rows
+        && picture.Column >= left && picture.Column + picture.Columns <= left + columns;
+
+    /// <summary>
+    /// Whether any part of a picture is still in a rectangle of cells.
+    /// </summary>
+    /// <remarks>
+    /// [zm 8.8.3] This is the other half of the scrolling rule. What
+    /// moves with a window is what the window holds, but what has
+    /// moved is only forgotten once none of it is left to see, or a
+    /// picture would vanish while part of it was still on the window's
+    /// last line.
+    /// </remarks>
+    private static bool Touches(PicturePlacement picture, int top, int left, int rows, int columns) =>
+        picture.Row < top + rows && picture.Row + picture.Rows > top
+        && picture.Column < left + columns && picture.Column + picture.Columns > left;
 
     /// <summary>
     /// [zm 8.8.3] Moves the pictures of a scrolling window along with
@@ -1428,12 +1519,12 @@ public sealed class WindowedScreenModel : IScreenModel
     /// screen with the paragraph it belongs to rather than hang in the
     /// air while the text moves out from under it.
     /// </remarks>
-    private void ScrollPictures(int units, int by, int top, int rows)
+    private void ScrollPictures(int units, int by, int top, int left, int rows, int columns)
     {
         for (var i = _pictures.Count - 1; i >= 0; i--)
         {
             var picture = _pictures[i];
-            if (!Within(picture, top, rows))
+            if (!Holds(picture, top, left, rows, columns))
             {
                 continue;
             }
@@ -1444,7 +1535,7 @@ public sealed class WindowedScreenModel : IScreenModel
                 UnitTop = picture.UnitTop - units,
             };
 
-            if (Within(moved, top, rows))
+            if (Touches(moved, top, left, rows, columns))
             {
                 _pictures[i] = moved;
             }

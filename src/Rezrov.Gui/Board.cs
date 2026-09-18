@@ -855,7 +855,7 @@ internal sealed class Board : Control
 
         foreach (var placement in screen.Pictures)
         {
-            if (pictures.Bitmap(placement.Number) is not { } bitmap
+            if (pictures.Bitmap(placement.Number, placement.Palette) is not { } bitmap
                 || placement.UnitWidth <= 0
                 || placement.UnitHeight <= 0)
             {

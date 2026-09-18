@@ -15,11 +15,28 @@ internal static class TestBlorb
     /// a sound is written as a plain chunk of its type, so an AIFF,
     /// which is a form, is not what this builds.
     /// </summary>
-    public static byte[] Build(IReadOnlyList<(int Number, string Type, byte[] Data)> pictures, byte[]? resolution = null, int release = 0, IReadOnlyList<(int Number, string Type, byte[] Data)>? data = null, IReadOnlyList<(int Number, string Type, byte[] Data)>? sounds = null)
+    public static byte[] Build(IReadOnlyList<(int Number, string Type, byte[] Data)> pictures, byte[]? resolution = null, int release = 0, IReadOnlyList<(int Number, string Type, byte[] Data)>? data = null, IReadOnlyList<(int Number, string Type, byte[] Data)>? sounds = null, IReadOnlyList<int>? adaptive = null)
     {
         data ??= [];
         sounds ??= [];
         var others = new List<(string Id, byte[] Data)>();
+
+        // [blorb 11.3] The pictures that take their colors from
+        // whatever was plotted before them, four bytes to a number.
+        if (adaptive is not null)
+        {
+            var numbers = new byte[adaptive.Count * 4];
+            for (var i = 0; i < adaptive.Count; i++)
+            {
+                var number = (uint)adaptive[i];
+                numbers[(i * 4) + 0] = (byte)(number >> 24);
+                numbers[(i * 4) + 1] = (byte)(number >> 16);
+                numbers[(i * 4) + 2] = (byte)(number >> 8);
+                numbers[(i * 4) + 3] = (byte)number;
+            }
+
+            others.Add(("APal", numbers));
+        }
         if (release != 0)
         {
             others.Add(("RelN", [(byte)(release >> 8), (byte)release]));
