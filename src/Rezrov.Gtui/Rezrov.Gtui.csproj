@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The grid frontend: the same interpreter again, in a window this
+    program opens for itself, drawing a grid of characters from a font
+    of its own. Nothing is referenced that did not come with .NET, so
+    the window, the keyboard and the pixels are all visible in this
+    project rather than behind a toolkit. That is the point of it: the
+    command line program shows what an interpreter needs at its
+    barest, the terminal program adds a screen model, the graphical
+    program hands the drawing to Avalonia, and this one shows what the
+    toolkit was doing.
+
+    It cannot play a game yet. What it has so far is the font.
+
+    AssemblyName is lowercase for the same reason as the CLI's.
+  -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>rezrov-gtui</AssemblyName>
+
+    <!-- A NativeAOT publish, as for the other programs. -->
+    <PublishAot>true</PublishAot>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Rezrov.Core\Rezrov.Core.csproj" />
+    <ProjectReference Include="..\Rezrov.Glulx\Rezrov.Glulx.csproj" />
+    <ProjectReference Include="..\Rezrov.ZMachine\Rezrov.ZMachine.csproj" />
+  </ItemGroup>
+
+</Project>
