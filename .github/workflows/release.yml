@@ -6,10 +6,17 @@
 # arm64. macOS is the exception that helps: the same toolchain builds both
 # Mac architectures, so the Apple silicon runner publishes an x64 and an
 # arm64 executable and lipo joins them into one universal binary that runs
-# natively on either kind of Mac. Each job packages both programs for its
-# platform, and one final job gathers the packages, checks that the tag
-# agrees with the version the projects were built with, and creates the
-# release with the packages and their checksums attached.
+# natively on either kind of Mac. Each job makes two packages for its
+# platform, and one final job gathers them, checks that the tag agrees
+# with the version the projects were built with, and creates the release
+# with the packages and their checksums attached.
+#
+# Two packages rather than one because the graphical program cannot be a
+# single file: Skia and HarfBuzz are native libraries that have to sit
+# beside it. Dropping those into the same directory as two standalone
+# executables would leave someone who wanted only the text programs
+# holding two libraries with nothing to say what they are for, and it
+# would grow that download by about half again.
 #
 # To cut a release: set Version in Directory.Build.props, merge that, then
 # tag main as v<version> and push the tag. The README's Releasing section
@@ -56,28 +63,48 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y clang zlib1g-dev
 
-      - name: Publish the two programs
+      - name: Publish the three programs
         if: runner.os != 'macOS'
         shell: bash
         run: |
           dotnet publish src/Rezrov.Cli -c Release -r ${{ matrix.rid }} -p:ContinuousIntegrationBuild=true -o "out/${{ matrix.rid }}"
           dotnet publish src/Rezrov.Tui -c Release -r ${{ matrix.rid }} -p:ContinuousIntegrationBuild=true -o "out/${{ matrix.rid }}"
+          dotnet publish src/Rezrov.Gui -c Release -r ${{ matrix.rid }} -p:ContinuousIntegrationBuild=true -o "out/${{ matrix.rid }}/gui"
 
-      - name: Publish the two programs for both Mac architectures and join them
+      - name: Publish the three programs for both Mac architectures and join them
         if: runner.os == 'macOS'
         run: |
           for rid in osx-arm64 osx-x64; do
             dotnet publish src/Rezrov.Cli -c Release -r "$rid" -p:ContinuousIntegrationBuild=true -o "out/$rid"
             dotnet publish src/Rezrov.Tui -c Release -r "$rid" -p:ContinuousIntegrationBuild=true -o "out/$rid"
+            dotnet publish src/Rezrov.Gui -c Release -r "$rid" -p:ContinuousIntegrationBuild=true -o "out/$rid/gui"
           done
-          mkdir -p out/osx-universal
+          mkdir -p out/osx-universal/gui
           for program in rezrov rezrov-tui; do
             lipo -create -output "out/osx-universal/$program" "out/osx-arm64/$program" "out/osx-x64/$program"
             lipo -info "out/osx-universal/$program"
           done
 
-      # Only the executables ship: no symbol files, no build leftovers.
-      # The version comes from the tag, so the package names match the
+          # The graphical program's own executable is built for one
+          # architecture and is joined like the other two. The native
+          # libraries beside it come from their NuGet packages and are
+          # usually universal already, in which case joining them would
+          # fail and either copy will do.
+          for file in out/osx-arm64/gui/*; do
+            name="$(basename "$file")"
+            case "$name" in *.pdb|*.dbg) continue;; esac
+            if lipo -info "$file" 2>/dev/null | grep -q '^Architectures in the fat file'; then
+              cp "$file" "out/osx-universal/gui/$name"
+            elif lipo -info "$file" > /dev/null 2>&1; then
+              lipo -create -output "out/osx-universal/gui/$name" "$file" "out/osx-x64/gui/$name"
+            else
+              cp "$file" "out/osx-universal/gui/$name"
+            fi
+          done
+          lipo -info out/osx-universal/gui/* 2>/dev/null || true
+
+      # Only what runs ships: no symbol files, no build leftovers. The
+      # version comes from the tag, so the package names match the
       # release they land in.
       - name: Package
         shell: bash
@@ -91,13 +118,26 @@ jobs:
             cp out/${{ matrix.rid }}/rezrov out/${{ matrix.rid }}/rezrov-tui "dist/${package}/"
           fi
           cp release/README.md LICENSE "dist/${package}/"
+
+          # The graphical program takes whatever its publish produced
+          # apart from symbols, rather than a list of names, since which
+          # native libraries it needs is the toolkit's business and may
+          # change without this file hearing about it.
+          gui="rezrov-gui-${version}-${{ matrix.rid }}"
+          mkdir -p "dist/${gui}"
+          find "out/${{ matrix.rid }}/gui" -maxdepth 1 -type f ! -name '*.pdb' ! -name '*.dbg' -exec cp {} "dist/${gui}/" \;
+          cp release/gui-README.md "dist/${gui}/README.md"
+          cp LICENSE "dist/${gui}/"
+
           cd dist
-          if [ "${{ runner.os }}" = "Windows" ]; then
-            7z a -tzip "${package}.zip" "${package}" > /dev/null
-          else
-            tar -czf "${package}.tar.gz" "${package}"
-          fi
-          rm -r "${package}"
+          for name in "${package}" "${gui}"; do
+            if [ "${{ runner.os }}" = "Windows" ]; then
+              7z a -tzip "${name}.zip" "${name}" > /dev/null
+            else
+              tar -czf "${name}.tar.gz" "${name}"
+            fi
+            rm -r "${name}"
+          done
 
       - uses: actions/upload-artifact@v7
         with:
