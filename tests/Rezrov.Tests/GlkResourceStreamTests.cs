@@ -69,7 +69,7 @@ public class GlkResourceStreamTests
         var glk = Library(Resources());
 
         var bytes = glk.OpenResourceStream(2, false, 0)!;
-        Assert.Equal("\0\0±\0\0\0b", ReadAll(glk, bytes));
+        Assert.Equal("\0\0\u0003\u00B1\0\0\0b", ReadAll(glk, bytes));
         Assert.False(bytes.IsText);
 
         // [glk #resource_streams] Four-byte words, and positions count
