@@ -22,6 +22,15 @@
 
     <!-- A NativeAOT publish, as for the other programs. -->
     <PublishAot>true</PublishAot>
+
+    <!--
+      Talking to an operating system means calling C functions, and the
+      generator that writes those calls emits unsafe code to do the
+      marshalling. None of the program's own code is unsafe: no pointer
+      is dereferenced and no memory is pinned by hand anywhere in this
+      project. The setting is here for the generated part alone.
+    -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>

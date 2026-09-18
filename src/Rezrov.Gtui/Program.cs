@@ -1,24 +1,45 @@
 using Rezrov.Core;
+using Rezrov.Core.Blorb;
+using Rezrov.ZMachine;
+using Rezrov.ZMachine.Execution;
+using Rezrov.ZMachine.Input;
 using Rezrov.ZMachine.Screen;
 
 namespace Rezrov.Gtui;
 
 /// <summary>
-/// The grid frontend, which is not yet a frontend: so far it is the
-/// font it will draw with, and a way to look at it.
+/// The grid frontend: a window this program opens for itself, with a
+/// grid of characters drawn into it from a font of its own.
 /// </summary>
 /// <remarks>
-/// A frontend that owns its pixels has to answer a question the other
-/// two never face, which is what a character actually looks like. The
-/// console hands that to the terminal and the graphical program hands
-/// it to Avalonia. This one has to draw it, so it starts with the two
-/// fonts it needs: [zm 16.1] font 3, the character graphics font, whose
-/// shapes the standard prints in full, and an ordinary font for
-/// everything else, which is drawn here rather than taken from
-/// anywhere.
+/// The four programs are meant to be read in order. The command line
+/// program shows what an interpreter needs at its barest, a stream of
+/// text. The terminal program adds the screen model and lets the
+/// terminal do the drawing. The graphical program hands the window and
+/// the drawing to a toolkit. This one is the same game in a window with
+/// nothing underneath it: no package is referenced, the window comes
+/// from the operating system directly, and every pixel is one this
+/// program decided on.
+///
+/// The interpreter runs on a thread of its own, because the thread that
+/// makes a window is the thread that has to answer its messages, and a
+/// game waiting for a key must not stop the window from painting or
+/// closing. The two meet at exactly two places: the game fills a screen
+/// of characters and asks for a repaint, and the window hands keys to
+/// the input queue.
 /// </remarks>
 internal static class Program
 {
+    // A comfortable page to start at. The window can be any size after
+    // that, and the grid is worked out from whatever the drawing area
+    // turns out to be.
+    private const int Columns = 80;
+    private const int Rows = 30;
+
+    private static int? _seed;
+    private static InterpreterNumber? _machine;
+    private static bool _tandy;
+
     internal static int Main(string[] args)
     {
         ArgumentNullException.ThrowIfNull(args);
@@ -26,6 +47,12 @@ internal static class Program
         if (args is ["--version"])
         {
             Console.WriteLine($"rezrov-gtui {ProgramVersion.Current}");
+            return 0;
+        }
+
+        if (args is ["--help"] or ["-h"])
+        {
+            Help(Console.Out);
             return 0;
         }
 
@@ -41,32 +68,237 @@ internal static class Program
             return 0;
         }
 
-        Help(args is ["--help"] or ["-h"] ? Console.Out : Console.Error);
-        return args is ["--help"] or ["-h"] ? 0 : 2;
+        if (args.Length < 1 || !Options(args, 1))
+        {
+            Help(Console.Error);
+            return 2;
+        }
+
+        return Play(args[0]);
+    }
+
+    /// <summary>
+    /// Reads the options that follow the story file, and says whether
+    /// they all made sense.
+    /// </summary>
+    private static bool Options(string[] args, int from)
+    {
+        for (var i = from; i < args.Length; i++)
+        {
+            switch (args[i])
+            {
+                case "--seed" when i + 1 < args.Length && int.TryParse(args[i + 1], out var seed) && seed >= 1:
+                    _seed = seed;
+                    i++;
+                    break;
+                case "--interpreter" when i + 1 < args.Length && InterpreterNumbers.TryParse(args[i + 1], out var number):
+                    _machine = number;
+                    i++;
+                    break;
+                case "--tandy":
+                    _tandy = true;
+                    break;
+                default:
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Opens a window and plays the game in it.
+    /// </summary>
+    private static int Play(string path)
+    {
+        if (Story(path) is not { } bytes)
+        {
+            return 1;
+        }
+
+        var memory = new ZMemory(bytes);
+        var header = new StoryHeader(memory);
+
+        using var window = new Win32Window();
+        window.Open(
+            $"{Path.GetFileName(path)} - rezrov",
+            Columns * Paint.CellWidth,
+            Rows * Paint.CellHeight);
+
+        var (columns, rows) = Paint.Fits(window.Surface.Width, window.Surface.Height);
+
+        // The screen needs the input for the [MORE] key and the input
+        // needs the screen for its echo, so each reaches the other
+        // through a variable filled in a moment later.
+        BufferedInput? input = null;
+        var screen = new BufferedScreen(
+            columns,
+            rows,
+            cursorStartsAtBottom: header.Version <= ZMachineVersion.V4,
+            repaint: window.Redraw,
+            waitForKey: () => input!.WaitForAnyKey(),
+
+            // [zm 8.8.1] A screen of pixels measures in pixels, and a
+            // character is as many of them as the font makes it.
+            fontWidth: Paint.CellWidth,
+            fontHeight: Paint.CellHeight,
+
+            // [zm 8.1.2] The character graphics font is drawn from the
+            // shapes the standard gives, which this program carries, so
+            // it says it has one. [zm 8.8.6] Pictures are another
+            // matter and it does not draw them yet, so it does not
+            // claim them and a Version 6 game takes its text path.
+            capabilities: ScreenCapabilities.StatusLine | ScreenCapabilities.UpperWindow
+                | ScreenCapabilities.Colors | ScreenCapabilities.Bold | ScreenCapabilities.Italic
+                | ScreenCapabilities.FixedPitch | ScreenCapabilities.FixedGrid
+                | ScreenCapabilities.CharacterGraphicsFont);
+
+        input = new BufferedInput(screen);
+
+        // Painting happens on the thread that owns the window while the
+        // game fills the screen on its own, so the screen is read under
+        // its lock rather than caught halfway through a line.
+        window.Painting = surface =>
+        {
+            lock (screen.Sync)
+            {
+                Paint.Screen(surface, screen);
+            }
+        };
+
+        window.Typed = character =>
+        {
+            if (GridKeys.FromCharacter(character) is var zscii and not 0)
+            {
+                input.Enqueue(zscii);
+            }
+        };
+
+        window.Pressed = key =>
+        {
+            if (GridKeys.FromKey(key) is var zscii and not 0)
+            {
+                input.Enqueue(zscii);
+            }
+        };
+
+        // [zm 8.4] A window that changes size changes the screen, and
+        // the game is told so it can lay its own windows out again.
+        window.Resized = () =>
+        {
+            var (across, down) = Paint.Fits(window.Surface.Width, window.Surface.Height);
+            screen.Resize(across, down);
+        };
+
+        var result = 0;
+        var interpreter = new Interpreter(
+            memory,
+            screen,
+            input,
+            _seed is { } seed ? new RandomGenerator(seed) : null,
+            interpreterNumber: _machine,
+            tandy: _tandy);
+
+        var worker = new Thread(() =>
+        {
+            try
+            {
+                interpreter.Run();
+            }
+            catch (Exception e) when (e is NotSupportedException or InvalidDataException)
+            {
+                Console.Error.WriteLine($"rezrov-gtui: stopped: {e.Message}");
+                result = 3;
+            }
+
+            window.Close();
+        })
+        {
+            IsBackground = true,
+            Name = "interpreter",
+        };
+
+        worker.Start();
+        window.Run();
+
+        return result;
+    }
+
+    /// <summary>
+    /// The story itself, taken out of a resource file when the game is
+    /// packaged in one, or null after saying what was wrong with it.
+    /// </summary>
+    private static byte[]? Story(string path)
+    {
+        if (!File.Exists(path))
+        {
+            Console.Error.WriteLine($"rezrov-gtui: no such file: {path}");
+            return null;
+        }
+
+        var bytes = File.ReadAllBytes(path);
+        var format = StoryFormatDetector.Detect(bytes);
+
+        // [blorb 5] A packaged game carries the story inside it.
+        if (format == StoryFormat.Blorb)
+        {
+            try
+            {
+                if (BlorbFile.Read(bytes).Executable is not { ChunkType: "ZCOD" } executable)
+                {
+                    Console.Error.WriteLine(
+                        $"rezrov-gtui: {Path.GetFileName(path)} has no Z-machine game in it.");
+                    return null;
+                }
+
+                return executable.Data.ToArray();
+            }
+            catch (InvalidDataException e)
+            {
+                Console.Error.WriteLine($"rezrov-gtui: the resource file could not be read: {e.Message}");
+                return null;
+            }
+        }
+
+        if (format != StoryFormat.ZMachine)
+        {
+            Console.Error.WriteLine(
+                $"rezrov-gtui: {Path.GetFileName(path)} is not a Z-machine story, and this program plays that machine only.");
+            return null;
+        }
+
+        return bytes;
     }
 
     private static void Help(TextWriter to)
     {
-        to.WriteLine("""
-            usage: rezrov-gtui --glyphs
+        var names = InterpreterNumbers.AllNames.ToList();
+        to.WriteLine($"""
+            usage: rezrov-gtui <story file> [options]
+                   rezrov-gtui --glyphs [text]
                    rezrov-gtui --version
                    rezrov-gtui --help
 
-            The grid frontend, which cannot play a game yet. What it has
-            so far is the fonts it will draw with: [zm 16.1] font 3, the
-            character graphics font, whose shapes the standard gives,
-            and the ordinary font, which is drawn in this program.
+            Plays a Z-machine game in a window of its own, as a grid of
+            characters drawn from a font this program carries. Nothing is
+            used that did not come with the system: the window, the keys,
+            and every pixel are this program's own doing.
+
+            options:
+              --seed <number>          seed the game's random numbers
+              --interpreter <machine>  tell the game which machine it is on
+              --tandy                  set the Tandy bit for a Version 1 to 3 game
+
+            machines: {string.Join(", ", names.Take(6))},
+                      {string.Join(", ", names.Skip(6))}, or a number from 1 to 11
+
+            Saving and restoring are not wired up here yet, and neither
+            are sounds or pictures. The other three programs have them.
+
+            The fonts can be read without playing anything:
 
               --glyphs          print both fonts, character by character
               --glyphs <text>   print that text in the ordinary font
-              --version         print the version and leave
-              --help            print this and leave
-
-            The shapes of the ordinary font were drawn by eye and no
-            test can say whether they look right, so the way to judge
-            them is to read them:
-
-              rezrov-gtui --glyphs "The quick brown fox"
             """);
     }
 
