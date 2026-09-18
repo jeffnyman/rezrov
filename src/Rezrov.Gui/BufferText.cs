@@ -29,7 +29,12 @@ public sealed record Piece(string Text, GlkStyle Style, uint Link, double Left, 
 /// </param>
 /// <param name="Width">How wide to draw it.</param>
 /// <param name="Height">How tall to draw it.</param>
-public sealed record Inset(Pixels Picture, double Left, double Top, double Width, double Height);
+/// <param name="Link">
+/// [glk #link_creating] The link it belongs to, or zero for none: a
+/// picture takes the link value in force where it was printed, exactly
+/// as the text around it does.
+/// </param>
+public sealed record Inset(Pixels Picture, double Left, double Top, double Width, double Height, uint Link);
 
 /// <summary>
 /// One laid out line of a text buffer: the pieces across it, the
@@ -147,7 +152,7 @@ public sealed class BufferText(IGlyphs glyphs)
     /// text for that rule, while a margin one does not, since two of
     /// them may share a line.
     /// </remarks>
-    public bool Draw(Pixels picture, ImageAlign align, ImageSizing sizing)
+    public bool Draw(Pixels picture, ImageAlign align, ImageSizing sizing, uint link)
     {
         ArgumentNullException.ThrowIfNull(picture);
 
@@ -157,7 +162,7 @@ public sealed class BufferText(IGlyphs glyphs)
             return false;
         }
 
-        _items.Add(new Drawn(picture, align, sizing));
+        _items.Add(new Drawn(picture, align, sizing, link));
         AtLineStart = AtLineStart && margin;
         Changed();
         return true;
@@ -258,6 +263,36 @@ public sealed class BufferText(IGlyphs glyphs)
         Math.Min(height, Height(width)) + Math.Clamp(Scroll, 0, Furthest(width, height));
 
     /// <summary>
+    /// [glk #link_events] The link at a point in a window of the given
+    /// size, measured from the window's top left corner, or zero where
+    /// there is no link there.
+    /// </summary>
+    /// <remarks>
+    /// The lines are walked from the bottom up, which is how they are
+    /// painted, so a point lands on whatever was drawn there however
+    /// far the text has been scrolled back.
+    /// </remarks>
+    public uint LinkAt(double x, double y, double width, double height)
+    {
+        var lines = Lines(width);
+        var bottom = Bottom(width, height);
+
+        for (var i = lines.Count - 1; i >= 0 && bottom > 0; i--)
+        {
+            var top = bottom - lines[i].Height;
+
+            if (y >= top && y < bottom)
+            {
+                return LinkIn(lines[i], x, y - top);
+            }
+
+            bottom = top;
+        }
+
+        return 0;
+    }
+
+    /// <summary>
     /// Something new to read means the player wants to see it, so
     /// anything they had scrolled back to is left behind, and the
     /// lines have to be worked out again.
@@ -266,6 +301,38 @@ public sealed class BufferText(IGlyphs glyphs)
     {
         _width = -1;
         Scroll = 0;
+    }
+
+    /// <summary>
+    /// [glk #link_events] The link of whatever is at a place in a line,
+    /// measured from the line's own top left corner.
+    /// </summary>
+    /// <remarks>
+    /// The pictures are looked at before the words, since a margin
+    /// picture stands beside the text rather than under it and an
+    /// inline one is drawn over the line it sits in.
+    /// </remarks>
+    private static uint LinkIn(Line line, double x, double y)
+    {
+        foreach (var inset in line.Images)
+        {
+            if (inset.Link != 0
+                && x >= inset.Left && x < inset.Left + inset.Width
+                && y >= inset.Top && y < inset.Top + inset.Height)
+            {
+                return inset.Link;
+            }
+        }
+
+        foreach (var piece in line.Pieces)
+        {
+            if (x >= piece.Left && x < piece.Left + piece.Width)
+            {
+                return piece.Link;
+            }
+        }
+
+        return 0;
     }
 
     private List<Line> Wrap(double width)
@@ -302,7 +369,7 @@ public sealed class BufferText(IGlyphs glyphs)
 
     private sealed record Run(StringBuilder Text, GlkStyle Style, uint Link) : Item;
 
-    private sealed record Drawn(Pixels Picture, ImageAlign Align, ImageSizing Sizing) : Item;
+    private sealed record Drawn(Pixels Picture, ImageAlign Align, ImageSizing Sizing, uint Link) : Item;
 
     private sealed record Parted : Item;
 
@@ -420,11 +487,11 @@ public sealed class BufferText(IGlyphs glyphs)
 
             if (picture.Align is ImageAlign.MarginLeft or ImageAlign.MarginRight)
             {
-                Aside(picture.Picture, picture.Align == ImageAlign.MarginLeft, across, down);
+                Aside(picture, picture.Align == ImageAlign.MarginLeft, across, down);
             }
             else
             {
-                Among(picture.Picture, picture.Align, across, down);
+                Among(picture, across, down);
             }
         }
 
@@ -519,10 +586,17 @@ public sealed class BufferText(IGlyphs glyphs)
         /// beside the first, which is the stacking the specification
         /// warns about and asks for a flow break to avoid.
         /// </remarks>
-        private void Aside(Pixels picture, bool left, double across, double down)
+        private void Aside(Drawn picture, bool left, double across, double down)
         {
             var from = left ? _start : _limit - across;
-            _margins.Add(new Margin(picture, left, _top, _top + down, from, from + across));
+            _margins.Add(new Margin(
+                picture.Picture,
+                picture.Link,
+                left,
+                _top,
+                _top + down,
+                from,
+                from + across));
 
             // The line the picture heads has to make room for it too.
             Open();
@@ -539,7 +613,7 @@ public sealed class BufferText(IGlyphs glyphs)
         /// of text", so the line it is placed against is a line of
         /// ordinary prose.
         /// </remarks>
-        private void Among(Pixels picture, ImageAlign align, double across, double down)
+        private void Among(Drawn picture, double across, double down)
         {
             Begin(GlkStyle.Normal);
 
@@ -551,14 +625,14 @@ public sealed class BufferText(IGlyphs glyphs)
             }
 
             var ascent = _glyphs.Baseline(GlkStyle.Normal);
-            var above = align switch
+            var above = picture.Align switch
             {
                 ImageAlign.InlineUp => down,
                 ImageAlign.InlineDown => ascent,
                 _ => (ascent + down) / 2,
             };
 
-            _inline.Add(new Waiting(picture, _left, above, across, down));
+            _inline.Add(new Waiting(picture.Picture, picture.Link, _left, above, across, down));
             _left += across;
             _above = Math.Max(_above, above);
             _below = Math.Max(_below, down - above);
@@ -703,7 +777,8 @@ public sealed class BufferText(IGlyphs glyphs)
                         margin.From,
                         margin.Top - _top,
                         margin.To - margin.From,
-                        margin.Bottom - margin.Top));
+                        margin.Bottom - margin.Top,
+                        margin.Link));
                 }
             }
 
@@ -714,7 +789,8 @@ public sealed class BufferText(IGlyphs glyphs)
                     waiting.Left,
                     baseline - waiting.Above,
                     waiting.Width,
-                    waiting.Height));
+                    waiting.Height,
+                    waiting.Link));
             }
 
             _lines.Add(new Line(pieces, images, height, baseline));
@@ -805,13 +881,13 @@ public sealed class BufferText(IGlyphs glyphs)
         /// [glk #graphics_textbuf] A picture in one of the margins, and
         /// the band of the window it stands the text out of.
         /// </summary>
-        private readonly record struct Margin(Pixels Picture, bool Left, double Top, double Bottom, double From, double To);
+        private readonly record struct Margin(Pixels Picture, uint Link, bool Left, double Top, double Bottom, double From, double To);
 
         /// <summary>
         /// An inline picture placed in the line being laid out, kept
         /// until the line's baseline is settled and it can be given a
         /// place to sit.
         /// </summary>
-        private readonly record struct Waiting(Pixels Picture, double Left, double Above, double Width, double Height);
+        private readonly record struct Waiting(Pixels Picture, uint Link, double Left, double Above, double Width, double Height);
     }
 }

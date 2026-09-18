@@ -40,6 +40,7 @@ public sealed class GuiGlkDisplay : IGlkDisplay
     private double _pixelWidth;
     private double _pixelHeight;
     private bool _resized;
+    private GlkWindow? _interrupted;
 
     /// <param name="glyphs">The font the text is measured in.</param>
     /// <param name="repaint">Asks the control to draw again.</param>
@@ -184,14 +185,14 @@ public sealed class GuiGlkDisplay : IGlkDisplay
     /// different size in a window of a different size, and the
     /// specification says it resizes when the window does.
     /// </remarks>
-    public bool DrawImage(GlkWindow window, uint image, Pixels picture, ImageAlign align, ImageSizing sizing)
+    public bool DrawImage(GlkWindow window, uint image, Pixels picture, ImageAlign align, ImageSizing sizing, uint link)
     {
         ArgumentNullException.ThrowIfNull(window);
 
         bool placed;
         lock (Sync)
         {
-            placed = Text(window).Draw(picture, align, sizing);
+            placed = Text(window).Draw(picture, align, sizing, link);
         }
 
         _repaint();
@@ -213,6 +214,19 @@ public sealed class GuiGlkDisplay : IGlkDisplay
 
         _repaint();
     }
+
+    /// <summary>
+    /// [glk #mouse_events] A window can be touched where there is a
+    /// pointer to touch it with, and the specification allows it only
+    /// in these two kinds.
+    /// </summary>
+    public bool CanReportMouse(WindowType type) => type is WindowType.TextGrid or WindowType.Graphics;
+
+    /// <summary>
+    /// [glk #link_testing] A link can be selected wherever text is
+    /// shown, which is where a link can be printed in the first place.
+    /// </summary>
+    public bool CanReportHyperlinks(WindowType type) => type is WindowType.TextBuffer or WindowType.TextGrid;
 
     /// <summary>
     /// [glk #window_graphics] The game painted on a canvas, so the
@@ -257,22 +271,71 @@ public sealed class GuiGlkDisplay : IGlkDisplay
             return ReadKey(charRequests[0], timeout);
         }
 
-        // Nothing to type into. [glk #timer_events] Only the timer or a
-        // wake can end the wait, and with neither there is nothing to
-        // wait for.
+        // Nothing to type into. [glk #mouse_events] and
+        // [glk #link_events] A window may still be waiting to be
+        // touched or to have a link selected, which is as much
+        // something to wait for as a key is. Failing that, only the
+        // timer can end the wait, and with no timer either there is
+        // nothing to wait for at all.
         _repaint();
-        if (timeout is null)
+
+        if (timeout is null && !Pointing())
         {
             return GlkInput.Ended;
         }
 
         var idle = new Deadline(timeout);
-        return Take(idle, out var press) && press.Kind == PressKind.Wake
-            ? GlkInput.Woken
-            : GlkInput.Timer;
+
+        while (true)
+        {
+            if (!Take(idle, out var press))
+            {
+                return GlkInput.Timer;
+            }
+
+            if (press.Kind == PressKind.Point && press.Input is { } pointed)
+            {
+                return pointed;
+            }
+
+            if (press.Kind == PressKind.Wake)
+            {
+                return GlkInput.Woken;
+            }
+        }
     }
 
+    /// <summary>
+    /// [glk #mouse_events] and [glk #link_events] Whether any window is
+    /// waiting to be touched or to have a link selected.
+    /// </summary>
+    private bool Pointing()
+    {
+        lock (Sync)
+        {
+            return Leaves(Root).Any(window => window.MouseRequest || window.HyperlinkRequest);
+        }
+    }
+
+    private static IEnumerable<GlkWindow> Leaves(GlkWindow? window) => window switch
+    {
+        null => [],
+        PairWindow pair => Leaves(pair.First).Concat(Leaves(pair.Second)),
+        _ => [window],
+    };
+
     public void Wake() => _presses.Add(new Press(PressKind.Wake, 0, ""));
+
+    /// <summary>
+    /// [glk #mouse_events] and [glk #link_events] The player touched a
+    /// window or selected a link in one, worked out by whatever knows
+    /// where the pointer landed.
+    /// </summary>
+    public void Point(GlkInput input)
+    {
+        ArgumentNullException.ThrowIfNull(input);
+        _presses.Add(new Press(PressKind.Point, 0, "", input));
+    }
 
     /// <summary>The window was made a different size.</summary>
     public void Resize(double width, double height)
@@ -311,8 +374,20 @@ public sealed class GuiGlkDisplay : IGlkDisplay
         lock (Sync)
         {
             Typing = window;
+
+            // [glk #line_events] A wait that was cut short by a resize
+            // or by a link leaves the game to ask for the line again,
+            // and the player finds what they had typed still there. The
+            // game's own initial text wins wherever it gave any.
+            var initial = window.LineRequest?.Initial ?? "";
+            if (initial.Length == 0 && ReferenceEquals(_interrupted, window))
+            {
+                initial = _typing.ToString();
+            }
+
+            _interrupted = null;
             _typing.Clear();
-            _typing.Append(window.LineRequest?.Initial ?? "");
+            _typing.Append(initial);
             Show(window);
         }
 
@@ -327,6 +402,12 @@ public sealed class GuiGlkDisplay : IGlkDisplay
                 return GlkInput.Timer;
             }
 
+            if (press.Kind == PressKind.Point && press.Input is { } pointed)
+            {
+                Interrupt(window);
+                return pointed;
+            }
+
             if (press.Kind == PressKind.Wake)
             {
                 lock (Sync)
@@ -334,12 +415,12 @@ public sealed class GuiGlkDisplay : IGlkDisplay
                     if (_resized)
                     {
                         _resized = false;
-                        Finish(window);
+                        Interrupt(window);
                         return GlkInput.Arrange;
                     }
                 }
 
-                Finish(window);
+                Interrupt(window);
                 return GlkInput.Woken;
             }
 
@@ -422,6 +503,9 @@ public sealed class GuiGlkDisplay : IGlkDisplay
 
                     return GlkInput.Woken;
 
+                case PressKind.Point when press.Input is { } pointed:
+                    return pointed;
+
                 case PressKind.Text when press.Text.Length > 0:
                     return GlkInput.KeyPress(window, press.Text[0]);
 
@@ -440,6 +524,7 @@ public sealed class GuiGlkDisplay : IGlkDisplay
         lock (Sync)
         {
             line = _typing.ToString();
+            _interrupted = null;
             Finish(window);
 
             // [glk #line_events] The line and the newline after it are
@@ -459,6 +544,17 @@ public sealed class GuiGlkDisplay : IGlkDisplay
 
         _repaint();
         return GlkInput.Line(window, line);
+    }
+
+    /// <summary>
+    /// Ends the line request without throwing away what the player had
+    /// typed, for a wait that something other than the enter key cut
+    /// short.
+    /// </summary>
+    private void Interrupt(GlkWindow window)
+    {
+        _interrupted = window;
+        Finish(window);
     }
 
     private void Finish(GlkWindow window)
@@ -501,9 +597,10 @@ public sealed class GuiGlkDisplay : IGlkDisplay
         Key,
         Text,
         Wake,
+        Point,
     }
 
-    private readonly record struct Press(PressKind Kind, uint Key, string Text);
+    private readonly record struct Press(PressKind Kind, uint Key, string Text, GlkInput? Input = null);
 
     /// <summary>
     /// [glk #timer_events] How long is left of a wait, or forever when

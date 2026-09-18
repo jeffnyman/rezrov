@@ -62,8 +62,10 @@ image 1 verbose worig horig halfwidth
 image 1 verbose wratio horig 1/1x1/1 halfwidth
 
 # [glk #link_creating] A picture the game makes a hyperlink of, which
-# is a value set around the drawing of it.
+# is a value set around the drawing of it, and then [glk #link_events]
+# the player selecting that link, which the checker reports by number.
 image 1 link
+[link 1001]
 
 # And a number that names no picture at all, which is refused.
 image 3

@@ -1,5 +1,6 @@
 using Rezrov.Glulx;
 using Rezrov.Glulx.Glk;
+using Rezrov.Gui;
 using Rezrov.Glulx.Instructions;
 using static Rezrov.Tests.GlulxAssembler;
 using FileMode = Rezrov.Glulx.Glk.FileMode;
@@ -179,6 +180,41 @@ public class GlkPointerTests
 
         Assert.Equal(0u, without.Gestalt((uint)GestaltSelector.HyperlinkInput, (uint)WindowType.TextBuffer, null));
         Assert.Equal(0u, without.Gestalt((uint)GestaltSelector.MouseInput, (uint)WindowType.TextGrid, null));
+    }
+
+    [Fact]
+    public void TheWindowReportsTouchesAndLinksWhereTheSpecificationAllowsThem()
+    {
+        var glk = new GlkLibrary(new GuiGlkDisplay(new Cells(), () => { }, 800, 600));
+
+        // [glk #mouse_events] A window may be touched only where there
+        // is something in it to touch: a grid of characters or a canvas
+        // of pixels. A buffer of flowing text is neither.
+        Assert.Equal(1u, glk.Gestalt((uint)GestaltSelector.MouseInput, (uint)WindowType.TextGrid, null));
+        Assert.Equal(1u, glk.Gestalt((uint)GestaltSelector.MouseInput, (uint)WindowType.Graphics, null));
+        Assert.Equal(0u, glk.Gestalt((uint)GestaltSelector.MouseInput, (uint)WindowType.TextBuffer, null));
+
+        // [glk #link_testing] A link can be selected wherever text can
+        // be printed, which is the other way round.
+        Assert.Equal(1u, glk.Gestalt((uint)GestaltSelector.Hyperlinks, 0, null));
+        Assert.Equal(1u, glk.Gestalt((uint)GestaltSelector.HyperlinkInput, (uint)WindowType.TextBuffer, null));
+        Assert.Equal(1u, glk.Gestalt((uint)GestaltSelector.HyperlinkInput, (uint)WindowType.TextGrid, null));
+        Assert.Equal(0u, glk.Gestalt((uint)GestaltSelector.HyperlinkInput, (uint)WindowType.Graphics, null));
+    }
+
+    /// <summary>
+    /// A font of whole cells, which is all the display needs to work
+    /// out how many of them the window holds.
+    /// </summary>
+    private sealed class Cells : IGlyphs
+    {
+        public double CellWidth => 10;
+
+        public double CellHeight => 20;
+
+        public double Width(string text, GlkStyle style) => (text?.Length ?? 0) * 10;
+
+        public double LineHeight(GlkStyle style) => 20;
     }
 
     [Fact]
