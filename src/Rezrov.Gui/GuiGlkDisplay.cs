@@ -33,6 +33,7 @@ public sealed class GuiGlkDisplay : IGlkDisplay
 {
     private readonly BlockingCollection<Press> _presses = [];
     private readonly Dictionary<GlkWindow, BufferText> _buffers = [];
+    private readonly Dictionary<GlkWindow, IGlyphs> _fonts = [];
     private readonly StringBuilder _typing = new();
     private readonly IGlyphs _glyphs;
     private readonly Action _repaint;
@@ -88,7 +89,7 @@ public sealed class GuiGlkDisplay : IGlkDisplay
 
     /// <summary>
     /// The text of a buffer window, made the first time it is printed
-    /// to.
+    /// to. Read under <see cref="Sync"/>, as everything here is.
     /// </summary>
     public BufferText Text(GlkWindow window)
     {
@@ -96,11 +97,51 @@ public sealed class GuiGlkDisplay : IGlkDisplay
 
         if (!_buffers.TryGetValue(window, out var text))
         {
-            text = new BufferText(_glyphs);
+            text = new BufferText(Glyphs(window));
             _buffers[window] = text;
         }
 
         return text;
+    }
+
+    /// <summary>
+    /// [glk #stream_style_hints] The fonts as one window sees them,
+    /// bound to the style hints that window was opened with, which are
+    /// the only ones that will ever reach it.
+    /// </summary>
+    public IGlyphs Glyphs(GlkWindow window)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+
+        if (!_fonts.TryGetValue(window, out var fonts))
+        {
+            fonts = _glyphs.Bound(window.Type, window.Styles);
+            _fonts[window] = fonts;
+        }
+
+        return fonts;
+    }
+
+    /// <summary>
+    /// [glk #stream_style_check] What a style comes out looking like in
+    /// a window, which is the same answer the control paints it with,
+    /// so a game that asks is told what it will actually see.
+    /// </summary>
+    public GlkAppearance? Appearance(GlkWindow window, GlkStyle style)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+
+        // A blank or graphics window shows no text, so there is nothing
+        // to tell the game about.
+        if (window.Type is not (WindowType.TextBuffer or WindowType.TextGrid))
+        {
+            return null;
+        }
+
+        lock (Sync)
+        {
+            return Glyphs(window).Look(style);
+        }
     }
 
     public void Print(GlkWindow window, uint character, GlkStyle style, uint link)

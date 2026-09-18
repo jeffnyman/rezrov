@@ -101,6 +101,24 @@ public enum StyleHint : uint
     ReverseColor = 9,
 }
 
+/// <summary>
+/// [glk #stream_style_hints] How the lines of a style sit between the
+/// edges of the window.
+/// </summary>
+public enum Justification : uint
+{
+    LeftFlush = 0,
+
+    /// <summary>
+    /// Set against both edges, which is full justification.
+    /// </summary>
+    LeftRight = 1,
+
+    Centered = 2,
+
+    RightFlush = 3,
+}
+
 /// <summary>[glk #gestalt] The gestalt selectors.</summary>
 public enum GestaltSelector : uint
 {

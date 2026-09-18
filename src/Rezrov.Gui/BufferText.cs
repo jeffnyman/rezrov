@@ -328,11 +328,14 @@ public sealed class BufferText(IGlyphs glyphs)
         private readonly IGlyphs _glyphs;
         private readonly double _width;
         private double _top;
+        private double _edge;
         private double _start;
         private double _limit;
         private double _left;
         private double _above;
         private double _below;
+        private Justification _justify;
+        private bool _paragraph = true;
 
         public Layout(IGlyphs glyphs, double width)
         {
@@ -352,10 +355,12 @@ public sealed class BufferText(IGlyphs glyphs)
                 if (part == "\n")
                 {
                     Grow(run.Style);
+                    _paragraph = true;
                     Close();
                     continue;
                 }
 
+                Begin(run.Style);
                 var measured = _glyphs.Width(part, run.Style);
 
                 // [glk #window_textbuf] A word that does not fit goes on
@@ -364,7 +369,9 @@ public sealed class BufferText(IGlyphs glyphs)
                 // to give, and dropping characters is worse.
                 if (_left + measured > _limit && _left > _start && part != " ")
                 {
+                    _paragraph = false;
                     Close();
+                    Begin(run.Style);
                 }
 
                 if (measured > Room && Room > 0)
@@ -374,7 +381,9 @@ public sealed class BufferText(IGlyphs glyphs)
                     {
                         if (_left + size > _limit && _left > _start)
                         {
+                            _paragraph = false;
                             Close();
+                            Begin(run.Style);
                         }
 
                         Add(text, run, size);
@@ -426,6 +435,8 @@ public sealed class BufferText(IGlyphs glyphs)
         /// </summary>
         public void Part()
         {
+            _paragraph = true;
+
             if (_pieces.Count > 0 || _inline.Count > 0)
             {
                 Close();
@@ -530,9 +541,13 @@ public sealed class BufferText(IGlyphs glyphs)
         /// </remarks>
         private void Among(Pixels picture, ImageAlign align, double across, double down)
         {
+            Begin(GlkStyle.Normal);
+
             if (_left + across > _limit && _left > _start)
             {
+                _paragraph = false;
                 Close();
+                Begin(GlkStyle.Normal);
             }
 
             var ascent = _glyphs.Baseline(GlkStyle.Normal);
@@ -547,6 +562,76 @@ public sealed class BufferText(IGlyphs glyphs)
             _left += across;
             _above = Math.Max(_above, above);
             _below = Math.Max(_below, down - above);
+        }
+
+        /// <summary>
+        /// [glk #stream_style_hints] Sets the line in from the edge and
+        /// settles how it will sit between the edges, from the style of
+        /// the first thing put on it.
+        /// </summary>
+        /// <remarks>
+        /// Glk hangs both the indentation and the justification on the
+        /// style rather than on the line, and a line may hold several
+        /// styles, so one of them has to be chosen. The style the line
+        /// opens in is the one the game was printing when the line
+        /// began, which is as close to what was meant as anything.
+        ///
+        /// The paragraph indentation goes on top of the ordinary one,
+        /// and only where a paragraph starts: a line that exists
+        /// because the one above it ran out of room is a continuation,
+        /// not a new paragraph.
+        /// </remarks>
+        private void Begin(GlkStyle style)
+        {
+            if (_pieces.Count > 0 || _inline.Count > 0)
+            {
+                return;
+            }
+
+            var look = _glyphs.Look(style);
+            var indent = look.Indentation + (_paragraph ? look.ParaIndentation : 0);
+
+            _start = Math.Clamp(_edge + indent, 0, _limit);
+            _left = _start;
+            _justify = look.Justification;
+        }
+
+        /// <summary>
+        /// [glk #stream_style_hints] How far the finished pieces of a
+        /// line move along to sit the way the style asked.
+        /// </summary>
+        /// <remarks>
+        /// Full justification is not among the answers. Setting a line
+        /// against both edges means stretching the spaces of a
+        /// proportional line, which is not done here, so
+        /// <see cref="GlkLook"/> declines that hint and the game is
+        /// told as much rather than being told one thing and shown
+        /// another.
+        ///
+        /// Trailing spaces are not part of what is being moved, or a
+        /// line that wrapped after a space would sit a space too far to
+        /// the left of where it should.
+        /// </remarks>
+        private double Shift()
+        {
+            if (_justify is not (Justification.Centered or Justification.RightFlush))
+            {
+                return 0;
+            }
+
+            var last = _pieces.Count - 1;
+            while (last >= 0 && _pieces[last].Text == " ")
+            {
+                last--;
+            }
+
+            if (last < 0)
+            {
+                return 0;
+            }
+
+            var slack = Math.Max(_limit - (_pieces[last].Left + _pieces[last].Width), 0);
+            return _justify == Justification.Centered ? slack / 2 : slack;
         }
 
         private void Add(string text, Run run, double measured)
@@ -569,6 +654,20 @@ public sealed class BufferText(IGlyphs glyphs)
 
         private void Close()
         {
+            var shift = Shift();
+            if (shift > 0)
+            {
+                for (var i = 0; i < _pieces.Count; i++)
+                {
+                    _pieces[i] = _pieces[i] with { Left = _pieces[i].Left + shift };
+                }
+
+                for (var i = 0; i < _inline.Count; i++)
+                {
+                    _inline[i] = _inline[i] with { Left = _inline[i].Left + shift };
+                }
+            }
+
             Emit([.. _pieces], _above, _above + _below);
             _pieces.Clear();
             _inline.Clear();
@@ -649,9 +748,11 @@ public sealed class BufferText(IGlyphs glyphs)
                 }
             }
 
+            _edge = left;
             _start = left;
             _limit = right;
             _left = left;
+            _justify = Justification.LeftFlush;
         }
 
         /// <summary>

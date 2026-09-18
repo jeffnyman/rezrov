@@ -44,6 +44,37 @@ public interface IGlyphs
     double Baseline(GlkStyle style) => LineHeight(style) * 0.8;
 
     /// <summary>
+    /// [glk #stream_style_check] What a style comes out looking like:
+    /// the indentation and the justification the layout sets its lines
+    /// by, and the colors and face whatever draws them uses.
+    /// </summary>
+    /// <remarks>
+    /// A font with no styles of its own, and the default here, gives
+    /// one plain appearance for every style: left flush, not indented,
+    /// ordinary weight, and black on white.
+    /// </remarks>
+    GlkAppearance Look(GlkStyle style) => new(
+        Indentation: 0,
+        ParaIndentation: 0,
+        Justification: Justification.LeftFlush,
+        Size: LineHeight(style),
+        Weight: 0,
+        Oblique: false,
+        Proportional: true,
+        TextColor: 0x00000000,
+        BackColor: 0x00FFFFFF,
+        Reverse: false);
+
+    /// <summary>
+    /// [glk #stream_style_hints] The same font bound to one window's
+    /// style hints, since a hint reaches only the windows opened after
+    /// it was set and so a window's styles are the window's own. A font
+    /// with no styles to vary, and the default here, is already the
+    /// answer.
+    /// </summary>
+    IGlyphs Bound(WindowType type, GlkStyles styles) => this;
+
+    /// <summary>
     /// [glk #window_textgrid] The width of one cell of the fixed font, in
     /// pixels, which is what a text grid is measured in and what the
     /// library divides the display into.
