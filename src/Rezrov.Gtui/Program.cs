@@ -35,6 +35,12 @@ internal static class Program
             return 0;
         }
 
+        if (args is ["--glyphs", var specimen])
+        {
+            Specimen(Console.Out, specimen);
+            return 0;
+        }
+
         Help(args is ["--help"] or ["-h"] ? Console.Out : Console.Error);
         return args is ["--help"] or ["-h"] ? 0 : 2;
     }
@@ -47,23 +53,74 @@ internal static class Program
                    rezrov-gtui --help
 
             The grid frontend, which cannot play a game yet. What it has
-            so far is the font it will draw with.
+            so far is the fonts it will draw with: [zm 16.1] font 3, the
+            character graphics font, whose shapes the standard gives,
+            and the ordinary font, which is drawn in this program.
 
-              --glyphs    print the font as the standard prints it
-              --version   print the version and leave
-              --help      print this and leave
+              --glyphs          print both fonts, character by character
+              --glyphs <text>   print that text in the ordinary font
+              --version         print the version and leave
+              --help            print this and leave
+
+            The shapes of the ordinary font were drawn by eye and no
+            test can say whether they look right, so the way to judge
+            them is to read them:
+
+              rezrov-gtui --glyphs "The quick brown fox"
             """);
     }
 
     /// <summary>
-    /// [zm 16.1] Font 3, laid out four characters to a group the way
-    /// the standard lays it out, so the two can be read side by side.
+    /// Both fonts, character by character. [zm 16.1] Font 3 is laid out
+    /// four to a group the way the standard lays it out, so the program
+    /// and the document can be read side by side, and the ordinary font
+    /// follows in the same shape.
     /// </summary>
     private static void Glyphs(TextWriter to)
     {
+        Table(
+            to,
+            $"font 3: {CharacterGraphics.Width} by {CharacterGraphics.Height}, codes 32 to 126",
+            CharacterGraphics.Height,
+            code => CharacterGraphics.Bitmap(code));
+
+        Table(
+            to,
+            $"ordinary text: {TextFont.Width} by {TextFont.Height}, codes 32 to 126",
+            TextFont.Height,
+            TextFont.Bitmap);
+    }
+
+    /// <summary>
+    /// A line of text in the ordinary font, which is the only way to
+    /// tell whether the shapes read well together.
+    /// </summary>
+    private static void Specimen(TextWriter to, string text)
+    {
+        for (var row = 0; row < TextFont.Height; row++)
+        {
+            var line = new char[text.Length * TextFont.Width];
+
+            for (var at = 0; at < text.Length; at++)
+            {
+                var bits = TextFont.Bitmap(text[at])[row];
+
+                for (var cell = 0; cell < TextFont.Width; cell++)
+                {
+                    line[(at * TextFont.Width) + cell] =
+                        (bits & (1 << (TextFont.Width - 1 - cell))) != 0 ? '#' : ' ';
+                }
+            }
+
+            to.WriteLine(new string(line).TrimEnd());
+        }
+    }
+
+    private static void Table(TextWriter to, string title, int height, Func<char, ReadOnlySpan<byte>> font)
+    {
         const int Across = 4;
 
-        to.WriteLine($"font 3: {CharacterGraphics.Width} by {CharacterGraphics.Height}, codes 32 to 126");
+        to.WriteLine(title);
         to.WriteLine();
 
         for (var first = ' '; first <= '~'; first = (char)(first + Across))
@@ -79,12 +136,12 @@ internal static class Program
                 "   ",
                 group.Select(code => $"{(int)code,3}({code}):  76543210")));
 
-            for (var row = 0; row < CharacterGraphics.Height; row++)
+            for (var row = 0; row < height; row++)
             {
-                to.WriteLine("        " + string.Join(
+                to.WriteLine("       " + string.Join(
                     "   ",
                     group.Select((code, at) =>
-                        (at == 0 ? string.Empty : "      ") + row + Cells(CharacterGraphics.Bitmap(code)[row]))));
+                        (at == 0 ? string.Empty : "      ") + $"{row,2}" + Cells(font(code)[row]))));
             }
 
             to.WriteLine();
@@ -93,7 +150,7 @@ internal static class Program
 
     /// <summary>
     /// One row of a character, a hash for a cell that is on. [zm 16.1]
-    /// The leftmost cell is the top bit.
+    /// The leftmost cell is the top bit, in both fonts.
     /// </summary>
     private static string Cells(byte row)
     {
