@@ -196,6 +196,15 @@ internal static class Program
             screen,
             input,
             _seed is { } seed ? new RandomGenerator(seed) : null,
+
+            // [zm 7.6] A saved game lands beside the story it came
+            // from, and the name is typed into the window rather than
+            // asked for in a dialog this program has no way to open.
+            files: new GridFiles(
+                screen,
+                input,
+                Path.GetDirectoryName(Path.GetFullPath(path)) ?? Directory.GetCurrentDirectory(),
+                Path.GetFileNameWithoutExtension(path)),
             interpreterNumber: _machine,
             tandy: _tandy);
 
@@ -292,8 +301,11 @@ internal static class Program
             machines: {string.Join(", ", names.Take(6))},
                       {string.Join(", ", names.Skip(6))}, or a number from 1 to 11
 
-            Saving and restoring are not wired up here yet, and neither
-            are sounds or pictures. The other three programs have them.
+            Saving and restoring ask for the file name in the window
+            itself, the way Infocom's interpreters did, since a file
+            dialog is a toolkit and there is none here. Sounds and
+            pictures are not drawn yet; the other three programs have
+            them.
 
             The fonts can be read without playing anything:
 
