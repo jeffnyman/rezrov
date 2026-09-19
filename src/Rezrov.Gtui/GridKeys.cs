@@ -44,6 +44,15 @@ public static class GridKeys
         _ => 0,
     };
 
+    // [x11] The symbols X names the same keys by. They are the same
+    // keys; only the numbering differs.
+    private const ulong SymLeft = 0xFF51;
+    private const ulong SymUp = 0xFF52;
+    private const ulong SymRight = 0xFF53;
+    private const ulong SymDown = 0xFF54;
+    private const ulong SymFirstFunction = 0xFFBE;
+    private const ulong SymLastFunction = 0xFFC9;
+
     /// <summary>
     /// [zm 3.8.3] The key the player pressed, for the keys that send no
     /// character, or zero for a key the Z-machine does not name.
@@ -58,6 +67,21 @@ public static class GridKeys
         // [zm 3.8.4] The twelve function keys run upward from 133,
         // in the order the keyboard has them.
         >= FirstFunction and <= LastFunction => (ushort)(Zscii.F1 + (key - FirstFunction)),
+        _ => 0,
+    };
+
+    /// <summary>
+    /// [zm 3.8.3] The same, for X11, which names its keys by symbol
+    /// rather than by code. A key that sends a character is dealt with
+    /// as a character, so only the rest arrive here.
+    /// </summary>
+    public static ushort FromKeySym(ulong symbol) => symbol switch
+    {
+        SymUp => Zscii.CursorUp,
+        SymDown => Zscii.CursorDown,
+        SymLeft => Zscii.CursorLeft,
+        SymRight => Zscii.CursorRight,
+        >= SymFirstFunction and <= SymLastFunction => (ushort)(Zscii.F1 + (symbol - SymFirstFunction)),
         _ => 0,
     };
 }

@@ -272,4 +272,30 @@ public class GridPaintTests
         // already been dealt with.
         Assert.Equal(0, GridKeys.FromKey('A'));
     }
+
+    [Fact]
+    public void X11NamesTheSameKeysDifferentlyAndTheyMeanTheSameThing()
+    {
+        // The two window systems number their keys differently and the
+        // game must not be able to tell which one it is running under.
+        Assert.Equal(GridKeys.FromKey(0x26), GridKeys.FromKeySym(0xFF52));
+        Assert.Equal(GridKeys.FromKey(0x28), GridKeys.FromKeySym(0xFF54));
+        Assert.Equal(GridKeys.FromKey(0x25), GridKeys.FromKeySym(0xFF51));
+        Assert.Equal(GridKeys.FromKey(0x27), GridKeys.FromKeySym(0xFF53));
+
+        // All twelve function keys, at both ends and in between.
+        Assert.Equal(Zscii.F1, GridKeys.FromKeySym(0xFFBE));
+        Assert.Equal(Zscii.F12, GridKeys.FromKeySym(0xFFC9));
+
+        for (ulong symbol = 0xFFBE; symbol <= 0xFFC9; symbol++)
+        {
+            Assert.Equal(GridKeys.FromKey(0x70 + (int)(symbol - 0xFFBE)), GridKeys.FromKeySym(symbol));
+        }
+
+        // A symbol the Z-machine has no name for is dropped, not sent
+        // as something else. Caps lock is the obvious one to press by
+        // accident.
+        Assert.Equal(0, GridKeys.FromKeySym(0xFFE5));
+        Assert.Equal(0, GridKeys.FromKeySym(0));
+    }
 }
