@@ -44,6 +44,10 @@ internal sealed partial class CocoaWindow : IGridWindow
 
     private const ulong Buffered = 2;
     private const ulong KeyDown = 10;
+
+    // [cocoa] The command key, which marks a keystroke as the menus'
+    // business rather than the game's.
+    private const long CommandKey = 1 << 20;
     private const ulong EveryEvent = ulong.MaxValue;
 
     // [cocoa] Skip the first byte of each pixel rather than read it as
@@ -160,12 +164,26 @@ internal sealed partial class CocoaWindow : IGridWindow
                 continue;
             }
 
-            if (SendForLong(next, Selector("type")) == (long)KeyDown)
+            // [cocoa] A key this program has taken is NOT passed on.
+            // Nothing in the responder chain handles typing, since the
+            // content view is an ordinary one with no drawing method of
+            // its own, so AppKit would reach the end of the chain and
+            // sound the system beep at every keystroke.
+            //
+            // Keys held with the command key are passed on regardless,
+            // because those belong to the menus rather than to the
+            // game, and a player who presses command and Q means it.
+            var typing = SendForLong(next, Selector("type")) == (long)KeyDown
+                && (SendForLong(next, Selector("modifierFlags")) & CommandKey) == 0;
+
+            if (typing)
             {
                 Pressed(next);
             }
-
-            SendPointer(_application, sendEvent, next);
+            else
+            {
+                SendPointer(_application, sendEvent, next);
+            }
 
             if (Send(_window, isVisible) == 0)
             {
