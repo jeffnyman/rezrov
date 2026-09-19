@@ -119,7 +119,7 @@ internal static class Program
         var memory = new ZMemory(bytes);
         var header = new StoryHeader(memory);
 
-        using var window = new Win32Window();
+        using var window = Window();
         window.Open(
             $"{Path.GetFileName(path)} - rezrov",
             Columns * Paint.CellWidth,
@@ -166,21 +166,7 @@ internal static class Program
             }
         };
 
-        window.Typed = character =>
-        {
-            if (GridKeys.FromCharacter(character) is var zscii and not 0)
-            {
-                input.Enqueue(zscii);
-            }
-        };
-
-        window.Pressed = key =>
-        {
-            if (GridKeys.FromKey(key) is var zscii and not 0)
-            {
-                input.Enqueue(zscii);
-            }
-        };
+        window.Key = input.Enqueue;
 
         // [zm 8.4] A window that changes size changes the screen, and
         // the game is told so it can lay its own windows out again.
@@ -231,6 +217,25 @@ internal static class Program
         window.Run();
 
         return result;
+    }
+
+    /// <summary>
+    /// The window for whichever system this is running on.
+    /// </summary>
+    private static IGridWindow Window()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            return new Win32Window();
+        }
+
+        if (OperatingSystem.IsLinux() || OperatingSystem.IsFreeBSD())
+        {
+            return new X11Window();
+        }
+
+        throw new PlatformNotSupportedException(
+            "This program opens its own window, and it only knows how to on Windows and on X11 so far.");
     }
 
     /// <summary>

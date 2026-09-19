@@ -17,7 +17,7 @@ namespace Rezrov.Gtui;
 /// that must run the message loop, so the game runs on a thread of its
 /// own and only ever touches the surface and asks for a repaint.
 /// </remarks>
-internal sealed partial class Win32Window : IDisposable
+internal sealed partial class Win32Window : IGridWindow
 {
     private const string ClassName = "RezrovGrid";
 
@@ -57,14 +57,10 @@ internal sealed partial class Win32Window : IDisposable
     public Surface Surface { get; private set; }
 
     /// <summary>
-    /// A character the player typed, as a Unicode character.
+    /// [zm 3.8] A key the player pressed, already turned into the
+    /// Z-machine's own code.
     /// </summary>
-    public Action<char>? Typed { get; set; }
-
-    /// <summary>
-    /// A key with no character of its own, as its virtual key code.
-    /// </summary>
-    public Action<int>? Pressed { get; set; }
+    public Action<ushort>? Key { get; set; }
 
     /// <summary>The window changed size, and the surface with it.</summary>
     public Action? Resized { get; set; }
@@ -212,12 +208,18 @@ internal sealed partial class Win32Window : IDisposable
                 Resized?.Invoke();
                 return 0;
 
+            // Windows reports a key twice: once as the key itself and
+            // once as the character that key means with the shift and
+            // the layout taken into account. Letters are taken from the
+            // character, so every layout works without this program
+            // knowing anything about layouts, and only the keys with no
+            // character of their own are taken from the key code.
             case WmChar:
-                Typed?.Invoke((char)wParam);
+                Send(GridKeys.FromCharacter((char)wParam));
                 return 0;
 
             case WmKeyDown:
-                Pressed?.Invoke((int)wParam);
+                Send(GridKeys.FromKey((int)wParam));
                 return 0;
 
             case WmClose:
@@ -232,6 +234,14 @@ internal sealed partial class Win32Window : IDisposable
 
             default:
                 return DefWindowProcW(window, message, wParam, lParam);
+        }
+    }
+
+    private void Send(ushort zscii)
+    {
+        if (zscii != 0)
+        {
+            Key?.Invoke(zscii);
         }
     }
 
