@@ -35,7 +35,7 @@ public static class GridKeys
         // line arrive as the one the Z-machine knows.
         '\r' or '\n' => Zscii.Newline,
         '\b' => Zscii.Delete,
-        '' => Zscii.Escape,
+        '\u001B' => Zscii.Escape,
 
         // [zm 3.8.3] The printable characters, which for the moment are
         // the ones the standard's own alphabet has. A character outside
@@ -67,6 +67,39 @@ public static class GridKeys
         // [zm 3.8.4] The twelve function keys run upward from 133,
         // in the order the keyboard has them.
         >= FirstFunction and <= LastFunction => (ushort)(Zscii.F1 + (key - FirstFunction)),
+        _ => 0,
+    };
+
+    // [cocoa] macOS sends the arrows and the function keys as
+    // characters in a private part of Unicode, which is how they are
+    // told apart from the letters.
+    private const char CocoaUp = '\uF700';
+    private const char CocoaDown = '\uF701';
+    private const char CocoaLeft = '\uF702';
+    private const char CocoaRight = '\uF703';
+    private const char CocoaFirstFunction = '\uF704';
+    private const char CocoaLastFunction = '\uF70F';
+
+    /// <summary>
+    /// [zm 3.8.3] The same again, for macOS. The arrows and function
+    /// keys arrive as characters rather than as codes, in the part of
+    /// Unicode set aside for exactly this, so the character settles it
+    /// and the key code is never consulted for them.
+    /// </summary>
+    public static ushort FromCocoa(char character) => character switch
+    {
+        CocoaUp => Zscii.CursorUp,
+        CocoaDown => Zscii.CursorDown,
+        CocoaLeft => Zscii.CursorLeft,
+        CocoaRight => Zscii.CursorRight,
+        >= CocoaFirstFunction and <= CocoaLastFunction =>
+            (ushort)(Zscii.F1 + (character - CocoaFirstFunction)),
+
+        // [zm 3.8.2] Return and delete come through as the control
+        // characters they are, whatever the key was called.
+        '\r' or '\n' => Zscii.Newline,
+        '\u007F' or '\b' => Zscii.Delete,
+        '\u001B' => Zscii.Escape,
         _ => 0,
     };
 

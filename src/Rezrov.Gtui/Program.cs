@@ -229,13 +229,18 @@ internal static class Program
             return new Win32Window();
         }
 
+        if (OperatingSystem.IsMacOS())
+        {
+            return new CocoaWindow();
+        }
+
         if (OperatingSystem.IsLinux() || OperatingSystem.IsFreeBSD())
         {
             return new X11Window();
         }
 
         throw new PlatformNotSupportedException(
-            "This program opens its own window, and it only knows how to on Windows and on X11 so far.");
+            "This program opens its own window, and it knows how to on Windows, on macOS, and on X11.");
     }
 
     /// <summary>

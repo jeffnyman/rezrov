@@ -254,7 +254,7 @@ public class GridPaintTests
         Assert.Equal(Zscii.Newline, GridKeys.FromCharacter('\r'));
         Assert.Equal(Zscii.Newline, GridKeys.FromCharacter('\n'));
         Assert.Equal(Zscii.Delete, GridKeys.FromCharacter('\b'));
-        Assert.Equal(Zscii.Escape, GridKeys.FromCharacter(''));
+        Assert.Equal(Zscii.Escape, GridKeys.FromCharacter('\u001B'));
 
         // A character with no place in the Z-machine is dropped rather
         // than sent as something else.
@@ -297,5 +297,36 @@ public class GridPaintTests
         // accident.
         Assert.Equal(0, GridKeys.FromKeySym(0xFFE5));
         Assert.Equal(0, GridKeys.FromKeySym(0));
+    }
+
+    [Fact]
+    public void MacOsNamesThemDifferentlyAgainAndTheyStillMeanTheSame()
+    {
+        // macOS puts the arrows and the function keys in the private
+        // use part of Unicode and sends them as characters, so all
+        // three systems arrive at the same Z-machine codes by three
+        // different routes.
+        Assert.Equal(GridKeys.FromKeySym(0xFF52), GridKeys.FromCocoa('\uF700'));
+        Assert.Equal(GridKeys.FromKeySym(0xFF54), GridKeys.FromCocoa('\uF701'));
+        Assert.Equal(GridKeys.FromKeySym(0xFF51), GridKeys.FromCocoa('\uF702'));
+        Assert.Equal(GridKeys.FromKeySym(0xFF53), GridKeys.FromCocoa('\uF703'));
+
+        for (var at = 0; at < 12; at++)
+        {
+            Assert.Equal(
+                GridKeys.FromKeySym((ulong)(0xFFBE + at)),
+                GridKeys.FromCocoa((char)(0xF704 + at)));
+        }
+
+        // [zm 3.8.2] Delete arrives as the delete character on macOS
+        // rather than as a backspace, which is the one place the
+        // three systems really do differ.
+        Assert.Equal(Zscii.Delete, GridKeys.FromCocoa('\u007F'));
+        Assert.Equal(Zscii.Newline, GridKeys.FromCocoa('\r'));
+        Assert.Equal(Zscii.Escape, GridKeys.FromCocoa('\u001B'));
+
+        // A letter is not this method's business; it comes through
+        // as a character like any other.
+        Assert.Equal(0, GridKeys.FromCocoa('a'));
     }
 }
