@@ -122,9 +122,47 @@ internal sealed partial class CocoaWindow : IGridWindow
         _colors = CGColorSpaceCreateDeviceRGB();
         Check(_colors, "No color space to draw in.");
 
+        Menu();
+
         SendPointer(_window, Selector("makeKeyAndOrderFront:"), 0);
         SendBool(_application, Selector("activateIgnoringOtherApps:"), true);
         Send(_application, Selector("finishLaunching"));
+    }
+
+    /// <summary>
+    /// [cocoa] The one menu the program needs.
+    /// </summary>
+    /// <remarks>
+    /// Command and Q is not a key the window sees; it is a key
+    /// equivalent belonging to a menu item, and an application with no
+    /// menu has nothing for it to reach, which is why pressing it did
+    /// nothing at all. Every Mac application has an application menu
+    /// whose last item quits, so this builds that much and no more: a
+    /// menu bar, one menu on it, and Quit inside that.
+    /// </remarks>
+    private void Menu()
+    {
+        var bar = Send(Send(Class("NSMenu"), Selector("alloc")), Selector("init"));
+        Check(bar, "No menu bar could be made.");
+
+        var heading = Send(Send(Class("NSMenuItem"), Selector("alloc")), Selector("init"));
+        Check(heading, "No menu could be made.");
+        SendPointer(bar, Selector("addItem:"), heading);
+
+        var menu = Send(Send(Class("NSMenu"), Selector("alloc")), Selector("init"));
+        Check(menu, "The menu has nothing in it.");
+
+        var quit = SendItem(
+            Send(Class("NSMenuItem"), Selector("alloc")),
+            Selector("initWithTitle:action:keyEquivalent:"),
+            Text("Quit rezrov"),
+            Selector("terminate:"),
+            Text("q"));
+        Check(quit, "The quit item could not be made.");
+
+        SendPointer(menu, Selector("addItem:"), quit);
+        SendPointer(heading, Selector("setSubmenu:"), menu);
+        SendPointer(_application, Selector("setMainMenu:"), bar);
     }
 
     public void Redraw() => _dirty = true;
@@ -361,6 +399,14 @@ internal sealed partial class CocoaWindow : IGridWindow
         ulong style,
         ulong backing,
         [MarshalAs(UnmanagedType.U1)] bool defer);
+
+    [LibraryImport(Runtime, EntryPoint = "objc_msgSend")]
+    private static partial nint SendItem(
+        nint receiver,
+        nint selector,
+        nint title,
+        nint action,
+        nint key);
 
     [LibraryImport(Runtime, EntryPoint = "objc_msgSend")]
     private static partial nint SendEvent(
