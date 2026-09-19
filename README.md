@@ -14,7 +14,7 @@ Each archive carries a short readme of its own, kept in the repository's `releas
 
 ## Using
 
-Rezrov comes as three programs over one interpreter. `rezrov` is the command line program: give it a story file and it tells you about the file; add `--run` and it plays the game on the console as a plain stream of text. `rezrov-tui` is the terminal program: give it a story file and it plays the game full screen, with the status line, the upper window, styles, and colors that the console cannot draw, and for a Glulx game with its windows laid out as the game splits them. `rezrov-gui` is the graphical program: the same games in a window of their own, where the pictures they carry can finally be drawn.
+Rezrov comes as four programs over one interpreter. `rezrov` is the command line program: give it a story file and it tells you about the file; add `--run` and it plays the game on the console as a plain stream of text. `rezrov-tui` is the terminal program: give it a story file and it plays the game full screen, with the status line, the upper window, styles, and colors that the console cannot draw, and for a Glulx game with its windows laid out as the game splits them. `rezrov-gui` is the graphical program: the same games in a window of their own, where the pictures they carry can finally be drawn. `rezrov-gtui` is the grid program: a Z-machine game in a window this program opens for itself, with no package underneath it at all, which is the same thing the graphical program does with every part of it written out rather than handed to a toolkit.
 
 ```sh
 dotnet run --project src/Rezrov.Cli -- entharion/zcode-infocom/zork1-r88-s840726.z3
@@ -139,6 +139,23 @@ dotnet run --project src/Rezrov.Gui -- --probe --font "Segoe UI" --size 18
 ```
 
 It reports the size of a character cell and, for a few of the styles, how wide a space is, how tall a line is, where its baseline sits, and whether the parts of a phrase add up to the whole. It exits nonzero when they do not, which is the one thing about a window that a script can check: the whole layout is built on those numbers, and they can be wrong in ways that are perfectly quiet on the screen.
+
+### The grid program
+
+```sh
+dotnet run --project src/Rezrov.Gtui -- entharion/zcode-infocom/zork1-r88-s840726.z3
+```
+
+This plays a Z-machine game in a window as a grid of characters, and it is the one program here that uses nothing at all: no package is referenced, the window comes from the operating system directly, and every pixel on the screen was decided by code in `src/Rezrov.Gtui`. It opens its own window on Windows through the Win32 API, on Linux and the BSDs through X11, and on macOS through the Objective-C runtime, in under five hundred lines each. The four programs are meant to be read in that order: the command line program shows what an interpreter needs at its barest, the terminal program adds the screen model and lets the terminal draw, the graphical program hands the window and the drawing to a toolkit, and this one shows what the toolkit was doing.
+
+Because it owns its pixels it carries two fonts of its own. The character graphics font of the standard's section 16 is drawn from the bitmaps the standard prints, rather than from the nearest box-drawing characters an ordinary font happens to have, which is as close to Infocom's own shapes as a frontend gets. Ordinary text is set in an eight by sixteen font drawn for this program, where a letter occupies seven columns and the eighth is the gap to the next one, so bold can be the same letter drawn again a pixel to the right and italic a one pixel lean without either running into its neighbor. Both fonts can be read without playing anything:
+
+```sh
+dotnet run --project src/Rezrov.Gtui -- --glyphs
+dotnet run --project src/Rezrov.Gtui -- --glyphs "The quick brown fox"
+```
+
+The `--seed`, `--interpreter`, and `--tandy` options work here as elsewhere. Saving and restoring ask for the file name in the window itself, the way Infocom's interpreters did, since a file dialog is a toolkit and there is none here; the name offered is the story's own, so saving is one keystroke. What it does not do is play Glulx, or draw pictures, or make any sound, and the window cannot be resized on macOS. The other three programs are the complete ones; this is the one that shows how a window is made. It is not in the release archives yet either, so it is run from a checkout as above.
 
 ## Building and Testing
 
