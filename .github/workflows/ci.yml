@@ -77,6 +77,29 @@ jobs:
         shell: bash
         run: dotnet publish src/Rezrov.Gui -c Release -r ${{ matrix.rid }} -p:ContinuousIntegrationBuild=true -o out/gui
 
+      # The grid program is published on every platform too, even though
+      # it can only open a window on one of them so far. A publish is
+      # the only thing that runs the AOT compiler over its interop, and
+      # a release is a poor place to find out that it does not survive.
+      - name: Publish the grid program
+        shell: bash
+        run: dotnet publish src/Rezrov.Gtui -c Release -r ${{ matrix.rid }} -p:ContinuousIntegrationBuild=true -o out/gtui
+
+      # And the published binary is run, not merely built. A call out to
+      # the operating system compiles whatever happens, and only running
+      # it shows whether the compiler kept what the call needs. Printing
+      # the font touches no window, so it works on every platform.
+      - name: Run the grid program
+        shell: bash
+        run: |
+          program="out/gtui/rezrov-gtui"
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            program="${program}.exe"
+          fi
+
+          "$program" --version
+          "$program" --glyphs "The quick brown fox"
+
       # The executable and the two native libraries beside it are what
       # the archive carries, so their absence is exactly what would
       # break a release.
