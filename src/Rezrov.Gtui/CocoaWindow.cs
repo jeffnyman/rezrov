@@ -22,13 +22,13 @@ namespace Rezrov.Gtui;
 /// view as a picture, which needs no new class at all and no callback
 /// into managed code.
 ///
-/// The window cannot be resized. Asking a view how large it is returns
-/// a rectangle of four numbers, and how such a thing comes back differs
-/// between Apple's two processors, which is exactly the sort of detail
-/// that cannot be got right without running it. The window opens at the
-/// size the program asks for and stays there, which every Z-machine
-/// game is content with. Resizing is worth adding once someone has this
-/// running in front of them.
+/// Asking a view how large it is returns a rectangle of four numbers,
+/// and a structure that size comes back differently on Apple's two
+/// processors: on Intel the caller passes the room for it and a
+/// different entry point is used, while on Apple silicon the ordinary
+/// one will do. Both are here, chosen by the processor the program
+/// finds itself on, which is the one piece of this that could not be
+/// written without a Mac to try it on.
 /// </remarks>
 internal sealed partial class CocoaWindow : IGridWindow
 {
@@ -36,11 +36,12 @@ internal sealed partial class CocoaWindow : IGridWindow
     private const string CoreGraphics =
         "/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics";
 
-    // [cocoa] A titled window with a close button and a minimize
-    // button, and deliberately without the resize corner.
+    // [cocoa] A titled window with a close button, a minimize button,
+    // and a corner to drag.
     private const ulong Titled = 1;
     private const ulong Closable = 2;
     private const ulong Miniaturizable = 4;
+    private const ulong Resizable = 8;
 
     private const ulong Buffered = 2;
     private const ulong KeyDown = 10;
@@ -58,6 +59,7 @@ internal sealed partial class CocoaWindow : IGridWindow
 
     private nint _application;
     private nint _window;
+    private nint _view;
     private nint _layer;
     private nint _colors;
     private int[] _copy = [];
@@ -97,7 +99,7 @@ internal sealed partial class CocoaWindow : IGridWindow
             window,
             Selector("initWithContentRect:styleMask:backing:defer:"),
             new CocoaRect { Width = Surface.Width, Height = Surface.Height },
-            Titled | Closable | Miniaturizable,
+            Titled | Closable | Miniaturizable | Resizable,
             Buffered,
             false);
         Check(_window, "The window could not be opened.");
@@ -105,13 +107,13 @@ internal sealed partial class CocoaWindow : IGridWindow
         SendPointer(_window, Selector("setTitle:"), Text(title));
         Send(_window, Selector("center"));
 
-        var view = Send(_window, Selector("contentView"));
-        Check(view, "The window has no content view.");
+        _view = Send(_window, Selector("contentView"));
+        Check(_view, "The window has no content view.");
 
         // [cocoa] A view backed by a layer is one whose pixels can be
         // handed over as a picture rather than drawn by a method.
-        SendBool(view, Selector("setWantsLayer:"), true);
-        _layer = Send(view, Selector("layer"));
+        SendBool(_view, Selector("setWantsLayer:"), true);
+        _layer = Send(_view, Selector("layer"));
         Check(_layer, "The content view has no layer to draw on.");
 
         // A bitmap font wants whole pixels. On a display of twice the
@@ -189,6 +191,8 @@ internal sealed partial class CocoaWindow : IGridWindow
             // noticed without that thread having to touch any of this.
             // Everything here belongs to the first thread and nothing
             // else may call it.
+            Measure();
+
             var until = SendDouble(Class("NSDate"), Selector("dateWithTimeIntervalSinceNow:"), 0.02);
             var next = SendEvent(_application, nextEvent, EveryEvent, until, mode, true);
 
@@ -228,6 +232,60 @@ internal sealed partial class CocoaWindow : IGridWindow
                 _running = false;
             }
         }
+    }
+
+    /// <summary>
+    /// Notices that the window has been dragged to a new size.
+    /// </summary>
+    /// <remarks>
+    /// [cocoa] Being told about a resize means giving the system an
+    /// object to tell, and an object means a class built at runtime,
+    /// which is the very thing this program avoids. The loop is already
+    /// going round many times a second, so it asks instead. The size is
+    /// in points rather than pixels, which is what the grid should be
+    /// counted in: on a dense display the picture is scaled up whole,
+    /// so the characters stay the size they were drawn.
+    /// </remarks>
+    private void Measure()
+    {
+        if (_view == 0)
+        {
+            return;
+        }
+
+        var frame = Frame(_view);
+        var width = (int)frame.Width;
+        var height = (int)frame.Height;
+
+        if (width == Surface.Width && height == Surface.Height)
+        {
+            return;
+        }
+
+        Surface = new Surface(Math.Max(width, 0), Math.Max(height, 0));
+        _copy = new int[Surface.Width * Surface.Height];
+
+        Resized?.Invoke();
+        Draw();
+    }
+
+    /// <summary>
+    /// [cocoa] How large a view is. A rectangle of four numbers is too
+    /// large to come back in registers, so on Intel the caller hands
+    /// over the room for it and a separate entry point fills it in,
+    /// while on Apple silicon the ordinary one returns it.
+    /// </summary>
+    private static CocoaRect Frame(nint view)
+    {
+        var selector = Selector("frame");
+
+        if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
+        {
+            SendRectApart(out var apart, view, selector);
+            return apart;
+        }
+
+        return SendRect(view, selector);
     }
 
     public void Close() => _running = false;
@@ -399,6 +457,12 @@ internal sealed partial class CocoaWindow : IGridWindow
         ulong style,
         ulong backing,
         [MarshalAs(UnmanagedType.U1)] bool defer);
+
+    [LibraryImport(Runtime, EntryPoint = "objc_msgSend")]
+    private static partial CocoaRect SendRect(nint receiver, nint selector);
+
+    [LibraryImport(Runtime, EntryPoint = "objc_msgSend_stret")]
+    private static partial void SendRectApart(out CocoaRect result, nint receiver, nint selector);
 
     [LibraryImport(Runtime, EntryPoint = "objc_msgSend")]
     private static partial nint SendItem(
