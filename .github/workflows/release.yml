@@ -13,7 +13,7 @@
 #
 # Two packages rather than one because the graphical program cannot be a
 # single file: Skia and HarfBuzz are native libraries that have to sit
-# beside it. Dropping those into the same directory as two standalone
+# beside it. The other three are single files and travel together. Dropping those into the same directory as two standalone
 # executables would leave someone who wanted only the text programs
 # holding two libraries with nothing to say what they are for, and it
 # would grow that download by about half again.
@@ -69,6 +69,7 @@ jobs:
         run: |
           dotnet publish src/Rezrov.Cli -c Release -r ${{ matrix.rid }} -p:ContinuousIntegrationBuild=true -o "out/${{ matrix.rid }}"
           dotnet publish src/Rezrov.Tui -c Release -r ${{ matrix.rid }} -p:ContinuousIntegrationBuild=true -o "out/${{ matrix.rid }}"
+          dotnet publish src/Rezrov.Gtui -c Release -r ${{ matrix.rid }} -p:ContinuousIntegrationBuild=true -o "out/${{ matrix.rid }}"
           dotnet publish src/Rezrov.Gui -c Release -r ${{ matrix.rid }} -p:ContinuousIntegrationBuild=true -o "out/${{ matrix.rid }}/gui"
 
       - name: Publish the three programs for both Mac architectures and join them
@@ -77,10 +78,11 @@ jobs:
           for rid in osx-arm64 osx-x64; do
             dotnet publish src/Rezrov.Cli -c Release -r "$rid" -p:ContinuousIntegrationBuild=true -o "out/$rid"
             dotnet publish src/Rezrov.Tui -c Release -r "$rid" -p:ContinuousIntegrationBuild=true -o "out/$rid"
+            dotnet publish src/Rezrov.Gtui -c Release -r "$rid" -p:ContinuousIntegrationBuild=true -o "out/$rid"
             dotnet publish src/Rezrov.Gui -c Release -r "$rid" -p:ContinuousIntegrationBuild=true -o "out/$rid/gui"
           done
           mkdir -p out/osx-universal
-          for program in rezrov rezrov-tui; do
+          for program in rezrov rezrov-tui rezrov-gtui; do
             lipo -create -output "out/osx-universal/$program" "out/osx-arm64/$program" "out/osx-x64/$program"
             lipo -info "out/osx-universal/$program"
           done
@@ -100,9 +102,9 @@ jobs:
           package="rezrov-${version}-${{ matrix.rid }}"
           mkdir -p "dist/${package}"
           if [ "${{ runner.os }}" = "Windows" ]; then
-            cp out/${{ matrix.rid }}/rezrov.exe out/${{ matrix.rid }}/rezrov-tui.exe "dist/${package}/"
+            cp out/${{ matrix.rid }}/rezrov.exe out/${{ matrix.rid }}/rezrov-tui.exe out/${{ matrix.rid }}/rezrov-gtui.exe "dist/${package}/"
           else
-            cp out/${{ matrix.rid }}/rezrov out/${{ matrix.rid }}/rezrov-tui "dist/${package}/"
+            cp out/${{ matrix.rid }}/rezrov out/${{ matrix.rid }}/rezrov-tui out/${{ matrix.rid }}/rezrov-gtui "dist/${package}/"
           fi
           cp release/README.md LICENSE "dist/${package}/"
 
