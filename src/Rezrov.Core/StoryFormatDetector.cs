@@ -28,6 +28,15 @@ public static class StoryFormatDetector
             return StoryFormat.Blorb;
         }
 
+        // [aam story] An Aa-machine story is an IFF FORM of type AAVM,
+        // told apart from a Blorb by those four bytes alone.
+        if (story.Length >= 12
+            && story[..4].SequenceEqual("FORM"u8)
+            && story[8..12].SequenceEqual("AAVM"u8))
+        {
+            return StoryFormat.AaMachine;
+        }
+
         // [glulx #the-header] The header is the first 36 bytes, and its
         // first four are the magic number 47 6C 75 6C, ASCII 'Glul'.
         if (story.Length >= 4 && story[..4].SequenceEqual("Glul"u8))

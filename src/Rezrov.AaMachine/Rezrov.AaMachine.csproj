@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The third machine. Dialog, a language for interactive fiction whose
+    rules read like logic rather than like code, compiles either to the
+    Z-Machine or to a machine of its own, the Aa-machine, which is built
+    around the way Dialog thinks: unification, choice points, and
+    backtracking. This project reads and runs that machine.
+
+    So far it reads the container and the header, which is enough to
+    describe a story file and nothing more.
+  -->
+
+  <PropertyGroup>
+    <RootNamespace>Rezrov.AaMachine</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Rezrov.Core\Rezrov.Core.csproj" />
+  </ItemGroup>
+
+</Project>

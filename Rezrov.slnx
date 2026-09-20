@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/Rezrov.AaMachine/Rezrov.AaMachine.csproj" />
     <Project Path="src/Rezrov.Cli/Rezrov.Cli.csproj" />
     <Project Path="src/Rezrov.Core/Rezrov.Core.csproj" />
     <Project Path="src/Rezrov.Glulx/Rezrov.Glulx.csproj" />

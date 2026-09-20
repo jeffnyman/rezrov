@@ -1,3 +1,4 @@
+using Rezrov.AaMachine;
 using Rezrov.Core;
 using Rezrov.Core.Blorb;
 using Rezrov.Core.Graphics;
@@ -166,8 +167,50 @@ internal static class Program
             StoryFormat.ZMachine => DescribeZMachine(bytes),
             StoryFormat.Glulx => DescribeGlulx(bytes),
             StoryFormat.Blorb => DescribeBlorb(bytes, path),
+            StoryFormat.AaMachine => DescribeAaMachine(bytes),
             _ => 1,
         };
+    }
+
+    /// <summary>
+    /// [aam story] What an Aa-machine story file says about itself.
+    /// </summary>
+    private static int DescribeAaMachine(byte[] bytes)
+    {
+        AaStory story;
+
+        try
+        {
+            story = AaStory.Read(bytes);
+        }
+        catch (InvalidDataException e)
+        {
+            Console.Error.WriteLine($"rezrov: {e.Message}");
+            return 1;
+        }
+
+        Console.WriteLine(
+            $"  version {story.MajorVersion}.{story.MinorVersion}, release {story.Release}, serial {story.Serial}");
+        Console.WriteLine(
+            $"  {story.WordSize} bytes to a word, {story.HeapSize} words of heap, "
+            + $"{story.AuxSize} of auxiliary, {story.RamSize} writable");
+
+        // The checksum covers seven of the chunks in one fixed order, so
+        // it is worth saying whether it comes out, as for a Z-Machine
+        // story's own checksum.
+        Console.WriteLine(story.VerifyChecksum()
+            ? $"  checksum {story.Checksum:X8} matches"
+            : $"  checksum {story.Checksum:X8} does NOT match {story.ComputeChecksum():X8}");
+
+        if (story.Identifier is { Length: > 0 } identifier)
+        {
+            Console.WriteLine($"  {identifier}");
+        }
+
+        Console.WriteLine($"  {story.Chunks.Count} chunks: "
+            + string.Join(", ", story.Chunks.Select(chunk => $"{chunk.Name} {chunk.Length}")));
+
+        return 0;
     }
 
     /// <summary>

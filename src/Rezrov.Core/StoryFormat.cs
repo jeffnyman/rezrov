@@ -17,6 +17,12 @@ public enum StoryFormat
     Glulx,
 
     /// <summary>
+    /// An Aa-machine story, as in a .aastory file, which is what Dialog
+    /// compiles to when it is not compiling to the Z-Machine.
+    /// </summary>
+    AaMachine,
+
+    /// <summary>
     /// A Blorb container, which wraps a story file together with its
     /// pictures and sounds, as in a .zblorb or .gblorb file.
     /// </summary>
