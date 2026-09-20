@@ -7,12 +7,9 @@
     around the way Dialog thinks: unification, choice points, and
     backtracking. This project reads and runs that machine.
 
-    So far it reads the container, the header, and the language: the
-    character set a game is written in, the tree its text is packed
-    against, and the dictionary its commonest words come out of. That
-    is enough to make a story speak. It also reads the bytecode, which
-    is a long way from running it, but the whole of the CODE chunk
-    decodes and everything it points at is where it says.
+    It reads the container, the header, and the language; it decodes
+    the bytecode; and it runs it, with the unification, the trail, and
+    the choice points that backtracking is made of.
   -->
 
   <PropertyGroup>

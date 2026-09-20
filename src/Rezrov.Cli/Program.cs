@@ -132,6 +132,22 @@ internal static class Program
                 return 1;
             }
 
+            if (story.Format == StoryFormat.AaMachine)
+            {
+                foreach (var option in Inapplicable(
+                    ("interpreter", machine is not null),
+                    ("tandy", tandy),
+                    ("trace", trace),
+                    ("transcript", transcript is not null),
+                    ("record", record is not null),
+                    ("blorb", blorb is not null)))
+                {
+                    Console.Error.WriteLine($"rezrov: the {option} option does not apply to the Aa-machine");
+                }
+
+                return AaMachinePlayer.Play(story.Bytes, commands, save, seed);
+            }
+
             if (story.Format == StoryFormat.Glulx)
             {
                 if (machine is not null)
@@ -170,6 +186,22 @@ internal static class Program
             StoryFormat.AaMachine => DescribeAaMachine(bytes),
             _ => 1,
         };
+    }
+
+    /// <summary>
+    /// The options that were given but mean nothing to the machine
+    /// about to run, so that a player is told rather than left to
+    /// wonder why one of them did nothing.
+    /// </summary>
+    private static IEnumerable<string> Inapplicable(params (string Name, bool Given)[] options)
+    {
+        foreach (var (name, given) in options)
+        {
+            if (given)
+            {
+                yield return name;
+            }
+        }
     }
 
     /// <summary>
