@@ -68,6 +68,7 @@ public sealed partial class Machine
     private readonly ushort[] _ram;
 
     private readonly List<int> _divs = [];
+    private readonly List<string> _runtimeErrors = [];
     private readonly List<byte> _characters = [];
 
     private int _inst;
@@ -143,6 +144,21 @@ public sealed partial class Machine
 
     /// <summary>Whether the story is waiting to be saved into.</summary>
     public bool CanUndo => _undo is not null;
+
+    /// <summary>
+    /// [aam runtime] What the story did that it should not have. A
+    /// runtime error does not stop the machine: it starts the story
+    /// again with the number of what went wrong in R00, so a play
+    /// that hits one carries on looking almost normal. Each one is
+    /// noted here so that it can be said afterwards.
+    /// </summary>
+    public IReadOnlyList<string> RuntimeErrors => _runtimeErrors;
+
+    /// <summary>
+    /// Starts the random numbers again from a new seed, which is what
+    /// a script does when it changes seed partway through a play.
+    /// </summary>
+    public void Reseed(int seed) => _random.Reseed(seed);
 
     /// <summary>
     /// Where a file is saved to and restored from, if anywhere. A

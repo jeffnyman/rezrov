@@ -113,7 +113,11 @@ internal static class AaMachinePlayer
         return string.IsNullOrWhiteSpace(name) ? null : name.Trim();
     }
 
-    private static string AltText(AaStory story, int resource) =>
+    /// <summary>
+    /// What to say in place of a resource that cannot be shown, which
+    /// is the alternative text the story carries for it.
+    /// </summary>
+    internal static string AltText(AaStory story, int resource) =>
         resource >= 0 && resource < story.Resources.Count
             ? story.Text.At(story.Resources[resource].AltText)
             : string.Empty;

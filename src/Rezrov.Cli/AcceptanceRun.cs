@@ -1,3 +1,5 @@
+using Rezrov.AaMachine;
+using Rezrov.AaMachine.Execution;
 using Rezrov.Core;
 using Rezrov.Core.Acceptance;
 using Rezrov.Glulx;
@@ -116,6 +118,10 @@ public sealed record AcceptanceDifference(int Line, string Description, bool Rec
 /// </remarks>
 public static class AcceptanceRun
 {
+    // [aam text] What a bare return means to a story waiting on a
+    // single keypress.
+    private const int Return = 0x0d;
+
     /// <summary>
     /// Plays the script and returns what happened, or null after saying
     /// on <paramref name="errors"/> why the game could not be loaded.
@@ -141,9 +147,14 @@ public static class AcceptanceRun
             return PlayGlulx(script, story, errors, display, resume);
         }
 
+        if (story.Format == StoryFormat.AaMachine)
+        {
+            return PlayAaMachine(script, story, errors, display, resume);
+        }
+
         if (story.Format != StoryFormat.ZMachine)
         {
-            errors.WriteLine($"rezrov: {Path.GetFileName(script.ScriptPath)}: acceptance scripts play Z-machine and Glulx games, and this game is {story.Format}");
+            errors.WriteLine($"rezrov: {Path.GetFileName(script.ScriptPath)}: acceptance scripts play Z-machine, Glulx and Aa-machine games, and this game is {story.Format}");
             return null;
         }
 
@@ -298,6 +309,189 @@ public static class AcceptanceRun
 
         var warnings = glk.Warnings.Select(w => "glk: " + w).ToList();
         return new AcceptanceResult(output.ToString(), ending, message, warnings, commands.Offsets);
+    }
+
+    // An Aa-machine game: the same shape as the others, except that
+    // the machine asks for input rather than being read from, so the
+    // script is fed to it a line at a time rather than handed over as
+    // a reader.
+    private static AcceptanceResult? PlayAaMachine(AcceptanceScript script, LoadedStory story, TextWriter errors, TextWriter? display, bool resume)
+    {
+        var name = Path.GetFileName(script.ScriptPath);
+
+        AaStory aa;
+
+        try
+        {
+            aa = AaStory.Read(story.Bytes);
+        }
+        catch (InvalidDataException e)
+        {
+            errors.WriteLine($"rezrov: {name}: {e.Message}");
+            return null;
+        }
+
+        // The directives that belong to the other two machines mean
+        // nothing here, and a script that carries one is told so
+        // rather than left to wonder why it did nothing.
+        foreach (var option in Inapplicable(script))
+        {
+            errors.WriteLine($"rezrov: {name}: the {option} directive does not apply to the Aa-machine");
+        }
+
+        var output = new StringWriter();
+        using var screenWriter = display is null ? null : new TeeWriter(output, display);
+        var sink = (TextWriter?)screenWriter ?? output;
+        var text = new TextOutput(sink, aa.Styles, resource => AaMachinePlayer.AltText(aa, resource));
+        var machine = new Machine(aa, text, script.Seed);
+
+        var offsets = new List<int>();
+        var ending = AcceptanceEnding.Quit;
+        string? message = null;
+        var next = 0;
+        var announced = false;
+
+        try
+        {
+            var status = machine.Start();
+
+            while (status != AaStatus.Quit)
+            {
+                if (next <= script.Commands.Count && script.SeedChanges.TryGetValue(next, out var seed))
+                {
+                    machine.Reseed(seed);
+                }
+
+                string? line;
+
+                if (next < script.Commands.Count)
+                {
+                    offsets.Add(output.GetStringBuilder().Length);
+                    line = script.Commands[next++];
+
+                    // The newline is the game's kind, not the
+                    // platform's, so the play reads the same
+                    // everywhere.
+                    sink.Write(line);
+                    sink.Write('\n');
+                }
+                else
+                {
+                    next = script.Commands.Count + 1;
+
+                    if (!resume)
+                    {
+                        ending = AcceptanceEnding.ScriptEnded;
+                        break;
+                    }
+
+                    if (!announced)
+                    {
+                        announced = true;
+                        errors.WriteLine();
+                        errors.WriteLine("rezrov: the script has ended; the game is yours from here");
+                    }
+
+                    if (Console.In.ReadLine() is not { } typed)
+                    {
+                        ending = AcceptanceEnding.ScriptEnded;
+                        break;
+                    }
+
+                    line = typed;
+                }
+
+                status = Answer(machine, text, status, line);
+            }
+        }
+        catch (AaMachineException e)
+        {
+            ending = AcceptanceEnding.Failed;
+            message = e.Message;
+        }
+        finally
+        {
+            text.Sync();
+            sink.Flush();
+        }
+
+        return new AcceptanceResult(output.ToString(), ending, message, machine.RuntimeErrors, offsets);
+    }
+
+    // One line of the script, given to whatever the machine is waiting
+    // for. A game waiting on a single key is given the line one key at
+    // a time, and the return at the end of it counts as one.
+    private static AaStatus Answer(Machine machine, TextOutput text, AaStatus status, string line)
+    {
+        if (status == AaStatus.GetInput)
+        {
+            text.Typed();
+            return machine.ProceedWithInput(line);
+        }
+
+        if (Key(line) is { } single)
+        {
+            return machine.ProceedWithKey(single);
+        }
+
+        foreach (var key in line)
+        {
+            if (status != AaStatus.GetKey)
+            {
+                break;
+            }
+
+            status = machine.ProceedWithKey(key);
+        }
+
+        return status == AaStatus.GetKey ? machine.ProceedWithKey(Return) : status;
+    }
+
+    /// <summary>
+    /// [aam text] A whole line that is one bracketed code is a single
+    /// keypress. The codes are the Z-Machine's, since that is what a
+    /// script writes and what a command file records, so the four
+    /// cursor keys are translated to the ones the Aa-machine knows.
+    /// </summary>
+    private static int? Key(string line) =>
+        line.Length > 2 && line[0] == '[' && line[^1] == ']' && int.TryParse(line[1..^1], out var code)
+            ? code switch
+            {
+                129 => 0x10,
+                130 => 0x11,
+                131 => 0x12,
+                132 => 0x13,
+                10 or 13 => Return,
+                _ => code,
+            }
+            : null;
+
+    private static IEnumerable<string> Inapplicable(AcceptanceScript script)
+    {
+        if (script.Interpreter is not null)
+        {
+            yield return "INTERPRETER";
+        }
+
+        if (script.Tandy)
+        {
+            yield return "TANDY";
+        }
+
+        if (script.Upper)
+        {
+            yield return "UPPER";
+        }
+
+        if (script.Pictures)
+        {
+            yield return "PICTURES";
+        }
+
+        if (script.BlorbPath is not null)
+        {
+            yield return "BLORB";
+        }
     }
 
     /// <summary>

@@ -1,0 +1,77 @@
+! SEED=1
+! GAME=../entharion/dialog-code/tethered.aastory
+
+# Tethered, by Linus Akesson, played to its ending. A climbing
+# accident in three parts: the cut rope, the cave below it, and an
+# apartment thirty years later that is the cave again.
+
+<space>
+look
+x rope
+x judith
+x me
+x harness
+x tool belt
+take knife
+cut rope with knife
+<space>
+<space>
+feel
+spit
+dig
+n
+tie rope to column
+w
+s
+w
+s
+n
+s
+e
+n
+push boulder south
+push boulder west
+find knot
+untie rope
+w
+s
+w
+s
+e
+n
+n
+s
+s
+w
+u
+e
+n
+w
+take bag
+s
+d
+e
+n
+s
+w
+open closet
+take toolbox
+e
+n
+n
+fix tap
+s
+w
+brush teeth
+clean litter box
+e
+s
+w
+open back door
+u
+e
+n
+sleep
+remove pyjamas
+sleep
+quit

@@ -1,0 +1,740 @@
+
+
+No! Not this! Of all the stupid, dangerous, unfair, preposterously unlikely
+accidents... And why did it have to happen today, on your first climb together?
+
+Easy now, stay calm. Don't panic. It's just that it's all your fault! Well, no
+it isn't, but Judith trusted you with her life, and you screwed up.
+
+And now she will hate you for what you are about to do. But you have to do it.
+It's the only way to save both your lives. She must understand.
+[32]
+
+> look
+By the crevice
+A misplaced step, a slip. The rope is pinning your arm down.
+
+> x rope
+The rope stretches across your right arm, over the edge of the crevice. Several
+metres below, Judith dangles from its other end.
+
+A snowflake drifts through the cold air.
+
+> x judith
+Judith is in the crevice, dangling off the far end of your rope, a short
+distance from the ground. She manages to look frightened and annoyed at the same
+time.
+
+> x me
+You are Charles Wong, 29 years old, aspiring writer and gentleman mountaineer.
+
+Snow is falling.
+
+> x harness
+It's a mountaineering harness, securely fastened to your body with a large loop
+around the waist and two smaller loops for the legs. Attached to the harness is
+a tool belt, and a rope.
+
+> x tool belt
+Hanging from the tool belt is your trusty pocket knife.
+
+> take knife
+You take the pocket knife off the tool belt.
+
+The snowfall is increasing.
+
+> cut rope with knife
+You brace yourself, send a solemn, confident look in the general direction of
+Judith, and hope that she'll understand. She probably can't see you anyway;
+you're having a hard time making out her contours beyond the whirling snow.
+Anyway, you know this mountain, and she'll only have a short distance to fall
+before hitting the soft snow below.
+
+The rope doesn't break as easily as you'd imagined. For what feels like an
+eternity, you saw through it one strand at a time, until it finally gives.
+
+Endorphins rush through your system, rewarding you for alleviating the pain in
+your right arm which is no longer pinned down. But this is no time to rest, and
+the weather conditions keep getting worse. You begin the arduous climb back down
+in order to get help.
+[32]
+
+It is taking longer than you expected. As the sun begins to set, the snowstorm
+intensifies. Soon everything is darkness.
+[32]
+
+Tethered
+An interactive roleplay by Linus Åkesson.
+Release 4. Serial number 191125.
+Dialog compiler version 0h/04. Library version 0.31.
+
+Type ABOUT for information and credits.
+
+In the dark
+You are surrounded by darkness.
+
+> feel
+You prod, and conclude that you are surrounded by snow.
+
+> spit
+Your drool moves in a direction that you conclude must be down.
+
+> dig
+You scratch away in the direction that you believe is up. You keep going until
+you finally see light.
+
+Below the cliff
+Bright light assaults your eyes. It is snowing from an overcast sky.
+
+So he cut the rope on you. That's so typical of Charlie. He gets all his
+knowledge from adventure stories. You've told him over and over: Just because
+something would work in a book, it's not necessarily the best way to tackle a
+problem in real life.
+
+Still, you suppose he's in the process of learning that now. And you're probably
+lucky to be alive.
+
+While you're waiting for Charlie to go and find help, it seems like a good idea
+to seek shelter from the elements.
+
+Rock structures block your way in all directions, although you spot an irregular
+opening that you might be able to squeeze through. Your landing site, the snow
+cave, is below you. The cliff you fell from is towering ominously to one side.
+Based on the route the two of you were taking, that cliff ought to be west from
+here, which would put the irregular opening to the north.
+
+> n
+You climb through the irregular opening.
+
+Cave entrance
+You're in a fairly spacious cavity in the mountain, with a large column off to
+one side. Bright sunlight enters through a narrow opening in the southern wall,
+and there appears to be a passage to the west leading further in.
+
+Wow! Perhaps it's the entrance to a large cave system. Just... wow! Once you're
+back to safety, you're going to tell Charlie all about this. He'll be absolutely
+thrilled. But you have to wait until you're both back home, otherwise he might
+jump into the crevice himself, on a whim.
+
+> tie rope to column
+You tie the rope to the column. It is now firmly anchored.
+
+> w
+You walk west through the passage. Part of the rope trails after you.
+
+Intersection
+You've reached an intersection in the cave system. The walls are rugged here,
+full of rough corners and edges. You move slowly so you don't hurt yourself.
+
+This is so cool! Charlie must see this place. He's going to make it into the
+setting of one of his stories, for sure.
+
+Passages to the west and south lead into darkness. The exit is to the east.
+
+Your rope, attached at one end to your climbing harness, stretches back towards
+the cave entrance.
+
+> s
+You walk south. Part of the rope trails after you.
+
+In the dark
+It is pitch dark, and you can't see a thing.
+
+> w
+Gradually, your eyes adapt to the darkness.
+
+You walk west. Part of the rope trails after you.
+
+Stalactite room
+The cave opens up into a fairly large chamber, its floor moist and slippery.
+From the ceiling hangs a single, large stalactite, from which water drips
+regularly.
+
+There are passages to the north and east. Along its southern edge the wet floor
+slopes down to what looks like a perilous shaft.
+
+Your rope, attached at one end to your climbing harness, stretches back towards
+the east.
+
+> s
+Holding the rope in a tight grip, you carefully lower yourself to the bottom of
+the shaft.
+
+In the pit
+You're in a pit at the bottom of a shallow shaft. The northern wall curves into
+a slope leading back up. High above, you can make out the faint outlines of a
+stalactite.
+
+A strong, musty odour emanates from what appears to be a tight crawlway at the
+bottom of the northern wall. A larger passage leads east.
+
+Your rope, attached at one end to your climbing harness, stretches back towards
+the stalactite room above you.
+
+> n
+You squeeze through the crawlway and emerge on the other side. Part of the rope
+trails after you.
+
+Dry stream bed
+An elongated, curved formation in the floor is dry now, but bears witness of
+running water in earlier times. The air is damp and cold, and the musty smell is
+almost overpowering in here.
+
+Some kind of fungus grows in patches on the cave walls, emitting a faint blue-
+green glow.
+
+The stream bed narrows into a crawlway through the southern wall.
+
+Your rope, attached at one end to your climbing harness, stretches back towards
+the pit.
+
+> s
+You squeeze through the crawlway and emerge on the other side. Part of the rope
+trails after you.
+
+In the pit
+You're in a pit at the bottom of a shallow shaft. The northern wall curves into
+a slope leading back up. High above, you can make out the faint outlines of a
+stalactite.
+
+A strong, musty odour emanates from what appears to be a tight crawlway at the
+bottom of the northern wall. A larger passage leads east.
+
+Your rope, attached at one end to your climbing harness, makes a small loop on
+the ground here. Then it trails away towards the stalactite room above you.
+
+> e
+You walk east through the passage. Part of the rope trails after you.
+
+Southern end of hall
+This is the southern end of a large hall. A passage in the western wall leads
+back to the bottom of the shaft.
+
+Your rope, attached at one end to your climbing harness, stretches back towards
+the pit.
+
+> n
+You walk north. Part of the rope trails after you.
+
+Middle of the hall
+You are in the middle of a large hall that continues to the north and south. The
+cave floor slants marginally upwards towards the northern parts of the hall.
+There are small stalactites all over the ceiling.
+
+A large boulder rests on the cave floor.
+
+Your rope, attached at one end to your climbing harness, stretches back towards
+the south.
+
+> push boulder south
+With great effort you set the boulder in motion, pushing it towards the southern
+end of the hall. Part of the rope trails after you.
+
+Southern end of hall
+This is the southern end of a large hall. A passage in the western wall leads
+back to the bottom of the shaft.
+
+A large boulder rests on the cave floor.
+
+Your rope, attached at one end to your climbing harness, makes a small loop on
+the ground here. Then it trails away towards the pit.
+
+It's chilly here. Your joints are beginning to ache a bit.
+
+> push boulder west
+With great effort you set the boulder in motion, pushing it towards the pit.
+Part of the rope trails after you.
+
+In the pit
+You're in a pit at the bottom of a shallow shaft. The northern wall curves into
+a slope leading back up. High above, you can make out the faint outlines of a
+stalactite.
+
+A passage leads east.
+
+A large boulder rests on the cave floor, near the northern wall.
+
+Your rope, attached at one end to your climbing harness, stretches back towards
+the southern end of the hall. A different part of the rope stretches between the
+southern end of the hall and the stalactite room above.
+
+> find knot
+(attempting to go up)
+You get onto the boulder and clamber up from the pit. Part of the rope trails
+after you.
+
+Stalactite room
+The cave opens up into a fairly large chamber, its floor moist and slippery.
+From the ceiling hangs a single, large stalactite, from which water drips
+regularly.
+
+There are passages to the north and east. Along its southern edge the wet floor
+slopes down to the pit.
+
+Your rope, attached at one end to your climbing harness, stretches back towards
+the pit below you. A different part of the rope stretches between the pit below
+and the tunnel in the east.
+
+(attempting to go east)
+You walk east. Part of the rope trails after you.
+
+Tunnel
+You're in a curved tunnel, with exits to the north and west.
+
+Your rope, attached at one end to your climbing harness, stretches back towards
+the west. A different part of the rope stretches between the stalactite room in
+the west and the intersection in the north.
+
+(attempting to go north)
+You walk north. Part of the rope trails after you.
+
+Intersection
+You've reached an intersection in the cave system. The walls are rugged here,
+full of rough corners and edges.
+
+Passages to the west and south lead further into the mountain. The exit is to
+the east.
+
+Your rope, attached at one end to your climbing harness, stretches back towards
+the south. A different part of the rope stretches between the tunnel in the
+south and the cave entrance.
+
+(attempting to go east)
+You walk east through the passage. Part of the rope trails after you.
+
+Cave entrance
+You're in a fairly spacious cavity in the mountain, with a large column off to
+one side. Bright sunlight enters through a narrow opening in the southern wall,
+and there's a passage to the west leading further in.
+
+Your rope, attached at one end to your climbing harness, stretches back towards
+the intersection. The other end of the rope appears from the intersection, and
+is tied to the column.
+
+> untie rope
+You untie the rope from the column and pull it in.
+
+You are starting to feel a bit sleepy.
+
+> w
+You walk west through the passage.
+
+Intersection
+You've reached an intersection in the cave system. The walls are rugged here,
+full of rough corners and edges.
+
+Passages to the west and south lead further into the mountain. The exit is to
+the east.
+
+> s
+You walk south.
+
+Tunnel
+You're in a curved tunnel, with exits to the north and west.
+
+> w
+You walk west.
+
+Stalactite room
+The cave opens up into a fairly large chamber, its floor moist and slippery.
+From the ceiling hangs a single, large stalactite, from which water drips
+regularly.
+
+There are passages to the north and east. Along its southern edge the wet floor
+slopes down to the pit.
+
+> s
+You carefully slide over the edge and onto the boulder. Then you climb down to
+the cave floor.
+
+In the pit
+You're in a pit at the bottom of a shallow shaft. The northern wall curves into
+a slope leading back up. High above, you can make out the faint outlines of a
+stalactite.
+
+A passage leads east.
+
+A large boulder rests on the cave floor, near the northern wall.
+
+> e
+You walk east through the passage.
+
+Southern end of hall
+This is the southern end of a large hall. A passage in the western wall leads
+back to the bottom of the shaft.
+
+> n
+You walk north.
+
+Middle of the hall
+You are in the middle of a large hall that continues to the north and south. The
+cave floor slants marginally upwards towards the northern parts of the hall.
+There are small stalactites all over the ceiling.
+
+Moving the boulder has revealed an opening in the western wall. A musty odour
+seeps out through it.
+
+> n
+You walk north.
+
+Northern end of hall
+Only a very faint light reaches this far into the cave. The stalactites in the
+ceiling are larger in this part of the hall, and the walls are covered with
+wavy, curtain-like formations in various shades and shapes. The cave floor dips
+slightly towards the rest of the hall to the south.
+
+The hot water tap is dripping again, so you tighten it.
+
+> s
+You walk south.
+
+Middle of the hall
+You are in the middle of a large hall that continues to the north and south. The
+cave floor slants marginally upwards towards the northern parts of the hall.
+There are small stalactites all over the ceiling.
+
+Moving the boulder has revealed an opening in the western wall. A musty odour
+seeps out through it.
+
+You have a slight headache.
+
+> s
+You walk south.
+
+Southern end of hall
+This is the southern end of a large hall. A passage in the western wall leads
+back to the bottom of the shaft.
+
+> w
+You walk west through the door.
+
+Bottom of staircase
+You're at the bottom of a flight of stairs leading up to the second floor. Built
+into the space under the staircase is a broom closet. You are starting to feel
+disoriented. Something is not right here.
+
+The back door of your apartment is to the west. To the east, the door to the
+living room is open.
+
+High above, you can make out the faint outlines of a stalactite.
+
+A large boulder rests on the cave floor, near the northern wall.
+
+> u
+You get onto the boulder and clamber up from the pit.
+
+Stalactite room
+The cave opens up into a fairly large chamber, its floor moist and slippery.
+From the ceiling hangs a single, large stalactite, from which water drips
+regularly.
+
+There are passages to the north and east. Along its southern edge the wet floor
+slopes down to the pit.
+
+> e
+You walk east.
+
+Tunnel
+You're in a curved tunnel, with exits to the north and west.
+
+> n
+You walk north through the door.
+
+Bedroom
+Your bed is here, by the window. An old dresser stands in one corner, and
+there's a mirror on the wall.
+
+Doors lead west to the study, and south to the corridor. The balcony door is to
+the east.
+
+> w
+You walk west through the door.
+
+Study
+Occasional splashes of rain trickle in from the open window in the western wall.
+A plain desk stands below, with a worn chair in front of it. On the desk is your
+computer and a small plastic bag. A picture is pinned to the wall.
+
+Doors lead east and south.
+
+> take bag
+You take the small plastic bag off the desk.
+
+You momentarily lose balance, but regain your footing.
+
+> s
+You walk south through the door.
+
+Top of staircase
+A large chandelier hangs from the ceiling at this end of the corridor. A flight
+of stairs leads down to the ground floor, and the door to your study is set in
+the northern wall. The corridor continues to the east.
+
+> d
+You go down the stairs to the ground floor.
+
+Bottom of staircase
+You're at the bottom of a flight of stairs leading up to the second floor. Built
+into the space under the staircase is a broom closet.
+
+The back door of your apartment is to the west. To the east, the door to the
+living room is open.
+
+High above, you can make out the faint outlines of a chandelier.
+
+> e
+You walk east through the door.
+
+Living room
+Some would probably refer to your living room as a library, but it's got all the
+amenities you need. There's your armchair by the window, next to your reading
+table and floor lamp. And there, organized by author in shelves covering every
+centimetre of the walls, are your books.
+
+A door leads west to the staircase, and you can step over a threshold to the
+vestibule in the north.
+
+> n
+You walk north.
+
+Vestibule
+This is the vestibule area of your apartment. It connects to the living room in
+the south, and the kitchen in the north. The main entrance is to the east, and
+there's a bathroom to the west.
+
+An overcoat hangs on a hook on the wall, and there's a pair of shoes on the
+floor.
+
+A musty odour emerges from the bathroom.
+
+> s
+You walk south.
+
+Living room
+Some would probably refer to your living room as a library, but it's got all the
+amenities you need. There's your armchair by the window, next to your reading
+table and floor lamp. And there, organized by author in shelves covering every
+centimetre of the walls, are your books.
+
+A door leads west to the staircase, and you can step over a threshold to the
+vestibule in the north.
+
+> w
+You walk west through the door.
+
+Bottom of staircase
+You're at the bottom of a flight of stairs leading up to the second floor. Built
+into the space under the staircase is a broom closet.
+
+The back door of your apartment is to the west. To the east, the door to the
+living room is open.
+
+High above, you can make out the faint outlines of a chandelier.
+
+> open closet
+You open the broom closet, revealing some cleaning equipment and a toolbox.
+
+> take toolbox
+You take the toolbox out of the broom closet.
+
+> e
+You walk east through the door.
+
+Living room
+Some would probably refer to your living room as a library, but it's got all the
+amenities you need. There's your armchair by the window, next to your reading
+table and floor lamp. And there, organized by author in shelves covering every
+centimetre of the walls, are your books.
+
+A door leads west to the staircase, and you can step over a threshold to the
+vestibule in the north.
+
+Your mind and body are starting to get tired.
+
+> n
+You walk north.
+
+Vestibule
+This is the vestibule area of your apartment. It connects to the living room in
+the south, and the kitchen in the north. The main entrance is to the east, and
+there's a bathroom to the west.
+
+An overcoat hangs on a hook on the wall, and there's a pair of shoes on the
+floor.
+
+A musty odour emerges from the bathroom.
+
+> n
+You walk north.
+
+Kitchen
+The kitchen is perhaps austere by modern standards, but it's adequate for your
+needs. You've got fridge and freezer, running water, and a cooker. In one corner
+of a large counter stands a microwave oven, next to a dishrack.
+
+Colourful curtains adorn the two large, opposite windows in the east and west
+walls.
+
+The only exit is south to the vestibule.
+
+The hot water tap is dripping again. You've been meaning to replace that washer.
+
+> fix tap
+You turn off the valves under the sink and loosen the screw that holds the tap
+in place. Then you replace the old washer with the new one, re-assemble the tap,
+and turn the valves on again. As good as new.
+
+> s
+You walk south.
+
+Vestibule
+This is the vestibule area of your apartment. It connects to the living room in
+the south, and the kitchen in the north. The main entrance is to the east, and
+there's a bathroom to the west.
+
+An overcoat hangs on a hook on the wall, and there's a pair of shoes on the
+floor.
+
+A musty odour emerges from the bathroom.
+
+> w
+You walk west through the bathroom door.
+
+Bathroom
+Tiled walls, tiled floor. A medium-sized bathtub with a shower occupies most of
+the room. There's also a toilet, and a wash basin below a mirror on the wall. A
+towel hangs on one side of the basin.
+
+Laplace's litter box needs to be cleaned.
+
+> brush teeth
+You brush your teeth diligently.
+
+> clean litter box
+You take care of Laplace's litter box. Now you have a bag of litter that smells
+horrible. Better get it out of here.
+
+Judith always wanted to have a cat named Laplace, in part as a reference to the
+mathematician, and in part because of her idea that cats prefer names with
+prominent sibilants. But you agreed to wait a few years as you both wanted the
+freedom to travel, and then all your plans were shattered by the incident. It
+took you another twenty years to finally muster up the courage to get Laplace.
+
+You're starting to feel dizzy.
+
+> e
+You walk east through the bathroom door.
+
+Vestibule
+This is the vestibule area of your apartment. It connects to the living room in
+the south, and the kitchen in the north. The main entrance is to the east, and
+there's a bathroom to the west.
+
+An overcoat hangs on a hook on the wall, and there's a pair of shoes on the
+floor.
+
+> s
+You walk south.
+
+Living room
+Some would probably refer to your living room as a library, but it's got all the
+amenities you need. There's your armchair by the window, next to your reading
+table and floor lamp. And there, organized by author in shelves covering every
+centimetre of the walls, are your books.
+
+A door leads west to the staircase, and you can step over a threshold to the
+vestibule in the north.
+
+> w
+You walk west through the door.
+
+Bottom of staircase
+You're at the bottom of a flight of stairs leading up to the second floor. Built
+into the space under the staircase is a broom closet.
+
+The back door of your apartment is to the west. To the east, the door to the
+living room is open.
+
+High above, you can make out the faint outlines of a chandelier.
+
+> open back door
+You pop out briefly, and throw the bag of litter into the bin. Then you get back
+indoors.
+
+> u
+You take the stairs to the second floor.
+
+Top of staircase
+A large chandelier hangs from the ceiling at this end of the corridor. A flight
+of stairs leads down to the ground floor, and the door to your study is set in
+the northern wall. The corridor continues to the east.
+
+> e
+You walk east.
+
+Eastern end of corridor
+Dust particles dance in the diffuse light from the window in the eastern wall.
+The bedroom door to the north is open, and the corridor continues to the west.
+
+> n
+You walk north through the door.
+
+Bedroom
+Your bed is here, by the window. An old dresser stands in one corner, and
+there's a mirror on the wall.
+
+Doors lead west to the study, and south to the corridor. The balcony door is to
+the east.
+
+> sleep
+(first attempting to get onto your bed)
+You lie down on the bed.
+
+It's really cold now. You're shaking.
+
+You toss and turn, but it's too hot to sleep. You're going to have to get out of
+those pyjamas.
+
+> remove pyjamas
+You take off your flannel pyjamas.
+
+> sleep
+You close your eyes and allow a wave of tiredness to wash over you.
+
+Like every night for the past thirty years, your thoughts return to Judith, and
+to that gruesome day in the mountains. When you returned after four hours with
+the mountain rescue volunteers, she was suffering from severe hypothermia. She
+had stumbled over the Swallet cave system, and sought shelter inside. Knowing
+her, you assume she started to explore them, exhausting herself in the process.
+As the night went on, her body temperature would have dropped gradually, and she
+would have started to behave erratically. When you found her, she was
+unconscious, in a state of undress, burrowed in a corner near the entrance. She
+died later that night in the hospital.
+
+At first you were crushed by acute feelings of pain and guilt. But through the
+years you've developed a more balanced attitude towards your grieving, and even
+begun to reenact and explore variations of the incident, here in the privacy of
+your apartment. If she knew about your solitary role playing, she'd roll her
+eyes. But it's how you keep her memory alive.
+
+You were told to cultivate new friendships, to learn to trust other people and
+to share your plight with them. It would help you to move on, they said. But you
+are inescapably entangled with Judith's memory, with strings that can never be
+severed. And you know that if you were to seek the company of others, you would
+be diluting that connection to the point where she ceases to be a unique
+snowflake, and is lost forever.
+
+As you drift away into sleep, you smile wistfully at a stray thought: The
+strongest bond you ever made was the result of cutting a rope.
+
+     *** You are tethered. ***
+
+Would you like to:
+     UNDO the last move,
+     RESTORE a saved position,
+     see a list of AMUSING things to do,
+     QUIT the program,
+     or RESTART from the beginning?
+> quit
+
+Thanks for playing!

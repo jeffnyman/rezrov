@@ -25,6 +25,8 @@ public sealed partial class Machine
                     _output.Newline();
                 }
 
+                _runtimeErrors.Add($"aam: {Explain(error.Code)}");
+
                 ClearOutputState();
                 Reset(AaValue.Number(error.Code));
             }
@@ -598,6 +600,20 @@ public sealed partial class Machine
             }
         }
     }
+
+    // [aam runtime] The numbered conditions, in the story's own
+    // words, so that a play that hits one says what happened rather
+    // than quietly starting over.
+    private static string Explain(int code) => code switch
+    {
+        1 => "the heap ran out",
+        2 => "the auxiliary heap ran out",
+        3 => "something that was not an object was used as one",
+        4 => "an unbound value was stored where a bound one was needed",
+        6 => "the long-term heap ran out",
+        7 => "the output was left in a state it cannot be left in",
+        _ => $"runtime error {code}",
+    };
 
     // [aam opcode] The object an instruction is about, which is the
     // globals when the opcode leaves it out.
