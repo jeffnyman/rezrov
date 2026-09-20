@@ -1,3 +1,5 @@
+using Rezrov.AaMachine;
+using Rezrov.AaMachine.Execution;
 using Rezrov.Core;
 using Rezrov.Core.Audio;
 using Rezrov.Core.Blorb;
@@ -125,8 +127,28 @@ internal static class Program
                 break;
             case StoryFormat.Glulx:
                 return PlayGlulx(bytes, FindResources(path, blorb), path, new TerminalFiles.Presets(transcript, record, save, commands), seed);
+            case StoryFormat.AaMachine:
+                // The options that belong to the other two machines
+                // mean nothing here, and are said so rather than
+                // quietly ignored.
+                foreach (var option in new (string Name, bool Given)[]
+                {
+                    ("interpreter", machine is not null),
+                    ("tandy", tandy),
+                    ("transcript", transcript is not null),
+                    ("record", record is not null),
+                    ("blorb", blorb is not null),
+                })
+                {
+                    if (option.Given)
+                    {
+                        Console.Error.WriteLine($"rezrov-tui: the {option.Name} option does not apply to the Aa-machine");
+                    }
+                }
+
+                return PlayAaMachine(bytes, path, commands, save, seed);
             default:
-                Console.Error.WriteLine($"rezrov-tui: only Z-machine and Glulx story files can be run");
+                Console.Error.WriteLine($"rezrov-tui: only Z-machine, Glulx and Aa-machine story files can be run");
                 return 1;
         }
 
@@ -430,6 +452,117 @@ internal static class Program
         }
 
         return ending is null || !ending.StartsWith("Stopped", StringComparison.Ordinal) ? 0 : 3;
+    }
+
+    /// <summary>
+    /// [aam output] An Aa-machine story in the terminal: the machine
+    /// on its own thread, the status area across the top, and the
+    /// style sheet honored as far as a grid of characters can.
+    /// </summary>
+    private static int PlayAaMachine(byte[] bytes, string path, string? commands, string? save, int? seed)
+    {
+        AaStory story;
+
+        try
+        {
+            story = AaStory.Read(bytes);
+        }
+        catch (InvalidDataException e)
+        {
+            Console.Error.WriteLine($"rezrov-tui: {e.Message}");
+            return 1;
+        }
+
+        using var app = Application.Create().Init();
+
+        var window = new Window { Title = Path.GetFileName(path) };
+        var view = new GameView(() => app.RequestStop());
+        window.Add(view);
+
+        string? ending = null;
+        IReadOnlyList<string> errors = [];
+
+        view.Ready = (width, height) =>
+        {
+            var scripted = commands is not null && File.Exists(commands) ? new StreamReader(commands) : null;
+            var display = new TerminalAaDisplay(
+                story, width, height, () => app.Invoke(() => view.SetNeedsDraw()), scripted);
+
+            view.Picture = display;
+            view.KeyPressed = key =>
+            {
+                if (AaKeyMap.ToCharacter(key) is not { } character)
+                {
+                    return false;
+                }
+
+                display.Enqueue(character);
+                return true;
+            };
+
+            view.TextPasted = text =>
+            {
+                foreach (var character in AaKeyMap.ToCharacters(text))
+                {
+                    display.Enqueue(character);
+                }
+            };
+
+            var machine = new Machine(story, display, seed);
+
+            // [aam opcode] There is no file dialog in the way the
+            // other machines have one here yet, so a saved game goes
+            // where the command line said and nowhere else.
+            machine.SaveFileName = _ => save is null ? null : Path.GetFullPath(save);
+
+            var worker = new Thread(() =>
+            {
+                try
+                {
+                    var status = machine.Start();
+
+                    while (status != AaStatus.Quit)
+                    {
+                        status = status == AaStatus.GetInput
+                            ? machine.ProceedWithInput(display.ReadLine())
+                            : machine.ProceedWithKey(display.ReadKey());
+                    }
+                }
+                catch (AaMachineException e)
+                {
+                    ending = $"Error: {e.Message}";
+                }
+                finally
+                {
+                    errors = machine.RuntimeErrors;
+                    scripted?.Dispose();
+                }
+
+                display.Notice(ending is null
+                    ? "[The game has ended. Press a key to leave.]"
+                    : $"{ending} Press a key to leave.");
+
+                app.Invoke(() => app.RequestStop());
+            })
+            {
+                IsBackground = true,
+                Name = "Aa-machine",
+            };
+
+            worker.Start();
+        };
+
+        app.Run(window);
+        window.Dispose();
+
+        // What the machine noticed, once the terminal is ordinary
+        // again.
+        foreach (var error in errors)
+        {
+            Console.Error.WriteLine($"rezrov-tui: {error}");
+        }
+
+        return ending is null ? 0 : 3;
     }
 
     private static void Help(TextWriter writer)
