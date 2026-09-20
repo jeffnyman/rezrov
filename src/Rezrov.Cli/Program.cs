@@ -218,6 +218,12 @@ internal static class Program
             + $"{story.Language.DecodingTable.Length / 2} nodes of decoding tree, "
             + $"{story.Dictionary.Count} dictionary words");
 
+        // Walking the bytecode is also the plainest check that it can
+        // be walked: the count only comes out if every instruction in
+        // the chunk decoded.
+        Console.WriteLine(
+            $"  {story.Instructions.All().Count()} instructions in {story.Instructions.Length} bytes");
+
         DescribeAaMetadata(story.Metadata);
 
         foreach (var resource in story.Resources)
