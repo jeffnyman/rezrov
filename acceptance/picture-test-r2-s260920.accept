@@ -1,0 +1,18 @@
+! SEED=1
+! GAME=../entharion/dialog-code/picture-test.aastory
+
+# A resource test on the frame of Cloak of Darkness, played to its
+# winning ending. The point of it is the opening: the game embeds a
+# picture, and a stream of text has nowhere to put one, so what comes
+# out is the alternative text the story carries for it. That is the
+# resource path exercised in play rather than in isolation.
+
+x me
+x cloak
+n
+w
+hang cloak on hook
+e
+s
+x message
+quit
