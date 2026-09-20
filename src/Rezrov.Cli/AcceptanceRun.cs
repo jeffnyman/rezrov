@@ -169,9 +169,23 @@ public static class AcceptanceRun
         // [zm 10.2] With nothing behind the file of commands, the run
         // ends when the script does; with the console behind it, the
         // player carries on from there and is told so.
+        // [zm 8.8.6] A screen that says it has pictures measures in
+        // pixels, so it is given a size in them: 80 by 25 cells of 8 by
+        // 16 is 640 by 400, exactly twice the screen the artwork was
+        // drawn for. Without pictures the old shape is kept, so every
+        // recording that existed before reads the same.
+        var screen = script.Pictures
+            ? new TextWriterScreen(
+                (TextWriter?)screenWriter ?? output,
+                width: 80,
+                height: 25,
+                showUpperWindow: script.Upper,
+                hasPictures: true)
+            : new TextWriterScreen((TextWriter?)screenWriter ?? output, showUpperWindow: script.Upper);
+
         var interpreter = new Interpreter(
             memory,
-            new TextWriterScreen((TextWriter?)screenWriter ?? output, showUpperWindow: script.Upper),
+            screen,
             resume
                 ? new AnnouncedInput(new ConsoleInput(header, memory), errors)
                 : new TextReaderInput(TextReader.Null, header, memory),
@@ -194,7 +208,7 @@ public static class AcceptanceRun
             }
         }
 
-        var commands = new MarkedCommands(script, output, random);
+        var commands = new MarkedCommands(script, output, random, screen);
         interpreter.PlayCommands(commands);
 
         var ending = AcceptanceEnding.Quit;
@@ -396,7 +410,11 @@ public static class AcceptanceRun
     /// where the script says to, just before the command it comes
     /// before is handed over.
     /// </summary>
-    private sealed class MarkedCommands(AcceptanceScript script, StringWriter output, RandomGenerator random) : TextReader
+    private sealed class MarkedCommands(
+        AcceptanceScript script,
+        StringWriter output,
+        RandomGenerator random,
+        TextWriterScreen screen) : TextReader
     {
         private int _next;
 
@@ -404,6 +422,11 @@ public static class AcceptanceRun
 
         public override string? ReadLine()
         {
+            // [zm 8.8.6] The game has paused for a command, so this is
+            // the moment the player would be looking at the screen, and
+            // the moment to record which pictures are on it.
+            screen.ShowPictures();
+
             // Reseeding as the next command is read means the game's
             // rolls for that command onward come from the new stream,
             // and nothing before it is touched. It is the session's kind
