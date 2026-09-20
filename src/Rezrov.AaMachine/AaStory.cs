@@ -83,6 +83,9 @@ public sealed class AaStory
         Instructions = new InstructionDecoder(
             Required("CODE").ToArray(), MajorVersion, MinorVersion, Shift);
 
+        Styles = AaStyles.Read(Contents("LOOK"));
+        WordMaps = AaWordMaps.Read(Contents("MAPS"));
+        ObjectNames = AaObjectNames.Read(Contents("TAGS"), Language.Characters);
         Metadata = AaMetadata.Read(Contents("META"), Language.Characters);
         Resources = AaResource.Read(Contents("URLS"), Language.Characters, Shift);
     }
@@ -150,6 +153,15 @@ public sealed class AaStory
 
     /// <summary>Reads the bytecode.</summary>
     public InstructionDecoder Instructions { get; }
+
+    /// <summary>The style sheet.</summary>
+    public AaStyles Styles { get; }
+
+    /// <summary>Which objects a word could be talking about.</summary>
+    public AaWordMaps WordMaps { get; }
+
+    /// <summary>What the author called each object.</summary>
+    public AaObjectNames ObjectNames { get; }
 
     /// <summary>What the story says about itself.</summary>
     public AaMetadata Metadata { get; }
