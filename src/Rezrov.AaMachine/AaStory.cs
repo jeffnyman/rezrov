@@ -1,5 +1,6 @@
 using System.Buffers.Binary;
 using System.Text;
+using Rezrov.AaMachine.Instructions;
 
 namespace Rezrov.AaMachine;
 
@@ -79,6 +80,9 @@ public sealed class AaStory
         Text = new AaTextDecoder(
             Required("WRIT").ToArray(), Language, Dictionary, MajorVersion, MinorVersion);
 
+        Instructions = new InstructionDecoder(
+            Required("CODE").ToArray(), MajorVersion, MinorVersion, Shift);
+
         Metadata = AaMetadata.Read(Contents("META"), Language.Characters);
         Resources = AaResource.Read(Contents("URLS"), Language.Characters, Shift);
     }
@@ -143,6 +147,9 @@ public sealed class AaStory
 
     /// <summary>Reads the compressed text.</summary>
     public AaTextDecoder Text { get; }
+
+    /// <summary>Reads the bytecode.</summary>
+    public InstructionDecoder Instructions { get; }
 
     /// <summary>What the story says about itself.</summary>
     public AaMetadata Metadata { get; }
