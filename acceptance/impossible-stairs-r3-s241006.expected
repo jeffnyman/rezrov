@@ -1,0 +1,640 @@
+
+
+The Impossible Stairs
+An interactive fiction by Mathbrush.
+Written in Dialog. Authorized sequel to The Impossible Bottle by Linus Åkesson.
+Release 3. Serial number 241006.
+Dialog compiler version 0m/03. Library version 0.46.
+
+What a mess! The hurricane did a real number on the old family home, and to think it would happen the week that your dad is moving out!
+
+You notice some movement from an upstairs window. A woman that looks somewhat familiar leans out and throws out a paper airplane that floats down and lands by you.
+
+"There you go, CJ! See you at dinner!" she shouts, then slams the window shut.
+
+"Huh. Who the heck was that?" you say to yourself.
+
+[Tutorial: You can LOOK to check out your surroundings. You can type TUTORIAL OFF to turn off this brief tutorial at any time.]
+
+> look
+Front Lawn
+You are standing in front of your family home, which you recently purchased from your father. The front door is to the east.
+
+The paper airplane is lying on the ground next to you.
+
+[Tutorial: You can TAKE AIRPLANE to pick up the paper airplane.]
+
+> take airplane
+You scoop up the airplane and un-fold it. It's a... chores list?
+
+[Tutorial: You can now type I or INVENTORY to check your inventory.]
+
+> i
+You have a chores list.
+
+[Tutorial: You can EXAMINE LIST or X LIST or READ LIST to see what it says.]
+
+> x list
+The list says "BEFORE THE GUESTS ARRIVE:" in all caps at the top. At the bottom it says,
+
+-Give the good serving dish to Uncle Joe
+
+-Put the plates on the table
+
+-Find Mom's baklava recipe and make it
+
+-Help Ada finish up in the garage (could take a while)
+
+-Remind Uncle Rob about dinner
+
+Huh. Strange.
+
+[Tutorial: You can now go EAST or E to enter the house. This is the end of the tutorial. For more help, you can type HELP or HINT at any time. Thanks!]
+
+> x me
+You're still feeling a bit frazzled from the hurricane and helping your dad pack for his big move, but otherwise you're doing fine.
+
+> x house
+You moved into this place pretty soon after your mother passed away, although she helped design it. It's not very big, but it has a lot of great memories in it.
+
+It's too bad that the hurricane damaged it quite a bit. You can't see it from here, but it's even worse in the kitchen.
+
+> e
+(first attempting to open the front door to the east)
+You open the front door.
+
+You walk into the house (your house, now) and close the door behind you.
+
+Family Room
+This cramped family room is dominated by a massive entertainment center and has burgundy carpeting. Unlike the rest of the house, it hasn't been hit hard by the hurricane.
+
+There is a calendar on the wall. The office is to the south, the garage is north, the kitchen is east, and the stairs go up and down. The front door is to the west.
+
+> x center
+This massive entertainment center is designed to hold your TV and all of its attachments. You haven't moved in your TV yet. You'll do that after dad moves out.
+
+> x carpeting
+You bought this carpet to be unique, but it turns out all the homeowners in the neighborhood had the same idea.
+
+> x calendar
+This calendar is a little warped from the water, but it still works. It's a calendar with pictures of wolves. You got it at Borders. It's August 20th, 2001.
+
+> n
+You start to head out before you remember: The garage was crushed by the tree in your backyard when the hurricane blew it over a few days ago. There's no way out there right now.
+
+Your cousin Ada was so sad about losing her projects, she hasn't been back since.
+
+> s
+You walk south.
+
+Office
+This is your art studio. Or, at least, it will be. Right now, it's mostly empty, except for a single easel in the middle and a pedestal. Your family's memory board is here, the only thing you kept from your dad's old office. The shelves and most of the books had to be thrown out.
+
+The family room is back to the north.
+
+On the pedestal, you can see a dish towel, artfully arranged.
+
+Your dad is hustling back and forth, finishing the last few tasks before you can move in completely.
+
+He looks up and smiles as you walk in before going back to his work.
+
+"Oh hey, CJ," he says, looking up for a second.
+
+> x easel
+It cost a little more than you budgeted for, but you hope it will suffice for the next few years, at least.
+
+> x pedestal
+This hefty pedestal is where you intend to put your current inspiration. Your choice may shape your future career, so you've been a bit nervous about it.
+
+> x towel
+A colorful dish towel which struck your fancy at the store. It is artfully arranged on the pedestal, serving as your current object of inspiration.
+
+> x board
+The memory board has portraits of all your loved ones who have passed on. Right now, that includes your grandfather, grandmother and mom.
+
+> x grandfather
+Grandpa died before you were born. It shows him standing outside a coal mine, pick in hand. That was his first job, after he immigrated.
+
+> x grandmother
+This is your grandmother's graduation picture from nursing school. She's wearing a crisp white uniform and cap, and standing by two nuns. She passed away shortly after her 84th birthday.
+
+> x mom
+You only have vague memories of your mother, including the day this was taken. The photo shows her at a picnic, feeding you a tiny slice of baklava.
+
+The corner of a recipe card is sticking out from behind the portrait.
+
+> take card
+You snatch up the card. It's your mom's old baklava recipe!
+
+> read it
+This is your mom's recipe for baklava.
+
+The card looks pretty old, and has food stains. At the bottom, it says, 'Dad's recipe'. Huh, you never thought about it, but she must have got it from Grandpa.
+
+It says you need cinnamon, phyllo dough, butter, nuts, and honey. Hopefully, Uncle Joe isn't hogging all the butter again.
+
+[To make the baklava, you can type MAKE RECIPE in the kitchen once you have all the ingredients.]
+
+> x Dad
+Dad has mellowed out a lot since you were younger. He has a full head of white hair that he finally gave up on dyeing. He changed out of his "nice suit" earlier so he could wear his old suit, just in case things got messy.
+
+> talk to Dad
+Your dad looks up. "Hey, CJ!" he says, smiling. "What's up?"
+
+1. "Hey, I saw a strange woman standing in the upstairs window. Any idea who it was?"
+2. "Have you seen the serving dish?"
+3. "Do you know where the plates are?"
+4. "Oh, just wanted to say hi."
+> 1
+"Hey, I saw a strange woman standing in the upstairs window. Any idea who it was?"
+
+Your dad looks startled. "Huh. Strange woman. What did she look like?"
+
+"I don't know, but she looked familiar. She threw a paper airplane at me," you say.
+
+"Did she seem dangerous?" asks Dad.
+
+"No, it's just weird having strangers in the house," you answer.
+
+"Well, it wouldn't be the weirdest thing that's happened here. Let me know if you see her again, okay?" says dad.
+
+1. "Have you seen the serving dish?"
+2. "Do you know where the plates are?"
+3. "Oh, just wanted to say hi."
+> 1
+"Have you seen the serving dish?"
+
+"I think it's downstairs somewhere."
+
+1. "Have you seen the serving dish?"
+2. "Do you know where the plates are?"
+3. "Oh, just wanted to say hi."
+> 2
+"Do you know where the plates are?"
+
+"Oh, those. Last I saw them, they were in the treehouse."
+
+1. "Have you seen the serving dish?"
+2. "Do you know where the plates are?"
+3. "Oh, just wanted to say hi."
+> 3
+"Oh, just wanted to say hi."
+
+"Hi to you, too, kid. Sorry I've been so busy lately!" he says. It hasn't just been lately, of course, but that's just Dad.
+
+> n
+You walk north.
+
+Family Room
+This cramped family room is dominated by a massive entertainment center and has burgundy carpeting. Unlike the rest of the house, it hasn't been hit hard by the hurricane.
+
+There is a calendar on the wall. The office is to the south, the garage is north, the kitchen is east, and the stairs go up and down. The front door is to the west.
+
+> e
+You walk east.
+
+Kitchen
+The kitchen is filled with wonderful smells. A long granite counter runs down one side. A small oven is next to it. The backyard is to the east, the pantry is to the south, and the family room is to the west.
+
+Plastic tarps are covering parts of the walls and ceilings. Light rain begins to drum on them.
+
+Uncle Joe is slicing and dicing potatoes like an expert chef. Which, of course, he is.
+
+"Hey, there you are," he says, as you walk in the room. "Hope you're hungry for later!"
+
+In the dining half of the kitchen, the big table has been assembled together for dinner. Right now the table has nothing on it.
+
+> x Joe
+Uncle Joe is only ten years older than you. He's a grizzled, mostly-bald man. He's tall and bulky, but leaner than he was a few years ago.
+
+He looks happy to see you. He's also sweating profusely in the kitchen heat.
+
+> talk to Joe
+"Hey, Uncle Joe, do you have a second?"
+
+"Sure, CJ, what's up?"
+
+1. "Did you see a strange woman upstairs today?"
+2. "How's work been recently?"
+3. "Did you see what happened to the garage?"
+4. "Do you know where Uncle Rob went?"
+5. "Do you have any butter, Uncle Joe?"
+6. "Can I help you with the potatoes?"
+7. "Never mind, Uncle Joe."
+> 1
+"Did you see a strange woman upstairs today?"
+
+Uncle Joe wipes his prodigious brow. "CJ, I haven't left this kitchen at all. Did she look hungry? Because I think I made way too many potatoes."
+
+"No, she didn't look hungry, but she did seem familiar. She left me a chores list for a party," you answer.
+
+"Oh, well that's great, actually. I thought I was the only one getting ready. Maybe she's a guest who came early?"
+
+1. "How's work been recently?"
+2. "Did you see what happened to the garage?"
+3. "Do you know where Uncle Rob went?"
+4. "Do you have any butter, Uncle Joe?"
+5. "Can I help you with the potatoes?"
+6. "Never mind, Uncle Joe."
+> 1
+"How's work been recently?"
+
+"We opened three new franchises this month," says Uncle Joe. "We're even expanding into Canada!"
+
+1. "How's work been recently?"
+2. "Did you see what happened to the garage?"
+3. "Do you know where Uncle Rob went?"
+4. "Do you have any butter, Uncle Joe?"
+5. "Can I help you with the potatoes?"
+6. "Never mind, Uncle Joe."
+> 2
+"Did you see what happened to the garage?"
+
+He stops chopping for a minute.
+
+"Yeah, what a mess. Can't believe the old maple fell on it. Should never have planted it that close to the house."
+
+1. "How's work been recently?"
+2. "Do you know where Uncle Rob went?"
+3. "Do you have any butter, Uncle Joe?"
+4. "Can I help you with the potatoes?"
+5. "Never mind, Uncle Joe."
+> 2
+"Do you know where Uncle Rob went?"
+
+"I'm just glad he's not here snacking. That guy's an eating machine! But, you know, he's like you," he says, pointing at you. "He kind of 'wanders', if you get my drift. But I think you'll find him."
+
+1. "How's work been recently?"
+2. "Do you have any butter, Uncle Joe?"
+3. "Can I help you with the potatoes?"
+4. "Never mind, Uncle Joe."
+> 2
+"Do you have any butter, Uncle Joe?"
+
+"No, I stopped using that years ago. It's margarine for me, now."
+
+1. "How's work been recently?"
+2. "Do you have any butter, Uncle Joe?"
+3. "Can I help you with the potatoes?"
+4. "Never mind, Uncle Joe."
+> 3
+"Can I help you with the potatoes?"
+
+"Sounds great!" says Joe. He hands you a pile of potatoes and you scrub them. He shows you some interesting cooking techniques while you're working. He can talk about potatoes for hours, if you let him. He starts: "Potatoes are the fruit of the earth. You can roast them, boil them, fry them, mash them."
+
+He goes on: "There's baked potatoes, mashed potatoes. Fried potatoes: pan fried, deep fried, stir-fried. There's potato tacos, twice-baked potatoes, tater-tots, potatoes au gratin, chips, potato soup, potato stew, potato salad, shrimp and potatoes, hashbrowns, steak fries. That's about it."
+
+By now, you've washed a ton of potatoes. Uncle Joe says, "Thanks, CJ. That helps!"
+
+> x tarps
+You put these up on the ceiling to temporarily handle the damage from the hurricane.
+
+> x counter
+This long granite counter is destined to outlast you, the house, and everyone in it. It was installed a little crooked when it was first put in, leaving a gap.
+
+> x gap
+Stuff keeps falling in here for some reason. It's a narrow gap. Right now, there's a serving dish stuck in there.
+
+> x dish
+This is the family's antique serving platter. Grandpa got it from the old country.
+
+It looks pretty dirty right now.
+
+> take dish
+The gap is too small for an adult's arm to fit.
+
+> x oven
+This is your dad's old stove, still. Your new one won't come in until later in the week.
+
+> e
+You walk east.
+
+Outdoors
+A small row of houses is lined up behind yours. Most of them are clearly still recovering from the storm.
+
+From out here you can see the damage to your own house.
+
+The rain is drizzling.
+
+The kitchen is back to the west.
+
+The old maple tree has fallen on the garage, and the brand new treehouse is smashed on top of it.
+
+> x tree
+Your family's majestic maple tree has fallen onto the garage, crushing it completely.
+
+> x treehouse
+The hurricane knocked over the new treehouse. Now it's shattered, and so is everything in it!
+
+> x houses
+Most of your neighbours grew up and moved away, with newer families taking their place.
+
+> w
+You walk west.
+
+Kitchen
+The kitchen is filled with wonderful smells. A long granite counter runs down one side. A small oven is next to it. The backyard is to the east, the pantry is to the south, and the family room is to the west.
+
+Plastic tarps are covering parts of the walls and ceilings. Light rain drums on them.
+
+Uncle Joe is slicing and dicing potatoes like an expert chef. Which, of course, he is.
+
+In the dining half of the kitchen, the big table has been assembled together for dinner. Right now the table has nothing on it.
+
+> s
+You walk south.
+
+Pantry
+This is your family's pantry, just a glorified closet with shelves.
+
+The shelves have some crushed walnuts and a can of yellow wax beans on them.
+
+> x shelves
+Plain white shelves, completely utilitarian. And very sturdy.
+
+> x walnuts
+Looks like this bag of crushed walnuts was the only thing left in the pantry, what with all the supply chain problems. You've already eaten through most of your supplies.
+
+> x beans
+Nobody in the house likes yellow wax beans. But this can is so old now it's part of your heritage, like the rest of the house.
+
+> take walnuts
+You take the crushed walnuts off the shelves.
+
+> n
+You walk north.
+
+Kitchen
+The kitchen is filled with wonderful smells. A long granite counter runs down one side. A small oven is next to it. The backyard is to the east, the pantry is to the south, and the family room is to the west.
+
+Plastic tarps are covering parts of the walls and ceilings. Light rain drums on them.
+
+Uncle Joe is slicing and dicing potatoes like an expert chef. Which, of course, he is.
+
+In the dining half of the kitchen, the big table has been assembled together for dinner. Right now the table has nothing on it.
+
+> w
+You walk west.
+
+Family Room
+This cramped family room is dominated by a massive entertainment center and has burgundy carpeting. Unlike the rest of the house, it hasn't been hit hard by the hurricane.
+
+There is a calendar on the wall. The office is to the south, the garage is north, the kitchen is east, and the stairs go up and down. The front door is to the west.
+
+> d
+The burden of years seems to lift from your shoulders the further down you get. This part of the house looks newer, too.
+
+Family Room
+This family room is certainly much more inviting than your college dorm room. The brown rug and wood paneling make you feel like you're in a cabin.
+
+There is a calendar on the wall. The office is to the south, the garage is north, the kitchen is east, and the stairs go up and down. The front door is to the west.
+
+Music is coming from a boombox.
+
+Grandma is watching TV from her old, busted recliner. It looks like Dallas is playing again. She's holding her usual bottle of Sprite.
+
+She gives you a little wave as you walk come down the stairs.
+
+> x calendar
+This is a linen calendar towel with decorative flowers all around it. It's May 17th, 1981, and it's Grandma's birthday!
+
+> x rug
+Sensible, practical, and easy to vacuum.
+
+> x paneling
+Your dad just recently bought this. It was fun helping him put it up.
+
+> x boombox
+This is the JVC RC-M90, the cutting edge of sound technology. Uncle Joe got it for Grandma for her birthday. It's blasting out "Bette Davis Eyes" at maximum loudness. The boombox is closed.
+
+> open it
+You open the boombox, revealing a battery.
+
+> x battery
+A single Z-cell battery. This thing is honestly huge! Ada made it herself, years ago.
+
+> x Grandma
+Grandma looks pretty tired. Then again, she has been for weeks. She's comfortable on the couch in her house dress and slippers. She notices you looking and waves at you cheerfully.
+
+> talk to Grandma
+"What is it, dear?" asks your grandmother.
+
+1. "Hey Grandma, some woman threw this list at me."
+2. "Happy Birthday!"
+3. "Grandma, do you know where the plates are?"
+4. "I can't find Uncle Rob anywhere."
+5. "Grandma, have you seen the good serving dish?"
+6. "That's all I wanted to say, Grandma."
+> 1
+"Hey Grandma, some woman threw this list at me."
+
+"Oh, that sounds pretty unusual. I've had a clipboard thrown at my face, if that makes you feel any better," she answers, still watching TV.
+
+"No, that doesn't...actually, yeah, that does kind of make me feel better," you answer.
+
+"Did she seem nice?" says Grandma.
+
+"She seemed familiar, somehow. She was leaning out the upstairs window," you say.
+
+"Ah, I see the problem. Don't worry dear, that kind of thing will sort itself out," says Grandma.
+
+1. "Happy Birthday!"
+2. "Grandma, do you know where the plates are?"
+3. "I can't find Uncle Rob anywhere."
+4. "Grandma, have you seen the good serving dish?"
+5. "That's all I wanted to say, Grandma."
+> 1
+"Happy Birthday!"
+
+"Oh thank you, Katrina," says Grandma.
+
+You try not to react at her calling you your mom's name. Grandma notices your unease and thinks for a moment.
+
+"I mean CJ, of course. It's not every day you turn eighty-four years old! I appreciate you taking care of the party!" she says, putting a kind hand on yours for a moment.
+
+1. "Grandma, do you know where the plates are?"
+2. "I can't find Uncle Rob anywhere."
+3. "Grandma, have you seen the good serving dish?"
+4. "That's all I wanted to say, Grandma."
+> 1
+"Grandma, do you know where the plates are?"
+
+You said plates? I'm not sure what plates you're talking about, dear, but I think your father would know."
+
+1. "Grandma, do you know where the plates are?"
+2. "I can't find Uncle Rob anywhere."
+3. "Grandma, have you seen the good serving dish?"
+4. "That's all I wanted to say, Grandma."
+> 2
+"I can't find Uncle Rob anywhere."
+
+"Oh, I'm not sure. He walks around like it was his purpose in life. Have you checked with Ada? The two of them think alike."
+
+1. "Grandma, do you know where the plates are?"
+2. "I can't find Uncle Rob anywhere."
+3. "Grandma, have you seen the good serving dish?"
+4. "That's all I wanted to say, Grandma."
+> 3
+"Grandma, have you seen the good serving dish?"
+
+"I lost that darned thing years ago. I was finishing washing up and putting away some of the plates when I heard the loudest clatter of my life. All the pots and pans had fallen over and rolled all over the room. I found them all eventually, but not the dish," says Grandma.
+
+1. "Grandma, do you know where the plates are?"
+2. "I can't find Uncle Rob anywhere."
+3. "Grandma, have you seen the good serving dish?"
+4. "That's all I wanted to say, Grandma."
+> 4
+"That's all I wanted to say, Grandma."
+
+She nods at you politely before going back to watching the TV.
+
+> x TV
+Dallas is playing on the television. It's a rerun, so you already know who shot JR. Grandma may have forgotten. The doctors like keeping things simple for her, these days.
+
+> x recliner
+Grandma's recliner is well past its glory years, but she refuses to replace it.
+
+> x Sprite
+Grandma's been into Sprite ever since she first saw it advertised, years ago.
+
+> n
+You walk north.
+
+Garage
+The garage has been converted into a workshop for Ada. A whiteboard is in the corner.
+
+The family room is to the south.
+
+Your cousin Ada is working diligently on her latest theorem in applied homological algebra. She seems withdrawn and focused.
+
+She notices you walk in.
+
+"Hi, CJ," she says absent-mindedly, and keeps walking around.
+
+> x whiteboard
+The whiteboard is covered in equations.
+
+> x equations
+Looks like she's studying finite subdivision rules. This is a series calculating the growth rate of a Gromov hyperbolic group.
+
+> x Ada
+Ada is a tall, young woman, about your age. Her wavy hair is dyed bright red, and she's wearing a black sweater that hangs loosely on her.
+
+She's your closest cousin, and a genius.
+
+> x sweater
+Ada has always preferred black sweaters.
+
+> talk to Ada
+Ada says, "Sorry, CJ, I'm busy. The life of a mathematician never slows down! Well, maybe never. But at least not until I've proven that there are no zeros off the critical line using annealing methods in numerical partial differential equations. But enough about me. What's up?"
+
+1. "Ada, did you see a strange woman upstairs?"
+2. "Make sure you're ready for dinner soon!"
+3. "So why do you like math so much anyway?"
+4. "Hey, do you know where Uncle Rob is?"
+5. "Ada, I seem to be traveling through time. Do you know anything about that?"
+6. "Hey, I know this is weird, but do you remember much about my mom?"
+7. "Nevermind, Ada!"
+> 1
+"Ada, did you see a strange woman upstairs?"
+
+"Besides you and me? Not really. Actually, have you ever even been upstairs? What with your... problem?"
+
+"It's not a problem, Ada!" you exclaim.
+
+"Oh, okay. That's actually a nice attitude. Anyway, no I haven't seen anyone. If you find her, let me know and I'll go say hi," she says.
+
+1. "Make sure you're ready for dinner soon!"
+2. "So why do you like math so much anyway?"
+3. "Hey, do you know where Uncle Rob is?"
+4. "Ada, I seem to be traveling through time. Do you know anything about that?"
+5. "Hey, I know this is weird, but do you remember much about my mom?"
+6. "Nevermind, Ada!"
+> 1
+"Make sure you're ready for dinner soon!"
+
+"Not now, CJ," says Ada. "Sorry if it sounds rude, but I feel like I'm on a real mission, like I can do something great here! As soon as I can figure out a couple problems."
+
+1. "So why do you like math so much anyway?"
+2. "Hey, do you know where Uncle Rob is?"
+3. "Ada, I seem to be traveling through time. Do you know anything about that?"
+4. "Hey, I know this is weird, but do you remember much about my mom?"
+5. "Nevermind, Ada!"
+> 1
+"So why do you like math so much anyway?"
+
+"Well, CJ, who wouldn't like math? In all the other sciences, you can doubt what your senses tell you. For all we know, nothing is real and we're just in a simulation or something. But math is a way of organizing human thought in consistent patterns, and it can be a source of truth even if you question everything else," she says.
+
+"Wow, I guess that makes sense," you say.
+
+"Also I tried biology but it was kind of boring," she says.
+
+1. "Hey, do you know where Uncle Rob is?"
+2. "Ada, I seem to be traveling through time. Do you know anything about that?"
+3. "Hey, I know this is weird, but do you remember much about my mom?"
+4. "Nevermind, Ada!"
+> 1
+"Hey, do you know where Uncle Rob is?"
+
+"Man, why do people keep asking me that?" says Ada. "Rob is kind of...you know..." she makes a weird gesture with her finger, like an infinity sign, and leans forward to whisper, "non-spatio-temporally anchored. You know. Like you. And our other cousin."
+
+She gives you a knowing nod and goes back to work.
+
+1. "Hey, do you know where Uncle Rob is?"
+2. "Ada, I seem to be traveling through time. Do you know anything about that?"
+3. "Hey, I know this is weird, but do you remember much about my mom?"
+4. "Nevermind, Ada!"
+> 2
+"Ada, I seem to be traveling through time. Do you know anything about that?"
+
+"Haha! Oh, CJ, you're such a kidder!" she says. "You know that you're one of the few members of the family with spatio-temporal disjunction. I've explained it to you many times before! And I specifically recall how disappointed you were when your beautiful and wondrous ability could be reduced to a simple and mundane 4-dimensional explanation! Oh, how the joy of mystery breaks down in the face of pure reason," she says, shaking her head.
+
+"Oh, yeah," you say. "I completely forgot about my spatio-temporal disjunction. Thanks for reminding me!"
+
+1. "Hey, do you know where Uncle Rob is?"
+2. "Hey, I know this is weird, but do you remember much about my mom?"
+3. "Nevermind, Ada!"
+> 2
+"Hey, I know this is weird, but do you remember much about my mom?"
+
+"I only met her when I was very little. It might be better to ask your dad or Joe or someone," she says a little uncomfortably.
+
+"That's why I wanted to talk to you; they knew her more and I feel like they would just get sad if I asked. What do you remember about her?" you say.
+
+"Oh, gosh. Well, I remember that she used to tell me stories when I was bored, like from Greek mythology. Cyclops and stuff. That was pretty cool. And she liked the color blue, and I swear I saw her take a pan out of the oven with her bare hands once. Although that doesn't really make sense given the laws of thermodynamics. Does that help?" she asks.
+
+"Yeah, that's great. Thanks Ada!" you say.
+
+1. "Hey, do you know where Uncle Rob is?"
+2. "Nevermind, Ada!"
+> 2
+"Nevermind, Ada!"
+
+"OK, CJ, see you later!" she says.
+
+> s
+You walk south.
+
+Family Room
+This family room is certainly much more inviting than your college dorm room. The brown rug and wood paneling make you feel like you're in a cabin.
+
+There is a calendar on the wall. The office is to the south, the garage is north, the kitchen is east, and the stairs go up and down. The front door is to the west.
+
+Music is coming from a boombox.
+
+Grandma is watching TV from her old, busted recliner. It looks like Dallas is playing again. She's holding her usual bottle of Sprite.
+
+> s
+You walk south.
+
+Office
+This is your father's office. It's covered in shelves filled with old classics and weathered issues of National Geographic, with a memory board on one wall. His old wooden desk is here, with his new computer.
+
+The family room is back to the north.
+
+Your dad sighs deeply, then rummages through his papers.
+
+> quit
+Really quit? (y/n) > y
+
+Thanks for playing!
