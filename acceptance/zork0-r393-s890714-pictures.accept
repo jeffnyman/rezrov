@@ -1,0 +1,2225 @@
+! SEED=24
+! PICTURES=yes
+! GAME=../entharion/zcode-infocom/zork0-r393-s890714.z6
+
+# Prologue
+
+ne. s. w. e. w
+examine man
+dive under table
+stand up
+get the parchment
+>
+
+# A second any-key pause follows the "94 YEARS LATER" title; a
+# missed press here once shifted every command a room short and
+# phantom-walked the whole first act (23 refusals, all flagged).
+
+>
+
+# Main Area of Castle
+
+up. s
+examine the rebus
+
+# The rebus is a v6 picture; its pause takes a key too.
+
+>
+s
+take bag
+press button
+
+# Pressing a key-shaped button frees one flattened animal from
+# the rebus -- this one, fittingly, the mouse.
+
+n. n. d. s. s
+take the sceptre
+sit on throne
+snap fingers
+stand up
+s
+take candle
+s. w. u. u
+take key
+say "Y"
+w. s
+take glove and cloak
+wear glove
+n. e. d. d. e. e.
+d. s. d
+take the cap
+
+# Dropping into the oubliette summons the jester. His riddles are
+# seed-random: at seed 24 he asks the not-a-twin riddle here.
+
+wait
+answer triplet
+sw
+open iron maiden
+open water chamber
+take metronome
+ne. n. u. w
+n. n. n. n
+n. e
+put sceptre in cauldron
+put metronome in cauldron
+
+# The Village Area
+
+e. d
+take walnut
+u. w. w
+ring the bell
+say "time"
+
+# The portcullis riddle's answer -- and the jester's parting gift
+# is a clown nose that suffocates in about thirty turns.
+
+remove the nose
+n
+take the worm
+nw. nw. u
+turn the wheel
+d. nw. nw. sw
+open the locker
+take the steel key
+ne. ne. se. e. n
+answer bookkeeper
+
+# The coin lands at your feet -- along with everything you were
+# holding, because "see you later, alligator" is literal. The
+# transformation pops off after a few turns; then gather up.
+
+z
+take all
+s. e. s
+sing lullaby
+take package
+read it
+open it
+examine the pigeon
+read the pigeon
+
+# The ceramic pigeon package stays behind for now: hands are full
+# and the walkthrough wants it later, from a lighter load.
+
+n. e
+
+# The T-square is on Floor 19 -- eighteen flights up from the
+# lobby -- and hands must be one short of full to take it.
+
+up. up. up. up. up
+up. up. up. up. up
+up. up. up. up. up
+up. up. up
+s
+wear the cap
+take the T-square
+n
+
+# Nineteen flights down is the Basement, one below the lobby; the
+# twentieth spends the move the jester's breeze steals mid-stair.
+
+down. down. down. down. down
+down. down. down. down. down
+down. down. down. down. down
+down. down. down. down. down
+look
+push the key-shaped button
+
+drop the walnut. drop the worm
+s
+get on stand
+get off
+take violin
+get on stand
+get off
+n. up. w. w. w
+
+nw. sw. se. se. se. se
+
+# That last move was a jester bat-abduction, not the walkthrough's
+# intended route through the Inner Bailey; it drops us at the Outer
+# Bailey instead, with the slate handed over early as a side effect.
+# Read and drop it here per the jester notes, then take the route
+# back from the Outer Bailey that the walkthrough gives much later
+# (in "Castle and Village again"), since it happens to apply now too.
+
+read slate
+drop slate
+se. se. se. se. s. e
+put t-square in cauldron
+put violin in cauldron
+
+# This completes "The Village Area" section.
+
+# The East Wing
+
+wear glove
+s. se
+unlock door with iron key
+drop iron key
+open door
+e. n
+touch armor. touch armor. touch armor
+take lance
+read encyclopedia
+
+# The jester's encyclopedia entry is a v6 picture page, like the
+# rebus; it takes two throwaway keypresses to dismiss, not one. At
+# seed 24 his middle name comes back as Urgwitz -- needed later at
+# the Cave-In in Antharia.
+
+look up jester
+>
+>
+s. s
+open trap door
+n. e
+take wand
+e. up
+open north door
+n. n
+take goggles
+wear goggles
+s. s
+save
+open south door
+
+# The Tower of Bozbar reads the weight number and the destination
+# peg (L/C/R) as two separate keypresses; putting both on one line
+# only feeds it the first. This is the walkthrough's sequence to the
+# right peg, one token per line.
+
+1
+L
+2
+R
+1
+R
+3
+L
+1
+C
+2
+L
+1
+L
+4
+R
+1
+R
+2
+C
+1
+C
+3
+R
+1
+L
+2
+R
+1
+R
+5
+L
+1
+C
+2
+L
+1
+L
+3
+C
+1
+R
+2
+C
+1
+C
+4
+L
+1
+L
+2
+R
+1
+R
+3
+L
+1
+C
+2
+L
+1
+L
+6
+R
+1
+R
+2
+C
+1
+C
+3
+R
+1
+L
+2
+R
+1
+R
+4
+C
+1
+C
+2
+L
+1
+L
+3
+C
+1
+R
+2
+C
+1
+C
+5
+R
+1
+L
+2
+R
+1
+R
+3
+L
+1
+C
+2
+L
+1
+L
+4
+R
+1
+R
+2
+C
+1
+C
+3
+R
+1
+L
+2
+R
+1
+R
+
+>
+open north door
+n. e
+take manuscript
+w. s
+save
+open south door
+
+# Second Tower of Bozbar, this time to the left peg.
+
+1
+C
+2
+L
+1
+L
+3
+C
+1
+R
+2
+C
+1
+C
+4
+L
+1
+L
+2
+R
+1
+R
+3
+L
+1
+C
+2
+L
+1
+L
+5
+C
+1
+R
+2
+C
+1
+C
+3
+R
+1
+L
+2
+R
+1
+R
+4
+C
+1
+C
+2
+L
+1
+L
+3
+C
+1
+R
+2
+C
+1
+C
+6
+L
+1
+L
+2
+R
+1
+R
+3
+L
+1
+C
+2
+L
+1
+L
+4
+R
+1
+R
+2
+C
+1
+C
+3
+R
+1
+L
+2
+R
+1
+R
+5
+L
+1
+C
+2
+L
+1
+L
+3
+C
+1
+R
+2
+C
+1
+C
+4
+L
+1
+L
+2
+R
+1
+R
+3
+L
+1
+C
+2
+L
+1
+L
+
+>
+open north door
+n. w
+take cup
+e. s. down
+w. w. w
+nw. n
+put lance in cauldron
+put manuscript in cauldron
+
+# This completes "The East Wing" section.
+
+# The West Wing
+
+# The walnut we'll need for the riddle down this wing was dropped
+# back in the FrobozzCo Basement (see "The Village Area" above), so
+# a detour to fetch it comes first. The worm we left there too gets
+# picked up in the same trip, to save a third pilgrimage before
+# Fenshire. Movement-only stretches below are chained; anything
+# that could go sideways gets its own line.
+
+w. n. nw. nw. u. d. nw. nw. sw
+ne. ne. se. e. n. s. e. s. n. e
+down
+take walnut
+take worm
+up
+
+# Climbing back out of the Basement lands on the jester's "See you
+# later, alligator!" turn, reliably, with this exact command count.
+# The transformation lasts a few turns and blocks taking anything
+# meanwhile, so wait it out before collecting the dropped pile.
+# Worn items don't count against the carry-weight limit, so
+# re-wearing the cap/glove/goggles before re-taking the walnut and
+# worm leaves enough headroom to hold both.
+
+wait. wait. wait
+take all
+wear cap. wear glove. wear goggles
+take walnut
+take worm
+
+# Back to the Banquet Hall the short way (the Root Cellar detour
+# from "The Village Area" isn't needed a second time), retracing
+# the same corridors in reverse.
+
+w. s. n. w. n. s. w. nw. sw
+sw. ne. se. se. u. d. se. se. s. e
+drop nose
+w. w
+point wand at lobster
+take nutcracker
+s. sw
+unlock door with steel key
+drop steel key
+open door
+w
+
+# The second "west" is the jester's riddle challenge, not an actual
+# move -- it blocks in place. Cracking the walnut only counts if the
+# jester is watching, which the challenge guarantees; showing or
+# eating it beforehand (with no jester present) silently fails the
+# riddle and wastes the only walnut.
+
+w
+open walnut with nutcracker
+show nut to jester
+eat nut
+drop shell
+
+# The funny paper (jester item 3) blows into view for exactly one
+# turn, right after dropping the shell -- take it immediately or
+# it's gone.
+
+take paper
+read paper
+drop paper
+drop nutcracker
+n
+save
+play peggleboz
+
+# Peggleboz reads a source letter and a destination letter as two
+# separate keypresses, like the Tower of Bozbar -- one token per
+# line. This is the walkthrough's winning sequence.
+
+Q
+G
+S
+Q
+H
+R
+U
+L
+I
+K
+T
+I
+E
+J
+O
+G
+A
+E
+F
+N
+M
+O
+L
+J
+P
+F
+F
+C
+B
+D
+D
+K
+Q
+G
+E
+J
+O
+G
+
+X
+n
+
+# Wearing the goggles reveals the shell game's trick automatically
+# on entering; pointing at the jester's hat claims the bill -- and
+# triggers another alligator turn, right here, dropping everything
+# again.
+
+point to hat
+wait. wait. wait
+take all
+wear cap. wear glove. wear goggles
+s. s. e. ne. e. e. n
+put bill in cauldron
+drop wand
+drop worm
+drop cup
+drop coin
+drop cloak
+drop bag
+
+# The dumbbell is too heavy to carry alongside anything else --
+# even the candle -- since its 99-ugh size alone is right at the
+# carry-weight ceiling; worn items are free, so the goggles/glove/
+# cap can stay on. Drop everything else (the candle included) before
+# lifting it, then reclaim the candle back at the Banquet Hall.
+
+drop candle
+s. w. w. sw. w. s
+take dumbbell
+n. e. ne. e. e. n
+put dumbbell in cauldron
+take candle
+
+# This completes "The West Wing" section, up to the point of
+# gathering the coin, package, and cloak for the trip underground,
+# which is where the next stretch picks up.
+
+# Underground
+
+# The package (with the pigeon and perch) is still back at the Post
+# Office from "The Village Area", so it's collected here along with
+# the coin and cloak. The route there and back skips the Upper
+# Barbican and Garrison and URS Office side-trips from that earlier
+# section, since their puzzles are already solved.
+#
+# Everything from here on is written one command per line rather
+# than chained with periods. A chained "a. b. c" line is handed to
+# the game as a single buffered input, which changes when the
+# jester's random-event daemon gets a chance to fire compared to
+# each command arriving as its own read -- enough to actually change
+# outcomes (a chained six-move stretch here once triggered a bat
+# abduction that a separated version of the same six moves did not).
+# Since this section leans on that daemon firing at specific,
+# verified moments (the alligator turn below, in particular), each
+# command gets its own line.
+
+take coin
+take cloak
+w
+n
+nw
+nw
+u
+d
+nw
+nw
+sw
+ne
+ne
+se
+e
+e
+s
+take package
+n
+w
+w
+nw
+sw
+se
+se
+se
+se
+s
+e
+w
+s
+down
+down
+examine vault door
+
+# Any number between 1 and 2570 cracks the safe automatically, since
+# we're wearing the glove.
+
+turn dial to 42
+open vault door
+s
+take certificate
+n
+n
+take both passages
+read notice
+drop notice
+s
+up
+sw
+s
+w
+w
+
+# The maze rooms all look alike apart from the number engraved on
+# the wall; that number is how a lot is identified below. A wall's
+# direction must be its short compass form -- "nw wall", not
+# "northwest wall" -- or the parser reads the direction as a move
+# instead of an adjective.
+
+sw
+se
+w
+w
+n
+ne
+n
+install nw-se passage in nw wall
+nw
+ne
+install n-s passage in north wall
+n
+ne
+w
+sw
+sw
+sw
+w
+nw
+drop perch
+wear cloak
+w
+w
+w
+n
+give pigeon to soldier
+remove cloak
+
+# The pigeon "scuttles out of reach" on a random try; if the first
+# TAKE fails, just try again -- it always works eventually. This
+# happens again below wherever the pigeon gets taken.
+
+take pigeon from soldier
+take pigeon from soldier
+knight, north twice then west once
+drop pigeon
+take pigeon
+knight, east once then south twice
+drop pigeon
+take pigeon
+take hardhat from soldier
+wear hardhat
+take perch
+drop cloak
+se
+e
+ne
+ne
+ne
+e
+sw
+s
+sw
+se
+s
+sw
+s
+e
+e
+nw
+ne
+e
+e
+s
+s
+read sign
+put coin in basket
+drop perch
+drop pigeon
+drop certificate
+drop package
+s
+e
+down
+take all
+up
+w
+n
+take all
+
+# TAKE ALL leaves the pigeon behind if it scuttles on that turn --
+# check for it explicitly rather than trusting the general sweep.
+
+take pigeon
+put pigeon in package
+put perch in package
+n
+e
+answer urgwitz
+take bomb
+remove nose
+w
+n
+n
+ne
+down
+down
+throw bomb at pits
+take lantern
+up
+up
+up
+n
+e
+
+# The jester's alligator turn hits again right here, dropping
+# everything in the Banquet Hall itself -- convenient, at least,
+# since that's where we're headed anyway.
+
+wait
+wait
+wait
+take all
+wear hardhat
+wear goggles
+wear glove
+wear cap
+put certificate in cauldron
+drop package
+drop milky orb
+drop fiery orb
+drop smoky orb
+drop glittery orb
+w
+s
+down
+n
+take screwdriver
+s
+up
+n
+e
+put screwdriver in cauldron
+
+# This completes "Underground" section.
+
+# Port Foozle
+
+# There's a bedbug blocking the Banquet Hall's exit again.
+
+sing lullaby
+s
+w
+down
+sw
+s
+s
+w
+w
+sw
+w
+w
+w
+n
+sit down
+
+# Double Fanucci is a raw single-keystroke UI, like the Tower of Bozbar
+# and Peggleboz: each play is chosen by moving a cursor with U/D/L/R
+# (down moves within a column, right moves a column over, both
+# wrapping) and selecting with a bare keystroke for Enter -- written
+# here as ">" per the acceptance-script format, same as the picture
+# dismissals elsewhere. Navigating with anything else (a whole word,
+# say) feeds the menu one raw character at a time and can walk it
+# somewhere nonsensical.
+#
+# The actual win condition, from the source (HIGHWAY.ZIL): the very
+# first UNDERTRUMP played right after the jester discards Trebled
+# Fromps sets a hidden streak counter to 1 if the card is one the
+# scoring table allows for that play (most are); two more UNDERTRUMPs
+# in a row, each independently valid, complete the streak and win
+# outright. Any other play in between -- even a harmless DRAW -- or a
+# single invalid UNDERTRUMP resets the streak to zero, so the run below
+# discards the whole starting hand (revealing what it holds) and
+# redraws until all three hand slots hold cards confirmed valid for
+# UNDERTRUMP, then just draws (which never touches the streak) until
+# the jester's discard naturally happens, and fires all three
+# undertrumps back to back.
+#
+# This makes this accept script fragile to change: it hinges on
+# the seed dealing three specific replacement cards (an Eight of
+# Fromps, a Four of Faces, and, by luck, an already-valid Trebled
+# Fromps drawn along the way) and on the discard landing at exactly
+# the twelfth stall draw. A different seed will deal different cards
+# and need different stalling, though the shape of the approach -- vet
+# the hand while it's safe to, then wait -- carries over.
+
+>
+d
+>
+1
+>
+d
+>
+2
+>
+d
+>
+3
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+d
+d
+r
+>
+1
+>
+d
+d
+r
+>
+2
+>
+d
+d
+r
+>
+3
+>
+take broom
+stand
+
+# The Inquisition's number-calling is on its own clock: once your
+# number is called, the very next command must be the final request,
+# or the executioner hangs you before another turn passes.
+
+s
+e
+n
+take number
+take box
+read sign
+wait
+executioner, behead me
+drop ticket
+s
+s
+se
+read sign
+ne
+
+# Each door's second statement names a different race; the walkthrough
+# picks whichever one names the Veritassi, which here is the right
+# door. Reading all three isn't required to solve it, just to see why.
+
+read left door
+read center door
+read right door
+open right door
+take shovel
+down
+ne
+e
+e
+n
+n
+ne
+up
+
+# This completes "Port Foozle" section.
+
+# Castle and Village again
+
+s
+s
+s
+s
+e
+down
+s
+se
+sweep cobwebs with broom
+take flask
+drop broom
+nw
+n
+n
+n
+
+# The funny paper (jester item 3, back in "The West Wing" above) said
+# to look under the longest slab; that's the hole to the Oracle, not
+# used yet.
+
+look under longest slab
+up
+n
+w
+nw
+n
+put flask in cauldron
+w
+n
+nw
+nw
+nw
+nw
+
+# The slate (jester item 1, back in "The Village Area") said to stand
+# at the oldest and mightiest elm and jump north once then west once;
+# both jumps succeed silently, marking the spot for the dig.
+
+stand on stump
+jump north
+jump west
+dig with shovel
+drop shovel
+open chest
+take crown
+se
+se
+se
+se
+s
+e
+put crown in cauldron
+take package
+
+# This completes "Castle and Village again" section.
+
+# The Lake Area
+
+s
+w
+down
+se
+e
+enter dock
+enter boat
+examine controls
+press white button
+down
+examine bathysphere
+open box
+get pellet
+drop pellet
+open bathysphere
+get in bathysphere
+close door
+examine controls
+turn on lights
+put hand in waldo hole
+get pellet
+
+# The waldo (the bathysphere's remote claw) is what actually holds the
+# pellet and, later, the ruby -- not us directly, so they stay out of
+# our own inventory the whole time. Descending and surfacing both take
+# exactly four turns of waiting.
+
+push lever down
+wait
+wait
+wait
+wait
+drop pellet
+get ruby
+push lever up
+wait
+wait
+wait
+wait
+remove hand from waldo hole
+turn off lights
+open door
+get out of bathysphere
+take ruby
+up
+press green button
+leave yacht
+leave dock
+w
+w
+answer music
+
+# This completes "The Lake Area" section.
+
+# The Grotto and Shrine
+
+e
+s
+e
+ne
+n
+e
+take amulet
+wear amulet
+push boulder
+n
+push key-shaped button
+ne
+
+# The Shrine's bowl needs three rounds of gravel, each one only
+# reachable by sliding down the Grotto's own passage (which also
+# scatters whatever's carried, pigeon and candle included, so both
+# get retaken each time before the pigeon's teleport-home brings us
+# back). The perch stays behind here the whole time, inside the
+# package dropped with everything else -- that's what the pigeon
+# teleports to.
+
+drop diploma
+drop ruby
+take pigeon
+drop package
+drop box
+remove amulet
+drop amulet
+remove cap
+drop cap
+remove glove
+drop glove
+remove goggles
+drop goggles
+remove hardhat
+drop hardhat
+sw
+down
+take gravel
+take candle
+take pigeon
+put gravel in bowl
+sw
+down
+take gravel
+take candle
+take pigeon
+put gravel in bowl
+sw
+down
+take gravel
+take candle
+take pigeon
+put gravel in bowl
+touch elixir
+take all
+wear amulet
+wear cap
+wear glove
+wear goggles
+wear hardhat
+take perch
+put pigeon in package
+put perch in package
+sw
+s
+down
+n
+take saddle
+take rooster
+s
+s
+take fox
+sw
+take fly
+w
+n
+enter dock
+enter yacht
+press yellow button
+wait
+leave boat
+leave dock
+w
+w
+take toboggan
+n
+up
+n
+e
+take worm
+put diploma in cauldron
+put saddle in cauldron
+
+# Drop everything but the fox, worm, and rooster, per the walkthrough
+# -- the large fly, package, ruby, box, candle, and even the toboggan
+# all wait here at the Banquet Hall until they're wanted again (the
+# toboggan not until "Oracle and Glacier", much later).
+
+drop fly
+drop package
+drop ruby
+drop box
+drop candle
+drop toboggan
+
+# This completes "The Grotto and Shrine" section.
+
+# Fenshire
+
+# The last "drop toboggan" was a bat abduction, not an ordinary drop:
+# it carries us off to the Bat's Lair with the ruby, candle, box, and
+# toboggan in hand (everything dropped a moment before we could
+# actually let go of it), well outside the walkthrough's assumed
+# Banquet Hall starting point. Rather than chase the exact intended
+# route from there, the way back is the same slide the Shrine's gravel
+# puzzle already proved reliable: down through the Grotto to the
+# Lowest Hall (which scatters everything carried, same as it did
+# there), then up twice and east, north to the Banquet Hall. Since
+# we're passing through anyway, the package and orbs get collected
+# here too, well ahead of where the walkthrough later asks for them.
+
+take all
+w
+n
+up
+n
+down
+take all
+up
+up
+e
+n
+take package
+take glittery orb
+take smoky orb
+take fiery orb
+
+# Only three more hand-slots are free at this point, not four, so the
+# milky orb has to wait; everything not needed for the river-crossing
+# puzzle goes back down here regardless, to be collected in full once
+# there's a free hand for all four orbs together.
+
+drop fiery orb
+drop smoky orb
+drop glittery orb
+drop package
+drop ruby
+drop box
+drop candle
+drop toboggan
+w
+w
+s
+sw
+w
+w
+enter dirigible
+press right button
+wait
+wait
+wait
+wait
+out
+s
+e
+n
+
+# Carrying all three animals into the Marsh is what sends the jester
+# running off to set up "lunch" -- no explicit GIVE needed. The
+# crossing itself is the classic fox/goose/grain puzzle: fox and worm
+# are safe left together, so the rooster goes over alone first; the
+# fox then goes over but comes back paired with the rooster so the two
+# are never left alone together; the rooster stays behind while the
+# worm goes over to join the fox (safe, as established at the start);
+# then the rooster makes the final crossing alone.
+
+drop fox
+drop worm
+n
+drop rooster
+s
+take fox
+n
+take rooster
+drop fox
+s
+take worm
+drop rooster
+n
+drop worm
+s
+take rooster
+n
+take hexagonal block
+enter gondola
+press left button
+wait
+wait
+wait
+wait
+out
+e
+e
+ne
+e
+e
+n
+take ruby
+take candle
+take toboggan
+take package
+take glittery orb
+take smoky orb
+take fiery orb
+take milky orb
+
+# This completes "Fenshire" section.
+
+# Oracle and Glacier
+
+sing lullaby
+s
+se
+e
+s
+down
+down
+take perch
+drop perch
+put ruby in depression
+
+# The oracle's eyes cycle 2-3-4-0-1-2-3-4-0-1..., four turns to a
+# state, with EXAMINE AMULET (or any other action) each spending one
+# of those turns. From the moment the ruby seats (which is itself
+# turn 0 of the "2 eyes" state), the "1 eye" state -- the one that
+# leads to the Glacier -- runs from turn 16 through turn 19. Sixteen
+# throwaway turns land the seventeenth action, ENTER ORACLE, on the
+# first of those turns.
+
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+enter oracle
+
+# The oracle's teleport is a dramatic v6 transition, like the pictures
+# elsewhere; it swallows the next command as a dismiss keystroke if
+# one isn't given explicitly.
+
+>
+drop toboggan
+ride toboggan
+
+# Of the four orbs, only the smoky one's REFLECTION shows the sleeping
+# maiden (Zilbeetha, from the encyclopedia entry read back in "The
+# East Wing"); examining the orbs directly all give the same generic
+# description regardless.
+
+look at reflection of milky orb
+look at reflection of fiery orb
+look at reflection of smoky orb
+look at reflection of glittery orb
+drop milky orb
+drop fiery orb
+drop glittery orb
+throw smoky orb east
+get off toboggan
+w
+take scale model
+e
+se
+ne
+take orb
+take pigeon
+drop pigeon
+take pigeon
+up
+up
+n
+w
+nw
+n
+put scale model in cauldron
+
+# This completes "Oracle and Glacier" section.
+
+# Crag Area
+
+take wand
+s
+w
+down
+se
+save
+
+# Getting to the Crag the first time needs entering the Oracle on
+# exactly the FIRST turn of a "4 eyes" state -- any other turn,
+# including later turns of that same state, lands on the Glacier
+# instead. Eighteen throwaway turns from the save land the nineteenth
+# action on that first turn.
+
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+
+# The wand's transformation lasts 16 turns from here, so everything
+# through tying the rope off needs to happen without delay.
+
+point wand at snake
+open cage
+take rope
+drop pigeon
+take pigeon
+enter oracle
+press key-shaped button
+down
+tie rope to spire
+down
+take easel
+take landscape
+drop pigeon
+take pigeon
+
+# The rope's already served its purpose, so the wand's clock no longer
+# matters. Getting back to the Crag a second time is much less fussy
+# than the first: any state other than exactly "1 eye" seems to do,
+# even mid-blink, though "no eyes" is what the walkthrough asks for
+# and ten throwaway turns lands on it here.
+
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+enter oracle
+ne
+down
+put orb on altar
+take flower
+up
+sw
+sw
+put hexagonal block in hole
+s
+take sapphire
+drop pigeon
+take pigeon
+up
+up
+n
+w
+nw
+n
+put easel in cauldron
+put landscape in cauldron
+
+# Fenshire Again
+
+w
+w
+s
+sw
+w
+w
+enter dirigible
+press right button
+wait
+wait
+wait
+wait
+out
+s
+e
+s
+
+# Snarfem is a Nim variant with four pebble piles. The walkthrough's hint
+# mechanism (flowers drawn in the corners of the screen) is purely
+# graphical -- fenshire.zil's DRAW-FLOWERS routine only ever calls SCREEN
+# and DISPLAY, with no text fallback -- so it's invisible here. Luckily,
+# trying to remove more pebbles than a pile holds triggers a bounds-check
+# message ("There are only N pebbles in Pile #M.") that doesn't consume a
+# turn, which is enough to read off a pile's exact size for free right
+# before actually moving on it. Probing that way turn by turn (pile 1,
+# then pile 2, then pile 3, then pile 4, taking 1 pebble for real each
+# time to keep the exploration going) revealed this seed's starting deal:
+# Pile #1 = 6, Pile #2 = 4, Pile #3 = 3, Pile #4 = 2. That's everything
+# needed to play it as ordinary Nim: XOR the pile sizes together, and on
+# each turn take from whichever pile brings its size down to (pile XOR
+# the running total) -- that always exists when the total isn't already
+# zero, and it keeps leaving the jester a losing (XOR = 0) position. The
+# jester only ever gets to move from a losing position here, so its move
+# is a random flail rather than a real threat; just recompute the safe
+# move from whatever it leaves behind. The exact sequence below is this
+# seed's specific game: 6^4^3^2 = 3, so Pile #3 (3^3 = 0) goes first.
+
+# [Hit any key to begin playing Snarfem.]
+
+>
+3
+3
+
+# [Hit any key to continue] after the jester's move. It flails from
+# 6/4/0/2 to 1/4/0/2 (takes 5 from Pile #1). XOR=7; take 1 from Pile #2
+# (4^7=3) to leave 1/3/0/2 (XOR=0).
+
+>
+2
+1
+
+# It flails from 1/3/0/2 to 0/3/0/2 (takes 1 from Pile #1). XOR=1; take 1
+# from Pile #2 (3^1=2) to leave 0/2/0/2 (XOR=0).
+
+>
+2
+1
+
+# It flails from 0/2/0/2 to 0/0/0/2 (takes 2 from Pile #2). Only Pile #4
+# is left, and it's already the whole XOR -- take both pebbles from it to
+# empty every pile with us taking the last one: a win.
+
+>
+4
+2
+
+>
+take fan
+n
+put flower in vase
+e
+take ladder
+w
+w
+n
+enter dirigible
+press left button
+wait
+wait
+wait
+wait
+out
+e
+e
+ne
+e
+e
+n
+put fan in cauldron
+
+# This completes "Fenshire Again" section.
+
+
+```WALKTHROUGH
+Regarding the Jester
+
+The jester will appear at random throughout the game, as well as in several set locations. Sometimes he just says something bizarre. He can turn you into an alligator, which will cause you to drop everything you are carrying or wearing. When you have "a bit of difficulty breathing" he's put a rubber clown nose on you; remove it and drop it. While you are inside the castle's perimeter walls, he can make you get picked up by a bat and carried to a random outdoor castle location. He can also make a bedbug appear, which will block you from exiting the room; sing a lullaby to make the bedbug fall asleep. (These all might have been amusing if they happened once or twice; the fact that they happen many more times than that makes them extremely annoying.)
+
+You need to get three things from the jester:
+1. A slate, which he will give you. Read it, make a note of what it says, then drop it.
+2. A scroll, which he drops. Pick it up and read it if you like, but it doesn't change from game to game, so you can ignore it.
+3. A "funny paper" (comic strip), which will blow by a turn or two after he says "see you in the funny papers". You must pick it up immediately after you see "It's a funny paper!" Read it, make a note of what it says, then drop it. If you miss it the first time, you will get more chances.
+```
+
+# Antharia
+
+# Already wearing the hardhat and amulet, and already carrying the pigeon
+# and candle from earlier sections; only the lantern (left behind at the
+# Banquet Hall after the Crag Area section) needs picking up.
+
+take lantern
+s
+se
+e
+s
+down
+down
+
+# The Oracle's eye-amulet is a 4-turn-per-state cycle (0/1/2/3/4 eyes,
+# then back to 0) driven by the absolute turn count, and Antharia's Mine
+# Entrance needs "all four eyes" to enter. Arriving here mid "one eye",
+# the throwaway examines below walk the cycle up to four -- except the
+# jester picks this exact stretch to appear and have a bat haul us off
+# to the Outer Bailey mid-cycle. The cycle itself doesn't care where we
+# physically are, so the throwaway examines keep counting it up out
+# there; dropping and retaking the pigeon then jumps straight back to
+# the Oracle without spending a turn choosing a route back.
+
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+drop pigeon
+take pigeon
+examine amulet
+enter oracle
+e
+ne
+n
+press key-shaped button
+nw
+take quill pen
+se
+s
+sw
+w
+w
+sw
+se
+e
+turn on lantern
+up
+e
+se
+
+# The bird at the Aerie steals whichever light source is lit -- the
+# lantern on this first pass through -- and drops it at Cliff Bottom.
+# Cough to summon the witches, then address one by name (a plain "say
+# hello to witch" doesn't parse).
+
+cough
+sickly witch, hello
+take vial
+nw
+search nest
+take tie
+
+# The bird strikes again on this second Aerie visit, this time taking
+# the candle since the lantern's already been recovered once; both end
+# up waiting at Cliff Bottom together.
+
+w
+down
+take candle
+take lantern
+turn off lantern
+drop pigeon
+take pigeon
+up
+up
+n
+w
+nw
+n
+put tie in cauldron
+put quill in cauldron
+
+# This completes "Antharia" section.
+
+# Fublio Valley
+
+# Still wearing the amulet, still carrying the candle and pigeon; the
+# ladder came along from the Crag Area section too, so nothing extra
+# needs gathering here.
+
+s
+se
+e
+s
+down
+down
+
+# One eye open on arrival; the throwaway examines below walk the cycle
+# up to three. The jester shows up and watches this time, but -- unlike
+# during the Antharia timing above -- doesn't send a bat after us.
+
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+enter oracle
+sw
+s
+w
+read poem
+drop ladder
+climb ladder
+open trap door
+up
+press key-shaped button
+down
+e
+n
+se
+e
+read sign
+ne
+take 4-gloop vial
+
+# Taking the vial is noticed on the way out: Gumboz curses us hungry as
+# we pigeon-teleport off with his property. Harmless flavor text, but a
+# real random-per-seed event worth flagging in case it ever matters.
+
+drop pigeon
+take pigeon
+
+# This completes "Fublio Valley" section.
+
+# Testing Room
+
+# Already wearing the seaman's cap and carrying the lantern, candle,
+# wand, and both vials from earlier sections; only the bag (with the
+# flamingo food inside) needs picking up here.
+
+up
+up
+n
+w
+nw
+n
+look
+take bag
+look in bag
+put pigeon in package
+take package
+w
+w
+s
+point wand at flamingo
+take lawn ornament
+e
+down
+n
+n
+put lawn ornament in left booth
+enter right booth
+open bag
+
+# Three waits gets the lawn ornament back to a live (and audibly angry)
+# flamingo. Pressing the button then turns us into one too, dropping
+# everything -- but eating the flamingo food still works mid-transform,
+# and cures the hunger Gumboz cursed us with back in Fublio Valley.
+
+wait
+wait
+wait
+press button
+eat food
+
+# Two more waits and the transformation wears off; everything dropped
+# lands in this same booth to be picked up again. Carrying capacity
+# only stretches to the vials, lantern, candle, sapphire, package, and
+# the three headgear pieces on the first pass -- the bag and wand won't
+# fit until the cap and amulet go back on and stop counting against the
+# carry weight, freeing enough room to step back in for them.
+
+wait
+wait
+look
+take all
+wear cap
+wear amulet
+exit
+inventory
+enter right booth
+take bag
+take wand
+wear hardhat
+wear goggles
+wear glove
+exit
+
+# This completes "Testing Room" section.
+
+# Desert and Oasis
+
+s
+s
+se
+e
+enter dock
+enter yacht
+press green button
+wait
+leave boat
+leave dock
+s
+w
+ride camel
+e
+n
+w
+e
+s
+s
+sw
+se
+se
+ne
+dismount
+
+# The jester turns us into an alligator the moment we dismount at the
+# Oasis, dropping everything; two waits reverses it, and a third is
+# harmless padding. This happens twice in this section -- the second
+# time mid-puzzle, once the vials already hold water -- and both times
+# whatever's on the ground (water included) is exactly as it was
+# dropped, so waiting it out and picking everything back up costs
+# nothing but the turns.
+
+wait
+wait
+wait
+look
+take all
+wear cap
+wear amulet
+wear hardhat
+wear goggles
+wear glove
+
+# Measuring 6 gloops into the 9-gloop vial with only a 9- and a 4-gloop
+# vial to work with: fill the 9, decant 4 into the 4-gloop vial twice
+# (dumping it each time) to leave 1 in the 9-gloop vial, pour that 1
+# into the (now empty) 4-gloop vial, then refill the 9-gloop vial and
+# top the 4-gloop vial off from it -- which only needs 3 more gloops
+# since it already holds 1, leaving 9-3=6 behind.
+
+fill 9-gloop vial
+fill 4-gloop vial from 9-gloop vial
+empty 4-gloop vial
+fill 4-gloop vial from 9-gloop vial
+empty 4-gloop vial
+pour 9-gloop vial into 4-gloop vial
+fill 9-gloop vial
+fill 4-gloop vial from 9-gloop vial
+
+wait
+wait
+wait
+look
+take all
+wear cap
+wear amulet
+wear hardhat
+wear goggles
+wear glove
+drop pigeon
+take pigeon
+
+# This completes "Desert and Oasis" section.
+
+# Under the World
+
+# One eye open on arrival; the throwaway examines below walk the cycle
+# up to four. The jester shows up harmlessly partway through.
+
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+examine amulet
+enter oracle
+turn on lantern
+w
+sw
+se
+e
+up
+e
+se
+
+# The witches still can't lift the enchantment without brogmoid earwax
+# (that comes later, in the Endgame section) but the vial's water and
+# the ritual around it are the point of handing it over here.
+
+give 9-gloop vial to sickly witch
+drop 4-gloop vial
+nw
+w
+down
+take candle
+take lantern
+turn off lantern
+drop pigeon
+take pigeon
+up
+up
+n
+w
+nw
+n
+take cup
+w
+s
+down
+down
+down
+down
+down
+ne
+down
+down
+w
+w
+up
+drink potion
+
+# The fungus's murmured gripe names the missing cousin: Sherman. That
+# name is what gets called for later, in the Top of the World section.
+
+listen to fungus
+down
+e
+e
+up
+up
+sw
+up
+up
+up
+up
+up
+e
+n
+
+# This sapphire's already in hand from the Crag Area section; taking it
+# again here is a harmless no-op that just keeps the script matching
+# the walkthrough's own steps.
+
+take sapphire
+
+# This completes "Under the World" section.
+
+# Top of the World
+
+inventory
+w
+n
+nw
+nw
+nw
+nw
+ne
+se
+e
+e
+e
+e
+n
+take ring
+inventory
+drop pigeon
+take pigeon
+put pigeon in package
+
+# One eye already gone (it was two when we arrived) and the throwaway
+# examines below walk the cycle up to three, for Fublio Valley's Foot
+# of Statue.
+
+examine amulet
+examine amulet
+enter oracle
+sw
+w
+up
+up
+up
+up
+up
+up
+drink potion
+
+# Sherman is the cousin's name, learned back in the Under the World
+# section's ear-fungus murmuring.
+
+call sherman
+take little fungus
+down
+down
+down
+down
+down
+down
+e
+se
+s
+down
+wear ring
+look
+take sapphire
+
+# Wearing the ring drops everything; taking the sapphire triggers a
+# swoon that leaves a rusty key behind when we wake, plus 14 points.
+
+look
+remove ring
+drop ring
+take candle
+take key
+up
+n
+nw
+s
+w
+climb ladder
+up
+unlock trunk with key
+open trunk
+drop key
+take notebook
+
+# The trunk's fly is the larger fly the Endgame section wants alongside
+# the large fly already waiting at the Banquet Hall.
+
+take fly
+
+# The magic word from the notebook -- needed much later, at the very
+# end of the Endgame section -- is "lizowurt".
+
+read notebook
+drop notebook
+down
+e
+n
+se
+s
+down
+look
+take package
+take bag
+take wand
+take lantern
+take cup
+take fungus
+inventory
+drop pigeon
+take pigeon
+
+# This completes "Top of the World" section.
+
+# Endgame
+
+up
+up
+n
+w
+nw
+w
+down
+down
+down
+down
+down
+ne
+down
+down
+w
+w
+up
+drop fungus
+in
+take earwax
+
+# The pigeon's occasional "scuttle" refusal (established back in the
+# Antharia section) strikes here; retrying take pigeon a second time
+# clears it, same as always.
+
+drop pigeon
+take pigeon
+examine amulet
+take pigeon
+examine amulet
+enter oracle
+w
+sw
+se
+e
+up
+e
+se
+turn on lantern
+give wax to sickly witch
+
+# The bird at the Aerie steals a light source on both the way in and
+# the way back out this time -- the candle going in, the lantern going
+# out -- leaving both waiting together at Cliff Bottom.
+
+nw
+w
+down
+look
+take candle
+take lantern
+w
+nw
+take club
+drop pigeon
+take pigeon
+up
+up
+n
+w
+nw
+n
+put club in cauldron
+put lantern in cauldron
+remove cap
+put cap in cauldron
+
+# The large fly has been sitting in the Banquet Hall since the very
+# first "Village Area" section; the larger fly came from the trunk in
+# the Top of the World section. Both are needed for Otto below.
+
+inventory
+take large fly
+inventory
+w
+s
+s
+s
+s
+s
+w
+up
+up
+up
+up
+take even larger fly
+drop pigeon
+take pigeon
+
+# Two eyes open, for the Frigid River Delta.
+
+examine amulet
+examine amulet
+examine amulet
+enter oracle
+ne
+ne
+take largest fly
+sw
+sw
+sw
+sw
+nw
+ask otto for spyglass
+give large fly to otto
+give larger fly to otto
+give even larger fly to otto
+give largest fly to otto
+ask otto for spyglass
+take spyglass
+drop pigeon
+take pigeon
+up
+up
+n
+w
+nw
+n
+put spyglass in cauldron
+
+# All 24 cauldron items are in: "almost lost amongst the clouds of dark
+# power and energy," and time itself stops. The magic word from the
+# notebook (Top of the World section) restarts it and starts the
+# castle's collapse -- from here on every turn matters, so the dash to
+# the Perimeter Wall runs without a wasted step.
+
+look
+say lizowurt
+w
+n
+nw
+nw
+nw
+nw
+nw
+nw
+
+# A perfect 1000 points, in 1433 turns: Dungeon Master. The transition
+# into Zork I -- West of House -- prints after one last dismiss; the
+# script ends there, at the game's own RESTART/RESTORE/UNDO/QUIT/CREDITS
+# prompt, rather than choosing one for it.
+
+>

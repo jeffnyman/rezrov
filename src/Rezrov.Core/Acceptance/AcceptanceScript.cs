@@ -88,7 +88,7 @@ public sealed class AcceptanceScript
         ["<space>"] = 32,
     };
 
-    private AcceptanceScript(string scriptPath, string gamePath, string? blorbPath, string? interpreter, bool tandy, bool upper, bool graphics, int seed, IReadOnlyList<string> commands, IReadOnlyList<int> commandLines, IReadOnlyDictionary<int, int> seedChanges)
+    private AcceptanceScript(string scriptPath, string gamePath, string? blorbPath, string? interpreter, bool tandy, bool upper, bool graphics, bool pictures, int seed, IReadOnlyList<string> commands, IReadOnlyList<int> commandLines, IReadOnlyDictionary<int, int> seedChanges)
     {
         ScriptPath = scriptPath;
         GamePath = gamePath;
@@ -97,6 +97,7 @@ public sealed class AcceptanceScript
         Tandy = tandy;
         Upper = upper;
         Graphics = graphics;
+        Pictures = pictures;
         Seed = seed;
         Commands = commands;
         CommandLines = commandLines;
@@ -141,6 +142,16 @@ public sealed class AcceptanceScript
     /// graphics at all.
     /// </summary>
     public bool Graphics { get; }
+
+    /// <summary>
+    /// [zm 8.8.6] Whether a Version 6 game is told the screen can show
+    /// pictures. A stream of text cannot show one, so the play records
+    /// which pictures are on the screen and where, whenever that
+    /// changes. Off, the game is told there are none and takes its
+    /// text-only path, which is what every recording did before this
+    /// existed.
+    /// </summary>
+    public bool Pictures { get; }
 
     /// <summary>The seed for the game's random numbers at the start.</summary>
     public int Seed { get; }
@@ -200,6 +211,7 @@ public sealed class AcceptanceScript
         var tandy = false;
         var upper = false;
         var graphics = false;
+        var pictures = false;
         int? seed = null;
         var commands = new List<string>();
         var commandLines = new List<int>();
@@ -322,6 +334,14 @@ public sealed class AcceptanceScript
                         _ => throw new InvalidDataException($"{name}, line {i + 1}: GRAPHICS must be yes or no"),
                     };
                     break;
+                case "PICTURES":
+                    pictures = value.ToUpperInvariant() switch
+                    {
+                        "1" or "YES" or "ON" or "TRUE" => true,
+                        "0" or "NO" or "OFF" or "FALSE" => false,
+                        _ => throw new InvalidDataException($"{name}, line {i + 1}: PICTURES must be yes or no"),
+                    };
+                    break;
                 case "SEED":
                     if (!int.TryParse(value, out var parsed) || parsed < 1)
                     {
@@ -357,6 +377,6 @@ public sealed class AcceptanceScript
             throw new InvalidDataException($"{name}: no SEED directive gives the random number seed");
         }
 
-        return new AcceptanceScript(fullPath, game, blorb, interpreter, tandy, upper, graphics, seed.Value, commands, commandLines, seedChanges);
+        return new AcceptanceScript(fullPath, game, blorb, interpreter, tandy, upper, graphics, pictures, seed.Value, commands, commandLines, seedChanges);
     }
 }

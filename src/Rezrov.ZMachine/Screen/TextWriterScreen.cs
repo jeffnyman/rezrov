@@ -30,6 +30,13 @@ public sealed class TextWriterScreen : IScreen
 {
     private readonly TextWriter _writer;
     private readonly bool _showUpperWindow;
+    private readonly bool _hasPictures;
+
+    // The pictures on the screen now, and as last written out, so that
+    // a play records the ones that changed and not the ones that are
+    // simply still there.
+    private IReadOnlyList<PicturePlacement> _pictures = [];
+    private string _drawn = string.Empty;
 
     // The upper window as last shown and as last seen, one string per
     // row, for telling a repaint from a keystroke's echo.
@@ -37,6 +44,14 @@ public sealed class TextWriterScreen : IScreen
     private string[] _seen = [];
     private readonly System.Text.StringBuilder _line = new();
 
+    /// <param name="hasPictures">
+    /// [zm 8.8.6] Whether the game is told the screen can show
+    /// pictures. A stream of text cannot show one, so what is recorded
+    /// is which pictures are on the screen and where, which is the
+    /// thing a Version 6 game gets wrong when it gets anything wrong.
+    /// Off, the game is told there are none and Infocom's Version 6
+    /// games take their text-only paths.
+    /// </param>
     /// <param name="showUpperWindow">
     /// Whether to write the upper window's rows into the stream whenever
     /// the game pauses for input and has changed them, for a game that
@@ -44,7 +59,12 @@ public sealed class TextWriterScreen : IScreen
     /// on the row the last one was on is the echo of a key being typed
     /// and is not written, nor is a window with nothing on it.
     /// </param>
-    public TextWriterScreen(TextWriter writer, int width = 80, int height = 255, bool showUpperWindow = false)
+    public TextWriterScreen(
+        TextWriter writer,
+        int width = 80,
+        int height = 255,
+        bool showUpperWindow = false,
+        bool hasPictures = false)
     {
         ArgumentNullException.ThrowIfNull(writer);
         ArgumentOutOfRangeException.ThrowIfLessThan(width, 1);
@@ -52,6 +72,7 @@ public sealed class TextWriterScreen : IScreen
 
         _writer = writer;
         _showUpperWindow = showUpperWindow;
+        _hasPictures = hasPictures;
         Width = width;
         Height = height;
     }
@@ -66,11 +87,22 @@ public sealed class TextWriterScreen : IScreen
     /// games measure sideways in pixels and downward in lines when they
     /// have no pictures.
     /// </summary>
-    public int FontWidth => 4;
+    /// <remarks>
+    /// A screen that says it has pictures measures in real pixels
+    /// instead, since that is what the game lays its artwork out in. A
+    /// cell of 8 by 16 over a screen of 80 by 25 comes to 640 by 400,
+    /// which is [blorb 11.2] exactly twice the 320 by 200 all four of
+    /// Infocom's Version 6 games say their pictures were drawn for, so
+    /// every size in a recording is exactly double the artwork's own
+    /// and can be read at a glance.
+    /// </remarks>
+    public int FontWidth => _hasPictures ? 8 : 4;
 
-    public int FontHeight => 1;
+    public int FontHeight => _hasPictures ? 16 : 1;
 
-    public ScreenCapabilities Capabilities => ScreenCapabilities.CharacterGraphicsFont | ScreenCapabilities.FixedPitch;
+    public ScreenCapabilities Capabilities =>
+        ScreenCapabilities.CharacterGraphicsFont | ScreenCapabilities.FixedPitch
+        | (_hasPictures ? ScreenCapabilities.Pictures : 0);
 
     public ScreenColor DefaultForeground => ScreenColor.White;
 
@@ -124,6 +156,58 @@ public sealed class TextWriterScreen : IScreen
 
     public void MorePrompt()
     {
+    }
+
+    /// <summary>
+    /// [zm 8.8.6] Remembers which pictures the game has on the screen.
+    /// </summary>
+    /// <remarks>
+    /// A Version 6 game redraws many times within a turn, so nothing is
+    /// written here; <see cref="ShowPictures"/> writes the picture line
+    /// when whatever is driving the game says it has paused, which is
+    /// the same rule the upper window follows.
+    /// </remarks>
+    public void UpdateWindows(WindowedScreenModel model)
+    {
+        ArgumentNullException.ThrowIfNull(model);
+
+        _pictures = model.Pictures;
+    }
+
+    /// <summary>
+    /// Writes which pictures are on the screen, if that has changed
+    /// since it was last written. Nothing is written for a game that
+    /// draws none, so a play without pictures reads as it always did.
+    /// </summary>
+    public void ShowPictures()
+    {
+        if (!_hasPictures)
+        {
+            return;
+        }
+
+        var now = _pictures.Count == 0
+            ? "[no pictures]"
+            : "[pictures " + string.Join(
+                "; ",
+                _pictures
+                    .OrderBy(picture => picture.Number)
+                    .ThenBy(picture => picture.Row)
+                    .ThenBy(picture => picture.Column)
+                    .Select(picture =>
+                        $"{picture.Number} at {picture.Row},{picture.Column} {picture.Rows}x{picture.Columns}"))
+            + "]";
+
+        // Nothing at all is written until the first picture appears, so
+        // that a game which never draws one records nothing.
+        if (now == _drawn || (_drawn.Length == 0 && _pictures.Count == 0))
+        {
+            return;
+        }
+
+        _drawn = now;
+        _writer.WriteLine();
+        _writer.WriteLine(now);
     }
 
     public void UpdateUpperWindow(ScreenModel model)

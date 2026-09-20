@@ -108,6 +108,30 @@ public class InterpreterNumberTests
     }
 
     [Fact]
+    public void APicturesDirectiveTellsAVersionSixGameItMayDraw()
+    {
+        // [zm 8.8.6] Off by default, so every script that existed
+        // before this went on recording the text-only path.
+        var plain = AcceptanceScript.Parse(
+            "! SEED=1\n! GAME=arthur.z6\nlook\n",
+            Path.Combine(Path.GetTempPath(), "t.accept"));
+
+        Assert.False(plain.Pictures);
+
+        var drawing = AcceptanceScript.Parse(
+            "! SEED=1\n! GAME=arthur.z6\n! PICTURES=yes\nlook\n",
+            Path.Combine(Path.GetTempPath(), "t.accept"));
+
+        Assert.True(drawing.Pictures);
+
+        var e = Assert.Throws<InvalidDataException>(() => AcceptanceScript.Parse(
+            "! SEED=1\n! GAME=arthur.z6\n! PICTURES=perhaps\nlook\n",
+            Path.Combine(Path.GetTempPath(), "t.accept")));
+
+        Assert.Contains("line 3: PICTURES must be yes or no", e.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void ATandyDirectiveMustBeYesOrNo()
     {
         var e = Assert.Throws<InvalidDataException>(() => AcceptanceScript.Parse("! SEED=1\n! GAME=zork1.z3\n! TANDY=maybe\nlook\n", Path.Combine(Path.GetTempPath(), "t.accept")));
