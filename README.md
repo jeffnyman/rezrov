@@ -182,6 +182,14 @@ dotnet run --project tests/Rezrov.Tests
 
 One thing worth knowing in advance, because the failure is misleading. In this mode `dotnet test` forwards any option it does not recognize to the test executable, which then rejects it. So `dotnet test -nologo` fails with "Zero tests ran" and exit code 5 rather than with a complaint about the flag. Other options from the VSTest era behave the same way. Plain `dotnet test` is the safe form.
 
+### Speed
+
+Fast enough that it has never been worth optimizing, which is worth writing down so that nobody wonders. On an AMD Ryzen 7 9800X3D, a release build on .NET 10 plays Zork Zero's whole recorded walkthrough, 1853 commands, in about 1.4 seconds, which is well under a millisecond a turn. On the Glulx side, Anchorhead's 722 command walkthrough executes 680 million virtual machine instructions in about 16 seconds, which is roughly 41 million instructions a second; a debug build measures the same within the noise.
+
+The interesting part of that is the ratio rather than the rate. Anchorhead spends about 940,000 instructions on a single turn, some twenty milliseconds, where Advent, running on the same Glulx engine, spends about 18,000: five and a half million instructions over its whole 298 command walkthrough against Anchorhead's 680 million over 722. Fifty times the work for a turn of the same game, and the difference is not the interpreter but the game. Anchorhead is Inform 7 with deep rulebooks and Advent is Inform 6.
+
+The same gap shows on the Z-Machine, which is the better demonstration because both games run on the older and simpler of the two machines. Zork Zero, which is about as much as Infocom ever asked of it, takes well under a millisecond a turn. Bronze, which is Inform 7 compiled to the same machine, takes about thirty-four. A player notices none of this. What it does mean is that two games, Bronze and Anchorhead, account for most of the time the test suite takes, so if that ever becomes annoying, that is where the time is.
+
 ## Prerequisites
 
 You will need the .NET SDK. The version is pinned in `global.json`, so you need **10.0.302 or newer within the 10.0.x band**. An older SDK will refuse to build rather than silently doing the wrong thing, and a future .NET 11 will not be picked up until that pin is raised deliberately.
