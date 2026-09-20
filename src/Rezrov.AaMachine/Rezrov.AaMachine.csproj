@@ -7,8 +7,10 @@
     around the way Dialog thinks: unification, choice points, and
     backtracking. This project reads and runs that machine.
 
-    So far it reads the container and the header, which is enough to
-    describe a story file and nothing more.
+    So far it reads the container, the header, and the language: the
+    character set a game is written in, the tree its text is packed
+    against, and the dictionary its commonest words come out of. That
+    is enough to make a story speak, though not yet to make it think.
   -->
 
   <PropertyGroup>
