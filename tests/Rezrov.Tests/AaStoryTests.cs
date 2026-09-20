@@ -9,20 +9,10 @@ namespace Rezrov.Tests;
 /// </summary>
 public class AaStoryTests
 {
-    private static List<string> Stories()
-    {
-        var root = Corpus.FindRepositoryRoot();
-        var directory = root is null ? null : Path.Combine(root, "entharion", "dialog-code");
-
-        return directory is not null && Directory.Exists(directory)
-            ? Directory.EnumerateFiles(directory, "*.aastory").Order(StringComparer.Ordinal).ToList()
-            : [];
-    }
-
     [Fact]
     public void EveryStoryInTheCorpusReadsAndMatchesItsOwnChecksum()
     {
-        var stories = Stories();
+        var stories = Corpus.AaStoryFiles();
         Assert.SkipUnless(stories.Count > 0, "The entharion submodule is not populated.");
 
         var failures = new List<string>();
@@ -72,7 +62,7 @@ public class AaStoryTests
     [Fact]
     public void TheHeaderReadsAsTheFileWasBuilt()
     {
-        var path = Stories().FirstOrDefault(p => Path.GetFileName(p) == "tethered.aastory");
+        var path = Corpus.AaStoryFile("tethered.aastory");
         Assert.SkipUnless(path is not null, "The entharion submodule is not populated.");
 
         var story = AaStory.Read(File.ReadAllBytes(path!));

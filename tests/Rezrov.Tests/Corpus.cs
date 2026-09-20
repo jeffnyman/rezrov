@@ -180,6 +180,28 @@ internal static class Corpus
     }
 
     /// <summary>
+    /// Every Aa-machine story in the corpus, which is what Dialog
+    /// compiles to when it is not compiling to the Z-Machine, sorted,
+    /// or empty if the submodule is not populated.
+    /// </summary>
+    public static List<string> AaStoryFiles()
+    {
+        var root = FindRepositoryRoot();
+        var path = root is null ? null : Path.Combine(root, "entharion", "dialog-code");
+
+        return path is not null && Directory.Exists(path)
+            ? Directory.EnumerateFiles(path, "*.aastory").Order(StringComparer.Ordinal).ToList()
+            : [];
+    }
+
+    /// <summary>
+    /// One named Aa-machine story, or null if the submodule is not
+    /// populated.
+    /// </summary>
+    public static string? AaStoryFile(string name) =>
+        AaStoryFiles().FirstOrDefault(f => Path.GetFileName(f) == name);
+
+    /// <summary>
     /// The simple-test fixtures: one tiny Inform program compiled once
     /// for each version, which prints one known sentence and quits.
     /// </summary>

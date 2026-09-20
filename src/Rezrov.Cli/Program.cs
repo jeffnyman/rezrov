@@ -210,7 +210,46 @@ internal static class Program
         Console.WriteLine($"  {story.Chunks.Count} chunks: "
             + string.Join(", ", story.Chunks.Select(chunk => $"{chunk.Name} {chunk.Length}")));
 
+        // [aam story] The language is what everything else is written
+        // in, so it is worth saying how large it is before saying
+        // anything that had to be read through it.
+        Console.WriteLine(
+            $"  {story.Language.Characters.Count} characters past ASCII, "
+            + $"{story.Language.DecodingTable.Length / 2} nodes of decoding tree, "
+            + $"{story.Dictionary.Count} dictionary words");
+
+        DescribeAaMetadata(story.Metadata);
+
+        foreach (var resource in story.Resources)
+        {
+            Console.WriteLine($"  {resource.Url}: {story.Text.At(resource.AltText)}");
+        }
+
         return 0;
+    }
+
+    /// <summary>
+    /// [aam story] What a story says about itself, which is the first
+    /// thing read through the game's own character set.
+    /// </summary>
+    private static void DescribeAaMetadata(AaMetadata metadata)
+    {
+        if (metadata.Title is { Length: > 0 } title)
+        {
+            Console.WriteLine($"  {title}"
+                + (metadata.Noun is { Length: > 0 } noun ? $", {noun}" : string.Empty));
+        }
+
+        if (metadata.Author is { Length: > 0 } author)
+        {
+            Console.WriteLine($"  by {author}"
+                + (metadata.ReleaseDate is { Length: > 0 } date ? $", {date}" : string.Empty));
+        }
+
+        if (metadata.Compiler is { Length: > 0 } compiler)
+        {
+            Console.WriteLine($"  built by {compiler}");
+        }
     }
 
     /// <summary>

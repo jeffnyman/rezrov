@@ -20,8 +20,11 @@ public readonly record struct AaChunk(string Name, int Offset, int Length);
 /// set, the word maps, the initial state, and whatever resources the
 /// game carries.
 ///
-/// Only the container and the header are read here. That is enough to
-/// say what a file is, which is where the other two machines started.
+/// The container, the header, and everything the machine needs in
+/// order to read text are read here: the character set, the bitstream
+/// decoding tree, the dictionary, and what the story says about
+/// itself. That is enough to make a story speak, though not yet to
+/// make it think.
 /// </remarks>
 public sealed class AaStory
 {
@@ -66,6 +69,18 @@ public sealed class AaStory
             var end = rest.IndexOf((byte)0);
             Identifier = Encoding.ASCII.GetString(end < 0 ? rest : rest[..end]).Trim();
         }
+
+        // The language comes first because everything else is written
+        // in it: the dictionary, the compressed text, and the story's
+        // own account of itself.
+        Language = AaLanguage.Read(Required("LANG"), MajorVersion, MinorVersion);
+        Dictionary = AaDictionaryTable.Read(Required("DICT"), Language.Characters);
+
+        Text = new AaTextDecoder(
+            Required("WRIT").ToArray(), Language, Dictionary, MajorVersion, MinorVersion);
+
+        Metadata = AaMetadata.Read(Contents("META"), Language.Characters);
+        Resources = AaResource.Read(Contents("URLS"), Language.Characters, Shift);
     }
 
     /// <summary>
@@ -116,6 +131,27 @@ public sealed class AaStory
 
     /// <summary>Every chunk in the file, in the order it appears.</summary>
     public IReadOnlyList<AaChunk> Chunks { get; }
+
+    /// <summary>
+    /// [aam story] The character set, the decoding tree, and the rest
+    /// of what the story says about its own language.
+    /// </summary>
+    public AaLanguage Language { get; }
+
+    /// <summary>Every word the game knows.</summary>
+    public AaDictionaryTable Dictionary { get; }
+
+    /// <summary>Reads the compressed text.</summary>
+    public AaTextDecoder Text { get; }
+
+    /// <summary>What the story says about itself.</summary>
+    public AaMetadata Metadata { get; }
+
+    /// <summary>
+    /// [aam story] The pictures, sounds and links the game can reach
+    /// for, which is empty unless the story carries a URLS chunk.
+    /// </summary>
+    public IReadOnlyList<AaResource> Resources { get; }
 
     /// <summary>
     /// The bytes of a chunk, or an empty span if it has none.
@@ -196,6 +232,11 @@ public sealed class AaStory
 
         return running ^ 0xFFFFFFFFu;
     }
+
+    private ReadOnlySpan<byte> Required(string name) =>
+        Find(name) is { } chunk
+            ? _bytes.AsSpan(chunk.Offset, chunk.Length)
+            : throw new InvalidDataException($"The story file has no {name} chunk.");
 
     private AaChunk? Find(string name)
     {
