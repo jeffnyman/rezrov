@@ -15,7 +15,28 @@ namespace Rezrov.Tui;
 /// lines of finished paragraphs so that showing the newest text is
 /// cheap however long the buffer has grown. Wrapping again at a new
 /// width is the same operation over all the paragraphs.
+///
+/// [aam output] A paragraph may also be set inside margins of its own
+/// and centered or pushed right within them, which is what an
+/// Aa-machine style class can ask for and what a Glk window never
+/// does. At the default of no margins and no alignment the wrapping is
+/// exactly what it was.
 /// </remarks>
+/// <summary>
+/// [aam output] Where a paragraph's lines sit inside its margins.
+/// </summary>
+public enum PaneAlignment
+{
+    /// <summary>Against the left margin, which is the usual.</summary>
+    Start,
+
+    /// <summary>Centered between the margins.</summary>
+    Center,
+
+    /// <summary>Against the right margin.</summary>
+    End,
+}
+
 public sealed class TextPane
 {
     /// <summary>
@@ -60,6 +81,19 @@ public sealed class TextPane
 
     /// <summary>The paragraph being printed to.</summary>
     private Paragraph Current => _paragraphs[^1];
+
+    /// <summary>
+    /// [aam output] Sets the margins and the alignment of the open
+    /// paragraph, which hold for as long as it does. The margins are
+    /// in characters and come off the width the paragraph wraps to.
+    /// </summary>
+    public void Layout(int left, int right, PaneAlignment alignment)
+    {
+        Current.Left = Math.Max(left, 0);
+        Current.Right = Math.Max(right, 0);
+        Current.Alignment = alignment;
+        Current.Wrapped = null;
+    }
 
     /// <summary>Wraps to a new width from now on.</summary>
     public void Resize(int width)
@@ -160,11 +194,58 @@ public sealed class TextPane
     {
         if (paragraph.Wrapped is null || paragraph.WrappedWidth != Width)
         {
-            paragraph.Wrapped = Wrap(paragraph.Cells, Width);
+            paragraph.Wrapped = Lay(paragraph, Width);
             paragraph.WrappedWidth = Width;
         }
 
         return paragraph.Wrapped;
+    }
+
+    // Wraps a paragraph inside its own margins and then puts each line
+    // where its alignment asks. A paragraph with neither margins nor
+    // alignment comes out of this exactly as it went in.
+    private static List<IReadOnlyList<PaneCell>> Lay(Paragraph paragraph, int width)
+    {
+        var inside = width - paragraph.Left - paragraph.Right;
+        var lines = Wrap(paragraph.Cells, Math.Max(inside, 1));
+
+        if (paragraph.Left == 0 && paragraph.Alignment == PaneAlignment.Start)
+        {
+            return lines;
+        }
+
+        for (var i = 0; i < lines.Count; i++)
+        {
+            var line = lines[i];
+            var slack = Math.Max(inside - line.Count, 0);
+
+            var indent = paragraph.Left + paragraph.Alignment switch
+            {
+                PaneAlignment.Center => slack / 2,
+                PaneAlignment.End => slack,
+                _ => 0,
+            };
+
+            if (indent == 0)
+            {
+                continue;
+            }
+
+            // The blanks in front take the look of the text they are
+            // in front of, which matters only when it is reversed.
+            var attributes = line.Count > 0 ? line[0].Cell.Attributes : default;
+            var laid = new List<PaneCell>(indent + line.Count);
+
+            for (var blank = 0; blank < indent; blank++)
+            {
+                laid.Add(new PaneCell(new Cell(' ', attributes), 0));
+            }
+
+            laid.AddRange(line);
+            lines[i] = laid;
+        }
+
+        return lines;
     }
 
     /// <summary>
@@ -219,5 +300,11 @@ public sealed class TextPane
         public List<IReadOnlyList<PaneCell>>? Wrapped { get; set; }
 
         public int WrappedWidth { get; set; }
+
+        public int Left { get; set; }
+
+        public int Right { get; set; }
+
+        public PaneAlignment Alignment { get; set; }
     }
 }
