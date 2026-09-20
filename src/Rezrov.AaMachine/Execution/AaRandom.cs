@@ -21,7 +21,17 @@ public sealed class AaRandom
     /// The seed a play was started with, or null to take one from the
     /// clock so that no two plays are the same.
     /// </summary>
-    public int? Seed { get; }
+    public int? Seed { get; private set; }
+
+    /// <summary>
+    /// Starts a fresh sequence from a new seed, which is what a
+    /// script does when it changes seed partway through a play.
+    /// </summary>
+    public void Reseed(int seed)
+    {
+        Seed = seed;
+        Reset();
+    }
 
     /// <summary>Starts the sequence again, as a restart does.</summary>
     public void Reset() =>
