@@ -247,6 +247,13 @@ public static class OpcodeTable
         28 => Only(v, ZMachineVersion.V6, new(Opcode.PictureTable, "picture_table")),
         29 => Only(v, ZMachineVersion.V6, new(Opcode.BufferScreen, "buffer_screen", Store: true)),
 
+        // [arc opcode] Arcturus draws its picture band with EXT:0x80,
+        // which sits in the range [zm 14.2.2] reserves for private use.
+        // Two operands, no store, no branch. Version 6 is left out: it
+        // has picture opcodes of its own, and the extension is defined
+        // for Versions 5, 7, and 8 only.
+        128 when v != ZMachineVersion.V6 => new(Opcode.DrawImage, "draw_image"),
+
         // [zm 14.2.1] EXT:30 and up are to be ignored rather than treated
         // as errors. Nothing says whether they store or branch, so they
         // are decoded as if they do neither.

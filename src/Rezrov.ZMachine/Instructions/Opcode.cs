@@ -151,4 +151,5 @@ public enum Opcode
     MakeMenu,
     PictureTable,
     BufferScreen,
+    DrawImage,
 }

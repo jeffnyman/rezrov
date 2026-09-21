@@ -15,7 +15,7 @@ internal static class TestBlorb
     /// a sound is written as a plain chunk of its type, so an AIFF,
     /// which is a form, is not what this builds.
     /// </summary>
-    public static byte[] Build(IReadOnlyList<(int Number, string Type, byte[] Data)> pictures, byte[]? resolution = null, int release = 0, IReadOnlyList<(int Number, string Type, byte[] Data)>? data = null, IReadOnlyList<(int Number, string Type, byte[] Data)>? sounds = null, IReadOnlyList<int>? adaptive = null)
+    public static byte[] Build(IReadOnlyList<(int Number, string Type, byte[] Data)> pictures, byte[]? resolution = null, int release = 0, IReadOnlyList<(int Number, string Type, byte[] Data)>? data = null, IReadOnlyList<(int Number, string Type, byte[] Data)>? sounds = null, IReadOnlyList<int>? adaptive = null, (int Version, int Mode)? arcImage = null)
     {
         data ??= [];
         sounds ??= [];
@@ -40,6 +40,14 @@ internal static class TestBlorb
         if (release != 0)
         {
             others.Add(("RelN", [(byte)(release >> 8), (byte)release]));
+        }
+
+        // [arc blorb] Arcturus's own declaration: the extension version
+        // and the band mode, which says these pictures are a game's
+        // scenes rather than an ordinary Blorb's artwork.
+        if (arcImage is { } declared)
+        {
+            others.Add(("ARCI", [(byte)declared.Version, (byte)declared.Mode]));
         }
 
         if (resolution is not null)
