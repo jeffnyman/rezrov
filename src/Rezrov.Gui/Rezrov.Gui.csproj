@@ -4,7 +4,9 @@
     The graphical frontend: the same interpreter as the other two, shown
     in a window that owns its own pixels. That buys what a terminal
     cannot give: a proportional font for a Glk text buffer, pictures in
-    graphics windows, and the artwork of the Version 6 games.
+    graphics windows, the artwork of the Version 6 games, and the whole
+    of an Aa-machine story's style sheet, which asks for faces, sizes,
+    colors and boxes that a grid of characters has no way to draw.
     AssemblyName is lowercase for the same reason as the CLI's.
   -->
 
@@ -21,6 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Rezrov.AaMachine\Rezrov.AaMachine.csproj" />
     <ProjectReference Include="..\Rezrov.Core\Rezrov.Core.csproj" />
     <ProjectReference Include="..\Rezrov.Glulx\Rezrov.Glulx.csproj" />
     <ProjectReference Include="..\Rezrov.ZMachine\Rezrov.ZMachine.csproj" />
