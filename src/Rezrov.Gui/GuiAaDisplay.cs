@@ -87,6 +87,18 @@ public sealed class GuiAaDisplay : IAaOutput
         Background = AaTheme.Paper;
     }
 
+    /// <summary>
+    /// What to hold while reading or changing the text.
+    /// </summary>
+    /// <remarks>
+    /// The machine runs on its own thread and writes as it goes, and
+    /// the toolkit lays the text out on its own thread to paint it. A
+    /// page half rewritten is not a page that can be laid out, so
+    /// nothing touches either of them without holding this. It is the
+    /// same arrangement the other two machines have here.
+    /// </remarks>
+    public object Sync { get; } = new();
+
     /// <summary>The main run of the story's text.</summary>
     public AaText Main { get; }
 
@@ -103,9 +115,21 @@ public sealed class GuiAaDisplay : IAaOutput
     /// How wide the column of text is: as much of the window as the
     /// measure allows.
     /// </summary>
-    public double Column => Math.Max(
-        Math.Min(_width, Columns * _glyphs.CharacterWidth(_sheet.Plain)),
-        1);
+    /// <remarks>
+    /// A window whose size is not known yet is taken to be as wide as
+    /// the measure rather than as wide as nothing. A column of no
+    /// width would break every word to a letter a line, which is a
+    /// great deal of work to do and throw away.
+    /// </remarks>
+    public double Column
+    {
+        get
+        {
+            var measure = Columns * _glyphs.CharacterWidth(_sheet.Plain);
+
+            return _width > 0 ? Math.Min(_width, measure) : measure;
+        }
+    }
 
     /// <summary>How far from the left of the window the column sits.</summary>
     public double Left => Math.Max((_width - Column) / 2, 0);
@@ -114,7 +138,16 @@ public sealed class GuiAaDisplay : IAaOutput
     /// How tall the status area is, which is nought while the story
     /// has not made one.
     /// </summary>
-    public double StatusHeight => Status.Height(Column);
+    public double StatusHeight
+    {
+        get
+        {
+            lock (Sync)
+            {
+                return Status.Height(Column);
+            }
+        }
+    }
 
     /// <summary>How tall the main text has room to be.</summary>
     public double MainHeight => Math.Max(_height - StatusHeight - Rule, 0);
@@ -144,8 +177,12 @@ public sealed class GuiAaDisplay : IAaOutput
     /// <summary>The window changed size, so the text lays out again.</summary>
     public void Resize(double width, double height)
     {
-        _width = width;
-        _height = height;
+        lock (Sync)
+        {
+            _width = width;
+            _height = height;
+        }
+
         _changed();
     }
 
@@ -157,10 +194,22 @@ public sealed class GuiAaDisplay : IAaOutput
     /// links it has already shown back into ordinary text, and the
     /// words stay where they are when it does.
     /// </summary>
-    public bool IsLive(int link) => link > _dead && link <= _links.Count;
+    public bool IsLive(int link)
+    {
+        lock (Sync)
+        {
+            return link > _dead && link <= _links.Count;
+        }
+    }
 
     /// <summary>What a link types when it is used.</summary>
-    public string Typed(int link) => IsLive(link) ? _links[link - 1] : string.Empty;
+    public string Typed(int link)
+    {
+        lock (Sync)
+        {
+            return link > _dead && link <= _links.Count ? _links[link - 1] : string.Empty;
+        }
+    }
 
     /// <summary>
     /// The next line the player types, echoed as it is typed, since
@@ -185,7 +234,12 @@ public sealed class GuiAaDisplay : IAaOutput
                 if (typed.Length > 0)
                 {
                     typed.Length--;
-                    Main.Backspace();
+
+                    lock (Sync)
+                    {
+                        Main.Backspace();
+                    }
+
                     _changed();
                 }
 
@@ -235,20 +289,29 @@ public sealed class GuiAaDisplay : IAaOutput
             return;
         }
 
-        if (_selfLink)
+        lock (Sync)
         {
-            _self.Append(text.ToLowerInvariant());
+            if (_selfLink)
+            {
+                _self.Append(text.ToLowerInvariant());
+            }
+
+            Pane.Put(text);
         }
 
-        Pane.Put(text);
         _transcript?.Write(text);
         _changed();
     }
 
-    // [aam opcode] A space that is not a place to break a line.
+    // [aam opcode] A space that is not a place to break a line, which
+    // the layout only breaks at an ordinary one.
     public void NoBreakSpace()
     {
-        Pane.Put(" ");
+        lock (Sync)
+        {
+            Pane.Put("\u00a0");
+        }
+
         _transcript?.NoBreakSpace();
         _changed();
     }
@@ -257,95 +320,135 @@ public sealed class GuiAaDisplay : IAaOutput
 
     public void Spaces(int count)
     {
-        Pane.Put(new string(' ', Math.Clamp(count, 0, 1000)));
+        lock (Sync)
+        {
+            Pane.Put(new string(' ', Math.Clamp(count, 0, 1000)));
+        }
+
         _transcript?.Spaces(count);
         _changed();
     }
 
     public void Newline()
     {
-        Pane.Newline();
+        lock (Sync)
+        {
+            Pane.Newline();
+        }
+
         _transcript?.Newline();
         _changed();
     }
 
     public void EndParagraph()
     {
-        Pane.EndParagraph();
+        lock (Sync)
+        {
+            Pane.EndParagraph();
+        }
+
         _transcript?.EndParagraph();
         _changed();
     }
 
     public void EnterDiv(int styleClass)
     {
-        Pane.EnterDiv(styleClass);
+        lock (Sync)
+        {
+            Pane.EnterDiv(styleClass);
+        }
+
         _transcript?.EnterDiv(styleClass);
         _changed();
     }
 
     public void LeaveDiv(int styleClass)
     {
-        Pane.LeaveDiv();
+        lock (Sync)
+        {
+            Pane.LeaveDiv();
+        }
+
         _transcript?.LeaveDiv(styleClass);
         _changed();
     }
 
     public void EnterSpan(int styleClass)
     {
-        Pane.EnterSpan(styleClass);
+        lock (Sync)
+        {
+            Pane.EnterSpan(styleClass);
+        }
+
         _transcript?.EnterSpan(styleClass);
     }
 
     public void LeaveSpan()
     {
-        Pane.LeaveSpan();
+        lock (Sync)
+        {
+            Pane.LeaveSpan();
+        }
+
         _transcript?.LeaveSpan();
     }
 
     public void SetBody(int styleClass)
     {
-        var plain = _sheet.Inside(_sheet.Plain, styleClass, span: false);
+        lock (Sync)
+        {
+            var plain = _sheet.Inside(_sheet.Plain, styleClass, span: false);
 
-        Background = _story.Styles.BackgroundColor(styleClass) is { IsSet: true } behind
-            ? behind.Value
-            : AaTheme.Paper;
+            Background = _story.Styles.BackgroundColor(styleClass) is { IsSet: true } behind
+                ? behind.Value
+                : AaTheme.Paper;
 
-        Main.SetBody(plain);
-        Status.SetBody(plain);
+            Main.SetBody(plain);
+            Status.SetBody(plain);
+        }
+
         _transcript?.SetBody(styleClass);
         _changed();
     }
 
     public void EnterStatus(int area, int styleClass)
     {
-        // [aam opcode] A status area is not entered from inside
-        // another, and entering one empties it.
-        if (_area >= 0)
+        lock (Sync)
         {
-            return;
+            // [aam opcode] A status area is not entered from inside
+            // another, and entering one empties it.
+            if (_area >= 0)
+            {
+                return;
+            }
+
+            _area = area;
+
+            if (area == 0)
+            {
+                Status.Clear();
+            }
+
+            Pane.EnterDiv(styleClass);
         }
 
-        _area = area;
-
-        if (area == 0)
-        {
-            Status.Clear();
-        }
-
-        Pane.EnterDiv(styleClass);
         _transcript?.EnterStatus(area, styleClass);
         _changed();
     }
 
     public void LeaveStatus()
     {
-        if (_area < 0)
+        lock (Sync)
         {
-            return;
+            if (_area < 0)
+            {
+                return;
+            }
+
+            Pane.LeaveDiv();
+            _area = -1;
         }
 
-        Pane.LeaveDiv();
-        _area = -1;
         _transcript?.LeaveStatus();
         _changed();
     }
@@ -356,22 +459,30 @@ public sealed class GuiAaDisplay : IAaOutput
     /// </summary>
     public void EnterSelfLink()
     {
-        _links.Add(string.Empty);
-        _self.Clear();
-        _selfLink = true;
-        Pane.EnterLink(_links.Count);
+        lock (Sync)
+        {
+            _links.Add(string.Empty);
+            _self.Clear();
+            _selfLink = true;
+            Pane.EnterLink(_links.Count);
+        }
+
         _transcript?.EnterSelfLink();
     }
 
     public void LeaveSelfLink()
     {
-        if (_selfLink)
+        lock (Sync)
         {
-            _links[^1] = _self.ToString().Trim();
-            _selfLink = false;
+            if (_selfLink)
+            {
+                _links[^1] = _self.ToString().Trim();
+                _selfLink = false;
+            }
+
+            Pane.LeaveLink();
         }
 
-        Pane.LeaveLink();
         _transcript?.LeaveSelfLink();
     }
 
@@ -379,14 +490,22 @@ public sealed class GuiAaDisplay : IAaOutput
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        _links.Add(input);
-        Pane.EnterLink(_links.Count);
+        lock (Sync)
+        {
+            _links.Add(input);
+            Pane.EnterLink(_links.Count);
+        }
+
         _transcript?.EnterLink(input);
     }
 
     public void LeaveLink()
     {
-        Pane.LeaveLink();
+        lock (Sync)
+        {
+            Pane.LeaveLink();
+        }
+
         _transcript?.LeaveLink();
     }
 
@@ -402,16 +521,30 @@ public sealed class GuiAaDisplay : IAaOutput
 
     public void EmbedResource(int resource)
     {
-        Pane.Draw(Picture(resource), AltText(resource));
+        lock (Sync)
+        {
+            Pane.Draw(Picture(resource), AltText(resource));
+        }
+
         _transcript?.EmbedResource(resource);
         _changed();
     }
 
-    public bool CanEmbedResource(int resource) => Picture(resource) is not null;
+    public bool CanEmbedResource(int resource)
+    {
+        lock (Sync)
+        {
+            return Picture(resource) is not null;
+        }
+    }
 
     public void ProgressBar(int amount, int total)
     {
-        Pane.ProgressBar(amount, total);
+        lock (Sync)
+        {
+            Pane.ProgressBar(amount, total);
+        }
+
         _transcript?.ProgressBar(amount, total);
         _changed();
     }
@@ -427,15 +560,23 @@ public sealed class GuiAaDisplay : IAaOutput
 
     public void Clear()
     {
-        Main.Clear();
+        lock (Sync)
+        {
+            Main.Clear();
+        }
+
         _transcript?.Clear();
         _changed();
     }
 
     public void ClearStatus()
     {
-        Status.Clear();
-        Status.LeaveAll();
+        lock (Sync)
+        {
+            Status.Clear();
+            Status.LeaveAll();
+        }
+
         _transcript?.ClearStatus();
         _changed();
     }
@@ -448,14 +589,22 @@ public sealed class GuiAaDisplay : IAaOutput
 
     public void ClearLinks()
     {
-        _dead = _links.Count;
+        lock (Sync)
+        {
+            _dead = _links.Count;
+        }
+
         _transcript?.ClearLinks();
         _changed();
     }
 
     public void ClearDiv()
     {
-        Pane.ClearDiv();
+        lock (Sync)
+        {
+            Pane.ClearDiv();
+        }
+
         _transcript?.ClearDiv();
         _changed();
     }
@@ -468,31 +617,46 @@ public sealed class GuiAaDisplay : IAaOutput
     public void LeaveAll()
     {
         Newline();
-        Main.LeaveAll();
-        Status.LeaveAll();
-        _area = -1;
-        _selfLink = false;
+
+        lock (Sync)
+        {
+            Main.LeaveAll();
+            Status.LeaveAll();
+            _area = -1;
+            _selfLink = false;
+        }
+
         _transcript?.LeaveAll();
     }
 
     public void Restart()
     {
-        Main.Clear();
-        Main.LeaveAll();
-        Status.Clear();
-        Status.LeaveAll();
-        _links.Clear();
-        _dead = 0;
-        _area = -1;
-        _selfLink = false;
-        Background = AaTheme.Paper;
+        lock (Sync)
+        {
+            Main.Clear();
+            Main.LeaveAll();
+            Status.Clear();
+            Status.LeaveAll();
+            _links.Clear();
+            _dead = 0;
+            _area = -1;
+            _selfLink = false;
+            Background = AaTheme.Paper;
+        }
+
         _transcript?.Restart();
         _changed();
     }
 
-    public void Sync()
+    // The lock is called Sync too, so the machine's call to make sure
+    // everything is visible is named only on the interface.
+    void IAaOutput.Sync()
     {
-        Main.ScrollToEnd();
+        lock (Sync)
+        {
+            Main.ScrollToEnd();
+        }
+
         _transcript?.Sync();
         _changed();
     }
@@ -502,13 +666,19 @@ public sealed class GuiAaDisplay : IAaOutput
     /// characters, which is what the reference interpreter answers by
     /// dividing the room it has by the size of a figure nought.
     /// </summary>
-    public int Measure(int which) => which switch
+    public int Measure(int which)
     {
-        0 => (int)(Column / Math.Max(_glyphs.CharacterWidth(_sheet.Plain), 1)),
-        1 => (int)((_area == 0 ? StatusHeight : MainHeight)
-            / Math.Max(_sheet.Plain.Size * AaText.LineSpacing, 1)),
-        _ => 0,
-    };
+        lock (Sync)
+        {
+            return which switch
+            {
+                0 => (int)(Column / Math.Max(_glyphs.CharacterWidth(_sheet.Plain), 1)),
+                1 => (int)((_area == 0 ? StatusHeight : MainHeight)
+                    / Math.Max(_sheet.Plain.Size * AaText.LineSpacing, 1)),
+                _ => 0,
+            };
+        }
+    }
 
     public bool ScriptOn()
     {
