@@ -226,7 +226,7 @@ public sealed class TerminalAaDisplay : IAaOutput, ITerminalPicture
             return;
         }
 
-        VerticalSpace(_story.Styles.Ems(styleClass, "margin-top", 0));
+        VerticalSpace(Lines(styleClass, AaSide.Top));
         LayOut();
     }
 
@@ -250,7 +250,7 @@ public sealed class TerminalAaDisplay : IAaOutput, ITerminalPicture
             return;
         }
 
-        VerticalSpace(_story.Styles.Ems(styleClass, "margin-bottom", 0));
+        VerticalSpace(Lines(styleClass, AaSide.Bottom));
         LayOut();
     }
 
@@ -464,6 +464,13 @@ public sealed class TerminalAaDisplay : IAaOutput, ITerminalPicture
         Newline();
     }
 
+    // [aam story] A margin of so many ems is so many blank lines,
+    // or so many blank columns at the side. The class may have named
+    // the side on its own or given the shorthand for all four, and
+    // either way it comes to the same thing here.
+    private int Lines(int styleClass, AaSide side) =>
+        _story.Styles.Margin(styleClass, side).WholeEms(0);
+
     private string AltText(int resource) =>
         resource >= 0 && resource < _story.Resources.Count
             ? _story.Text.At(_story.Resources[resource].AltText)
@@ -474,23 +481,27 @@ public sealed class TerminalAaDisplay : IAaOutput, ITerminalPicture
     // The look of the text being written now: heavier or leaning if
     // any class around it asks, and reversed throughout the status
     // area so that it reads as a bar.
+    //
+    // A class that says nothing about the weight or the slant leaves
+    // whatever is in force alone, and a class that asks for ordinary
+    // text cancels it. That is the difference between a bold span
+    // inside an italic div and a bold span that means to stand up
+    // straight in one.
     private TextAttributes Attributes()
     {
         var attributes = _inStatus ? Screen.StatusAttributes : Normal;
-        var style = attributes.Style;
+        var bold = attributes.Style.HasFlag(TextStyle.Bold);
+        var italic = attributes.Style.HasFlag(TextStyle.Italic);
 
         foreach (var styleClass in _divs.Concat(_spans))
         {
-            if (_story.Styles.IsBold(styleClass))
-            {
-                style |= TextStyle.Bold;
-            }
-
-            if (_story.Styles.IsItalic(styleClass))
-            {
-                style |= TextStyle.Italic;
-            }
+            bold = _story.Styles.Bold(styleClass) ?? bold;
+            italic = _story.Styles.Italic(styleClass) ?? italic;
         }
+
+        var style = attributes.Style;
+        style = bold ? style | TextStyle.Bold : style & ~TextStyle.Bold;
+        style = italic ? style | TextStyle.Italic : style & ~TextStyle.Italic;
 
         return attributes with { Style = style };
     }
@@ -506,8 +517,8 @@ public sealed class TerminalAaDisplay : IAaOutput, ITerminalPicture
 
         foreach (var styleClass in _divs)
         {
-            left += _story.Styles.Ems(styleClass, "margin-left", 0);
-            right += _story.Styles.Ems(styleClass, "margin-right", 0);
+            left += Lines(styleClass, AaSide.Left);
+            right += Lines(styleClass, AaSide.Right);
             shout |= _story.Styles.IsUppercase(styleClass);
 
             alignment = _story.Styles.Alignment(styleClass) switch
