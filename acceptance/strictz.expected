@@ -11,7 +11,7 @@ Testing @jin:
 @jin 5 6 => FALSE (correct)
 @jin 6 5 => TRUE (correct)
 @jin 0 5 => FALSE (correct)
-@jin 0 0 => FALSE (incorrect)
+@jin 0 0 => TRUE (correct)
 
 Testing @get_child:
 
