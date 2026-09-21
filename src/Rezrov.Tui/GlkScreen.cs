@@ -1,3 +1,4 @@
+using Rezrov.Grid;
 using Rezrov.Glulx.Glk;
 using Rezrov.ZMachine.Screen;
 using GlkWindowType = Rezrov.Glulx.Glk.WindowType;

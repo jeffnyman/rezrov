@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The grid of characters, and what the two frontends that draw one
+    put into it. A terminal draws its cells by handing them to a
+    terminal library; the window program draws the same cells as
+    pixels of its own. Neither of them decides where a word breaks or
+    how far a margin reaches, and neither should have to: that is
+    here, once.
+
+    Nothing in this project knows what a terminal or a window is. It
+    references no package, so the frontend that is built on the
+    operating system alone can use it without taking a dependency it
+    would have to explain.
+  -->
+
+  <ItemGroup>
+    <ProjectReference Include="..\Rezrov.AaMachine\Rezrov.AaMachine.csproj" />
+    <ProjectReference Include="..\Rezrov.ZMachine\Rezrov.ZMachine.csproj" />
+  </ItemGroup>
+
+</Project>

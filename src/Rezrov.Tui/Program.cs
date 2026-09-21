@@ -1,3 +1,4 @@
+using Rezrov.Grid;
 using Rezrov.AaMachine;
 using Rezrov.AaMachine.Execution;
 using Rezrov.Core;
@@ -485,7 +486,7 @@ internal static class Program
         view.Ready = (width, height) =>
         {
             var scripted = commands is not null && File.Exists(commands) ? new StreamReader(commands) : null;
-            var display = new TerminalAaDisplay(
+            var display = new AaGridDisplay(
                 story, width, height, () => app.Invoke(() => view.SetNeedsDraw()), scripted);
 
             view.Picture = display;

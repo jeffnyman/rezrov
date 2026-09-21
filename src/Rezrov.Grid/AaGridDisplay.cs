@@ -4,10 +4,10 @@ using Rezrov.AaMachine;
 using Rezrov.AaMachine.Execution;
 using Rezrov.ZMachine.Screen;
 
-namespace Rezrov.Tui;
+namespace Rezrov.Grid;
 
 /// <summary>
-/// An Aa-machine story shown on the terminal.
+/// An Aa-machine story shown as a grid of characters.
 /// </summary>
 /// <remarks>
 /// [aam output] This is the whole of the machine's output model
@@ -15,15 +15,20 @@ namespace Rezrov.Tui;
 /// alignment, spans and divs alike carry a style class, and the top
 /// status area becomes rows across the top of the screen.
 ///
-/// What a terminal cannot do it says so about, and the game is told
+/// What a grid cannot do it says so about, and the game is told
 /// through VM_INFO before it tries: there are no pictures, so a
 /// resource is shown as the words the story carries in its place, and
 /// there are no links, so link text is ordinary text.
 ///
+/// Nothing here knows whether the cells are drawn by a terminal or
+/// painted as pixels by a program that opened its own window. Both
+/// frontends that draw a grid use this one, and what they each add is
+/// only the keyboard and the drawing.
+///
 /// The machine runs on its own thread and blocks here when it wants
 /// the player, which is why the presses arrive through a queue.
 /// </remarks>
-public sealed class TerminalAaDisplay : IAaOutput, ITerminalPicture
+public sealed class AaGridDisplay : IAaOutput, IGridPicture
 {
     private readonly AaStory _story;
     private readonly Action _changed;
@@ -38,7 +43,7 @@ public sealed class TerminalAaDisplay : IAaOutput, ITerminalPicture
     private bool _floating;
     private bool _uppercase;
 
-    public TerminalAaDisplay(AaStory story, int width, int height, Action changed, TextReader? commands = null)
+    public AaGridDisplay(AaStory story, int width, int height, Action changed, TextReader? commands = null)
     {
         ArgumentNullException.ThrowIfNull(story);
         ArgumentNullException.ThrowIfNull(changed);
@@ -64,9 +69,9 @@ public sealed class TerminalAaDisplay : IAaOutput, ITerminalPicture
 
     public (int Row, int Column)? Cursor => Screen.Cursor;
 
-    // A terminal can tell bold from italic and can color text, and it
-    // can put a line where the style sheet asks. It cannot draw, so
-    // there are no pictures and nothing to click.
+    // A grid can tell bold from italic and can color text, and it can
+    // put a line where the style sheet asks. It cannot draw, so there
+    // are no pictures and nothing to click.
     public bool HasLinks => false;
 
     public bool HasStyles => true;

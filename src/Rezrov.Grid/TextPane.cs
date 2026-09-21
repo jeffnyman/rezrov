@@ -1,6 +1,6 @@
 using Rezrov.ZMachine.Screen;
 
-namespace Rezrov.Tui;
+namespace Rezrov.Grid;
 
 /// <summary>
 /// The text of one Glk text buffer window, kept as paragraphs and
