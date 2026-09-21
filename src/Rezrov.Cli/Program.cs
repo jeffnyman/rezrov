@@ -726,6 +726,17 @@ internal static class Program
 
         Console.WriteLine($"  version {(int)header.Version}, release {header.Release}, serial {header.SerialCode}");
 
+        // [babel legacy Z-code IFID] A story carries nothing that says
+        // which game it is, so it is named from its header, and the
+        // games that came before anyone thought to write a name down
+        // are looked up in the catalog of them.
+        if (Ifid.Of(bytes) is { } ifid)
+        {
+            var title = InfocomCatalog.Title(ifid);
+
+            Console.WriteLine(title is null ? $"  {ifid}" : $"  {ifid}, Infocom's {title}");
+        }
+
         if (header.InformVersion.Trim('\0').Length > 0)
         {
             Console.WriteLine($"  compiled by Inform {header.InformVersion}");

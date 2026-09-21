@@ -139,8 +139,11 @@ internal static class Program
         var header = new StoryHeader(memory);
 
         using var window = Window();
+        // [babel legacy Z-code IFID] A game Infocom made is named
+        // after itself rather than after whatever the file on disk
+        // happens to be called.
         window.Open(
-            $"{Path.GetFileName(path)} - rezrov",
+            $"{InfocomCatalog.TitleOf(bytes) ?? Path.GetFileName(path)} - rezrov",
             Columns * Paint.CellWidth,
             Rows * Paint.CellHeight);
 

@@ -165,7 +165,12 @@ internal static class Program
             return 1;
         }
 
-        return Play(memory, header, resources, Path.GetFileName(path), new TerminalFiles.Presets(transcript, record, save, commands), seed, machine, tandy);
+        // [babel legacy Z-code IFID] A game Infocom made is named
+        // after itself rather than after whatever the file on disk
+        // happens to be called.
+        var title = InfocomCatalog.TitleOf(bytes) ?? Path.GetFileName(path);
+
+        return Play(memory, header, resources, title, new TerminalFiles.Presets(transcript, record, save, commands), seed, machine, tandy);
     }
 
     private static int Play(ZMemory memory, StoryHeader header, BlorbFile? resources, string title, TerminalFiles.Presets presets, int? seed, InterpreterNumber? machine, bool tandy)
