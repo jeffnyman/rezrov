@@ -1,3 +1,4 @@
+using Rezrov.Grid;
 using System.Collections.Concurrent;
 using System.Text;
 using Rezrov.Glulx.Glk;
@@ -23,7 +24,7 @@ namespace Rezrov.Tui;
 /// inputs pauses with a prompt, as the Z-machine screen does, so
 /// nothing scrolls past unread.
 /// </remarks>
-public sealed class TerminalGlkDisplay : IGlkDisplay, ITerminalPicture
+public sealed class TerminalGlkDisplay : IGlkDisplay, IGridPicture
 {
     private readonly BlockingCollection<Press> _presses = [];
     private readonly Dictionary<GlkWindow, int> _marks = [];

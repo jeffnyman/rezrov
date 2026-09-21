@@ -1,3 +1,4 @@
+using Rezrov.Grid;
 using Rezrov.ZMachine.Screen;
 
 namespace Rezrov.Tui;
@@ -7,7 +8,7 @@ namespace Rezrov.Tui;
 /// <see cref="BufferedScreen"/> of the terminal's size, with the shape
 /// and the abilities a terminal has.
 /// </summary>
-public sealed class TerminalScreen : BufferedScreen, ITerminalPicture
+public sealed class TerminalScreen : BufferedScreen, IGridPicture
 {
     public TerminalScreen(int width, int height, bool cursorStartsAtBottom, Action repaint, Func<ushort> waitForKey)
         : base(

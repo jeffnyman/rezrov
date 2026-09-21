@@ -1,3 +1,4 @@
+using Rezrov.Grid;
 using System.Drawing;
 using System.Text;
 using Rezrov.ZMachine.Screen;
@@ -21,7 +22,7 @@ namespace Rezrov.Tui;
 /// so all that is left is to draw the cells with their styles and
 /// colors and to put the terminal's cursor where the game's is. Which
 /// machine is behind the picture makes no difference here, since both
-/// come down to an <see cref="ITerminalPicture"/>.
+/// come down to an <see cref="IGridPicture"/>.
 ///
 /// The terminal's size is not known until the view is first laid out
 /// and drawn, and [zm 8.4] the game must be told its screen size before
@@ -63,7 +64,7 @@ public sealed class GameView : View
     /// <summary>
     /// The picture being painted, once the game has started.
     /// </summary>
-    public ITerminalPicture? Picture { get; set; }
+    public IGridPicture? Picture { get; set; }
 
     /// <summary>
     /// Takes a key for the game, answering whether it was one the game

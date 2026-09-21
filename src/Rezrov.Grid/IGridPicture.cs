@@ -1,9 +1,9 @@
 using Rezrov.ZMachine.Screen;
 
-namespace Rezrov.Tui;
+namespace Rezrov.Grid;
 
 /// <summary>
-/// What the game view paints: a grid of cells the size of the terminal
+/// What a frontend paints: a grid of cells the size of the screen
 /// and a cursor, kept by whichever machine is running.
 /// </summary>
 /// <remarks>
@@ -13,7 +13,7 @@ namespace Rezrov.Tui;
 /// thread, and calls <see cref="Repaint"/> first, for a picture that
 /// composes itself on demand.
 /// </remarks>
-public interface ITerminalPicture
+public interface IGridPicture
 {
     /// <summary>The lock the cells are read and written under.</summary>
     object Sync { get; }
@@ -26,7 +26,7 @@ public interface ITerminalPicture
     Cell this[int row, int column] { get; }
 
     /// <summary>
-    /// Where the terminal's cursor goes, or null to hide it.
+    /// Where the cursor goes, or null to hide it.
     /// </summary>
     (int Row, int Column)? Cursor { get; }
 
@@ -35,6 +35,6 @@ public interface ITerminalPicture
     /// </summary>
     void Repaint();
 
-    /// <summary>The terminal changed size.</summary>
+    /// <summary>The screen changed size.</summary>
     void Resize(int width, int height);
 }

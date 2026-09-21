@@ -1,14 +1,14 @@
 using Rezrov.ZMachine.Screen;
 
-namespace Rezrov.Tui;
+namespace Rezrov.Grid;
 
 /// <summary>
-/// The terminal's picture of an Aa-machine story: a status area across
+/// A grid of characters showing an Aa-machine story: a status area across
 /// the top and the game's text below it.
 /// </summary>
 /// <remarks>
 /// [aam output] The Aa-machine's output goes to a main area and to one
-/// or more status areas. A terminal can show the top one, which is
+/// or more status areas. A grid can show the top one, which is
 /// where every game in the corpus puts its location and its score, so
 /// that is the one kept here. It is as many rows tall as its style
 /// class asks for and is emptied each time the game enters it, which
@@ -16,7 +16,7 @@ namespace Rezrov.Tui;
 ///
 /// Both areas are <see cref="TextPane"/>s, so the wrapping, the
 /// margins and the alignment are the same code that lays out a Glk
-/// text buffer, and a change of terminal size lays them out again.
+/// text buffer, and a change of screen size lays them out again.
 /// </remarks>
 public sealed class AaScreen
 {
@@ -24,8 +24,8 @@ public sealed class AaScreen
 
     private Cell[][] _rows;
 
-    /// <param name="width">The terminal's width in cells.</param>
-    /// <param name="height">The terminal's height in cells.</param>
+    /// <param name="width">The screen's width in cells.</param>
+    /// <param name="height">The screen's height in cells.</param>
     /// <param name="normal">
     /// The look of plain text and of the cells nothing has been
     /// written to.
@@ -80,7 +80,7 @@ public sealed class AaScreen
     public Cell this[int row, int column] => _rows[row][column];
 
     /// <summary>
-    /// Where the terminal's cursor goes: the end of the game's text,
+    /// Where the cursor goes: the end of the game's text,
     /// which is where the player is typing.
     /// </summary>
     public (int Row, int Column) Cursor
@@ -126,7 +126,7 @@ public sealed class AaScreen
         PaintPane(Main, status, Height - status);
     }
 
-    /// <summary>The terminal changed size.</summary>
+    /// <summary>The screen changed size.</summary>
     public void Resize(int width, int height)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(width, 1);

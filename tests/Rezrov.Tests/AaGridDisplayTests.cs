@@ -1,3 +1,4 @@
+using Rezrov.Grid;
 using Rezrov.AaMachine;
 using Rezrov.AaMachine.Execution;
 using Rezrov.Tui;
@@ -15,7 +16,7 @@ namespace Rezrov.Tests;
 /// without a terminal under it, so what the player would see is read
 /// straight off the grid of cells.
 /// </remarks>
-public class TerminalAaDisplayTests
+public class AaGridDisplayTests
 {
     private const int Width = 80;
     private const int Height = 24;
@@ -114,9 +115,9 @@ public class TerminalAaDisplayTests
 
     // Plays a story on a display with no terminal under it, feeding it
     // the given lines and stopping when it runs out of them.
-    private static TerminalAaDisplay Play(AaStory story, string[] input)
+    private static AaGridDisplay Play(AaStory story, string[] input)
     {
-        var display = new TerminalAaDisplay(story, Width, Height, () => { }, new StringReader(string.Join('\n', input)));
+        var display = new AaGridDisplay(story, Width, Height, () => { }, new StringReader(string.Join('\n', input)));
         var machine = new Machine(story, display, seed: 1);
         var status = machine.Start();
         var fed = 0;
