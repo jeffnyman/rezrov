@@ -171,7 +171,13 @@ internal sealed class Board : Control
 
         if (Page is { } page)
         {
-            PaintPage(context, page);
+            // The machine writes on its own thread, so the page is
+            // held still while it is laid out and painted.
+            lock (page.Sync)
+            {
+                PaintPage(context, page);
+            }
+
             return;
         }
 
@@ -369,13 +375,18 @@ internal sealed class Board : Control
 
         if (Page is { } page)
         {
-            if (Clicked(page, e.GetPosition(this)) is { } link)
+            var at = e.GetPosition(this);
+
+            lock (page.Sync)
             {
-                // [aam output] A link stands for a command rather than
-                // for a letter, so it goes on the same queue as the
-                // keys but as something a key can never be.
-                page.Enqueue(-link);
-                e.Handled = true;
+                if (Clicked(page, at) is { } link)
+            {
+                    // [aam output] A link stands for a command rather
+                    // than for a letter, so it goes on the same queue
+                    // as the keys but as something a key can never be.
+                    page.Enqueue(-link);
+                    e.Handled = true;
+                }
             }
         }
         else if (Display is { Root: { } root } display)
@@ -469,12 +480,15 @@ internal sealed class Board : Control
 
         if (Page is { } page)
         {
-            // Three lines to a notch of the wheel, as everywhere else
-            // that text scrolls.
-            page.Main.ScrollBy(
-                e.Delta.Y * _glyphs.CellHeight * 3,
-                page.Column,
-                page.MainHeight);
+            lock (page.Sync)
+            {
+                // Three lines to a notch of the wheel, as everywhere
+                // else that text scrolls.
+                page.Main.ScrollBy(
+                    e.Delta.Y * _glyphs.CellHeight * 3,
+                    page.Column,
+                    page.MainHeight);
+            }
 
             InvalidateVisual();
             e.Handled = true;
