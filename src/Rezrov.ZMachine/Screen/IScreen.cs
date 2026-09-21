@@ -102,4 +102,32 @@ public interface IScreen
     void UpdateWindows(WindowedScreenModel model)
     {
     }
+
+    /// <summary>
+    /// [arc contract 2] Show <paramref name="picture"/> in the band
+    /// across the top of the screen, or where the number is 0 take the
+    /// band down. A frontend that declares no
+    /// <see cref="ScreenCapabilities.PictureBand"/> is never asked,
+    /// because the story reads that capability out of the header and
+    /// never issues the opcode without it.
+    /// </summary>
+    /// <param name="picture">
+    /// Which picture to show, numbered as the resource file numbers
+    /// them, or 0 to clear the band.
+    /// </param>
+    /// <param name="mode">
+    /// How tall the band is in text rows, 9 or 12, which is eight
+    /// pixel rows each. This operand is the authority on the band's
+    /// height: it arrives on every call, a clear included, and a
+    /// picture is never measured to work the layout out.
+    /// </param>
+    /// <remarks>
+    /// [arc contract 2] A picture nothing answers to, or one that
+    /// cannot be read, is passed over in silence and play goes on. A
+    /// picture is presentation, never game state, so there is nothing
+    /// here a story can be told went wrong.
+    /// </remarks>
+    void DrawImageBand(int picture, int mode)
+    {
+    }
 }

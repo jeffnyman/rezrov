@@ -180,6 +180,24 @@ internal static class Corpus
     }
 
     /// <summary>
+    /// Every Arcturus resource file in the corpus, sorted, or empty if
+    /// the submodule is not populated. These carry the arc_image
+    /// pictures, either beside a story or wrapped around one.
+    /// </summary>
+    public static List<string> ArcturusPacks()
+    {
+        var root = FindRepositoryRoot();
+        var path = root is null ? null : Path.Combine(root, "entharion", "arcturus-code");
+
+        return path is not null && Directory.Exists(path)
+            ? Directory.EnumerateFiles(path)
+                .Where(f => Path.GetExtension(f) is ".blorb" or ".zblorb")
+                .Order(StringComparer.Ordinal)
+                .ToList()
+            : [];
+    }
+
+    /// <summary>
     /// Every Aa-machine story in the corpus, which is what Dialog
     /// compiles to when it is not compiling to the Z-Machine, sorted,
     /// or empty if the submodule is not populated.

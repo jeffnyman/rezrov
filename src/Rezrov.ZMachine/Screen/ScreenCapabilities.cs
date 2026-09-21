@@ -66,4 +66,14 @@ public enum ScreenCapabilities
     /// run in their text-only modes, which suits a screen of cells.
     /// </summary>
     Pictures = 1 << 9,
+
+    /// <summary>
+    /// [arc contract 1] A picture band can be shown across the top of
+    /// the screen, with the text below it, so an Arcturus story is told
+    /// its scenes will be drawn. Separate from <see cref="Pictures"/>
+    /// because the two are different jobs: that one places pictures
+    /// wherever a Version 6 game asks, this one keeps a band above the
+    /// text and re-bases the screen around it.
+    /// </summary>
+    PictureBand = 1 << 10,
 }

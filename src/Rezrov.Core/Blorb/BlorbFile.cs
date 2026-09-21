@@ -57,6 +57,13 @@ public sealed class BlorbFile
                     // [blorb 8]
                     Frontispiece = (int)BinaryPrimitives.ReadUInt32BigEndian(data);
                     break;
+                case "ARCI" when data.Length >= 2:
+                    // [arc blorb] Two bytes, the extension version and
+                    // then the band mode. Not a Blorb chunk at all but
+                    // Arcturus's own, which is why it is read here and
+                    // nowhere in the Blorb specification.
+                    ArcImage = new ArcImageDeclaration(data[0], data[1]);
+                    break;
                 case "Loop":
                     // [blorb 11.4] Pairs of sound number and a flag: 1 to
                     // play once, 0 to repeat until stopped.
@@ -144,6 +151,14 @@ public sealed class BlorbFile
     /// no adaptive palette chunk, and where it has an empty one.
     /// </summary>
     public IReadOnlySet<int> AdaptivePictures { get; } = new HashSet<int>();
+
+    /// <summary>
+    /// [arc blorb] The arc_image declaration, where the file carries
+    /// one. Its presence is the whole signal: these pictures are an
+    /// Arcturus game's scenes rather than an ordinary Blorb's artwork,
+    /// and a file without it is played as it always was.
+    /// </summary>
+    public ArcImageDeclaration? ArcImage { get; }
 
     /// <summary>[blorb 10] The metadata document, if any.</summary>
     public string? Metadata { get; }

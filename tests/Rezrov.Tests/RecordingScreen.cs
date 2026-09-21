@@ -97,4 +97,9 @@ internal sealed class RecordingScreen : IScreen
         WindowUpdates++;
         LastWindows = model;
     }
+
+    /// <summary>Every band draw asked for, in order.</summary>
+    public List<(int Picture, int Mode)> Bands { get; } = [];
+
+    public void DrawImageBand(int picture, int mode) => Bands.Add((picture, mode));
 }

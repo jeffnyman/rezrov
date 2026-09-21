@@ -150,6 +150,23 @@ public sealed class Interpreter
     public BlorbFile? Resources { get; private set; }
 
     /// <summary>
+    /// [arc blorb] Whether this story gets a picture band: its resource
+    /// file declares itself an arc_image pack, and the screen has a
+    /// band to put the pictures in.
+    /// </summary>
+    /// <remarks>
+    /// Both halves matter. Without the declaration there is no way to
+    /// tell an Arcturus story from any other Version 5, and the header
+    /// bit means something else entirely on an Inform one. Without a
+    /// band on the screen there would be nothing to advertise, and a
+    /// story told it has pictures would issue draws into nothing.
+    /// </remarks>
+    private bool ShowsImageBand =>
+        Header.Version != ZMachineVersion.V6
+        && Resources?.ArcImage is not null
+        && Display.Screen.Capabilities.HasFlag(ScreenCapabilities.PictureBand);
+
+    /// <summary>
     /// Takes the sounds and pictures of a Blorb resource file, after
     /// checking it belongs to this story.
     /// </summary>
@@ -172,6 +189,13 @@ public sealed class Interpreter
 
         // [zm 8.8.6] The pictures are the Version 6 screen's business.
         Windows?.UsePictures(BlorbPictures.From(blorb));
+
+        // [arc blorb] The header was written when this interpreter was
+        // built, before there was a resource file to ask, and whether
+        // an arc_image band is available is a thing only the resource
+        // file can answer. So the interpreter describes itself again
+        // now that it knows.
+        DescribeInterpreterInHeader();
     }
 
     /// <summary>Input stream 0, the keyboard.</summary>
@@ -1044,6 +1068,18 @@ public sealed class Interpreter
             case Opcode.PushStack:
                 // [zm op:push_stack] Branch if it fit.
                 Branch(instruction, UserStackTable.TryPush(Memory, a[1], a[0]));
+                break;
+            case Opcode.DrawImage:
+                // [arc opcode] draw_image image-id mode. The story only
+                // reaches this after reading the capability bit, but a
+                // frontend without a band is checked for again here,
+                // because a saved game restored on another screen
+                // arrives with the story already sure of itself.
+                if (ShowsImageBand)
+                {
+                    Display.Screen.DrawImageBand(a[0], a[1]);
+                }
+
                 break;
             case Opcode.Unknown:
                 // [zm 14.2.1] Extended opcodes from 30 up are ignored.
@@ -2431,6 +2467,23 @@ public sealed class Interpreter
             {
                 flags = Set(flags, Flags1FromVersion4.SoundEffectsAvailable, Sound.CanPlaySounds);
                 flags = Set(flags, Flags1FromVersion4.PicturesAvailable, can.HasFlag(ScreenCapabilities.Pictures));
+            }
+            else if (ShowsImageBand)
+            {
+                // [arc contract 1] Outside Version 6 the same bit tells
+                // an Arcturus story that its picture band will be
+                // drawn, and the story reads it before it ever issues
+                // the opcode.
+                //
+                // Only for an Arcturus story, though. [zm 11.1] warns
+                // that Inform's Version 4 and later games carry the
+                // Version 3 meaning of this bit over, using it to
+                // choose between a time and a score status line, and
+                // says an interpreter should leave it alone there.
+                // Setting it for everything would turn every score
+                // game in the world into a clock, which is why
+                // ShowsImageBand asks the resource file first.
+                flags = Set(flags, Flags1FromVersion4.PicturesAvailable, true);
             }
             flags = Set(flags, Flags1FromVersion4.TimedInputAvailable, Input.SupportsTimedInput);
             Header.Flags1FromVersion4 = flags;
