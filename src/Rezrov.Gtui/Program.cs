@@ -1,5 +1,8 @@
+using Rezrov.AaMachine;
+using Rezrov.AaMachine.Execution;
 using Rezrov.Core;
 using Rezrov.Core.Blorb;
+using Rezrov.Grid;
 using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
 using Rezrov.ZMachine.Input;
@@ -39,6 +42,7 @@ internal static class Program
     private static int? _seed;
     private static InterpreterNumber? _machine;
     private static bool _tandy;
+    private static string? _save;
 
     internal static int Main(string[] args)
     {
@@ -98,6 +102,9 @@ internal static class Program
                 case "--tandy":
                     _tandy = true;
                     break;
+                case "--save" when i + 1 < args.Length:
+                    _save = args[++i];
+                    break;
                 default:
                     return false;
             }
@@ -111,11 +118,23 @@ internal static class Program
     /// </summary>
     private static int Play(string path)
     {
-        if (Story(path) is not { } bytes)
+        if (Story(path) is not { } story)
         {
             return 1;
         }
 
+        return story.Format == StoryFormat.AaMachine
+            ? PlayAaMachine(path, story.Bytes)
+            : PlayZMachine(path, story.Bytes);
+    }
+
+    /// <summary>
+    /// [zm 8] A Z-machine game: one grid of cells that the screen model
+    /// wraps and pages for, and whose size is the window's own divided
+    /// by a character.
+    /// </summary>
+    private static int PlayZMachine(string path, byte[] bytes)
+    {
         var memory = new ZMemory(bytes);
         var header = new StoryHeader(memory);
 
@@ -220,6 +239,137 @@ internal static class Program
     }
 
     /// <summary>
+    /// [aam output] The other machine this program plays: a story that
+    /// lays its own text out, with the status area across the top, in
+    /// the same grid of characters and the same window.
+    /// </summary>
+    /// <remarks>
+    /// Almost nothing here is new. The grid, the wrapping, the margins
+    /// and the status area are the ones the terminal program uses, and
+    /// what this adds is the two ends: the keys the window reports, and
+    /// the pixels the cells are drawn as.
+    /// </remarks>
+    private static int PlayAaMachine(string path, byte[] bytes)
+    {
+        AaStory story;
+
+        try
+        {
+            story = AaStory.Read(bytes);
+        }
+        catch (InvalidDataException e)
+        {
+            Console.Error.WriteLine($"rezrov-gtui: {e.Message}");
+            return 1;
+        }
+
+        foreach (var name in new[] { _machine is null ? null : "interpreter", _tandy ? "tandy" : null })
+        {
+            if (name is not null)
+            {
+                Console.Error.WriteLine($"rezrov-gtui: the {name} option does not apply to the Aa-machine");
+            }
+        }
+
+        using var window = Window();
+        window.Open(
+            $"{Path.GetFileName(path)} - rezrov",
+            Columns * Paint.CellWidth,
+            Rows * Paint.CellHeight);
+
+        var (columns, rows) = Paint.Fits(window.Surface.Width, window.Surface.Height);
+        var display = new AaGridDisplay(story, columns, rows, window.Redraw);
+
+        // The game fills the cells on its own thread while the window
+        // is painted on the thread that owns it, so the picture is
+        // brought up to date and read under its own lock.
+        window.Painting = surface =>
+        {
+            lock (display.Sync)
+            {
+                // Composing the picture and reading it have to happen
+                // without the game getting in between, or the cells are
+                // painted halfway through a line the story is writing.
+                display.Repaint();
+                Paint.Picture(surface, display);
+            }
+        };
+
+        // [aam text] The window reports the Z-machine's key codes,
+        // since that is what it was built to report and what the
+        // platforms translate to. A key the Aa-machine has no character
+        // for is not passed on.
+        window.Key = key =>
+        {
+            if (AaGridKeys.FromZscii(key) is { } character)
+            {
+                display.Enqueue(character);
+            }
+        };
+
+        window.Resized = () =>
+        {
+            var (across, down) = Paint.Fits(window.Surface.Width, window.Surface.Height);
+            display.Resize(across, down);
+        };
+
+        var machine = new Machine(story, display, _seed);
+
+        // [aam savefile] A saved game goes where the command line said
+        // and nowhere else, which is where the terminal program leaves
+        // it too. The Z-machine here asks for a name in the window, and
+        // doing the same for this machine is a piece of work of its
+        // own rather than a line of this one.
+        machine.SaveFileName = _ => _save is null ? null : Path.GetFullPath(_save);
+
+        var result = 0;
+
+        var worker = new Thread(() =>
+        {
+            string? ending = null;
+
+            try
+            {
+                var status = machine.Start();
+
+                while (status != AaStatus.Quit)
+                {
+                    status = status == AaStatus.GetInput
+                        ? machine.ProceedWithInput(display.ReadLine())
+                        : machine.ProceedWithKey(display.ReadKey());
+                }
+            }
+            catch (AaMachineException e)
+            {
+                Console.Error.WriteLine($"rezrov-gtui: stopped: {e.Message}");
+                ending = e.Message;
+                result = 3;
+            }
+
+            foreach (var error in machine.RuntimeErrors)
+            {
+                Console.Error.WriteLine($"rezrov-gtui: {error}");
+            }
+
+            display.Notice(ending is null
+                ? "[The game has ended. Press a key to leave.]"
+                : $"[The game stopped: {ending} Press a key to leave.]");
+
+            display.ReadKey();
+            window.Close();
+        })
+        {
+            IsBackground = true,
+            Name = "interpreter",
+        };
+
+        worker.Start();
+        window.Run();
+
+        return result;
+    }
+
+    /// <summary>
     /// The window for whichever system this is running on.
     /// </summary>
     private static IGridWindow Window()
@@ -244,10 +394,11 @@ internal static class Program
     }
 
     /// <summary>
-    /// The story itself, taken out of a resource file when the game is
-    /// packaged in one, or null after saying what was wrong with it.
+    /// A story and which machine plays it, taken out of a resource file
+    /// when the game is packaged in one, or null after saying what was
+    /// wrong with it.
     /// </summary>
-    private static byte[]? Story(string path)
+    private static (byte[] Bytes, StoryFormat Format)? Story(string path)
     {
         if (!File.Exists(path))
         {
@@ -270,7 +421,7 @@ internal static class Program
                     return null;
                 }
 
-                return executable.Data.ToArray();
+                return (executable.Data.ToArray(), StoryFormat.ZMachine);
             }
             catch (InvalidDataException e)
             {
@@ -279,14 +430,14 @@ internal static class Program
             }
         }
 
-        if (format != StoryFormat.ZMachine)
+        if (format is not (StoryFormat.ZMachine or StoryFormat.AaMachine))
         {
             Console.Error.WriteLine(
-                $"rezrov-gtui: {Path.GetFileName(path)} is not a Z-machine story, and this program plays that machine only.");
+                $"rezrov-gtui: {Path.GetFileName(path)} is not a story either of this program's machines can play.");
             return null;
         }
 
-        return bytes;
+        return (bytes, format);
     }
 
     private static void Help(TextWriter to)
@@ -298,24 +449,30 @@ internal static class Program
                    rezrov-gtui --version
                    rezrov-gtui --help
 
-            Plays a Z-machine game in a window of its own, as a grid of
-            characters drawn from a font this program carries. Nothing is
-            used that did not come with the system: the window, the keys,
-            and every pixel are this program's own doing.
+            Plays a game in a window of its own, as a grid of characters
+            drawn from a font this program carries. Nothing is used that
+            did not come with the system: the window, the keys, and every
+            pixel are this program's own doing.
+
+            Both machines that come down to a grid of characters play
+            here: a Z-machine game from a .z3 to a .z8 or a .zblorb, and
+            a Dialog game from an .aastory.
 
             options:
               --seed <number>          seed the game's random numbers
               --interpreter <machine>  tell the game which machine it is on
               --tandy                  set the Tandy bit for a Version 1 to 3 game
+              --save <file>            where a Dialog game's saves go
 
             machines: {string.Join(", ", names.Take(6))},
                       {string.Join(", ", names.Skip(6))}, or a number from 1 to 11
 
-            Saving and restoring ask for the file name in the window
+            A Z-machine game asks for its save file name in the window
             itself, the way Infocom's interpreters did, since a file
-            dialog is a toolkit and there is none here. Sounds and
-            pictures are not drawn yet; the other three programs have
-            them.
+            dialog is a toolkit and there is none here. A Dialog game
+            writes the whole file itself and so is told where with
+            --save. Sounds and pictures are not drawn yet; the other
+            three programs have them.
 
             The fonts can be read without playing anything:
 
