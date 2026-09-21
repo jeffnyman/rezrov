@@ -451,6 +451,15 @@ internal static class Program
     }
 
     /// <summary>
+    /// [babel legacy Z-code IFID] What to call the window: the game
+    /// Infocom made, where the story is one of theirs, and otherwise
+    /// the name of the file on disk.
+    /// </summary>
+    private static string Named() =>
+        (_format == StoryFormat.ZMachine ? InfocomCatalog.TitleOf(_bytes) : null)
+        ?? Path.GetFileName(_path);
+
+    /// <summary>
     /// The size a page of text comes to, before the screen has a say.
     /// </summary>
     private static (double Width, double Height) Page(Glyphs glyphs) =>
@@ -792,7 +801,7 @@ internal static class Program
                 var board = new Board(glyphs, _smoothing);
                 var window = new Window
                 {
-                    Title = $"{Path.GetFileName(_path)} - rezrov",
+                    Title = $"{Named()} - rezrov",
                     Content = board,
                     WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 };
