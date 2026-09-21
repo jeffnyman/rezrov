@@ -11,6 +11,16 @@ namespace Rezrov.AaMachine;
 public readonly record struct AaChunk(string Name, int Offset, int Length);
 
 /// <summary>
+/// [aam story] A file the story carries inside itself: a picture, a
+/// sound, or anything else a resource points at with the "file"
+/// scheme.
+/// </summary>
+/// <param name="Name">The name the resource table refers to it by.</param>
+/// <param name="Offset">Where its contents begin in the story file.</param>
+/// <param name="Length">How many bytes of it there are.</param>
+public readonly record struct AaFile(string Name, int Offset, int Length);
+
+/// <summary>
 /// [aam story] An Aa-machine story file, read as far as its header.
 /// </summary>
 /// <remarks>
@@ -83,6 +93,7 @@ public sealed class AaStory
         Instructions = new InstructionDecoder(
             Required("CODE").ToArray(), MajorVersion, MinorVersion, Shift);
 
+        Files = ReadFiles(bytes, chunks);
         Styles = AaStyles.Read(Contents("LOOK"));
         WordMaps = AaWordMaps.Read(Contents("MAPS"));
         ObjectNames = AaObjectNames.Read(Contents("TAGS"), Language.Characters);
@@ -173,6 +184,46 @@ public sealed class AaStory
     public IReadOnlyList<AaResource> Resources { get; }
 
     /// <summary>
+    /// [aam story] The files packaged inside the story, in the order
+    /// they appear. A story may carry any number of them, or none.
+    /// </summary>
+    public IReadOnlyList<AaFile> Files { get; }
+
+    /// <summary>
+    /// [aam story] The bytes of a packaged file, or an empty span
+    /// where the story carries no such file.
+    /// </summary>
+    public ReadOnlySpan<byte> File(string name)
+    {
+        ArgumentNullException.ThrowIfNull(name);
+
+        foreach (var file in Files)
+        {
+            if (string.Equals(file.Name, name, StringComparison.Ordinal))
+            {
+                return _bytes.AsSpan(file.Offset, file.Length);
+            }
+        }
+
+        return default;
+    }
+
+    /// <summary>
+    /// [aam story] What a resource points at, where that is a file the
+    /// story carries. A resource somewhere else on the web is not
+    /// something an interpreter can go and fetch, so it comes back
+    /// empty and the alternative text is what there is to show.
+    /// </summary>
+    public ReadOnlySpan<byte> Contents(AaResource resource)
+    {
+        const string Scheme = "file:";
+
+        return resource.Url.StartsWith(Scheme, StringComparison.Ordinal)
+            ? File(resource.Url[Scheme.Length..])
+            : default;
+    }
+
+    /// <summary>
     /// The bytes of a chunk, or an empty span if it has none.
     /// </summary>
     public ReadOnlySpan<byte> Contents(string name) =>
@@ -250,6 +301,36 @@ public sealed class AaStory
         }
 
         return running ^ 0xFFFFFFFFu;
+    }
+
+    // [aam story] Each FILE chunk is a name, a null, and then the
+    // file itself. There may be several, which is why they are found
+    // by walking the chunks rather than by asking for one by name.
+    private static AaFile[] ReadFiles(byte[] bytes, IReadOnlyList<AaChunk> chunks)
+    {
+        var files = new List<AaFile>();
+
+        foreach (var chunk in chunks)
+        {
+            if (chunk.Name != "FILE")
+            {
+                continue;
+            }
+
+            var end = bytes.AsSpan(chunk.Offset, chunk.Length).IndexOf((byte)0);
+
+            if (end < 0)
+            {
+                throw new InvalidDataException("A FILE chunk does not say what it is called.");
+            }
+
+            files.Add(new AaFile(
+                Encoding.ASCII.GetString(bytes, chunk.Offset, end),
+                chunk.Offset + end + 1,
+                chunk.Length - end - 1));
+        }
+
+        return [.. files];
     }
 
     private ReadOnlySpan<byte> Required(string name) =>
