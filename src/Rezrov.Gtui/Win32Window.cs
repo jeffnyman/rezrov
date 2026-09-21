@@ -1,3 +1,4 @@
+using Rezrov.Core.Graphics;
 using System.Runtime.InteropServices;
 
 namespace Rezrov.Gtui;
@@ -31,6 +32,14 @@ internal sealed partial class Win32Window : IGridWindow
     private const uint WmEraseBackground = 0x0014;
     private const uint WmKeyDown = 0x0100;
     private const uint WmChar = 0x0102;
+    private const uint WmSetIcon = 0x0080;
+
+    // [win32] The two sizes a window is asked for, and the metrics
+    // that say how large each one should be on this display.
+    private const nint IconBig = 1;
+    private const nint IconSmall = 0;
+    private const int SmCxIcon = 11;
+    private const int SmCxSmallIcon = 49;
 
     private const int BiRgb = 0;
     private const uint DibRgbColors = 0;
@@ -135,6 +144,55 @@ internal sealed partial class Win32Window : IGridWindow
     /// running the game, since this only marks the window and the
     /// painting itself happens on the thread that owns it.
     /// </summary>
+    /// <summary>
+    /// [win32] The mark the window wears, built by Windows itself from
+    /// the bytes of the icon file.
+    /// </summary>
+    /// <remarks>
+    /// The two sizes are set separately, because a window shows a small
+    /// one in its corner and a large one where a program is listed, and
+    /// Windows scales badly between them. Both come from the same file,
+    /// which carries each size drawn rather than derived.
+    ///
+    /// Handing the file's own bytes over means Windows decodes them,
+    /// mask and all, rather than this program reasoning about what
+    /// order the rows and the channels go in and being quietly wrong.
+    /// </remarks>
+    public void SetIcon(byte[] icon)
+    {
+        ArgumentNullException.ThrowIfNull(icon);
+
+        if (_window == 0)
+        {
+            return;
+        }
+
+        Wear(icon, GetSystemMetrics(SmCxIcon), IconBig);
+        Wear(icon, GetSystemMetrics(SmCxSmallIcon), IconSmall);
+    }
+
+    private void Wear(byte[] icon, int size, nint which)
+    {
+        if (IcoReader.Find(icon, size > 0 ? size : 32) is not { } place)
+        {
+            return;
+        }
+
+        var image = new byte[place.Length];
+
+        Array.Copy(icon, place.Offset, image, 0, place.Length);
+
+        // [win32] The version is the one every icon file has used since
+        // Windows 3, and zero for the sizes asks for the picture at the
+        // size it was drawn.
+        var handle = CreateIconFromResourceEx(image, (uint)image.Length, true, 0x00030000, 0, 0, 0);
+
+        if (handle != 0)
+        {
+            SendMessageW(_window, WmSetIcon, which, handle);
+        }
+    }
+
     public void Redraw()
     {
         if (_window != 0)
@@ -405,6 +463,22 @@ internal sealed partial class Win32Window : IGridWindow
         nint menu,
         nint instance,
         nint parameter);
+
+    [LibraryImport("user32", SetLastError = true)]
+    private static partial nint CreateIconFromResourceEx(
+        byte[] bits,
+        uint length,
+        [MarshalAs(UnmanagedType.Bool)] bool icon,
+        uint version,
+        int wanted,
+        int tall,
+        uint flags);
+
+    [LibraryImport("user32")]
+    private static partial int GetSystemMetrics(int metric);
+
+    [LibraryImport("user32", EntryPoint = "SendMessageW")]
+    private static partial nint SendMessageW(nint window, uint message, nint first, nint second);
 
     [LibraryImport("user32")]
     private static partial nint DefWindowProcW(nint window, uint message, nuint wParam, nint lParam);

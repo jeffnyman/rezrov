@@ -100,6 +100,61 @@ public static class IcoReader
     /// </summary>
     private static ReadOnlySpan<byte> Png => [0x89, (byte)'P', (byte)'N', (byte)'G'];
 
+    /// <summary>
+    /// Where in the file the picture nearest the size asked for
+    /// begins, and how long it is, or null where the file holds none.
+    /// </summary>
+    /// <remarks>
+    /// This is for a platform that would rather decode an icon itself
+    /// than be handed pixels. Windows will build one from these bytes
+    /// exactly as they stand, which is better than reasoning about
+    /// what order it wants them in.
+    /// </remarks>
+    public static (int Offset, int Length)? Find(ReadOnlySpan<byte> file, int size)
+    {
+        if (file.Length < 6
+            || BinaryPrimitives.ReadUInt16LittleEndian(file) != 0
+            || BinaryPrimitives.ReadUInt16LittleEndian(file[2..]) != 1)
+        {
+            return null;
+        }
+
+        var count = BinaryPrimitives.ReadUInt16LittleEndian(file[4..]);
+        (int Offset, int Length)? chosen = null;
+        var best = int.MaxValue;
+
+        for (var i = 0; i < count; i++)
+        {
+            var entry = 6 + (i * 16);
+
+            if (entry + 16 > file.Length)
+            {
+                break;
+            }
+
+            var width = file[entry] == 0 ? 256 : file[entry];
+            var length = (int)BinaryPrimitives.ReadUInt32LittleEndian(file[(entry + 8)..]);
+            var offset = (int)BinaryPrimitives.ReadUInt32LittleEndian(file[(entry + 12)..]);
+
+            if (length <= 0 || offset < 0 || offset + length > file.Length)
+            {
+                continue;
+            }
+
+            // The nearest at or above the size wanted, and failing
+            // that the largest there is.
+            var distance = width >= size ? width - size : size - width + 1000;
+
+            if (chosen is null || distance < best)
+            {
+                chosen = (offset, length);
+                best = distance;
+            }
+        }
+
+        return chosen;
+    }
+
     /// <summary>One picture out of the file, whichever kind it is.</summary>
     private static Pixels? One(ReadOnlySpan<byte> image) =>
         image.Length > 8 && image[..4].SequenceEqual(Png)
