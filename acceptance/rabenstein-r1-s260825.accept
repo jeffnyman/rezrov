@@ -1,0 +1,32 @@
+! SEED=1
+! GAME=../entharion/arcturus-code/rabenstein-r1-s260825.z5
+
+# The Demo of Rabenstein, by Stefan Vogt, played to its ending. A
+# night walk through the Black Forest that doubles as the Arcturus
+# interpreter author's test game: the walkthrough its own source
+# header sets out, visiting a pictured room, a room with no picture
+# where the band must clear, a dark room with a scene of its own,
+# and a picture that changes in place on an event, repeatably. The
+# LOOK commands are here for the rule that a band must not be
+# redrawn when the picture has not changed.
+
+look
+north
+look
+north
+look
+north
+look
+south
+south
+take lantern
+light lantern
+north
+north
+look
+sleep
+look
+sleep
+sleep
+south
+quit

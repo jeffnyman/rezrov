@@ -1,0 +1,102 @@
+
+Welcome. This little night walk shows everything arc_image can do: pictures that follow you, a room too plain for one, darkness with a scene of its own, and a picture that changes before your eyes. Head north, trust the lantern you find on the way, and when the dark finally offers you a bed, SLEEP. Interpreter authors: the source file carries the walkthrough, with the expected picture at every step.
+
+The Demo of Rabenstein
+An arc_image demonstration by Stefan Vogt
+Release 1 / Serial number 260825 / Arcturus 1.13 (Cosmos 1.16)
+
+You are standing on a path deep in the Black Forest, extending further north from here. On a night like this, the trees cast eerie shadows and people disappear without ever being seen again.
+
+>look
+
+Forsaken Path
+You are standing on a path deep in the Black Forest, extending further north from here. On a night like this, the trees cast eerie shadows and people disappear without ever being seen again.
+
+>north
+
+Churchyard
+A small stone church stands here, its windows dark and its door ajar. The path leads back south, and a gate opens north onto the manor lawn.
+
+You can see a storm lantern here.
+
+>look
+
+Churchyard
+A small stone church stands here, its windows dark and its door ajar. The path leads back south, and a gate opens north onto the manor lawn.
+
+You can see a storm lantern here.
+
+>north
+
+Open Lawn
+A stretch of open lawn between the churchyard wall and the manor. The churchyard lies south; a side door into the manor stands north.
+
+>look
+
+Open Lawn
+A stretch of open lawn between the churchyard wall and the manor. The churchyard lies south; a side door into the manor stands north.
+
+>north
+
+Pitch black. Even your hands have gone missing.
+
+>look
+
+Pitch black. Even your hands have gone missing.
+
+>south
+
+Open Lawn
+A stretch of open lawn between the churchyard wall and the manor. The churchyard lies south; a side door into the manor stands north.
+
+>south
+
+Churchyard
+A small stone church stands here, its windows dark and its door ajar. The path leads back south, and a gate opens north onto the manor lawn.
+
+You can see a storm lantern here.
+
+>take lantern
+You take the storm lantern with you.
+
+>light lantern
+The lantern catches with a soft hiss.
+
+>north
+
+Open Lawn
+A stretch of open lawn between the churchyard wall and the manor. The churchyard lies south; a side door into the manor stands north.
+
+>north
+
+Bedchamber
+A four-poster bed under a window full of night. It has been a long walk through the dark; the bed is turned down, and SLEEP would end this night kindly. The side door back to the lawn is south.
+
+>look
+
+Bedchamber
+A four-poster bed under a window full of night. It has been a long walk through the dark; the bed is turned down, and SLEEP would end this night kindly. The side door back to the lawn is south.
+
+>sleep
+You sleep, mercifully without dreams, and wake to daylight.
+
+>look
+
+Bedchamber
+Morning light pours over the old guest bed; for a while, the manor almost forgets itself. The side door back to the lawn is south.
+
+>sleep
+You doze through the day, and wake to the window full of night again.
+
+>sleep
+You sleep, mercifully without dreams, and wake to daylight.
+
+>south
+You step out into the morning, the manor at your back, and the Black Forest, for once, lets you go.
+*** You have survived the night of Rabenstein ***
+
+This game does not keep score.
+
+Would you like to RESTART, RESTORE a saved game, or QUIT?
+
+>quit
