@@ -8,6 +8,7 @@ using Rezrov.AaMachine;
 using Rezrov.AaMachine.Execution;
 using Rezrov.Core;
 using Rezrov.Core.Audio;
+using Rezrov.Core.Graphics;
 using Rezrov.Core.Blorb;
 using Rezrov.Glulx;
 using Rezrov.Glulx.Execution;
@@ -453,11 +454,37 @@ internal static class Program
     /// <summary>
     /// [babel legacy Z-code IFID] What to call the window: the game
     /// Infocom made, where the story is one of theirs, and otherwise
-    /// the name of the file on disk.
+    /// the name of the file on disk, with what it runs on after it.
     /// </summary>
     private static string Named() =>
-        (_format == StoryFormat.ZMachine ? InfocomCatalog.TitleOf(_bytes) : null)
-        ?? Path.GetFileName(_path);
+        StoryBadges.Title(_path, _format, _bytes, _resources is not null);
+
+    /// <summary>
+    /// The mark the window wears: whose game it is, or failing that
+    /// which machine it runs on, or the program's own.
+    /// </summary>
+    /// <remarks>
+    /// The toolkit wants an icon file rather than pixels, so the bytes
+    /// go straight over and it decodes them. A mark that cannot be
+    /// read is no mark, which leaves the window with whatever the
+    /// system gives a program that asks for none.
+    /// </remarks>
+    private static WindowIcon? Mark()
+    {
+        if (StoryIcons.Read(StoryBadges.Icon(_format, _bytes)) is not { } bytes)
+        {
+            return null;
+        }
+
+        try
+        {
+            return new WindowIcon(new MemoryStream(bytes));
+        }
+        catch (Exception e) when (e is ArgumentException or InvalidDataException or NotSupportedException)
+        {
+            return null;
+        }
+    }
 
     /// <summary>
     /// The size a page of text comes to, before the screen has a say.
@@ -802,6 +829,7 @@ internal static class Program
                 var window = new Window
                 {
                     Title = $"{Named()} - rezrov",
+                    Icon = Mark(),
                     Content = board,
                     WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 };

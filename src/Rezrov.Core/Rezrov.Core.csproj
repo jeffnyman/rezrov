@@ -6,4 +6,15 @@
     globalization, and the AOT analyzers.
   -->
 
+  <!--
+    The marks a frontend shows for a story, carried inside the assembly
+    rather than read from a folder beside it. A published program is a
+    single file, or nearly one, and the corpus these came from is a
+    submodule that need not be checked out at all.
+  -->
+
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\*.ico" LogicalName="$([System.String]::Copy('%(Filename)').ToLowerInvariant()).ico" />
+  </ItemGroup>
+
 </Project>

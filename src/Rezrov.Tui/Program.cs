@@ -167,8 +167,9 @@ internal static class Program
 
         // [babel legacy Z-code IFID] A game Infocom made is named
         // after itself rather than after whatever the file on disk
-        // happens to be called.
-        var title = InfocomCatalog.TitleOf(bytes) ?? Path.GetFileName(path);
+        // happens to be called, and the window says what machine it
+        // runs on and whether it came packaged.
+        var title = StoryBadges.Title(path, StoryFormat.ZMachine, bytes, resources is not null);
 
         return Play(memory, header, resources, title, new TerminalFiles.Presets(transcript, record, save, commands), seed, machine, tandy);
     }
@@ -339,7 +340,7 @@ internal static class Program
         // [glk #sound] The machine's audio output, or nothing on a
         // machine with none, which the gestalt answers then report.
         using var audio = AudioEngine.Create();
-        var window = new Window { Title = Path.GetFileName(path) };
+        var window = new Window { Title = StoryBadges.Title(path, StoryFormat.Glulx, bytes, resources is not null) };
         var view = new GameView(() => app.RequestStop());
         window.Add(view);
 
