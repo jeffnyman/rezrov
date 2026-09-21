@@ -173,7 +173,14 @@ public sealed class ScreenModel : IScreenModel
     /// </remarks>
     public void Reset()
     {
-        _word.Clear();
+        // The word still being gathered has already been printed by the
+        // game, so it is written out rather than dropped. On a screen
+        // the erase below wipes it in the same breath and no player
+        // sees the difference; a frontend that is a stream of text
+        // erases nothing, and would otherwise lose the tail of a line.
+        // Infocom's own ZIP test ends its read check by printing
+        // "End of test." and restarting, which is exactly that case.
+        FlushWord();
         Style = TextStyle.Roman;
         Foreground = _screen.DefaultForeground;
         Background = _screen.DefaultBackground;
