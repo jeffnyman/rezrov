@@ -1,3 +1,4 @@
+using Rezrov.Core.Graphics;
 using System.Runtime.InteropServices;
 
 namespace Rezrov.Gtui;
@@ -56,6 +57,11 @@ internal sealed partial class CocoaWindow : IGridWindow
     // writes them, which is the order a surface already has them in.
     private const uint SkipFirst = 6;
     private const uint LittleEndian = 2 << 12;
+
+    // [cocoa] Read the last byte of each pixel as transparency,
+    // which is the order a decoded picture has them in, unlike a
+    // surface.
+    private const uint LastAlpha = 3;
 
     private nint _application;
     private nint _window;
@@ -165,6 +171,87 @@ internal sealed partial class CocoaWindow : IGridWindow
         SendPointer(menu, Selector("addItem:"), quit);
         SendPointer(heading, Selector("setSubmenu:"), menu);
         SendPointer(_application, Selector("setMainMenu:"), bar);
+    }
+
+    /// <summary>
+    /// [cocoa] The mark the program wears, which on this system is the
+    /// application's rather than the window's.
+    /// </summary>
+    /// <remarks>
+    /// A window here carries no icon of its own: the mark belongs to
+    /// the program and shows in the dock. So the picture goes to the
+    /// application, which is the same place a bundled program's mark
+    /// would end up, and this program has no bundle to put one in.
+    ///
+    /// The picture becomes a CGImage the same way the screen does, and
+    /// then an NSImage around it. A size of nothing tells the image to
+    /// take its own.
+    /// </remarks>
+    public void SetIcon(byte[] icon)
+    {
+        ArgumentNullException.ThrowIfNull(icon);
+
+        if (_application == 0 || IcoReader.Read(icon, 128) is not { } picture)
+        {
+            return;
+        }
+
+        var bytes = picture.Width * picture.Height * 4;
+        var pixels = Marshal.AllocHGlobal(bytes);
+
+        try
+        {
+            Marshal.Copy(picture.Rgba, 0, pixels, bytes);
+
+            var provider = CGDataProviderCreateWithData(0, pixels, (nuint)bytes, 0);
+
+            if (provider == 0)
+            {
+                return;
+            }
+
+            // The pixels are red, green, blue and alpha in that order,
+            // which is the other way round from the screen's.
+            var image = CGImageCreate(
+                (nuint)picture.Width,
+                (nuint)picture.Height,
+                8,
+                32,
+                (nuint)(picture.Width * 4),
+                _colors,
+                LastAlpha,
+                provider,
+                0,
+                false,
+                0);
+
+            if (image != 0)
+            {
+                var wrapped = Send(Class("NSImage"), Selector("alloc"));
+
+                if (wrapped != 0)
+                {
+                    wrapped = SendImage(
+                        wrapped,
+                        Selector("initWithCGImage:size:"),
+                        image,
+                        default);
+
+                    if (wrapped != 0)
+                    {
+                        SendPointer(_application, Selector("setApplicationIconImage:"), wrapped);
+                    }
+                }
+
+                CGImageRelease(image);
+            }
+
+            CGDataProviderRelease(provider);
+        }
+        finally
+        {
+            Marshal.FreeHGlobal(pixels);
+        }
     }
 
     public void Redraw() => _dirty = true;
@@ -459,6 +546,13 @@ internal sealed partial class CocoaWindow : IGridWindow
         [MarshalAs(UnmanagedType.U1)] bool defer);
 
     [LibraryImport(Runtime, EntryPoint = "objc_msgSend")]
+    private static partial nint SendImage(
+        nint receiver,
+        nint selector,
+        nint image,
+        CocoaSize size);
+
+    [LibraryImport(Runtime, EntryPoint = "objc_msgSend")]
     private static partial CocoaRect SendRect(nint receiver, nint selector);
 
     [LibraryImport(Runtime, EntryPoint = "objc_msgSend_stret")]
@@ -513,6 +607,18 @@ internal sealed partial class CocoaWindow : IGridWindow
     // [cocoa] A rectangle is four numbers: where it sits and how large
     // it is. The window is placed by the system, so the first two are
     // left at nothing.
+    /// <summary>
+    /// [cocoa] A width and a height, which an image asked to keep
+    /// its own is given as nothing at all.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    private struct CocoaSize
+    {
+        public double Width;
+
+        public double Height;
+    }
+
     [StructLayout(LayoutKind.Sequential)]
     private struct CocoaRect
     {

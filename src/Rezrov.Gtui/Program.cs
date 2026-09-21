@@ -1,6 +1,7 @@
 using Rezrov.AaMachine;
 using Rezrov.AaMachine.Execution;
 using Rezrov.Core;
+using Rezrov.Core.Graphics;
 using Rezrov.Core.Blorb;
 using Rezrov.Grid;
 using Rezrov.ZMachine;
@@ -125,7 +126,7 @@ internal static class Program
 
         return story.Format == StoryFormat.AaMachine
             ? PlayAaMachine(path, story.Bytes)
-            : PlayZMachine(path, story.Bytes);
+            : PlayZMachine(path, story.Bytes, story.Packaged);
     }
 
     /// <summary>
@@ -133,7 +134,7 @@ internal static class Program
     /// wraps and pages for, and whose size is the window's own divided
     /// by a character.
     /// </summary>
-    private static int PlayZMachine(string path, byte[] bytes)
+    private static int PlayZMachine(string path, byte[] bytes, bool packaged)
     {
         var memory = new ZMemory(bytes);
         var header = new StoryHeader(memory);
@@ -141,11 +142,19 @@ internal static class Program
         using var window = Window();
         // [babel legacy Z-code IFID] A game Infocom made is named
         // after itself rather than after whatever the file on disk
-        // happens to be called.
+        // happens to be called, and the window says what machine
+        // it runs on.
         window.Open(
-            $"{InfocomCatalog.TitleOf(bytes) ?? Path.GetFileName(path)} - rezrov",
+            $"{StoryBadges.Title(path, StoryFormat.ZMachine, bytes, packaged)} - rezrov",
             Columns * Paint.CellWidth,
             Rows * Paint.CellHeight);
+
+        // The mark the window wears, which is whose game it is
+        // where that can be told, and the program's own otherwise.
+        if (StoryIcons.Read(StoryBadges.Icon(StoryFormat.ZMachine, bytes)) is { } mark)
+        {
+            window.SetIcon(mark);
+        }
 
         var (columns, rows) = Paint.Fits(window.Surface.Width, window.Surface.Height);
 
@@ -276,9 +285,16 @@ internal static class Program
 
         using var window = Window();
         window.Open(
-            $"{Path.GetFileName(path)} - rezrov",
+            $"{StoryBadges.Title(path, StoryFormat.AaMachine, bytes, false)} - rezrov",
             Columns * Paint.CellWidth,
             Rows * Paint.CellHeight);
+
+        // The mark the window wears, which is whose game it is
+        // where that can be told, and the program's own otherwise.
+        if (StoryIcons.Read(StoryBadges.Icon(StoryFormat.AaMachine, bytes)) is { } mark)
+        {
+            window.SetIcon(mark);
+        }
 
         var (columns, rows) = Paint.Fits(window.Surface.Width, window.Surface.Height);
         var display = new AaGridDisplay(story, columns, rows, window.Redraw);
@@ -401,7 +417,7 @@ internal static class Program
     /// when the game is packaged in one, or null after saying what was
     /// wrong with it.
     /// </summary>
-    private static (byte[] Bytes, StoryFormat Format)? Story(string path)
+    private static (byte[] Bytes, StoryFormat Format, bool Packaged)? Story(string path)
     {
         if (!File.Exists(path))
         {
@@ -424,7 +440,7 @@ internal static class Program
                     return null;
                 }
 
-                return (executable.Data.ToArray(), StoryFormat.ZMachine);
+                return (executable.Data.ToArray(), StoryFormat.ZMachine, true);
             }
             catch (InvalidDataException e)
             {
@@ -440,7 +456,7 @@ internal static class Program
             return null;
         }
 
-        return (bytes, format);
+        return (bytes, format, false);
     }
 
     private static void Help(TextWriter to)

@@ -45,6 +45,19 @@ internal interface IGridWindow : IDisposable
     void Open(string title, int width, int height);
 
     /// <summary>
+    /// The mark the window wears, as the bytes of an icon file, which
+    /// is what every one of these systems would rather be handed than
+    /// pixels: each has its own decoder and its own idea of what order
+    /// the rows go in.
+    /// </summary>
+    /// <remarks>
+    /// A system with nowhere to put a mark, or one that will not read
+    /// this one, does nothing. A window without an icon is a window,
+    /// and a game is not worth failing to open over its absence.
+    /// </remarks>
+    void SetIcon(byte[] icon);
+
+    /// <summary>
     /// Asks for the window to be painted again. Safe to call from the
     /// thread running the game.
     /// </summary>

@@ -162,6 +162,46 @@ public class StoryBadgeTests
     }
 
     [Fact]
+    public void AMarkCanBeHandedToASystemThatWouldRatherDecodeItItself()
+    {
+        // Windows builds an icon from the file's own bytes, so it is
+        // told where in the file to look rather than given pixels.
+        var bytes = StoryIcons.Read(StoryIcons.Rezrov);
+
+        Assert.NotNull(bytes);
+
+        var small = IcoReader.Find(bytes, 16);
+        var large = IcoReader.Find(bytes, 48);
+
+        Assert.NotNull(small);
+        Assert.NotNull(large);
+        Assert.NotEqual(small!.Value.Offset, large!.Value.Offset);
+
+        // What it points at has to be the picture of that size, which
+        // is the whole of the promise. These are bitmaps rather than
+        // whole icon files, so the width is read where a bitmap keeps
+        // it, which is where the system will read it too.
+        Assert.Equal(16, Wide(bytes, small.Value));
+        Assert.Equal(48, Wide(bytes, large.Value));
+
+        // A mark of one size answers every question with that size.
+        var one = StoryIcons.Read(StoryIcons.Infocom);
+
+        Assert.NotNull(one);
+        Assert.NotNull(IcoReader.Find(one, 16));
+        Assert.NotNull(IcoReader.Find(one, 256));
+
+        Assert.Null(IcoReader.Find([], 32));
+        Assert.Null(IcoReader.Find([0x89, 0x50, 0x4E, 0x47, 0, 0], 32));
+    }
+
+    /// <summary>
+    /// How wide the bitmap at a place in an icon file says it is.
+    /// </summary>
+    private static int Wide(byte[] icon, (int Offset, int Length) place) =>
+        BitConverter.ToInt32(icon, place.Offset + 4);
+
+    [Fact]
     public void SomethingThatIsNotAnIconIsNotReadAsOne()
     {
         Assert.Empty(IcoReader.Read([]));

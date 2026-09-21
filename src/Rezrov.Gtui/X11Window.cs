@@ -1,3 +1,4 @@
+using Rezrov.Core.Graphics;
 using System.Runtime.InteropServices;
 
 namespace Rezrov.Gtui;
@@ -24,6 +25,11 @@ internal sealed partial class X11Window : IGridWindow
     private const long KeyPressMask = 1L << 0;
     private const long ExposureMask = 1L << 15;
     private const long StructureNotifyMask = 1L << 17;
+
+    // [x11] Replacing whatever a property held before, which is
+    // the only one of the three ways of writing one that is wanted
+    // here.
+    private const int PropModeReplace = 0;
 
     private const int KeyPress = 2;
     private const int Expose = 12;
@@ -111,6 +117,62 @@ internal sealed partial class X11Window : IGridWindow
         XFlush(_display);
 
         Resize(width, height);
+    }
+
+    /// <summary>
+    /// [x11] The mark the window wears, as the property the window
+    /// managers agreed on.
+    /// </summary>
+    /// <remarks>
+    /// The property is a list of pictures, each of them its width, its
+    /// height, and then a pixel for every place in it, so that a panel
+    /// showing a small mark and a switcher showing a large one can each
+    /// take the size they want. Every value is a thirty-two bit
+    /// quantity in the protocol and a machine word here, which is why
+    /// the array is of the wider type on a machine where those differ.
+    ///
+    /// A window manager that does not read this property leaves the
+    /// window as it was, which is no worse than never having asked.
+    /// </remarks>
+    public void SetIcon(byte[] icon)
+    {
+        ArgumentNullException.ThrowIfNull(icon);
+
+        if (_display == 0 || _window == 0)
+        {
+            return;
+        }
+
+        var pictures = IcoReader.Read(icon);
+        var values = new List<nint>();
+
+        foreach (var picture in pictures)
+        {
+            values.Add(picture.Width);
+            values.Add(picture.Height);
+
+            for (var y = 0; y < picture.Height; y++)
+            {
+                for (var x = 0; x < picture.Width; x++)
+                {
+                    var (red, green, blue, alpha) = picture.At(x, y);
+
+                    values.Add((alpha << 24) | (red << 16) | (green << 8) | blue);
+                }
+            }
+        }
+
+        if (values.Count == 0)
+        {
+            return;
+        }
+
+        var property = XInternAtom(_display, "_NET_WM_ICON", false);
+        var cardinal = XInternAtom(_display, "CARDINAL", false);
+        var data = values.ToArray();
+
+        XChangeProperty(_display, _window, property, cardinal, 32, PropModeReplace, data, data.Length);
+        XFlush(_display);
     }
 
     public void Redraw()
@@ -389,6 +451,17 @@ internal sealed partial class X11Window : IGridWindow
 
     [LibraryImport("libX11.so.6", StringMarshalling = StringMarshalling.Utf8)]
     private static partial void XStoreName(nint display, nint window, string title);
+
+    [LibraryImport("libX11.so.6")]
+    private static partial void XChangeProperty(
+        nint display,
+        nint window,
+        nint property,
+        nint type,
+        int format,
+        int mode,
+        nint[] data,
+        int count);
 
     [LibraryImport("libX11.so.6")]
     private static partial void XSelectInput(nint display, nint window, long mask);
