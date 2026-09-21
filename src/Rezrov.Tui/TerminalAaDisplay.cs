@@ -165,7 +165,7 @@ public sealed class TerminalAaDisplay : IAaOutput, ITerminalPicture
     {
         if (_commands?.ReadLine() is { } scripted)
         {
-            return scripted.Length > 0 ? scripted[0] : AaKeyMap.Return;
+            return scripted.Length > 0 ? scripted[0] : AaKeys.Return;
         }
 
         return _keys.Take();

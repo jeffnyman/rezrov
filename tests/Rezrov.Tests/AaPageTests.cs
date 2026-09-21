@@ -10,18 +10,14 @@ namespace Rezrov.Tests;
 /// a style sheet asks for come to rest.
 /// </summary>
 /// <remarks>
-/// The face is invented here, which is the point of the measuring
-/// seam: every character is exactly as wide as the text is tall, so a
-/// measurement in ems, a measurement in characters and a count of
-/// letters are all the same number and the layout can be stated
-/// exactly rather than approximately. Ordinary text is ten tall, so a
-/// width of a hundred holds ten characters and a line takes thirteen
-/// and a half.
+/// The text is laid out in <see cref="AaRuler"/>, a face invented for
+/// the tests, so that every measurement can be stated exactly rather
+/// than approximately.
 /// </remarks>
 public class AaPageTests
 {
-    private const double Size = 10;
-    private const double LineHeight = Size * 1.35;
+    private const double Size = AaRuler.Size;
+    private const double LineHeight = AaRuler.LineHeight;
 
     [Fact]
     public void TextComesOutAsLinesWithTheirPlaceOnThePage()
@@ -436,13 +432,12 @@ public class AaPageTests
         Assert.Equal(named["status"], text.Innermost);
     }
 
-    private static AaText Plain(AaStyles? styles = null) =>
-        new(
-            new Ruler(),
-            new AaSheet(
-                styles ?? AaStyles.None,
-                new Ruler(),
-                new AaLook(string.Empty, Size, false, false, 0, AaTheme.Ink, 0)));
+    private static AaText Plain(AaStyles? styles = null)
+    {
+        var ruler = new AaRuler();
+
+        return new AaText(ruler, new AaSheet(styles ?? AaStyles.None, ruler, AaRuler.Plain));
+    }
 
     private static AaStyles Story(string name)
     {
@@ -471,23 +466,4 @@ public class AaPageTests
     private static Pixels Picture(int width, int height) =>
         new(width, height, new byte[width * height * 4]);
 
-    /// <summary>
-    /// A face where every character is exactly as wide as the text is
-    /// tall, so that ems, characters and letters are all one number.
-    /// </summary>
-    private sealed class Ruler : IAaGlyphs
-    {
-        public double Width(string text, AaLook look)
-        {
-            ArgumentNullException.ThrowIfNull(text);
-
-            return text.Length * look.Size;
-        }
-
-        public double Ascent(AaLook look) => look.Size * 0.8;
-
-        public double Descent(AaLook look) => look.Size * 0.2;
-
-        public double CharacterWidth(AaLook look) => look.Size;
-    }
 }

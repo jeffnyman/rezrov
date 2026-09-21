@@ -71,6 +71,17 @@ internal sealed class Fonts
             _ => FontWeight.Normal,
         });
 
+    /// <summary>
+    /// [aam story] The face a named family calls for, heavy or leaning
+    /// as a style class asks. An Aa-machine story names its own
+    /// families rather than choosing between two the frontend keeps,
+    /// so the family comes in from outside.
+    /// </summary>
+    public static Typeface Face(FontFamily family, bool bold, bool italic) => new(
+        family,
+        italic ? FontStyle.Italic : FontStyle.Normal,
+        bold ? FontWeight.Bold : FontWeight.Normal);
+
     public double Width(string text, Typeface face, double size)
     {
         if (_widths.TryGetValue((text, face, size), out var known))
@@ -153,6 +164,13 @@ internal sealed class Glyphs : IGlyphs
         _fonts = fonts;
         _look = look;
     }
+
+    /// <summary>
+    /// [aam story] The faces themselves, for an Aa-machine story,
+    /// which names its own families rather than choosing between the
+    /// two a Glk game has.
+    /// </summary>
+    public Fonts Fonts => _fonts;
 
     public double CellWidth => _fonts.CellWidth;
 

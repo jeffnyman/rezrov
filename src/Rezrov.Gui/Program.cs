@@ -4,6 +4,8 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Rezrov.AaMachine;
+using Rezrov.AaMachine.Execution;
 using Rezrov.Core;
 using Rezrov.Core.Audio;
 using Rezrov.Core.Blorb;
@@ -24,10 +26,11 @@ namespace Rezrov.Gui;
 /// toolkit on the main one, and the Glk display between them.
 /// </summary>
 /// <remarks>
-/// Both machines play here, each against the seam the core already has
-/// for it: a Glulx game through the Glk library's windows, graphics,
-/// and sound, and a Z-machine game through the screen model and its
-/// Version 6 windows. The same control draws either of them.
+/// All three machines play here, each against the seam the core
+/// already has for it: a Glulx game through the Glk library's windows,
+/// graphics, and sound, a Z-machine game through the screen model and
+/// its Version 6 windows, and an Aa-machine game through a page that
+/// lays its own text out. The same control draws any of them.
 ///
 /// The interpreter waits on the toolkit when it asks the player for a
 /// file, and the toolkit never waits on the interpreter, so the
@@ -55,6 +58,7 @@ internal static class Program
     private static InterpreterNumber? _machine;
     private static bool _tandy;
     private static string _prose = Glyphs.ProseFamily;
+    private static string _sans = GuiAaGlyphs.SansFamily;
     private static string _fixed = Glyphs.FixedFamily;
     private static double _size = Glyphs.OrdinarySize;
     private static TextRenderingMode _smoothing = TextRenderingMode.SubpixelAntialias;
@@ -144,6 +148,9 @@ internal static class Program
                     break;
                 case "--font" when i + 1 < args.Length:
                     _prose = args[++i];
+                    break;
+                case "--sans" when i + 1 < args.Length:
+                    _sans = args[++i];
                     break;
                 case "--fixed" when i + 1 < args.Length:
                     _fixed = args[++i];
@@ -277,7 +284,7 @@ internal static class Program
         }
 
         _format = StoryFormatDetector.Detect(bytes);
-        if (_format is not (StoryFormat.Glulx or StoryFormat.ZMachine))
+        if (_format is not (StoryFormat.Glulx or StoryFormat.ZMachine or StoryFormat.AaMachine))
         {
             return Trouble($"{Path.GetFileName(_path)} is not a story file this can play.");
         }
@@ -338,6 +345,7 @@ internal static class Program
               --interpreter <machine>  tell the game which machine it is running on
               --tandy                  set the Tandy bit for a Version 1 to 3 game
               --font <family>          set the prose in this family
+              --sans <family>          set what a story's sans-serif text uses
               --fixed <family>         set the grids and preformatted text in this one
               --size <pixels>          the size of ordinary text, from 6 to 72
               --smoothing <s>          subpixel, grayscale, or none
@@ -352,11 +360,13 @@ internal static class Program
             machine actually has is the one used. The defaults are:
 
               --font "Georgia, Palatino, Times New Roman, serif"
+              --sans "Verdana, Helvetica Neue, DejaVu Sans, sans-serif"
               --fixed "Consolas, Menlo, DejaVu Sans Mono, monospace"
               --size 16 --smoothing subpixel
 
-            Both machines: a Z-machine game from a .z3 to a .z8 or a
-            .zblorb, and a Glulx game from a .ulx or a .gblorb.
+            All three machines: a Z-machine game from a .z3 to a .z8 or
+            a .zblorb, a Glulx game from a .ulx or a .gblorb, and a
+            Dialog game from an .aastory.
             """);
     }
 
@@ -454,6 +464,12 @@ internal static class Program
         if (_format == StoryFormat.ZMachine)
         {
             StartZMachine(window, board, glyphs);
+            return;
+        }
+
+        if (_format == StoryFormat.AaMachine)
+        {
+            StartAaMachine(window, board, glyphs);
             return;
         }
 
@@ -641,6 +657,104 @@ internal static class Program
                 _result = 3;
             }
 
+            Dispatcher.UIThread.Post(window.Close);
+        })
+        {
+            IsBackground = true,
+            Name = "interpreter",
+        };
+
+        worker.Start();
+    }
+
+    /// <summary>
+    /// [aam output] The third machine: one page of text that lays
+    /// itself out to the window, a status area across the top, and a
+    /// style sheet that asks for faces, sizes, colors and boxes, all
+    /// of which a window can actually give it.
+    /// </summary>
+    private static void StartAaMachine(Window window, Board board, Glyphs glyphs)
+    {
+        foreach (var name in new[]
+        {
+            _machine is null ? null : "interpreter",
+            _tandy ? "tandy" : null,
+            _blorb is null ? null : "blorb",
+        })
+        {
+            if (name is not null)
+            {
+                Console.Error.WriteLine($"rezrov-gui: the {name} option does not apply to the Aa-machine");
+            }
+        }
+
+        var story = AaStory.Read(_bytes);
+        var directory = Path.GetDirectoryName(Path.GetFullPath(_path)) ?? Directory.GetCurrentDirectory();
+        var dialogs = new GuiFiles(window, directory);
+
+        var faces = new GuiAaGlyphs(glyphs.Fonts, _prose, _sans, _fixed);
+        var display = new GuiAaDisplay(
+            story,
+            faces,
+
+            // [aam story] How text is set where no class says
+            // otherwise, which is the frontend's own choice and not
+            // the story's. It is the prose family at the ordinary
+            // size, in the colors the reference interpreter uses.
+            new AaLook(string.Empty, _size, false, false, 0, AaTheme.Ink, 0),
+            () => Dispatcher.UIThread.Post(board.InvalidateVisual),
+            dialogs.OpenTranscript);
+
+        board.AaGlyphs = faces;
+        board.Page = display;
+        display.Resize(board.Bounds.Width, board.Bounds.Height);
+
+        var machine = new Machine(story, display, _seed);
+
+        // [aam savefile] The machine writes the whole save file itself,
+        // so what it wants from the frontend is a name to write it
+        // under. A player who cancels the dialog gets no file, which
+        // the machine reports to the game as a save that did not
+        // happen.
+        machine.SaveFileName = writing => Dispatcher.UIThread.Invoke(() => dialogs.AskForAaSave(writing));
+
+        var worker = new Thread(() =>
+        {
+            string? ending = null;
+
+            try
+            {
+                var status = machine.Start();
+
+                while (status != AaStatus.Quit)
+                {
+                    status = status == AaStatus.GetInput
+                        ? machine.ProceedWithInput(display.ReadLine())
+                        : machine.ProceedWithKey(display.ReadKey());
+                }
+            }
+            catch (AaMachineException e)
+            {
+                Console.Error.WriteLine($"rezrov-gui: stopped: {e.Message}");
+                ending = e.Message;
+                _result = 3;
+            }
+
+            foreach (var error in machine.RuntimeErrors)
+            {
+                Console.Error.WriteLine($"rezrov-gui: {error}");
+            }
+
+            display.ScriptOff();
+            display.Notice(ending is null
+                ? "[The game has ended. Press a key to leave.]"
+                : $"[The game stopped: {ending} Press a key to leave.]");
+
+            // The window stays up until the player has had a chance to
+            // read how it ended, which the other two machines do not
+            // need because they print their endings through a library
+            // that waits for a key itself.
+            display.ReadKey();
             Dispatcher.UIThread.Post(window.Close);
         })
         {
