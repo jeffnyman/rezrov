@@ -1,0 +1,93 @@
+! SEED=1
+! GAME=../entharion/dialog-code/pas-de-deux.aastory
+
+# Pas De Deux, by Linus Akesson, played to its best ending. An
+# evening conducting a community orchestra through Tchaikovsky,
+# where the whole of the game is looking at the right player at the
+# right moment and turning the page when the music says to.
+
+suit
+audience
+orchestra
+semi-circle
+second harp
+score
+first page
+celli
+wait
+wait
+wait
+next page
+wait
+wait
+wait
+wait
+wait
+flutes
+next page
+oboes
+french horns
+first violins
+bass clarinet
+next page
+wait
+wait
+first bassoon
+next page
+wait
+first oboe
+tuba
+bass trombone
+tuba
+bass clarinet
+wait
+next page
+wait
+tuba
+wait
+next page
+flutes
+timpani
+wait
+wait
+trumpets
+wait
+wait
+wait
+next page
+french horns
+first violins
+wait
+next page
+wait
+wait
+wait
+next page
+cymbals
+trumpets
+wait
+next page
+wait
+oboes
+flutes
+bass clarinet
+wait
+next page
+next page
+next page
+woodwinds
+harps
+first violins
+french horns
+oboes
+timpani
+english horn
+timpani
+wait
+wait
+wait
+audience
+applause
+herald
+note
+quit

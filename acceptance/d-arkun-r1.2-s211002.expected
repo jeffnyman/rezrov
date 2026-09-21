@@ -1,0 +1,2407 @@
+
+
+Overwhelmed as one would be, placed in my position.
+Such a heavy burden now to be the One.
+Born to bear and bring to all the details of our ending,
+To write it down for all the world to see.
+
+--Tool
+[32]
+
+Cold air is streaming through the gap of the car window, much colder than you
+would expect on a summer day like this. You had to pay a lot of money for some
+nasty science books and you're spending this term in a foreign country, so you
+have almost no budget for any summer vacation. But then you saw this
+advertisement about a house located in the middle of nowhere, old but probably
+suitable for a relaxing week at the coast. After traveling in a cheap car
+through the rough landscape for hours, you are now near the northernmost point
+of the island.
+
+[32]
+You're just passing another bend of the road, as all of a sudden you spot an
+almost overgrown sign reading "Putgarten". You turn the wheel hard right, drive
+through an iron archway, and stop in front of a thicket. You get out of the car,
+stretch yourself and take a deep breath of salty air.
+
+[32]
+The wind is cold as ice. Somehow, you shiver.
+
+[32]
+D'ARKUN
+a mysterious adventure trip by Michael Baltes.
+Release 1.2. Serial number 211002.
+Dialog compiler version 0m/03. Library version 0.46.
+
+(type [about] to get some info about this story)
+
+Parking lot
+This parking lot is surrounded by dense thicket leaving only two gaps to the
+north and the east wide enough to slip through. South lies the street, or at
+least, what somebody may call a street.
+
+Your car is standing here in front of the thicket.
+
+> open trunk
+You open the trunk, revealing your suitcase and your climbing gear.
+
+> open suitcase
+You open your suitcase, revealing some spare clothing, some washing utensils,
+and your raincoat.
+
+> get gear
+You take your climbing gear out of the trunk.
+
+> get coat
+You take your raincoat out of your suitcase.
+
+> e
+
+Narrow trail
+A narrow trail winds its way through dense undergrowth and you get the feeling
+that no one must have been here for years. The trail is slightly descending and
+you can follow it further to the southeast, or go back to the parking lot to the
+west.
+
+> se
+
+Top of the cliff
+The picture you saw in the advertisement must have been taken here. This isn't a
+wide beach, this is a steep face of rough stone and the water is about hundred
+feet below you. From here you have an impressive view of the steely grey waves.
+The only way back is to the northwest.
+
+Somehow, you recognize a faint glinting on the ground far below.
+
+> d
+You secure your climbing gear on a protruding rock and begin to climb down until
+you reach the ground.
+
+Bottom of the cliff
+You are at water level now and the noise of the crashing waves swallows any
+other sounds down here. There is not much space here, just enough to stand and
+take a short rest. Among the rocks extending along the seaside you spot a hole
+to the west that might be an entry to a cavern.
+
+The glinting you saw from above comes from an amulet, half hidden in a gap
+between the stones.
+
+> get amulet
+You take the amulet.
+
+(You have got an achievement.)
+
+> u
+You assure yourself that the climbing gear is still securely fixed on the rock
+and begin to climb up until you reach the top of the steep face.
+
+Top of the cliff
+You are standing on a platform, at the edge of a steep face of rough stone and
+the water is about hundred feet below you. From here you have an impressive view
+of the steely grey waves. The only way back is to the northwest.
+
+> nw
+
+Narrow trail
+A narrow trail winds its way through dense undergrowth and you get the feeling
+that no one must have been here for years. The trail is slightly descending and
+you can follow it further to the southeast, or go back to the parking lot to the
+west.
+
+> w
+
+Parking lot
+This parking lot is surrounded by dense thicket leaving only two gaps to the
+north and the east wide enough to slip through. South lies the street, or at
+least, what somebody may call a street.
+
+Your car is standing here in front of the thicket.
+
+> n
+
+Front yard
+An old tree has grown in the middle of the front yard. The house looks worn but
+noble and its facades show the craftsmanship of the past century. The front door
+to the north is kind of a portal, flanked by two statues on either side. Once
+there seemed to exist two ways round the house to the northwest and the
+northeast, but now they are overgrown and only barely visible. South lies the
+parking lot.
+
+As you approach the front yard, you meet an old woman, walking in the opposite
+direction. At first you think she could belong to the cleaning staff, but then
+you realise she's dressed in fine clothes. You are bewildered by the vacant
+expression in her eyes, as if she doesn't notice you at all.
+
+[32]
+Then suddenly she grabs your wrist. "Holy god, you carry the mark", she
+whispers, "please take care of yourself, young lady!" Then she quickly heads off
+to the south.
+
+> get key
+You're looking around. You've read the letter before the road trip. There was
+something written about the key, but you can't remember it.
+
+> g
+As you're poking your hand into the mouth of the statue to get the key you feel
+a sudden pain, as if an insect has bitten you. You step back and examine your
+hand, but there's no sign of injury. Your eye catches your birthmark. Has it
+changed? Grown? You shake your head. That's silly. You look into the mouth, but
+you can only see the key lying in there.
+
+> g
+You take the brass key and store it on the keyring.
+
+(You have got an achievement.)
+
+> n
+(first attempting to unlock and open the double door)
+You unlock and open the double door.
+
+Vestibule
+This is a square room that provides enough space for a long coat rack and a tall
+wall mirror. Above the doorway that leads north to the dining room hangs a
+gloomy oil painting. Besides, you can either go west to the kitchen or follow
+the stairs up to the second storey. South is the double door leading out to the
+front yard.
+
+> u
+
+Octogonal bay
+At the upper end of the stairs is an octogonal bay with several windows
+providing a view of your surroundings in multiple directions south and east of
+the building. There are two doorways, one leading north and a second east.
+
+> e
+
+Bedroom
+The bedroom is decorated with some fine wooden paneling on its walls and a four
+poster bed in the center of it. The heavy curtains in front of the windows are
+shut, so the room is rather dark. A wardrobe sits next to the doorway to the
+west.
+
+The curtains seem to move a bit, though.
+
+> open curtains
+As you open the curtains, some daylight falls into the room, highlighting a
+small patch on the floor.
+
+As you draw them further back you recoil in horror. A man was hidden there! In
+the blink of an eye you can see nothing more than his dark clothes, his face is
+veiled by a hood. You are frozen in shock for a moment.
+
+[32]
+He leaps ahead, his hand reaches out for your forehead. As soon as he touches
+you, you feel a shockwave running through your whole body and you are thrown
+back onto the bed. The man rushes down the stairs, then you hear the slam of a
+door. You feel your hands are beginning to tremble.
+
+> [32]
+(I'm sorry, I didn't understand what you wanted to do.)
+
+> w
+(first attempting to get off the four poster bed)
+You get off the four poster bed.
+
+Octogonal bay
+At the upper end of the stairs is an octogonal bay with several windows
+providing a view of your surroundings in multiple directions south and east of
+the building. There are two doorways, one leading north and a second east to the
+bedroom.
+
+> d
+
+Vestibule
+This is a square room that provides enough space for a long coat rack and a tall
+wall mirror. Above the doorway that leads north to the dining room hangs a
+gloomy oil painting. Besides, you can either go west to the kitchen or follow
+the stairs up to the second storey. South is the double door leading out to the
+front yard.
+
+> lock door
+(with the brass key)
+You lock the double door with the brass key.
+
+> u
+
+Octogonal bay
+At the upper end of the stairs is an octogonal bay with several windows
+providing a view of your surroundings in multiple directions south and east of
+the building. There are two doorways, one leading north and a second east to the
+bedroom.
+
+> e
+
+Bedroom
+The bedroom is decorated with some fine wooden paneling on its walls and a four
+poster bed in the center of it. The heavy curtains in front of the windows are
+open, so some daylight falls into the room, highlighting a patch on the floor. A
+wardrobe sits next to the doorway to the west.
+
+> sleep
+(first attempting to get onto the four poster bed)
+You get onto the four poster bed.
+
+You close your eyes. At first you are lying awake, listening to your own
+heartbeat, which calms down after a while. Then you feel your eyelids getting
+more and more weighty and finally you fall asleep. [32]
+
+
+In the middle of the night you jump awake, breathing heavy.
+
+Your head is aching and you only have a faint memory of a strange dream, in
+which you were trying to flee from some deformed creatures. This kind of dream
+in which you exactly know that they will do terrible things to you, but you
+can't say why, in which you want to flee, but your legs are too weak and won't
+obey yourself.
+
+You're trying to shake your fear off and soon you fall asleep again.
+
+[32]
+The next morning you wake up and the first thing you realise is, that your head
+is aching a bit. The second is, that you can hear heavy rain hammering on the
+roof of the building.
+
+Bedroom (on the four poster bed)
+The bedroom is decorated with some fine wooden paneling on its walls and a four
+poster bed in the center of it. The heavy curtains in front of the windows are
+open, so some daylight falls into the room, highlighting a patch on the floor. A
+wardrobe sits next to the doorway to the west.
+
+> open floorboard
+You open the loose floorboard. It reveals a small niche to you.
+
+> get key
+You take the iron key and store it on the keyring.
+
+(You have got an achievement.)
+
+> w
+(first attempting to get off the four poster bed)
+You get off the four poster bed.
+
+Octogonal bay
+At the upper end of the stairs is an octogonal bay with several windows
+providing a view of your surroundings in multiple directions south and east of
+the building. There are two doorways, one leading north and a second east to the
+bedroom.
+
+> d
+
+Vestibule
+This is a square room that provides enough space for a long coat rack and a tall
+wall mirror. Above the doorway that leads north to the dining room hangs a
+gloomy oil painting. Besides, you can either go west to the kitchen or follow
+the stairs up to the second storey. South is the double door leading out to the
+front yard.
+
+> w
+
+Kitchen
+The room is full of kitchen stuff, as expected. It's an old style smoke room
+with a wood-fired stove and provides no microwave or fridge or any other modern
+convenience. But if you feel the urge to cook something, you'll find here
+probably all you need. Beside the exit east to the vestibule, there is another
+leading north through an iron door.
+
+> n
+(first attempting to unlock and open the iron door)
+You unlock and open the iron door.
+
+Pantry
+This cramped little room offers all kinds of clutter piled up in shelves over
+the decades. Thick layers of dust cover every surface, although someone has
+tried to keep them off by covering the shelves in a piece of foil. A doorway
+leads northwest to a staircase and the other exit is the iron door south to the
+kitchen.
+
+> search things
+Among the clutter you find an oil lamp in good shape.
+
+> get lamp
+You take the oil lamp.
+
+> nw
+
+Tower room
+This round room is the platform of a spiral staircase which leads up and down
+from here. The only thing that's worth your attention is a portrait on the wall.
+To the southeast is the doorway to the pantry.
+
+> u
+
+Attic of the house
+The floor of the attic is littered with all kinds of boxes and crates, covered
+by a thick layer of dust. The only visible exit is the narrow spiral staircase
+descending to the tower room. Faint light falls through tiny roof windows. Parts
+of the room, where the floorboards have collapsed, are inaccessible.
+
+A small area of the attic is obviously preserved for astronomical studies where
+a single oak desk is standing beside a telescope, pointing through a small
+window at the sky.
+
+> jump over floorboard
+You jump over the collapsed floor, landing safely on another part of the attic.
+
+Attic (unsafe part)
+This part of the attic is as dusty as the rest. You are standing on a small
+area, surrounded by broken floorboards and within your reach is just a single
+crate. You can retreat to the southwest.
+
+> get map
+You take the old map out of the single crate.
+
+[You find a copy of it in the feelies for this story, the password is
+"PTGRTN13"]
+
+(You have got an achievement.)
+
+> sw
+You jump back over the collapsed floor, landing safely again.
+
+Attic of the house
+The floor of the attic is littered with all kinds of boxes and crates, covered
+by a thick layer of dust. The only visible exit is the narrow spiral staircase
+descending to the tower room. Faint light falls through tiny roof windows. Parts
+of the room, where the floorboards have collapsed, are inaccessible.
+
+A small area of the attic is obviously preserved for astronomical studies where
+a single oak desk is standing beside a telescope, pointing through a small
+window at the sky.
+
+> d
+
+Tower room
+This round room is the platform of a spiral staircase which leads up and down
+from here. The only thing that's worth your attention is a portrait on the wall.
+To the southeast is the doorway to the pantry.
+
+> se
+
+Pantry
+This cramped little room offers all kinds of clutter piled up in shelves over
+the decades. Thick layers of dust cover every surface, although someone has
+tried to keep them off by covering the shelves in a piece of foil. A doorway
+leads northwest to a staircase and the other exit is the iron door south to the
+kitchen.
+
+> s
+
+Kitchen
+The room is full of kitchen stuff, as expected. It's an old style smoke room
+with a wood-fired stove and provides no microwave or fridge or any other modern
+convenience. But if you feel the urge to cook something, you'll find here
+probably all you need. Beside the exit east to the vestibule, there is another
+leading north through an iron door to the tower room.
+
+> e
+
+Vestibule
+This is a square room that provides enough space for a long coat rack and a tall
+wall mirror. Above the doorway that leads north to the dining room hangs a
+gloomy oil painting. Besides, you can either go west to the kitchen or follow
+the stairs up to the second storey. South is the double door leading out to the
+front yard.
+
+> n
+
+Dining room
+A huge oval table occupies most of the room, rounded by twelve chairs. On the
+walls you find more oil paintings, all depicting strange scenes. The rest of the
+room is quite bare, as if there are some things missing, that once might have
+been here. One exit leads south, back to the vestibule, and another leads north
+to another room.
+
+> n
+
+Living room
+The living room is a lushly decorated spacious room with a lounger in front of a
+whole row of windows. Another dark oil painting is occupying most of the western
+wall and opposite of it sits a fireplace. Above the mantelpiece hangs the
+carcass of a ray and you spot an old phonograph on a low table. The only exit is
+south, to the dining room.
+
+> get matches
+You take the matches off the mantelpiece.
+
+> s
+
+Dining room
+A huge oval table occupies most of the room, rounded by twelve chairs. On the
+walls you find more oil paintings, all depicting strange scenes. The rest of the
+room is quite bare, as if there are some things missing, that once might have
+been here. One exit leads south, back to the vestibule, and another leads north
+to the living room.
+
+> s
+
+Vestibule
+This is a square room that provides enough space for a long coat rack and a tall
+wall mirror. Above the doorway that leads north to the dining room hangs a
+gloomy oil painting. Besides, you can either go west to the kitchen or follow
+the stairs up to the second storey. South is the double door leading out to the
+front yard.
+
+> wear coat
+You put on your raincoat.
+
+> s
+(first attempting to unlock and open the double door)
+You unlock and open the double door.
+
+You step into the rain and feel the downpour of the raindrops on your raincoat.
+
+Front yard
+An old tree has grown in the middle of the front yard. The house looks worn but
+noble and its facades show the craftsmanship of the past century. The front door
+to the north is kind of a portal, flanked by two statues on either side. Once
+there seemed to exist two ways round the house to the northwest and the
+northeast, but now they are overgrown and only barely visible. South lies the
+parking lot.
+
+> find top of cliff
+(attempting to go to the top of the cliff)
+(attempting to go south)
+
+Parking lot
+This parking lot is surrounded by dense thicket leaving only two gaps to the
+north and the east wide enough to slip through. South lies the street, or at
+least, what somebody may call a street.
+
+Your car is standing here in front of the thicket.
+
+(attempting to go east)
+
+Narrow trail
+A narrow trail winds its way through dense undergrowth and you get the feeling
+that no one must have been here for years. The trail is slightly descending and
+you can follow it further to the southeast, or go back to the parking lot to the
+west.
+
+A torrent of water hits you directly into your face.
+
+(attempting to go southeast)
+
+Top of the cliff
+You are standing on a platform, at the edge of a steep face of rough stone and
+the water is about hundred feet below you. From here you have an impressive view
+of the steely grey waves. The only way back is to the northwest.
+
+> d
+You secure your climbing gear on a protruding rock and begin to climb down until
+you reach the ground.
+
+Bottom of the cliff
+You are at water level now and the noise of the crashing waves swallows any
+other sounds down here. There is not much space here, just enough to stand and
+take a short rest. Among the rocks extending along the seaside you spot a hole
+to the west that might be an entry to a cavern.
+
+> drop gear
+Your climbing gear falls to the ground.
+
+> light lamp
+You light the oil lamp with a match and it proves to be a useful light source.
+Of course, you are not sure how much oil is left in the lamp.
+
+> w
+As you enter the cavern you notice that your raincoat is soaked up with water.
+
+In the cavern
+This cavern is an alcove of stone with treacherous surfaces that might have been
+smoothed by the sea water for centuries. Despite its small size the cave is
+littered with dark corners that can't be lit no matter how attentively you pivot
+your lamp. The sole exit lies east.
+
+A skeleton rests in one corner of the cavern.
+
+> open bag
+You open the bag, revealing a diary.
+
+> get diary
+You take the diary out of the bag.
+
+> e
+You can't help shivering as a downpour of raindrops hits your raincoat.
+
+Bottom of the cliff
+You are at water level now and the noise of the crashing waves swallows any
+other sounds down here. There is not much space here, just enough to stand and
+take a short rest. Among the rocks extending along the seaside you spot a hole
+to the west that is an entry to a cavern.
+
+You also see your climbing gear here.
+
+The rain is pouring down like waterfalls.
+
+> blow lamp
+You extinguish the oil lamp.
+
+> get gear
+You take your climbing gear.
+
+> u
+You assure yourself that the climbing gear is still securely fixed on the rock
+and begin to climb up until you reach the top of the steep face.
+
+Top of the cliff
+You are standing on a platform, at the edge of a steep face of rough stone and
+the water is about hundred feet below you. From here you have an impressive view
+of the steely grey waves. The only way back is to the northwest.
+
+> find portal
+(attempting to go to the front yard)
+(attempting to go northwest)
+
+Narrow trail
+A narrow trail winds its way through dense undergrowth and you get the feeling
+that no one must have been here for years. The trail is slightly descending and
+you can follow it further to the southeast, or go back to the parking lot to the
+west.
+
+(attempting to go west)
+
+Parking lot
+This parking lot is surrounded by dense thicket leaving only two gaps to the
+north and the east wide enough to slip through. South lies the street, or at
+least, what somebody may call a street.
+
+Your car is standing here in front of the thicket.
+
+The wind is howling around the corners.
+
+(attempting to go north)
+
+Front yard
+An old tree has grown in the middle of the front yard. The house looks worn but
+noble and its facades show the craftsmanship of the past century. The front door
+to the north is kind of a portal, flanked by two statues on either side. Once
+there seemed to exist two ways round the house to the northwest and the
+northeast, but now they are overgrown and only barely visible. South lies the
+parking lot.
+
+> ne
+
+Back yard of the building
+As you already expected, the back yard is overgrown by wild grape and you can
+barely see anything, except for some ruins to the north and an old shed in the
+center of this place. A small wooden door leads inside the shed, while the path
+would let you go back to the southwest or the southeast, as you like.
+
+> in
+(first attempting to open the wooden door inside)
+You open the wooden door.
+
+You shake off some raindrops from your raincoat and enter.
+
+Inside the shed
+Tiny dust particles are whirling in the air and almost all surfaces are covered
+by those of them which have settled down here for decades. The sole exit leads
+out through the wooden door.
+
+A bicycle is leaning on the wall here.
+
+> ride bike to altenkirchen
+(first attempting to get onto the bicycle)
+You get onto the bicycle.
+
+You start from here and ride the bike west over small paths and gravel roads
+until you reach the small town Altenkirchen.
+
+[32]
+Town square (on the bicycle)
+Altenkirchen is a small town that mostly consists of two-storey houses, rather
+small dwellings, but you also see a few public buildings among them, like a book
+store to the south, a cemetery behind a fence to the north and an old candy shop
+to the northwest, opposite to a church to the southeast.
+
+You get off the bicycle.
+
+> s
+You are looking forward to get inside.
+
+Book store
+The book store is crammed with all kinds of rare and antique books presented on
+book shelves that stretch out to the ceiling. The size of the shop is bigger
+than you expected, at least for a small town miles from anywhere like this. A
+plaque is dangling above the entrance which leads north back to the town square.
+
+Behind the counter stands a tall man eyeing you suspiciously.
+
+> ask about morpheus
+(speaking to the tall man)
+"Are there any books written by Morpheus von Putgarten?", you ask.
+
+"Yes, there is indeed a book available called 'Secret Underwater Caves'", he
+answers, "you'll find it in the shelf under the local books."
+
+> x local
+You comb through the local books and soon you find a book called "Secret
+Underwater Caves", written by Morpheus von Putgarten.
+
+> get secret
+You take Morpheus' book.
+
+The man hits himself on the head and murmurs something to himself.
+
+(You have got an achievement.)
+
+> buy it
+You give some money to the man. "That's yours then, I guess", he says, "have a
+nice day."
+
+> n
+A torrent of rain is hitting you directly in the face.
+
+Town square
+Altenkirchen is a small town that mostly consists of two-storey houses, rather
+small dwellings, but you also see a few public buildings among them, like a book
+store to the south, a cemetery behind a fence to the north and an old candy shop
+to the northwest, opposite to a church to the southeast.
+
+The bicycle is leaning on a house wall here.
+
+Streams of water are running across the ground.
+
+> se
+You enter the stone church and the rain stops falling onto your raincoat.
+
+Stone church
+The church is built in roman style with thick stone walls and narrow glass
+windows. The room might be twenty feet high and thirty feet wide, with wooden
+benches on both sides. Apart from that the room is bare except for a few lit
+candles on the walls. East lies the presbytery and northwest the exit to the
+townsquare.
+
+A vicar stands in front of the presbytery, obviously immersed in a prayer.
+
+> show amulet to vicar
+"May I show you that?", you ask.
+
+"Mathilda's lost amulet", he whispers and hands it back to you. "I'm not fully
+convinced yet", he says, "maybe you could show me something else?"
+
+> show map to vicar
+"May I show you that?", you ask.
+
+"Morpheus' secret map", he whispers and hands it back to you. "I'm not fully
+convinced yet", he says, "maybe you could show me something else?"
+
+> show diary to vicar
+"May I show you that?", you ask.
+
+"A page from Mathilda's lost diary?", he whispers and hands it back to you.
+"That's really a precious thing you're holding", he says. "So I guess you belong
+to the Putgarten family somehow", he says. "Well, then, feel free to explore the
+presbytery, I guess you already know about it." He opens the gate for you.
+
+The vicar kneels down and murmurs a prayer.
+
+> e
+
+Presbytery
+The choir is a half-cut octogon annex aligned to the east as usual in a
+Christian church, but thin figurative glass windows depict a strange scene. The
+light which falls from high in the wall into the room is quite scattered and
+unexpectedly pale. West is the main part of the church.
+
+In the middle of the room rests a stone altar.
+
+> open casket
+It's not quite easy, but you manage to open the casket behind the stone plate.
+
+> get flask
+You take the flask out of the grey casket.
+
+(You have got an achievement.)
+
+> w
+
+Stone church
+The church is built in roman style with thick stone walls and narrow glass
+windows. The room might be twenty feet high and thirty feet wide, with wooden
+benches on both sides. Apart from that the room is bare except for a few lit
+candles on the walls. East lies the presbytery and northwest the exit to the
+townsquare.
+
+A vicar stands in front of the presbytery, obviously immersed in a prayer.
+
+> nw
+As you leave the shelter of this location, the rain is pouring down on you
+intensely.
+
+Town square
+Altenkirchen is a small town that mostly consists of two-storey houses, rather
+small dwellings, but you also see a few public buildings among them, like a book
+store to the south, a cemetery behind a fence to the north and an old candy shop
+to the northwest, opposite to a church to the southeast.
+
+The bicycle is leaning on a house wall here.
+
+> n
+
+Cemetery area
+An age-old oak tree is stretching its leafless branches over a small place in
+the middle of the cemetery. The expanse is flat except for a single hill to the
+northeast and a rather large mausoleum is resting peacefully between rows of
+graves to the northwest. An exit leads south through a fence to the town square.
+
+> nw
+You step in and feel thankful for the shelter from the rain.
+
+Inside the Mausoleum
+The quietness of this place makes you stand still for a moment. There are
+several graves lined along the wall, placed in round niches. The stone floor
+reflects the dim light falling through slots into the room. The cemetery is to
+the southeast.
+
+> x grave
+There are roses around the grave, carved out of the stone, and on the slab
+there's written:
+"Elsinore von Putgarten
+wife of Morpheus von Putgarten
+mother of Mathilda von Putgarten
+died after long illness
+on October 9th 1937"
+
+> x roses
+One of the roses is slightly more protruding than the others.
+
+> push rose
+You push the single rose and a recess in the grave opens.
+
+> get key
+You take the gold key and store it on the keyring.
+
+(You have got an achievement.)
+
+> se
+You can't help wincing as a torrent of rain is falling onto your raincoat.
+
+Cemetery area
+An age-old oak tree is stretching its leafless branches over a small place in
+the middle of the cemetery. The expanse is flat except for a single hill to the
+northeast and a rather large mausoleum is resting peacefully between rows of
+graves to the northwest. An exit leads south through a fence to the town square.
+
+> ne
+
+On the hill
+You are standing on a hill, overlooking the whole cemetery. From here you can
+see that there is a hole in the fence, which leads northwest into an adjacent
+courtyard. The main part of the cemetery lies southwest.
+
+> nw
+
+Courtyard
+You are standing in a courtyard, enclosed by the fence on one side and a grey
+wall of a building with a flat roof on the other. A pile of half rotten wood is
+stacked in one corner of the courtyard and the smell of soot hangs in the air,
+as if there once was a fire here. An iron fire ladder is ascending to the
+rooftop of the building while the hole in the fence leads southeast back to the
+cemetery.
+
+> u
+You climb the fire ladder up to the roof.
+
+Eastern roof
+The rooftop is a flat expanse, surrounded only by one foot high walls, which
+might once have been the support for a pitched roof that got destroyed by the
+fire. Marks of soot all around the place seem to be evidence for that theory.
+The roof extends to the west and the only way down is the fire ladder, down to
+the courtyard.
+
+A torrent of water hits you directly into your face.
+
+> w
+
+Western roof
+The western part of the roof looks much like the eastern, except for a pile of
+debris that someone has left here and some charred rests of wooden beams, the
+last witnesses of the fire disaster that once took place here. The roof extends
+to the east.
+
+> push debris
+You shove the debris aside and discover a rectangular opening which was hidden
+underneath.
+
+> d
+You secure your climbing gear on the rest of a wall and begin to climb down
+until you reach the ground.
+
+Inside the shop
+You don't know what purpose this building had, but you are sure it wasn't a
+candy shop. It looks more like a pharmacy or a surgery. You can see a cabinet
+along the wall and a desk in the middle of the room. Beside the desk there's a
+strange chair. Exits are the closed door to the south or a doorway to the north.
+
+As you look around you see a woman sitting on the previously empty chair! The
+woman's arms and legs are strapped down on the chair and electric shockwaves run
+through her body. The woman is screaming, trying to shake off her bounds but to
+no avail. After the seventh wave, she loses her consciousness.
+
+[32]
+You rub your eyes and as you open them again the scene is gone. Maybe your
+imagination played tricks on yourself. But what remains is an uncertain feeling.
+You feel your hands are beginning to tremble.
+
+> get vial
+You reach out for the vial, but it slips through your fingers and falls on the
+ground.
+
+> g
+Crawling on the floor you finally succeed in taking the vial.
+
+(You have got an achievement.)
+
+> drink it
+You take a sip of the yellow fluid. The trembling of your hands gets slightly
+better.
+
+> drop gear
+Your climbing gear falls to the ground.
+
+> n
+
+Closet
+The closet is a windowless chamber, bare except for some old brooms and a small
+panel on the wall. The ceiling must have a leak, at least you see some large
+water stains on it and on the floor below. The sole exit lies south.
+
+> open panel
+You open the panel, revealing a fuse.
+
+> get fuse
+You take the fuse out of the panel.
+
+> s
+
+Inside the shop
+You don't know what purpose this building had, but you are sure it wasn't a
+candy shop. It looks more like a pharmacy or a surgery. You can see a cabinet
+along the wall and a desk in the middle of the room. Beside the desk there's a
+strange chair. Exits are the closed door to the south or a doorway to the north.
+
+You also see your climbing gear here.
+
+> open drawer
+You open the drawer in the candy shop, revealing a syringe and a medical report.
+
+> get syringe
+You take the syringe out of the drawer in the candy shop.
+
+> get gear
+You take your climbing gear.
+
+> find bike
+(attempting to go to the town square)
+(attempting to go up)
+You assure yourself that the climbing gear is still securely fixed on the piece
+of wall and begin to climb up through the opening to the roof.
+
+Western roof
+The western part of the roof looks much like the eastern, except for a pile of
+debris that someone has left here and some charred rests of wooden beams, the
+last witnesses of the fire disaster that once took place here. The roof extends
+to the east.
+
+(attempting to go east)
+
+Eastern roof
+The rooftop is a flat expanse, surrounded only by one foot high walls, which
+might once have been the support for a pitched roof that got destroyed by the
+fire. Marks of soot all around the place seem to be evidence for that theory.
+The roof extends to the west and the only way down is the fire ladder, down to
+the courtyard.
+
+(attempting to go down)
+You climb the fire ladder down to the courtyard.
+
+Courtyard
+You are standing in a courtyard, enclosed by the fence on one side and a grey
+wall of a building with a flat roof on the other. A pile of half rotten wood is
+stacked in one corner of the courtyard and the smell of soot hangs in the air,
+as if there once was a fire here. An iron fire ladder is ascending to the
+rooftop of the building while the hole in the fence leads southeast back to the
+cemetery.
+
+The rain is pouring down like waterfalls.
+
+(attempting to go southeast)
+
+On the hill
+You are standing on a hill, overlooking the whole cemetery. From here you can
+see that there is a hole in the fence, which leads northwest into an adjacent
+courtyard. The main part of the cemetery lies southwest.
+
+(attempting to go southwest)
+
+Cemetery area
+An age-old oak tree is stretching its leafless branches over a small place in
+the middle of the cemetery. The expanse is flat except for a single hill to the
+northeast and a rather large mausoleum is resting peacefully between rows of
+graves to the northwest. An exit leads south through a fence to the town square.
+
+(attempting to go south)
+
+Town square
+Altenkirchen is a small town that mostly consists of two-storey houses, rather
+small dwellings, but you also see a few public buildings among them, like a book
+store to the south, a cemetery behind a fence to the north and an old candy shop
+to the northwest, opposite to a church to the southeast.
+
+The bicycle is leaning on a house wall here.
+
+> ride bike to putgarten
+(first attempting to get onto the bicycle)
+You get onto the bicycle.
+
+You start from here and ride the bike east over small paths and gravel roads
+until you reach Putgarten.
+
+[32]
+Inside the shed (on the bicycle)
+Tiny dust particles are whirling in the air and almost all surfaces are covered
+by those of them which have settled down here for decades. The sole exit leads
+out through the wooden door.
+
+You get off the bicycle.
+
+> find portrait
+(attempting to go to the tower room)
+(attempting to go out)
+You step into the rain and feel the downpour of the raindrops on your raincoat.
+
+Back yard of the building
+The back yard is overgrown by wild grape and you can barely see anything, except
+for some ruins to the north and an old shed in the center of this place. A small
+wooden door leads inside the shed, while the path would let you go back to the
+southwest or the southeast, as you like.
+
+The wind is howling around the corners.
+
+(attempting to go southeast)
+
+Front yard
+An old tree has grown in the middle of the front yard. The house looks worn but
+noble and its facades show the craftsmanship of the past century. The front door
+to the north is kind of a portal, flanked by two statues on either side. Once
+there seemed to exist two ways round the house to the northwest and the
+northeast, but now they are overgrown and only barely visible. South lies the
+parking lot.
+
+(attempting to go north)
+As you enter the vestibule you notice that your raincoat is soaked up with
+water.
+
+Vestibule
+This is a square room that provides enough space for a long coat rack and a tall
+wall mirror. Above the doorway that leads north to the dining room hangs a
+gloomy oil painting. Besides, you can either go west to the kitchen or follow
+the stairs up to the second storey. South is the double door leading out to the
+front yard.
+
+(attempting to go west)
+
+Kitchen
+The room is full of kitchen stuff, as expected. It's an old style smoke room
+with a wood-fired stove and provides no microwave or fridge or any other modern
+convenience. But if you feel the urge to cook something, you'll find here
+probably all you need. Beside the exit east to the vestibule, there is another
+leading north through an iron door to the tower room.
+
+(attempting to go north)
+
+Pantry
+This cramped little room offers all kinds of clutter piled up in shelves over
+the decades. Thick layers of dust cover every surface, although someone has
+tried to keep them off by covering the shelves in a piece of foil. A doorway
+leads northwest to a staircase and the other exit is the iron door south to the
+kitchen.
+
+(attempting to go northwest)
+
+Tower room
+This round room is the platform of a spiral staircase which leads up and down
+from here. The only thing that's worth your attention is a portrait on the wall.
+To the southeast is the doorway to the pantry.
+
+> d
+
+Wine cellar
+This room is dark and sinister and you can't make out any details without a
+light source. You start wandering around and feel some rough surfaces around
+you, which might be walls or pillars or something like that. Some faint light
+falls in from above, the only visible exit.
+
+> light lamp
+You light the oil lamp again.
+
+> open panel
+You open the panel.
+
+The lamp flickers softly.
+
+> fill liquid into bulge
+The last drips of the black liquid fall into the bulge and the door opens
+slowly.
+
+> enter door
+
+Secret laboratory
+This room is a huge underground chamber, so deep under the earth that no
+daylight could find its way down here. There's some fresh air streaming into
+this room from outside however, but you can't tell from where. The room is
+filled with a kind of chemical assembly with a wooden lectern in front of it.
+The only exit leads southwest, through the bone door back to the wine cellar.
+
+The lamp flickers wildly.
+
+> find bike
+(attempting to go to the shed)
+(attempting to go southwest)
+
+Wine cellar
+The cellar seems to be much older than the house, it's a vault built of black
+stone blocks and the weight of the ceiling rests on four cyclopean pillars. Long
+wine racks are filled with countless bottles. Located in the centre of the
+northeast wall is a tall bone door.
+
+The lamp extinguishes.
+
+(attempting to go up)
+
+Tower room
+This round room is the platform of a spiral staircase which leads up and down
+from here. The only thing that's worth your attention is a portrait on the wall.
+To the southeast is the doorway to the pantry.
+
+(attempting to go southeast)
+
+Pantry
+This cramped little room offers all kinds of clutter piled up in shelves over
+the decades. Thick layers of dust cover every surface, although someone has
+tried to keep them off by covering the shelves in a piece of foil. A doorway
+leads northwest to a staircase and the other exit is the iron door south to the
+kitchen.
+
+(attempting to go south)
+
+Kitchen
+The room is full of kitchen stuff, as expected. It's an old style smoke room
+with a wood-fired stove and provides no microwave or fridge or any other modern
+convenience. But if you feel the urge to cook something, you'll find here
+probably all you need. Beside the exit east to the vestibule, there is another
+leading north through an iron door to the tower room.
+
+(attempting to go east)
+
+Vestibule
+This is a square room that provides enough space for a long coat rack and a tall
+wall mirror. Above the doorway that leads north to the dining room hangs a
+gloomy oil painting. Besides, you can either go west to the kitchen or follow
+the stairs up to the second storey. South is the double door leading out to the
+front yard.
+
+(attempting to go south)
+You can't help shivering as a downpour of raindrops hits your raincoat.
+
+Front yard
+An old tree has grown in the middle of the front yard. The house looks worn but
+noble and its facades show the craftsmanship of the past century. The front door
+to the north is kind of a portal, flanked by two statues on either side. Once
+there seemed to exist two ways round the house to the northwest and the
+northeast, but now they are overgrown and only barely visible. South lies the
+parking lot.
+
+You look at the sky and notice that it must be late afternoon now.
+
+(attempting to go northeast)
+
+Back yard of the building
+The back yard is overgrown by wild grape and you can barely see anything, except
+for some ruins to the north and an old shed in the center of this place. A small
+wooden door leads inside the shed, while the path would let you go back to the
+southwest or the southeast, as you like.
+
+(attempting to go in)
+You shake off some raindrops from your raincoat and enter.
+
+Inside the shed
+Tiny dust particles are whirling in the air and almost all surfaces are covered
+by those of them which have settled down here for decades. The sole exit leads
+out through the wooden door.
+
+The bicycle is leaning on the wall here.
+
+> ride bike to altenkirchen
+(first attempting to get onto the bicycle)
+You get onto the bicycle.
+
+You start from here and ride the bike west over small paths and gravel roads
+until you reach the small town Altenkirchen.
+
+[32]
+Town square (on the bicycle)
+Altenkirchen is a small town that mostly consists of two-storey houses, rather
+small dwellings, but you also see a few public buildings among them, like a book
+store to the south, a cemetery behind a fence to the north and an old candy shop
+to the northwest, opposite to a church to the southeast.
+
+You get off the bicycle.
+
+> nw
+
+In front of the shop
+The old candy shop is located in a side alley of the town, probably the oldest
+part of Altenkirchen. The shop is a flat-roofed grey building that surely has
+seen better times than these. The paint was washed away from the facade exposing
+it shelterless to wind and weather. There's a sign over the closed door to the
+north, opposite to an old factory to the south, and you can see the town square
+to the southeast.
+
+Streams of water are running across the ground.
+
+> s
+
+Old factory
+You are quite surprised that this building is crumbled down to its foundations.
+The only thing which is still intact is the facade to the street, while the
+remains of the building are just rests of walls, covered by dense undergrowth.
+The only way back is north.
+
+> remove undergrowth
+You yank at the undergrowth and suddenly a whole part of it gives in, revealing
+an old shelf and a counter.
+
+> get shelf
+You can't take the shelf.
+
+> get tin
+You take the tin off the shelf.
+
+> open tin
+You open the tin, revealing some oil.
+
+> fill tin in lamp
+You fill the content of the tin into the lamp and dispose it.
+
+A torrent of water hits you directly into your face.
+
+> find bike
+(attempting to go to the town square)
+(attempting to go north)
+
+In front of the shop
+The old candy shop is located in a side alley of the town, probably the oldest
+part of Altenkirchen. The shop is a flat-roofed grey building that surely has
+seen better times than these. The paint was washed away from the facade exposing
+it shelterless to wind and weather. There's a sign over the closed door to the
+north, opposite to an old factory to the south, and you can see the town square
+to the southeast.
+
+(attempting to go southeast)
+
+Town square
+Altenkirchen is a small town that mostly consists of two-storey houses, rather
+small dwellings, but you also see a few public buildings among them, like a book
+store to the south, a cemetery behind a fence to the north and an old candy shop
+to the northwest, opposite to a church to the southeast.
+
+The bicycle is leaning on a house wall here.
+
+> ride bike to vitt
+(first attempting to get onto the bicycle)
+You get onto the bicycle.
+
+You start from here and ride the bike southeast over small paths and gravel
+roads until you reach the small village Vitt.
+
+[32]
+Village square (on the bicycle)
+This place is of a sinister quality, surrounded by decaying wooden houses,
+adapted for some new and uncertain purpose. Their inhabitants do not know about
+renovating a roof or a facade or they simply don't care. But they clearly are
+there, shadowy figures lurking behind broken windows. The ground is a mess of
+puddles. East lies the harbour, you can enter a tall warehouse to the south and
+a wooden chapel to the northwest.
+
+A villager is here, watching the entrance to the chapel.
+
+You get off the bicycle.
+
+> s
+You are looking forward to get inside.
+
+Former warehouse
+This warehouse is nothing more than a cover made of steel and corrugated iron
+sheets to hide the unfathomable things beyond it. The ground has opened and
+reveals a lengthy underground hall that extends on one side far under the
+surface of the village. Whatever is there, is hidden in a kind of fog that
+ascends between gaps of monolithic black blocks. The only visible exit is north,
+back to the village square.
+
+A kind of ritual is ongoing, the villagers are standing in circles around a
+pedestal, on which one of them is pounding on a huge drum.
+
+> z
+A moment slips away. Their chanting is pulsating to the rhythm of the drums and
+reaches a kind of crescendo now.
+
+> z
+A moment slips away. All of a sudden their chanting stops and they fall onto
+their knees. You don't know what happens but it seems like there is an echo of
+their pounding, almost barely noticeable.
+
+[32]
+One of the villagers turns around and spots you. He shouts some unknown words
+and points in your direction. You turn around and look directly into the face of
+another villager who might have been standing behind you for a while.
+
+[32]
+Strong arms are grabbing you and your eyes get covered. Then somebody lifts you
+onto his shoulder and carries you away. You are lowered into a narrow room.
+
+Restroom
+This a tiny room, bare except for an old toilet. The ceiling is high above you,
+out of reach, and there is a spot on the wall where once might have been a door,
+but now there is a solid black block visible through the opening.
+
+> get shard
+You take the shard out from under the old toilet.
+
+> hit wall
+You kick into the wall and it gets a crack!
+
+> g
+You kick into the wall again and another crack appears!
+
+> g
+After your third kick the wall gives in, finally, revealing a shaft behind it.
+
+(You have got an achievement.)
+
+> d
+You climb down through the shaft until you reach the ground.
+
+Sewers
+You are standing at waist height in some filthy sewer water. A long and winding
+passageway leads northeast and maybe you can climb up to the toilet again. The
+air is foul and the water is stagnant. Nobody seems to have been down here for
+decades.
+
+> ne
+You make your way through the passageway until you see daylight coming from an
+opening. As you step through it, you find yourself on the shore and realize that
+this exit was hidden behind a tall stone block.
+
+Shore
+The shore is a vast expanse of flat stones, all of the same blackness you've
+already seen before. It just looks like there might be a whole city underneath
+the island, made of this unfamiliar material. The raging ocean is throwing tall
+waves at the shore, bringing lots of flotsam with them. You can go west back to
+the harbour or southwest into the canals.
+
+The rain is pouring down like waterfalls.
+
+> w
+
+Harbour
+This is maybe the oldest part of the village and marks the beginning of any
+human settlement on this forbidding stretch of land. The harbour administration
+once might have been a proud building, but now it's crumbled and through its
+foundations comes another structure to daylight, made of huge black blocks that
+could be stone or an even tougher material. South lies the squid market, west
+the village square, and a path leads east down to the shore.
+
+An old trawler has dared to come here, resting north from here at the docks.
+
+The pounding is still there, faint but steady.
+
+> w
+
+Village square
+This place is of a sinister quality, surrounded by decaying wooden houses,
+adapted for some new and uncertain purpose. Their inhabitants do not know about
+renovating a roof or a facade or they simply don't care. But they clearly are
+there, shadowy figures lurking behind broken windows. The ground is a mess of
+puddles. East lies the harbour, you can enter a tall warehouse to the south and
+a wooden chapel to the northwest.
+
+The bicycle is leaning on a fence here.
+
+A villager is here, watching the entrance to the chapel.
+
+The pounding can also be heard here.
+
+> blind villager
+With what?
+
+> shard
+You point the shard at the villager and a beam of light strikes his face. He
+screams out loud and runs away, covering his eyes with his hands.
+
+(You have got an achievement.)
+
+> nw
+
+Inside the chapel
+As you've already expected, this building is as rotten as the village around.
+Its roof is long gone and you can see a bewildering light coming from above
+through the blackened sky. The benches, once used for praying, now are crumbled
+to splinters of wood, lying around on the floor. A whole part of the floor has
+collapsed, giving way to some room under the chapel. The only exit is southeast
+to the village square.
+
+You hear the pounding repeating endlessly.
+
+> d
+You find some footing on the remains of the collapsed floor and climb down.
+
+Oval room
+This room is unlike any other place you know. Its cyclopean walls are made of
+large black blocks, flanked by gibbous niches on all sides, resting in which are
+corpses of unknown creatures. Countless tentacles are streaming down on the
+floor to the very center of the room, where you find a tall statue of an ancient
+deity. The hole in the ceiling is just tiny compared to the sheer size of this
+place, so this room should be dark, but it isn't. There is a kind of fluorescent
+shine of unknown origin. The sole exit lies up.
+
+In front of the statue is a huge drum.
+
+The pounding is still there, maybe a bit louder down here.
+
+> get sticks
+You reach out for the sticks but suddenly you feel a sharp pain in your hand.
+You pull it back and become aware that your birthmark has grown much bigger. Now
+it streches out onto your complete arm.
+
+> g
+You take two sticks out of the statue's mouth.
+
+> hit drum
+You hit the drum with the sticks and there is a rumbling running through the
+room. First you think the walls are rising, but then you realise that it must be
+the floor which is lowering. The walls are trembling and you feel a kind of
+light quake as you descend into the depths of the earth. After a while the
+hidden mechanism comes to a halt.
+
+Oval room
+The room has somehow changed. Its cyclopean walls are still there and the
+gibbous niches on all sides too. Countless tentacles are still streaming down on
+the floor to the very center of the room, where you now see the bottom of the
+statue. The hole in the ceiling is now far out of reach and this room still
+isn't dark, but lighted by the strange fluorescent shine.
+
+In front of the statue is a huge drum.
+
+Suddenly, you notice a movement in the shadows. The creatures in the niches are
+beginning to come alive!
+
+> z
+A moment slips away.
+
+> z
+A moment slips away.
+
+The creatures all move towards the center of the room, where you are standing,
+your back turned to the statue.
+
+> z
+A moment slips away.
+
+> z
+A moment slips away.
+
+The creatures are coming closer and closer and you feel the fear sinking to your
+feet, paralysing you.
+
+> z
+A moment slips away.
+
+> z
+A moment slips away.
+
+As the creatures are only an arm's length away from you, you suddenly feel
+strong hands, lifting your body up before your mind gives in and you lose your
+consciousness.
+
+[32]
+How you came home last night isn't quite clear, but the next morning you wake up
+in your bed. You jump to your feet.
+
+[32]
+The first thing you realise is that your head is aching as if somebody hit a
+hammer on it for several times. The second is that the sky is pitch black and
+the sunlight refuses to shine on earth. It's still raining and there must be a
+heavy storm outside, as the trees are swinging back and forth as wildly as if
+they're just weeds.
+
+Bedroom
+The bedroom is decorated with some fine wooden paneling on its walls and a four
+poster bed in the center of it. The heavy curtains in front of the windows are
+open, so some daylight falls into the room, highlighting a patch on the floor. A
+wardrobe sits next to the doorway to the west.
+
+> find bike
+(attempting to go to the shed)
+(attempting to go west)
+
+Octogonal bay
+At the upper end of the stairs is an octogonal bay with several windows
+providing a view of your surroundings in multiple directions south and east of
+the building. There are two doorways, one leading north and a second east to the
+bedroom.
+
+(attempting to go down)
+
+Vestibule
+This is a square room that provides enough space for a long coat rack and a tall
+wall mirror. Above the doorway that leads north to the dining room hangs a
+gloomy oil painting. Besides, you can either go west to the kitchen or follow
+the stairs up to the second storey. South is the double door leading out to the
+front yard.
+
+(attempting to go south)
+A torrent of rain is hitting you directly in the face.
+
+Front yard
+An old tree has grown in the middle of the front yard. The house looks worn but
+noble and its facades show the craftsmanship of the past century. The front door
+to the north is kind of a portal, flanked by two statues on either side. Once
+there seemed to exist two ways round the house to the northwest and the
+northeast, but now they are overgrown and only barely visible. South lies the
+parking lot.
+
+The wind is howling around the corners.
+
+(attempting to go northeast)
+
+Back yard of the building
+The back yard is overgrown by wild grape and you can barely see anything, except
+for some ruins to the north and an old shed in the center of this place. A small
+wooden door leads inside the shed, while the path would let you go back to the
+southwest or the southeast, as you like.
+
+(attempting to go in)
+You enter the shed and the rain stops falling onto your raincoat.
+
+Inside the shed
+Tiny dust particles are whirling in the air and almost all surfaces are covered
+by those of them which have settled down here for decades. The sole exit leads
+out through the wooden door.
+
+The bicycle is leaning on the wall here.
+
+> ride bike to stein
+(first attempting to get onto the bicycle)
+You get onto the bicycle.
+
+You start from here and ride the bike north over small paths and gravel roads
+until you reach the coastland.
+
+[32]
+Coast land (on the bicycle)
+This patch of land must be the northernmost point of the island. The sea has
+retreated a bit, like a wounded animal that must take some rest for recovery.
+The shore is an austere and cold stone desert, surfaces washed out by centuries.
+Nearby lies the Siebenschneiderstein, a huge rock, placed on the sea shore,
+covering half of an opening in the ground.
+
+You get off the bicycle.
+
+> d
+You secure your climbing gear on a protruding rock and begin to climb down until
+you reach the ground.
+
+Underwater cave (at the exit, leading up)
+This is a vast cave under the surface of the sea. It consists mostly of rough
+stones with treacherous gaps and slippery crevices, but here and there are the
+same black blocks protruding out of the cave's walls you already saw in Vitt.
+You ask yourself if the whole island may have once been an ancient city, in
+times where the sea did just not exist yet. Exits lead in all directions.
+
+> light lamp
+You light the oil lamp again.
+
+> drop gear
+Your climbing gear falls to the ground.
+
+> nw
+You carefully make your way northwest.
+
+Underwater cave (somewhere west and north of the exit)
+You are somewhere in the vast cave, and you see here more black blocks
+protruding out from the ground.
+
+> nw
+You carefully make your way northwest.
+
+Underwater cave (somewhere west and north of the exit)
+You are somewhere in the vast cave, and you see here even more edged stones.
+
+You spot here the remains of a campfire.
+
+> x last
+You take a look at the handmade drawing on the last page of the book and seeing
+the campfire you're able to determine the position of the strange symbol
+somewhere west and north from here.
+
+> nw
+You carefully make your way northwest.
+
+Underwater cave (somewhere west and north of the exit)
+You are somewhere in the vast cave, where you encounter more treacherous gaps
+between the stones.
+
+The lamp is shining less brightly now.
+
+> nw
+There's a huge pile of stones in your way to the northwest.
+
+> n
+You carefully make your way north.
+
+Underwater cave (somewhere west and north of the exit)
+You are somewhere in the vast cave, and your feet almost lose footing here on
+the slippery crevices.
+
+> nw
+You carefully make your way northwest.
+
+Underwater cave (somewhere west and north of the exit)
+You are somewhere in the vast cave, and you are standing here unsafe with
+pitched stone surfaces under your feet.
+
+> w
+You carefully make your way west.
+
+Underwater cave (somewhere west and north of the exit)
+You are somewhere in the vast cave, where you encounter more treacherous gaps
+between the stones.
+
+This is a place where black algae grow.
+
+> get algae
+You pick up some of the black algae.
+
+> find exit
+You make your way back to the entry of the cave.
+
+Underwater cave (at the exit, leading up)
+You are somewhere in the vast cave, and your feet almost lose footing here on
+the slippery crevices.
+
+This is a place where black algae grow.
+
+You also see your climbing gear here.
+
+> take gear
+You take your climbing gear.
+
+The lamp flickers softly.
+
+> u
+You assure yourself that the climbing gear is still securely fixed on the rock
+and begin to climb up until you reach the top of the steep face.
+
+Coast land
+This patch of land must be the northernmost point of the island. The sea has
+retreated a bit, like a wounded animal that must take some rest for recovery.
+The shore is an austere and cold stone desert, surfaces washed out by centuries.
+Nearby lies the Siebenschneiderstein, a huge rock, placed on the sea shore,
+covering half of an opening in the ground.
+
+The bicycle is leaning on a trunk here.
+
+> blow lamp
+You extinguish the oil lamp.
+
+> ride bike to vitt
+(first attempting to get onto the bicycle)
+You get onto the bicycle.
+
+Streams of water are running across the ground.
+
+You start from here and ride the bike south over small paths and gravel roads
+until you reach the small village Vitt.
+
+[32]
+Village square (on the bicycle)
+This place is of a sinister quality, surrounded by decaying wooden houses,
+adapted for some new and uncertain purpose. Their inhabitants do not know about
+renovating a roof or a facade or they simply don't care. But they clearly are
+there, shadowy figures lurking behind broken windows. The ground is a mess of
+puddles. East lies the harbour, you can enter a tall warehouse to the south and
+a wooden chapel to the northwest.
+
+You get off the bicycle.
+
+> e
+
+Harbour
+This is maybe the oldest part of the village and marks the beginning of any
+human settlement on this forbidding stretch of land. The harbour administration
+once might have been a proud building, but now it's crumbled and through its
+foundations comes another structure to daylight, made of huge black blocks that
+could be stone or an even tougher material. South lies the squid market, west
+the village square, and a path leads east down to the shore.
+
+The old trawler has run aground at the docks.
+
+The pounding is echoing in your ears.
+
+> e
+
+Shore
+The shore is a vast expanse of flat stones, all of the same blackness you've
+already seen before. It just looks like there might be a whole city underneath
+the island, made of this unfamiliar material. The raging ocean is far away and
+has brought vast marshlands to the daylight. You can go west back to the harbour
+or southwest into the canals.
+
+A dead kraken has been flushed ashore.
+
+You are scared of the pounding.
+
+> e
+There doesn't appear to be an exit in that direction.
+
+> x kraken
+The kraken has a bulky head, sitting on top of a bunch of tentacles. He was
+obviously wounded by some other animal, that's why a huge puddle of blood has
+pooled under its body But what animal could cause such wounds? You shiver.
+
+> inject syringe into kraken
+With some effort, you get a small amount of blood into the syringe.
+
+A torrent of water hits you directly into your face.
+
+> w
+
+Harbour
+This is maybe the oldest part of the village and marks the beginning of any
+human settlement on this forbidding stretch of land. The harbour administration
+once might have been a proud building, but now it's crumbled and through its
+foundations comes another structure to daylight, made of huge black blocks that
+could be stone or an even tougher material. South lies the squid market, west
+the village square, and a path leads east down to the shore.
+
+The old trawler has run aground at the docks.
+
+The pounding is still there, faint but steady.
+
+> n
+
+Onboard the old trawler
+This ship is in a rather bad condition and some noisome stench is coming from
+the stairs that lead down to the cargo hold. The upper deck is a mess of ropes,
+sails, and fishing nets. You can leave the ship to the south.
+
+The pounding can also be heard here.
+
+> d
+You step in and feel thankful for the shelter from the rain.
+
+Cargo deck
+The cargo deck is a low area crammed full of barrels. Portholes provide some
+light here, but nonetheless it's a damp and sombre place. A single net is here,
+still wet from the sea. The only exit leads up.
+
+> get cucumber
+You take the sea cucumber out of the net.
+
+> find bike
+(attempting to go to the village square)
+(attempting to go up)
+As you leave the shelter of this location, the rain is pouring down on you
+intensely.
+
+Onboard the old trawler
+This ship is in a rather bad condition and some noisome stench is coming from
+the stairs that lead down to the cargo hold. The upper deck is a mess of ropes,
+sails, and fishing nets. You can leave the ship to the south.
+
+(attempting to go south)
+
+Harbour
+This is maybe the oldest part of the village and marks the beginning of any
+human settlement on this forbidding stretch of land. The harbour administration
+once might have been a proud building, but now it's crumbled and through its
+foundations comes another structure to daylight, made of huge black blocks that
+could be stone or an even tougher material. South lies the squid market, west
+the village square, and a path leads east down to the shore.
+
+The old trawler has run aground at the docks.
+
+(attempting to go west)
+
+Village square
+This place is of a sinister quality, surrounded by decaying wooden houses,
+adapted for some new and uncertain purpose. Their inhabitants do not know about
+renovating a roof or a facade or they simply don't care. But they clearly are
+there, shadowy figures lurking behind broken windows. The ground is a mess of
+puddles. East lies the harbour, you can enter a tall warehouse to the south and
+a wooden chapel to the northwest.
+
+The bicycle is leaning on a fence here.
+
+You hear the pounding repeating endlessly.
+
+The rain is pouring down like waterfalls.
+
+> ride bike to putgarten
+(first attempting to get onto the bicycle)
+You get onto the bicycle.
+
+You start from here and ride the bike north over small paths and gravel roads
+until you reach Putgarten.
+
+[32]
+Inside the shed (on the bicycle)
+Tiny dust particles are whirling in the air and almost all surfaces are covered
+by those of them which have settled down here for decades. The sole exit leads
+out through the wooden door.
+
+You get off the bicycle.
+
+> find wine racks
+(attempting to go to the wine cellar)
+(attempting to go out)
+You can't help wincing as a torrent of rain is falling onto your raincoat.
+
+Back yard of the building
+The back yard is overgrown by wild grape and you can barely see anything, except
+for some ruins to the north and an old shed in the center of this place. A small
+wooden door leads inside the shed, while the path would let you go back to the
+southwest or the southeast, as you like.
+
+(attempting to go southeast)
+
+Front yard
+An old tree has grown in the middle of the front yard. The house looks worn but
+noble and its facades show the craftsmanship of the past century. The front door
+to the north is kind of a portal, flanked by two statues on either side. Once
+there seemed to exist two ways round the house to the northwest and the
+northeast, but now they are overgrown and only barely visible. South lies the
+parking lot.
+
+(attempting to go north)
+As you enter the vestibule you notice that your raincoat is soaked up with
+water.
+
+Vestibule
+This is a square room that provides enough space for a long coat rack and a tall
+wall mirror. Above the doorway that leads north to the dining room hangs a
+gloomy oil painting. Besides, you can either go west to the kitchen or follow
+the stairs up to the second storey. South is the double door leading out to the
+front yard.
+
+(attempting to go west)
+
+Kitchen
+The room is full of kitchen stuff, as expected. It's an old style smoke room
+with a wood-fired stove and provides no microwave or fridge or any other modern
+convenience. Hungry as you are, you'll find here probably all you need. Beside
+the exit east to the vestibule, there is another leading north through an iron
+door to the tower room.
+
+(attempting to go north)
+
+Pantry
+This cramped little room offers all kinds of clutter piled up in shelves over
+the decades. Thick layers of dust cover every surface, although someone has
+tried to keep them off by covering the shelves in a piece of foil. A doorway
+leads northwest to a staircase and the other exit is the iron door south to the
+kitchen.
+
+(attempting to go northwest)
+
+Tower room
+This round room is the platform of a spiral staircase which leads up and down
+from here. The only thing that's worth your attention is a portrait on the wall.
+To the southeast is the doorway to the pantry.
+
+(attempting to go down)
+
+Wine cellar
+This room is dark and sinister and you can't make out any details without a
+light source. You start wandering around and feel some rough surfaces around
+you, which might be walls or pillars or something like that. Some faint light
+falls in from above, the only visible exit.
+
+> put fuse in panel
+You put the fuse in the panel. The room lights up.
+
+> enter door
+
+Secret laboratory
+This room is a huge underground chamber, so deep under the earth that no
+daylight could find its way down here. There's some fresh air streaming into
+this room from outside however, but you can't tell from where. The room is
+filled with a kind of chemical assembly with a wooden lectern in front of it.
+The only exit leads southwest, through the bone door back to the wine cellar.
+
+> fill algae in funnel
+You put some black algae into the funnel.
+
+> g
+You put some black algae into the funnel.
+
+> g
+You put some black algae into the funnel.
+
+> g
+You put some black algae into the funnel.
+
+> fill larvae in funnel
+(first attempting to take the pearlfish larvae)
+You take the pearlfish larvae out of the sea cucumber.
+
+You put some larvae into the funnel.
+
+> g
+You put some larvae into the funnel.
+
+> g
+You put some larvae into the funnel.
+
+> fill blood in funnel
+You fill some blood from the kraken into the funnel.
+
+> g
+You fill some blood from the kraken into the funnel.
+
+> x belly
+You've inserted a small amount of blood, some pearlfish larvae, and some black
+algae into the belly of the machine and now the mass inside is very thick, very
+shiny and black.
+
+> put flask on slab
+You put the flask on the slab.
+
+> touch impression
+There's a humming and the ingredients were heated until steam leaks out of the
+machine. Finally the assembly begins to pour out the liquid inside its belly and
+the mycaeum runs into the flask.
+
+(You have got an achievement.)
+
+> take flask
+You take the flask off the slab.
+
+> find bike
+(attempting to go to the shed)
+(attempting to go southwest)
+
+Wine cellar
+The cellar seems to be much older than the house, it's a vault built of black
+stone blocks and the weight of the ceiling rests on four cyclopean pillars. Long
+wine racks are filled with countless bottles. Located in the centre of the
+northeast wall is a tall bone door.
+
+(attempting to go up)
+
+Tower room
+This round room is the platform of a spiral staircase which leads up and down
+from here. The only thing that's worth your attention is a portrait on the wall.
+To the southeast is the doorway to the pantry.
+
+(attempting to go southeast)
+
+Pantry
+This cramped little room offers all kinds of clutter piled up in shelves over
+the decades. Thick layers of dust cover every surface, although someone has
+tried to keep them off by covering the shelves in a piece of foil. A doorway
+leads northwest to a staircase and the other exit is the iron door south to the
+kitchen.
+
+(attempting to go south)
+
+Kitchen
+The room is full of kitchen stuff, as expected. It's an old style smoke room
+with a wood-fired stove and provides no microwave or fridge or any other modern
+convenience. Hungry as you are, you'll find here probably all you need. Beside
+the exit east to the vestibule, there is another leading north through an iron
+door to the tower room.
+
+(attempting to go east)
+
+Vestibule
+This is a square room that provides enough space for a long coat rack and a tall
+wall mirror. Above the doorway that leads north to the dining room hangs a
+gloomy oil painting. Besides, you can either go west to the kitchen or follow
+the stairs up to the second storey. South is the double door leading out to the
+front yard.
+
+(attempting to go south)
+You step into the rain and feel the downpour of the raindrops on your raincoat.
+
+Front yard
+An old tree has grown in the middle of the front yard. The house looks worn but
+noble and its facades show the craftsmanship of the past century. The front door
+to the north is kind of a portal, flanked by two statues on either side. Once
+there seemed to exist two ways round the house to the northwest and the
+northeast, but now they are overgrown and only barely visible. South lies the
+parking lot.
+
+(attempting to go northeast)
+
+Back yard of the building
+The back yard is overgrown by wild grape and you can barely see anything, except
+for some ruins to the north and an old shed in the center of this place. A small
+wooden door leads inside the shed, while the path would let you go back to the
+southwest or the southeast, as you like.
+
+The wind is howling around the corners.
+
+(attempting to go in)
+You shake off some raindrops from your raincoat and enter.
+
+Inside the shed
+Tiny dust particles are whirling in the air and almost all surfaces are covered
+by those of them which have settled down here for decades. The sole exit leads
+out through the wooden door.
+
+The bicycle is leaning on the wall here.
+
+> ride bike to vitt
+(first attempting to get onto the bicycle)
+You get onto the bicycle.
+
+You start from here and ride the bike south over small paths and gravel roads
+until you reach the small village Vitt.
+
+[32]
+Village square (on the bicycle)
+This place is of a sinister quality, surrounded by decaying wooden houses,
+adapted for some new and uncertain purpose. Their inhabitants do not know about
+renovating a roof or a facade or they simply don't care. But they clearly are
+there, shadowy figures lurking behind broken windows. The ground is a mess of
+puddles. East lies the harbour, you can enter a tall warehouse to the south and
+a wooden chapel to the northwest.
+
+You get off the bicycle.
+
+> w
+There doesn't appear to be an exit in that direction.
+
+> nw
+
+Inside the chapel
+As you've already expected, this building is as rotten as the village around.
+Its roof is long gone and you can see a bewildering light coming from above
+through the blackened sky. The benches, once used for praying, now are crumbled
+to splinters of wood, lying around on the floor. A whole part of the floor has
+collapsed, giving way to some room under the chapel. The only exit is southeast
+to the village square.
+
+The pounding is echoing in your ears.
+
+> d
+You find some footing on the remains of the collapsed floor and climb down.
+
+Oval room
+This room is unlike any other place you know. Its cyclopean walls are made of
+large black blocks, flanked by gibbous niches on all sides, resting in which are
+corpses of unknown creatures. Countless tentacles are streaming down on the
+floor to the very center of the room, where you find a tall statue of an ancient
+deity. The hole in the ceiling is just tiny compared to the sheer size of this
+place, so this room should be dark, but it isn't. There is a kind of fluorescent
+shine of unknown origin. The sole exit lies up.
+
+In front of the statue is a huge drum.
+
+The pounding is still there, maybe a bit louder down here.
+
+> hit drum
+You hit the drum with the sticks and there is a rumbling running through the
+room. First you think the walls are rising, but then you realise that it must be
+the floor which is lowering. The walls are trembling and you feel a kind of
+light quake as you descend into the depths of the earth. After a while the
+hidden mechanism comes to a halt.
+
+Oval room
+The room has somehow changed. Its cyclopean walls are still there and the
+gibbous niches on all sides too. Countless tentacles are still streaming down on
+the floor to the very center of the room, where you now see the bottom of the
+statue. The hole in the ceiling is now far out of reach and this room still
+isn't dark, but lighted by the strange fluorescent shine.
+
+In front of the statue is a huge drum.
+
+Again, you notice a movement in the shadows. The creatures in the niches are
+beginning to come alive!
+
+> fill liquid in bulge
+As soon as some drips of the black liquid fall into the bulge, the door opens
+slowly.
+
+> enter door
+Just as one creature reaches out to grab you, you slip through the door. The
+door closes, severing the creature's hand. From the other side of the door you
+hear an otherworldly scream that makes your ears hurt and your nerves tremble.
+
+Upper ghastly void
+This is a kind of void, a room that shouldn't exist and that's bare of
+everything, no sound, no visible features, no smell. Except for the floor, of
+course, that is made of these tall black blocks you've seen before. You see a
+passageway to the southwest and the southeast.
+
+You also see a severed hand here.
+
+You are scared of the pounding. Terrified by the nothingness of this space you
+persuade yourself, that there must be thousands of eyes lurking behind the
+curtain of darkness. You feel your hands are beginning to tremble. The trembling
+of your hands gets even worse and now your feet won't obey you any more.
+
+> drink vial
+You take a sip of the yellow fluid. Your feet are beginning to obey you again.
+
+> g
+You take a sip of the yellow fluid. The trembling of your hands gets slightly
+better.
+
+> get hand
+You take the severed hand.
+
+> se
+
+Cyclopean cave
+This cave is a vast expanse of marsh, a wet and muddy plain where every step
+takes twice as much time as under normal circumstances. It is littered with
+shells, accompanied by dead squids and other sea creatures you've never seen
+before. Cyclopean pillars are protruding from the mud, but they don't support
+the ceiling, they are just standing there as the remains of some ancient
+civilization that once may have lived down here. An exit is leading northwest
+and a narrow bridge spans over a deep abyss to the west.
+
+Between the pillars there is one single black stela, with the impression of a
+hand on it.
+
+The pounding is still there, faint but steady.
+
+> put hand on stela
+You put the severed hand on the black stela. You hear a rumbling and a
+passageway opens to the southwest, but only half way.
+
+> w
+
+Distorted room
+This room is winding its walls, ceiling and floor in awkward angles to all
+possible directions. Wherever you are standing, you feel unsafe and constantly
+threatened. It is bare as far as you can see. An exit is leading northeast and a
+narrow bridge spans over a deep abyss to the east. There also a passage to the
+southeast, but after a few steps it breaks off like it isn't finished somehow.
+
+In the middle of nowhere there is one single black stela, with the impression of
+a hand on it.
+
+The pounding can also be heard here.
+
+> touch impression
+As you touch the impression, there is a rumbling and the passageway opens fully
+to the southeast.
+
+> se
+
+Crooked plateau
+This is a vast plateau made of tall black blocks. They are bending along an edge
+which seems to lead to nothing more than the deep blackness of an endless chasm.
+Passageways lead to the northeast and northwest.
+
+You hear the pounding repeating endlessly.
+
+(You have got an achievement.)
+
+> d
+You secure your climbing gear on a protruding rock and begin to climb down.
+
+[32]
+And you climb down.
+
+[32]
+And then the end of the line is reached.
+
+[32]
+Lower ghastly void
+The lower ghastly void is as empty as the upper one, but the difference is that
+you're clinging to the line, above vast blackness. You can climb up back to the
+crooked plateau.
+
+The pounding is echoing in your ears.
+
+> jump
+And then you jump into the darkness. After a short fall you hit hard onto some
+kind of floor.
+
+Hall
+There must be a floor, some walls and maybe other things in the darkness, as you
+hear strange echoes, a constant wave of dripping sounds from millions of
+waterdrops that fall on you and the floor. The air is damp and filled with the
+unsettling scent of things that have been untouched for centuries.
+
+> w
+You wander around in the darkness feeling along the walls and you think you've
+discovered exits to the north, south, and west.
+
+> w
+
+Alcove
+This must be a smaller cave you assume because you can't hear any echoes here.
+In the middle of the room you can feel a rectangular block. The only exit you
+know of, is east.
+
+> feel block
+As you approach it your hand touches a kind of cylinder, which falls to the
+ground, making terrible noises.
+
+> get tin
+You take the cylinder and discover that is must be a tin of oil!
+
+> open lid
+You open the tin, revealing some oil.
+
+> fill it in lamp
+You fill the content of the tin into the lamp and dispose it.
+
+> light lamp
+You light the oil lamp again. You turn around and look into the eyes of a man
+who was standing behind you. You feel your hands are beginning to tremble.
+
+"I thought nobody would ever come down here", he says, "may I introduce myself,
+Morpheus von Putgarten". He looks very young, about your age, although that
+can't be true. His hair is white and you don't know what is more frightening,
+his harsh voice or the sinister sparkling in his eyes. The trembling of your
+hands gets even worse and now your feet won't obey you any more.
+
+[32]
+He grabs your arm tightly and takes a close look at your birthmark. "Dear god",
+he says, "you are closer to it than I've ever been." Then he inspects your
+belongings. "I see", he continues, "you have found some of my things. Don't
+worry, you can keep them, except, of course, for that flask." Being still
+stunned by his sudden presence, you stand idly by while he takes the flask out
+of your hand.
+
+[32]
+"I've been waiting so long for that moment", he says, "do you know how long a
+century could be? After Elsinore's death I've decided to return down here again.
+And I learned that time is meaningless when you're on HIS side. HE can change
+our world forever when HE awakes. And I wanted to be here when this finally
+happens. We're on the brink of a new age, I call it a new world, where our
+heritage means nothing. But what does heritage mean at all, if we can become
+immortal."
+
+[32]
+He sizes you up curiously. "It's time now", and with these words he walks off to
+the hall.
+
+> drink vial
+You take a sip of the yellow fluid. Your feet are beginning to obey you again.
+
+> drink vial
+You take a sip of the yellow fluid. The trembling of your hands gets slightly
+better.
+
+> e
+
+Deeper demoniac hall
+This hall must be below the ground of the sea. The walls throw bizarre echoes
+back to you, a constant wave of dripping sounds from millions of waterdrops that
+fall on the wet floor. In the very center of the hall you see a kind of icy
+block, that has an opening tall enough to slip through. Compared to the sheer
+size of this hall, there are rather small alcoves to the north, south, and west.
+The air is damp and filled with the unsettling scent of things that have been
+untouched for centuries.
+
+A system of open channels lowered into the ground are leading to the icy
+chamber.
+
+You are scared of the pounding.
+
+> s
+
+Alcove of wakefulness
+This cave is bare except for a kind of glass tube. The tube winds its way down
+in a spiral, from the ceiling to the ground, where it ends above a floor
+channel. The only exit is north.
+
+The lamp is about to extinguish.
+
+> break glass with lamp
+You hit the glass tube with the oil lamp and it shatters into a thousand pieces.
+The mycaeum is now flowing onto the floor where it's trickling away through some
+joints.
+
+[32]
+A moment later you hear a desperate sustained shout from the hall, that chills
+you to the bone. "Why?", yells Morpheus. "Where is the mycaeum? What have you
+done?" Then you hear faint crying. "Please dearest elder being, please wake up!
+Please!".
+
+[32]
+Then Morpeus calls out again, but it sounds strange, distorted, unhuman and it
+ends abruptly. Then the hall falls completely silent. No echoes.
+
+(You have got an achievement.)
+
+> n
+
+Deeper demoniac hall
+This hall must be below the ground of the sea. The walls throw bizarre echoes
+back to you, a constant wave of dripping sounds from millions of waterdrops that
+fall on the wet floor. In the very center of the hall you see a kind of icy
+block, that has an opening tall enough to slip through. Compared to the sheer
+size of this hall, there are rather small alcoves to the north, south, and west.
+The air is damp and filled with the unsettling scent of things that have been
+untouched for centuries.
+
+A system of open channels lowered into the ground are leading to the icy
+chamber.
+
+The pounding is still there, faint but steady.
+
+> in
+
+Icy chamber
+Inside the icy block is hollow and it contains another frozen block, standing
+beside a black orb. The only exit leads out to the hall.
+
+The flask is lying on the floor.
+
+Morpheus has closed his arms around the block, clinging to it in an awkward
+angle, as if he wanted to melt the ice with his own body's warmth.
+
+> get flask
+You take the flask.
+
+> out
+
+Deeper demoniac hall
+This hall must be below the ground of the sea. The walls throw bizarre echoes
+back to you, a constant wave of dripping sounds from millions of waterdrops that
+fall on the wet floor. In the very center of the hall you see a kind of icy
+block, that has an opening tall enough to slip through. Compared to the sheer
+size of this hall, there are rather small alcoves to the north, south, and west.
+The air is damp and filled with the unsettling scent of things that have been
+untouched for centuries.
+
+A system of open channels lowered into the ground are leading to the icy
+chamber.
+
+> n
+
+Alcove of compassion
+This cave is filled with a pillar and has no visible ceiling. The only exit is
+south.
+
+The lamp goes out for a moment, but recovers then.
+
+> fill liquid into bulge
+The last drips of the black liquid fall into the bulge and the statue begins
+turning. The four heads spill out the mycaeum, drawing a circle on the floor. As
+soon as the circle is finished, a huge maelstrom appears, taking some parts of
+the floor with it upwards.
+
+(You have got an achievement.)
+
+> enter maelstrom
+You are instantly drawn upwards flying in the air for several minutes. At last,
+the uplifting speed slows down more and more and you see the daylight above you.
+
+[32]
+Then everything goes bright.
+
+[32]
+How you came home isn't quite clear, but the next morning you wake up in your
+bed. You try to shake off the nightmares and sit up. You stagger, but then you
+are on your feet.
+
+[32]
+You try to remember anything that happened on the last day, but suddenly you
+aren't sure at all whether you really were in Vitt yesterday or if that all was
+a kind of dream. [32]
+
+
+You notice the weather has changed. The sun is shining outside.
+
+Bedroom
+The bedroom is decorated with some fine wooden paneling on its walls and a four
+poster bed in the center of it. The heavy curtains in front of the windows are
+open, so some daylight falls into the room, highlighting a patch on the floor. A
+wardrobe sits next to the doorway to the west.
+
+> w
+
+Octogonal bay
+At the upper end of the stairs is an octogonal bay with several windows
+providing a view of your surroundings in multiple directions south and east of
+the building. There are two doorways, one leading north and a second east to the
+bedroom.
+
+> d
+
+Vestibule
+This is a square room that provides enough space for a long coat rack and a tall
+wall mirror. Above the doorway that leads north to the dining room hangs a
+gloomy oil painting. Besides, you can either go west to the kitchen or follow
+the stairs up to the second storey. South is the double door leading out to the
+front yard.
+
+> s
+
+Front yard
+An old tree has grown in the middle of the front yard. The house looks worn but
+noble and its facades show the craftsmanship of the past century. The front door
+to the north is kind of a portal, flanked by two statues on either side. Once
+there seemed to exist two ways round the house to the northwest and the
+northeast, but now they are overgrown and only barely visible. South lies the
+parking lot.
+
+> s
+
+Parking lot
+This parking lot is surrounded by dense thicket leaving only two gaps to the
+north and the east wide enough to slip through. South lies the street, or at
+least, what somebody may call a street.
+
+Your car is standing here in front of the thicket.
+
+> drive home
+(first attempting to unlock and open the old car)
+You unlock and open the old car.
+
+You get into the old car.
+
+You take a last look at your birthmark. It definitely has changed. However, it's
+time to go home. While you're sitting in the car, your wanderings focus on
+Morpheus von Putgarten and the dark secrets of this place. A feeling of
+fatedness overwhelms you. Are you the chosen one who's bound to reveal the
+sinister hiddenness of D'Arkun?
+
+[32]
+What about that birthmark? Will it grow even further? Morpheus did only talk
+vaguely about it. Are you mutating more with every touch of the ancient culture?
+And can you prevent this?
+
+[32]
+Sure, you succeded to find some answers to that manifold questions about this
+sinister stretch of land. Maybe you'll return here after the term's finished and
+then you'll investigate further. Maybe not. Some things should better not be
+unraveled.
+
+[32]
+You fasten your seatbelt, start the engine, and drive through the iron archway.
+
+[32]
+     *** THE END--Thank you for playing this story ***
+
+The story has ended. You have got 14 achievements out of 30.
+
+Would you like to:
+     UNDO the last move,
+     RESTORE a saved position,
+     see your FULL SCORE,
+     QUIT the program,
+     or RESTART from the beginning?
+> quit
+
+Thanks for playing!
