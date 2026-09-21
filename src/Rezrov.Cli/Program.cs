@@ -260,7 +260,13 @@ internal static class Program
 
         foreach (var resource in story.Resources)
         {
-            Console.WriteLine($"  {resource.Url}: {story.Text.At(resource.AltText)}");
+            // [aam story] A resource that names a file the story
+            // carries is one the interpreter can actually show, so it
+            // is worth saying how large that file is.
+            var packaged = story.Contents(resource).Length;
+
+            Console.WriteLine($"  {resource.Url}: {story.Text.At(resource.AltText)}"
+                + (packaged > 0 ? $" ({packaged} bytes)" : string.Empty));
         }
 
         return 0;
