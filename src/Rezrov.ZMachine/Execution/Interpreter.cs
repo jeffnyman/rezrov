@@ -1077,7 +1077,13 @@ public sealed class Interpreter
                 // arrives with the story already sure of itself.
                 if (ShowsImageBand)
                 {
-                    Display.Screen.DrawImageBand(a[0], a[1]);
+                    Display.DrawImageBand(a[0], a[1]);
+
+                    // [arc contract 3] The band takes its rows off the
+                    // top of the screen, so the height the story reads
+                    // is a smaller one now, exactly as for any other
+                    // change of screen size.
+                    DescribeInterpreterInHeader();
                 }
 
                 break;
@@ -2512,7 +2518,12 @@ public sealed class Interpreter
             // its dice the same way as on the other interpreters whose
             // plain frontends say 255, so a script made on one of those
             // plays here unchanged. A real screen reports its own height.
-            Header.ScreenHeightLines = (byte)Math.Min(screen.Height, 255);
+            //
+            // [arc contract 3] And the height is the model's, not the
+            // frontend's, because an arc_image band has taken its rows
+            // off the top and what is left is the screen the story
+            // gets.
+            Header.ScreenHeightLines = (byte)Math.Min(Display.Height, 255);
             Header.ScreenWidthCharacters = (byte)Math.Min(screen.Width, 255);
         }
 
@@ -2535,7 +2546,7 @@ public sealed class Interpreter
             // section 8 recommend, so [zm 8.4.3] the size in units is
             // the size in characters and [zm 8.1.1] a font is 1 by 1.
             Header.ScreenWidthUnits = (ushort)Math.Min(screen.Width, 255);
-            Header.ScreenHeightUnits = (ushort)Math.Min(screen.Height, 255);
+            Header.ScreenHeightUnits = (ushort)Math.Min(Display.Height, 255);
             Header.FontWidthUnits = 1;
             Header.FontHeightUnits = 1;
 

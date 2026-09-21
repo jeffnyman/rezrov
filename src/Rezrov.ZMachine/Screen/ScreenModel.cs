@@ -63,8 +63,55 @@ public sealed class ScreenModel : IScreenModel
     /// <summary>[zm 8.4] Width in characters.</summary>
     public int Width => _screen.Width;
 
-    /// <summary>[zm 8.4] Height in lines.</summary>
-    public int Height => _screen.Height;
+    /// <summary>
+    /// [zm 8.4] Height in lines, which is what is left of the screen
+    /// once [arc contract 3] the arc_image band has taken its rows off
+    /// the top. The band is not part of the Z-machine screen, so a
+    /// story that reads the height is told about the space it actually
+    /// has.
+    /// </summary>
+    public int Height => Math.Max(_screen.Height - BandRows, 1);
+
+    /// <summary>
+    /// [arc contract 3] Rows the arc_image band takes across the top,
+    /// 0 while there is none.
+    /// </summary>
+    public int BandRows { get; private set; }
+
+    /// <summary>
+    /// [arc contract 2] Puts a picture in the band, or takes the band
+    /// down where the number is 0.
+    /// </summary>
+    /// <remarks>
+    /// [arc contract 3] The band is released rather than kept reserved:
+    /// a clear gives the rows back to the text, and the next picture
+    /// re-bases the screen again. The specification calls both choices
+    /// conformant on a windowed interpreter and leaves it to the
+    /// author; this is the one Actaea makes, so an Arcturus game looks
+    /// here the way its own interpreter shows it.
+    ///
+    /// The re-base may not eat an unread line. Where what has gone by
+    /// since the player last had a chance to read would not fit below
+    /// the band, they get that chance now, behind an honest [MORE],
+    /// before the band covers any of it.
+    /// </remarks>
+    public void DrawImageBand(int picture, int mode)
+    {
+        var rows = picture == 0 ? 0 : Math.Clamp(mode, 0, Math.Max(_screen.Height - 1, 0));
+
+        if (rows > BandRows && IsGrid && !_pagingSuppressed)
+        {
+            var below = Math.Max(_screen.Height - rows - StatusLineRows - UpperWindow.Lines, 2);
+            if (_linesSincePause >= below - 1)
+            {
+                _screen.MorePrompt();
+                _linesSincePause = 0;
+            }
+        }
+
+        BandRows = rows;
+        _screen.DrawImageBand(picture, mode);
+    }
 
     /// <summary>[zm 8.4.2] A unit is a character here.</summary>
     public int FontWidth => 1;
@@ -188,6 +235,16 @@ public sealed class ScreenModel : IScreenModel
         IsBuffering = true;
         StatusLine = null;
         _pagingSuppressed = false;
+
+        // [arc contract 1] A restart is the screen as at the start of a
+        // game, so the band comes down with everything else. The story
+        // is told again that pictures are available and draws its first
+        // room's scene afresh.
+        if (BandRows != 0)
+        {
+            DrawImageBand(0, 0);
+        }
+
         EraseWindow(-1);
     }
 

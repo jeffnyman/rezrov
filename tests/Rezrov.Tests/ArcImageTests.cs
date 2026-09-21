@@ -133,6 +133,164 @@ public partial class InterpreterTests
     }
 
     [Fact]
+    public void TheBandTakesItsRowsOffTheTopOfTheScreen()
+    {
+        var screen = Banded(60, 24);
+        var run = Execute(
+            new Assembler()
+                .Ext(DrawImage, Small(8), Small(9))
+                .Quit(),
+            version: ZMachineVersion.V5,
+            screen: screen,
+            before: interpreter => interpreter.UseResources(Pack((1, 9))));
+
+        // [arc contract 3] Nine rows for the Arthur band, and what is
+        // left is the screen the story is told it has.
+        Assert.Equal(9, screen.Buffer.BandRows);
+        Assert.Equal(15, run.Interpreter.Display.Height);
+        Assert.Equal(15, run.Interpreter.Header.ScreenHeightLines);
+        Assert.Equal(15, run.Interpreter.Header.ScreenHeightUnits);
+    }
+
+    [Fact]
+    public void ClearingTheBandGivesTheRowsBackToTheText()
+    {
+        var screen = Banded(60, 24);
+        var run = Execute(
+            new Assembler()
+                .Ext(DrawImage, Small(8), Small(12))
+                .Ext(DrawImage, Small(0), Small(12))
+                .Quit(),
+            screen: screen,
+            before: interpreter => interpreter.UseResources(Pack((1, 12))));
+
+        // [arc contract 3] The releasing choice: id 0 takes the picture
+        // down and hands its rows back, rather than keeping a blank
+        // strip reserved. The next picture re-bases the screen again.
+        Assert.Equal(0, screen.Buffer.BandRows);
+        Assert.Equal(0, screen.BandPicture);
+        Assert.Equal(24, run.Interpreter.Display.Height);
+        Assert.Equal(24, run.Interpreter.Header.ScreenHeightLines);
+    }
+
+    [Fact]
+    public void TheStatusLineAndUpperWindowSitBelowTheBand()
+    {
+        var screen = Banded(40, 20);
+        var model = Model(screen, ZMachineVersion.V3);
+
+        model.DrawImageBand(8, 9);
+        model.ShowStatusLine("Churchyard", timeGame: false, 0, 0);
+        model.SplitWindow(2);
+        screen.UpdateUpperWindow(model);
+
+        // [arc contract 3] The whole text screen lives strictly below
+        // the band: nine rows of picture, then the status line, then
+        // the upper window, and the lower window under all of it.
+        Assert.Equal(9, screen.Buffer.BandRows);
+        Assert.Equal(1, screen.Buffer.StatusRows);
+        Assert.Equal(2, screen.Buffer.UpperLines);
+        Assert.Equal(12, screen.Buffer.LowerTop);
+    }
+
+    [Fact]
+    public void ARebaseThatWouldCoverUnreadTextPausesFirst()
+    {
+        var screen = new RecordingScreen(40, 20, WithBand);
+        var model = Model(screen, ZMachineVersion.V5);
+
+        for (var line = 0; line < 16; line++)
+        {
+            model.Print('x');
+            model.NewLine();
+        }
+
+        model.Flush();
+        var before = screen.MorePrompts;
+        model.DrawImageBand(8, 12);
+
+        // [arc contract 3] The re-base never eats a line. Sixteen lines
+        // have gone by unread and only eight rows are left below a
+        // band of twelve, so the player is given the chance to read
+        // them before any of it is covered.
+        Assert.Equal(before + 1, screen.MorePrompts);
+    }
+
+    [Fact]
+    public void ARebaseWithRoomBelowItPausesForNothing()
+    {
+        var screen = new RecordingScreen(40, 20, WithBand);
+        var model = Model(screen, ZMachineVersion.V5);
+
+        model.Print('x');
+        model.NewLine();
+        model.Flush();
+
+        var before = screen.MorePrompts;
+        model.DrawImageBand(8, 9);
+
+        // [arc contract 3] An intro that fits below the band boots as
+        // one composition, picture above and all its text below, with
+        // no pause anywhere in it.
+        Assert.Equal(before, screen.MorePrompts);
+    }
+
+    [Fact]
+    public void ARestartTakesTheBandDown()
+    {
+        var screen = Banded(60, 24);
+        var model = Model(screen, ZMachineVersion.V5);
+
+        model.DrawImageBand(8, 9);
+        Assert.Equal(9, screen.Buffer.BandRows);
+
+        model.Reset();
+
+        // [arc contract 1] A restart is the screen as at the start of a
+        // game. The story is told again that pictures are available and
+        // draws its first room's scene afresh.
+        Assert.Equal(0, screen.Buffer.BandRows);
+        Assert.Equal(24, model.Height);
+    }
+
+    [Fact]
+    public void TheRabensteinWalkthroughDrawsTheBandItsAuthorSaysItWill()
+    {
+        var story = Corpus.ArcturusStory("rabenstein-r1-s260825.z5");
+        var pack = Corpus.ArcturusPack("rabenstein-r1-s260825.blorb");
+
+        Assert.SkipUnless(story is not null && pack is not null, "The entharion submodule is not populated.");
+
+        var screen = new RecordingScreen(60, 24, WithBand);
+        var interpreter = new Interpreter(
+            new ZMemory(File.ReadAllBytes(story)),
+            screen,
+            new ScriptedInput(
+                "north", "north", "north", "south", "south",
+                "take lantern", "light lantern", "north", "north",
+                "sleep", "sleep", "sleep", "quit", "y"));
+
+        interpreter.UseResources(BlorbFile.Read(File.ReadAllBytes(pack)));
+        interpreter.Run();
+
+        // The walkthrough in the story's own source header, which is
+        // written for interpreter authors and names the expected band
+        // at every step: the path, the churchyard, a room with no
+        // picture where the band must clear, the dark bedchamber's own
+        // scene, back out and in again with the lantern lit for the
+        // reveal, and then SLEEP changing the picture in place.
+        //
+        // The leading 0 is the library clearing a band that was never
+        // there. [arc contract 3] A clear that arrives before any
+        // picture was shown reserves nothing and is a no-op, which is
+        // why it does not count as the first draw and re-base nothing.
+        //
+        // [arc contract 2] The mode rides every call, a clear included.
+        Assert.Equal("0,8,1,0,21,0,1,0,7,9,7,9", string.Join(",", screen.Bands.Select(b => b.Picture)));
+        Assert.All(screen.Bands, band => Assert.Equal(12, band.Mode));
+    }
+
+    [Fact]
     public void EveryArcturusPackInTheCorpusDeclaresABandWeKnow()
     {
         var packs = Corpus.ArcturusPacks();
@@ -162,6 +320,25 @@ public partial class InterpreterTests
 
     private static bool Advertises(Interpreter interpreter) =>
         interpreter.Header.Flags1FromVersion4.HasFlag(Flags1FromVersion4.PicturesAvailable);
+
+    private static ScreenModel Model(IScreen screen, ZMachineVersion version)
+    {
+        var story = new Story(version);
+        var memory = new ZMemory(story.Bytes);
+
+        return new ScreenModel(screen, new StoryHeader(memory), memory);
+    }
+
+    private static BufferedScreen Banded(int width, int height) =>
+        new(
+            width,
+            height,
+            cursorStartsAtBottom: false,
+            repaint: () => { },
+            waitForKey: () => 13,
+            fontWidth: 1,
+            fontHeight: 1,
+            capabilities: WithBand);
 
     private static BlorbFile Pack((int Version, int Mode) arcImage) =>
         BlorbFile.Read(TestBlorb.Build([(1, "PNG ", TestBlorb.Png(320, 96))], arcImage: arcImage));

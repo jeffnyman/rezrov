@@ -45,6 +45,14 @@ public sealed class ScreenBuffer
     public bool CursorStartsAtBottom { get; }
 
     /// <summary>
+    /// [arc contract 3] Rows taken by the arc_image band across the
+    /// top, 0 while there is no band. The band is not part of the
+    /// Z-machine screen at all: the whole text model, status line and
+    /// upper window included, lives strictly below it.
+    /// </summary>
+    public int BandRows { get; private set; }
+
+    /// <summary>
     /// [zm 8.6.1.1] Rows taken by the status line: 0 or 1.
     /// </summary>
     public int StatusRows { get; private set; }
@@ -53,7 +61,39 @@ public sealed class ScreenBuffer
     public int UpperLines { get; private set; }
 
     /// <summary>The first row of the lower window.</summary>
-    public int LowerTop => Math.Min(StatusRows + UpperLines, Height - 1);
+    public int LowerTop => Math.Min(BandRows + StatusRows + UpperLines, Height - 1);
+
+    /// <summary>
+    /// [arc contract 3] Gives the band the top <paramref name="rows"/>
+    /// of the grid, or takes it down again with 0, and says whether
+    /// anything changed.
+    /// </summary>
+    /// <remarks>
+    /// The rows the band takes are blanked, because what was drawn
+    /// there belongs to the screen the band is replacing and a picture
+    /// is about to cover it. Whether the text that was there survives
+    /// is settled before this is called: [arc contract 3] says the
+    /// re-base may not eat an unread line.
+    /// </remarks>
+    public bool SetBand(int rows)
+    {
+        rows = Math.Clamp(rows, 0, Math.Max(Height - 1, 0));
+
+        if (rows == BandRows)
+        {
+            return false;
+        }
+
+        BandRows = rows;
+
+        for (var row = 0; row < rows; row++)
+        {
+            _rows[row] = BlankRow(Width, _blank);
+        }
+
+        CursorRow = Math.Clamp(CursorRow, LowerTop, Math.Max(Height - 1, 0));
+        return true;
+    }
 
     /// <summary>
     /// The upper window's cursor as a row and column of this grid,
@@ -104,10 +144,12 @@ public sealed class ScreenBuffer
         StatusRows = model.StatusLine is null ? 0 : 1;
         if (model.StatusLine is { } status)
         {
-            CopyRow(0, status);
+            // [arc contract 3] Below the band, which the status line
+            // shares a screen with rather than sitting above.
+            CopyRow(Math.Min(BandRows, Height - 1), status);
         }
 
-        UpperLines = Math.Min(model.UpperWindow.Lines, Height - StatusRows);
+        UpperLines = Math.Max(Math.Min(model.UpperWindow.Lines, Height - BandRows - StatusRows), 0);
         for (var line = 0; line < UpperLines; line++)
         {
             var cells = new Cell[Width];
@@ -118,7 +160,7 @@ public sealed class ScreenBuffer
                     : Cell.Blank(_blank);
             }
 
-            CopyRow(StatusRows + line, cells);
+            CopyRow(BandRows + StatusRows + line, cells);
         }
 
         // [zm 8.7.2.2] A split that would swallow the lower window's
@@ -132,7 +174,7 @@ public sealed class ScreenBuffer
         // The model's cursor counts from 1, this grid from 0, and the
         // status line sits above the upper window.
         UpperCursor = model.CurrentWindow == ScreenModel.Upper
-            ? (Math.Min(StatusRows + model.UpperWindow.CursorRow - 1, Height - 1),
+            ? (Math.Min(BandRows + StatusRows + model.UpperWindow.CursorRow - 1, Height - 1),
                Math.Min(model.UpperWindow.CursorColumn - 1, Width - 1))
             : null;
     }
