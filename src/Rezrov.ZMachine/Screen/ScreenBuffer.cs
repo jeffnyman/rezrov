@@ -69,11 +69,17 @@ public sealed class ScreenBuffer
     /// anything changed.
     /// </summary>
     /// <remarks>
-    /// The rows the band takes are blanked, because what was drawn
-    /// there belongs to the screen the band is replacing and a picture
-    /// is about to cover it. Whether the text that was there survives
-    /// is settled before this is called: [arc contract 3] says the
-    /// re-base may not eat an unread line.
+    /// Every row the band held before or holds now is blanked, and so
+    /// are the status line and upper window rows, because a band that
+    /// changes height moves both of those up or down the screen and
+    /// whatever they painted stays behind otherwise. Leaving it behind
+    /// shows as a second status line stranded where the band used to
+    /// end. They are written again from the model on the next update,
+    /// so blanking them costs nothing.
+    ///
+    /// Whether the text that was there survives is settled before this
+    /// is called: [arc contract 3] says the re-base may not eat an
+    /// unread line.
     /// </remarks>
     public bool SetBand(int rows)
     {
@@ -84,9 +90,11 @@ public sealed class ScreenBuffer
             return false;
         }
 
+        var stale = Math.Min(Math.Max(BandRows, rows) + StatusRows + UpperLines, Height);
+
         BandRows = rows;
 
-        for (var row = 0; row < rows; row++)
+        for (var row = 0; row < stale; row++)
         {
             _rows[row] = BlankRow(Width, _blank);
         }

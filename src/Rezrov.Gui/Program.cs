@@ -56,6 +56,7 @@ internal static class Program
     private static StoryFormat _format;
     private static BlorbFile? _resources;
     private static int? _seed;
+    private static string? _commands;
     private static InterpreterNumber? _machine;
     private static bool _tandy;
     private static string _prose = Glyphs.ProseFamily;
@@ -135,6 +136,9 @@ internal static class Program
             {
                 case "--blorb" when i + 1 < args.Length:
                     _blorb = args[++i];
+                    break;
+                case "--commands" when i + 1 < args.Length:
+                    _commands = args[++i];
                     break;
                 case "--seed" when i + 1 < args.Length && int.TryParse(args[i + 1], out var seed) && seed >= 1:
                     _seed = seed;
@@ -686,6 +690,14 @@ internal static class Program
                 // [blorb 6] Complain righteously, then carry on without.
                 Console.Error.WriteLine($"rezrov-gui: {e.Message}");
             }
+        }
+
+        // [zm 10.2.2] Commands from a file before the keyboard, which
+        // is how a window can be driven through a game without a hand
+        // on it.
+        if (_commands is not null && File.Exists(_commands))
+        {
+            interpreter.PlayCommands(new StreamReader(_commands));
         }
 
         var worker = new Thread(() =>
