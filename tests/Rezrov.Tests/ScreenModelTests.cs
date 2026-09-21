@@ -609,6 +609,28 @@ public class ScreenModelTests
         Assert.Equal("", writer.ToString());
     }
 
+    [Fact]
+    public void ResettingWritesOutTheWordStillBeingGathered()
+    {
+        // [zm 6.1.3] A restart puts the screen back as it was at the
+        // start of a game, and the word being gathered for wrapping has
+        // already been printed by then, so it goes out rather than
+        // being dropped. Infocom's own ZIP test ends its read check by
+        // printing "End of test." and restarting, and the full stop is
+        // the last thing in the buffer with nothing behind it to push
+        // it out.
+        var (writer, model) = MakeText(40, 6);
+
+        Print(model, "\nEnd of test.");
+
+        // Nothing has pushed the last word out yet.
+        Assert.Equal("\nEnd of ", writer.ToString());
+
+        model.Reset();
+
+        Assert.Equal("\nEnd of test.", writer.ToString());
+    }
+
     private static (StringWriter Writer, ScreenModel Model) MakeText(int width, int height)
     {
         var (_, _, memory) = MakeWithMemory(width, height);

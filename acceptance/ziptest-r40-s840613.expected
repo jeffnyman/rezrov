@@ -64,7 +64,7 @@ Randomness check - Type 2-100 or just RETURN to skip this test.
 Test of READ - Type THE AA BBBB at the prompt.
 >THE AA BBBB
 the aa bbbb 
-End of 
+End of test.
 Arithmetic testing: ADD, SUB, MUL, DIV, MOD/
 3+7=10
 21765-9870=11895
