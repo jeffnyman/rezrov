@@ -202,6 +202,26 @@ internal static class Corpus
         AaStoryFiles().FirstOrDefault(f => Path.GetFileName(f) == name);
 
     /// <summary>
+    /// One story from the Aa-machine's own conformance suite, or null
+    /// if the submodule is not populated.
+    /// </summary>
+    /// <remarks>
+    /// These are written to be read wrongly: they ask for things no
+    /// frontend has, in units nothing measures in, so that an
+    /// interpreter can be caught answering rather than declining. The
+    /// published games ask for far less.
+    /// </remarks>
+    public static string? AaConformanceFile(string name)
+    {
+        var root = FindRepositoryRoot();
+        var path = root is null
+            ? null
+            : Path.Combine(root, "entharion", "vendor", "aamachine", "test", name, $"{name}.aastory");
+
+        return path is not null && File.Exists(path) ? path : null;
+    }
+
+    /// <summary>
     /// The simple-test fixtures: one tiny Inform program compiled once
     /// for each version, which prints one known sentence and quits.
     /// </summary>

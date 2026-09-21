@@ -137,9 +137,9 @@ public sealed class TextOutput : IAaOutput
 
     public void EndParagraph() => Break(1);
 
-    public void EnterDiv(int styleClass) => Break(_styles.Ems(styleClass, "margin-top", 0));
+    public void EnterDiv(int styleClass) => Break(Blank(styleClass, "margin-top"));
 
-    public void LeaveDiv(int styleClass) => Break(_styles.Ems(styleClass, "margin-bottom", 0));
+    public void LeaveDiv(int styleClass) => Break(Blank(styleClass, "margin-bottom"));
 
     public void EnterSpan(int styleClass)
     {
@@ -330,6 +330,22 @@ public sealed class TextOutput : IAaOutput
     }
 
     // Puts out whatever is waiting and then ends the line.
+    // [aam output deviates] How many blank lines a margin comes
+    // to. The reference frontend reads one with a pattern that
+    // wants digits and then "em" with nothing in between, so a
+    // margin of a line and a half is no margin at all to it rather
+    // than a margin of one line. That is not the better reading,
+    // and the display on a terminal does round it down, but the
+    // transcripts this frontend exists to match came from there.
+    private int Blank(int styleClass, string key)
+    {
+        var margin = _styles.Length(styleClass, key);
+
+        return margin.Unit == AaUnit.Em && margin.Amount == Math.Floor(margin.Amount)
+            ? (int)margin.Amount
+            : 0;
+    }
+
     private void Break(int blank)
     {
         if (_hidden)
