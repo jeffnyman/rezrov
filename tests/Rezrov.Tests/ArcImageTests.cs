@@ -194,6 +194,30 @@ public partial class InterpreterTests
     }
 
     [Fact]
+    public void ReleasingTheBandLeavesNoStatusLineStrandedBehindIt()
+    {
+        var screen = Banded(40, 20);
+        var model = Model(screen, ZMachineVersion.V3);
+
+        model.DrawImageBand(8, 9);
+        model.ShowStatusLine("Churchyard", timeGame: false, 0, 0);
+        screen.UpdateUpperWindow(model);
+        Assert.Contains("Churchyard", screen.Buffer.RowText(9));
+
+        model.DrawImageBand(0, 9);
+        model.ShowStatusLine("Open Lawn", timeGame: false, 0, 0);
+        screen.UpdateUpperWindow(model);
+
+        // [arc contract 3] Releasing the band moves the status line up
+        // the screen with it. The row it used to be on belongs to the
+        // lower window now, and what it painted there has to go, or the
+        // player is left looking at two status lines with a hole
+        // between them.
+        Assert.Contains("Open Lawn", screen.Buffer.RowText(0));
+        Assert.DoesNotContain("Churchyard", screen.Buffer.RowText(9));
+    }
+
+    [Fact]
     public void ARebaseThatWouldCoverUnreadTextPausesFirst()
     {
         var screen = new RecordingScreen(40, 20, WithBand);
