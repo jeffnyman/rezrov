@@ -1,0 +1,1590 @@
+
+
+Note: The web version of this game can be played by typing commands at the
+prompt, or by clicking on highlighted words. It is possible to reach a good
+ending using either method, but some typing is required to unlock every part of
+the narrative.
+
+For an authentic experience, please print out a double-sided copy of the
+enclosed score extract, and make notes with a soft pencil.
+
+Before we begin, a matter of preference: You are Nevada Elmsbee, artistic
+director of the Bournebrook Rill Community Orchestra, and you have a big
+performance tonight. Do you wear a suit or a dress?
+
+> suit
+
+Suit it is.
+
+Pas De Deux
+An Interactive Performance by Linus Åkesson.
+Release 2. Serial number 191125.
+Dialog compiler version 0h/04. Library version 0.31.
+
+Type ABOUT for credits.
+
+* * *
+
+The applause begins the minute you enter the hall.
+
+With practiced confidence, you stride into the spotlight and smile sincerely as
+you look out over the crowd. It's a good turnout tonight.
+
+Concert hall (facing the audience)
+You are standing at the focal point of the grand stage of the Bournebrook Rill
+Concert Hall.
+
+This spacious auditorium was built in the seventies, to endorse and promote
+local drama productions and musical performances. The interior is pine wood and
+concrete, and the ceiling is covered in brown felt panels mounted at odd angles
+to improve the acoustics. No windows, of course.
+
+You shake hands with the concertmaster. She sits down, and behind your back the
+rest of the orchestra follows her example.
+
+The audience is still clapping wildly.
+
+> audience
+It's a full house. Press, politicians, and the local upper crust, mixed with the
+usual coterie of friends and relatives of orchestra members. In a unique
+collaboration with the town council, tonight's concert is a fundraiser for a new
+“mallard habitat” in the Botanic Garden, and you suspect that a large proportion
+of the crowd are here primarily to wallow in their own benevolence.
+
+Not that any of that matters, of course. The music does. The music and the
+orchestra.
+
+The lights dim, and the applause comes to an end. You hear a few coughs and
+excited whispers.
+
+> orchestra
+(first turning to face the orchestra)
+
+The Bournebrook Rill Community Orchestra is a kaleidoscopic bunch of happy
+amateurs. The musicians are seated in a large semi-circle around the conductor's
+stand.
+
+When you moved to the neighbourhood, a complete stranger to everyone, you wanted
+to find a way into the local music life. A small sinfonietta happened to be
+looking for a new conductor, and you jumped at the opportunity. The ensemble was
+in a pretty sorry state back then, but with your experience and their
+dedication, things have finally turned around. Your little group is now
+attracting some of the best amateur instrumentalists.
+
+The best amateur instrumentalists of Bournebrook Rill, that is.
+
+Expectation is in the air.
+
+The second harp is waiting for your signal.
+
+> semi-circle
+The seating arrangement is a semi-circle, roughly made up of four separate
+slices.
+
+[A diagram is included in your Pas De Deux package.]
+
+Starting at the far left, you've got the first violins up close, headed by the
+concertmaster. Behind them are the two harps, and at the back you can see the
+cymbalist and the timpani player.
+
+The second slice begins with the second violins. Behind them are the flutes and
+piccolo, then the clarinets and bass clarinet, and at the far back the French
+horns.
+
+In the third slice, you've got the violas up front, then the oboes, the English
+horn, and the bassoons. Back against the wall are the trumpets, trombones, bass
+trombone, and tuba.
+
+And to your right, in the fourth slice, the celli are seated in front of the
+bassi.
+
+The second harp is waiting for your signal.
+
+> second harp
+Rebecca Ward, second harp, is in her mid-twenties. She has her brown hair tied
+in a ponytail.
+
+The town council liked the idea of hosting a charity event for the Botanic
+Garden so much that, in addition to the venue, they insisted on throwing in a
+bit of cash. This you promptly spent on hiring two professional harpists for the
+evening: Joy Patterson, who is teaching at the conservatory, and Rebecca Ward,
+one of her top students at the moment.
+
+Rebecca acknowledges your cue, and plays the arpeggiated chord that leads up to
+the first bar of the piece.
+
+As though it had a mind of its own, your right hand picks up the baton and
+begins to trace out beats in the air.
+
+Andante maestoso
+The second harp is playing a series of soft, arpeggiated chords, enhanced by
+pizzicatos in the violins, violas, and bassi.
+
+The first harp plucks the individual chord notes, up and down in soothing waves.
+
+> score
+A facsimile edition of the relevant pages from the Broude Brothers reprint of
+the original 1892 Nutcracker score. The composer's name is displayed prominently
+on the cover, lost in transliteration: Peter Ilich Tchaikovsky.
+
+[This is the printed score from your Pas De Deux package.]
+
+You could open the score extract.
+
+The second harp continues to play a series of soft, arpeggiated chords, enhanced
+by pizzicatos in the violins, violas, and bassi.
+
+The first harp plucks the individual chord notes, up and down in soothing waves.
+
+> first page
+You open the score extract on the first two pages, numbered 418-419 in this
+facsimile edition.
+
+No. 14. PAS DE DEUX
+
+This piece calls for two flutes, a piccolo, two oboes, English horn, two
+clarinets, bass clarinet, two bassoons, four French horns, two trumpets, two
+trombones, bass trombone, tuba, timpani, cymbals, two harps, and a full string
+section.
+
+The first eight bars are visible, two on the left-hand page and six on the
+right-hand page. They are mostly made up of a regular accompaniment in the harps
+and strings, initially set in motion by the second harp.
+
+The main motif is introduced in the celli, fortissimo, in the second bar on the
+right-hand page. You will have to cue this, of course.
+
+You could look at the next page, turn to a given page number, or close the
+score.
+
+The second harp continues to play a series of soft, arpeggiated chords, enhanced
+by pizzicatos in the violins, violas, and bassi.
+
+The first harp plucks the individual chord notes, up and down in soothing waves.
+
+A glance at the score confirms that you're currently listening to the first bar
+on the right-hand page.
+
+> celli
+All nine members of the cello section are present, including Harold, the section
+leader.
+
+Your timely look acts like a reassuring prompt for Harold and the other
+cellists.
+
+They pour out their emotions in a sudden, gripping fortissimo. This is the main
+motif of the piece, beginning with a descending major scale on the downbeat,
+molto espressivo.
+
+Meanwhile, the harps, violins, violas, and bassi continue their accompaniment,
+steadily, reliably.
+
+A glance at the score confirms that you're currently hearing the second bar on
+the right-hand page.
+
+> wait
+As you listen to the music, you continue to watch the celli.
+
+The final note of the descending scale lingers for a while, softer, but with
+undiminished emotional intensity.
+
+The harps and strings keep going, like clockwork.
+
+A glance at the score confirms that you're currently listening to the third bar
+on the right-hand page.
+
+> wait
+As you listen to the music, you keep watching the celli.
+
+In the celli, the last part of the main motif is repeated with an embellishment.
+It is less intense this time, a calm reflection of the emotional turmoil that
+preceded it.
+
+The soothing accompaniment in the harps and strings continues, unruffled.
+
+A glance at the score confirms that you're currently listening to the fourth bar
+on the right-hand page.
+
+> wait
+As you listen to the music, you keep your eyes on the celli.
+
+The celli repeat the end of the motif again. Now it is merely a faint echo,
+ending on a long, soft note.
+
+The steady accompaniment in the harps and strings continues.
+
+The soft note in the celli begins to crescendo, growing also in intensity,
+striving, reaching for more.
+
+A glance at the score confirms that you're currently listening to the fifth bar
+on the right-hand page.
+
+> next page
+You turn to pages 420-421.
+
+In the five bars on the left-hand page you see a continued accompaniment in the
+harps and strings, and variations of the main motif in the celli. The last of
+these bars is marked with rehearsal letter A.
+
+There are three bars on the right-hand page. The flutes and clarinets begin at
+the top, in fortissimo, and the oboes and bassoons enter two bars later. Better
+cue both of these entrances, just to be on the safe side.
+
+You could look at the next or previous page, turn to a given page number, or
+close the score.
+
+Another eruption of emotions in the celli, again fortissimo. This time, the main
+motif appears in a lower, minor key, tinged with a lamenting quality.
+
+The accompaniment played by the harps and strings continues in the same lulling
+spirit, but with subtle harmonic adjustments to fit the new scale.
+
+You scan the sheet music in front of you, but what you can hear right now is
+nowhere to be found.
+
+> wait
+You listen to the music.
+
+The final note of the scale lingers for a while in the cello section,
+persevering, but then, with an air of inevitability, decreases in intensity.
+
+The harps and strings persist in their steadfast accompaniment.
+
+With a glance at the printed score you get your bearings: This is the first bar
+on the left-hand page.
+
+> wait
+You listen to the music.
+
+The celli restate the end of the preceding motif, again with an embellishment,
+another introspective comment on the flare-up that came before it.
+
+The accompaniment in the harps and strings continues, relentlessly, like time
+itself.
+
+A glance at the score confirms that you're currently hearing the second bar on
+the left-hand page.
+
+> wait
+You listen to the music.
+
+Again, the celli play a second echo of the end of the motif, faint, sad, almost
+resigned. And again, that last, lingering note seems to gain new energy,
+eventually turning into a crescendo, this time along with the rest of the
+strings and the harps, as the ensemble strives towards a third recital of the
+motif, even more powerful than the preceding ones.
+
+A glance at the score confirms that you're currently hearing the third bar on
+the left-hand page.
+
+> wait
+You listen to the music.
+
+This time, an upbeat leads to a modulated version of the main motif, in a higher
+key that offers a fresh harmonical perspective, almost triumphant in character.
+
+The accompaniment carried out by the harps and strings is louder now, but still
+restrained and stately.
+
+A glance at the score confirms that you're currently listening to the fourth bar
+on the left-hand page.
+
+> wait
+You listen to the music.
+
+Rehearsal letter A
+The descending scale played by the celli takes a turn upwards, and lands in a
+major tonality. But the melody doesn't stop there. It keeps going, and begins to
+rise chromatically.
+
+The harps and strings continue their accompaniment, dependably, like clockwork.
+
+A glance at the score confirms that you're currently listening to the fifth bar
+on the left-hand page.
+
+> flutes
+Pia and Frank play first and second flute, respectively.
+
+The flutes and clarinets acknowledge your cue, and confidently restate the main
+motif, fortissimo, in its original key.
+
+At the same time, the melody played by the celli continues to rise chromatically
+through a series of flourishes, steadily increasing in intensity and dynamics.
+
+The harps, violins, violas, and bassi carry on with their arpeggios and plucked
+chords.
+
+A glance at the score confirms that you're currently listening to the first bar
+on the right-hand page.
+
+> next page
+You flip to pages 422-423.
+
+There are two bars on the left-hand page. In the first, the French horns start
+to play chords in half notes. In the second, the main motif appears in the
+flutes, English horn, clarinets, first violins, and celli.
+
+In the first of the two bars on the right-hand page, the bass clarinet enters
+with a sustained note.
+
+You could look at the next or previous page, turn to a given page number, or
+close the score.
+
+The flutes and clarinets hold the final note of their scale.
+
+The celli continue to climb chromatically through a series of flourishes,
+steadily increasing in intensity and dynamics.
+
+The harps, violins, violas, and bassi join the celli in the crescendo.
+
+You scan the sheet music in front of you, but what you can hear right now is
+nowhere to be found.
+
+> oboes
+Sarah and Stanislav play first and second oboe, respectively.
+
+Out of the corner of your eye, you notice the tuba player stifling a yawn.
+
+At your cue, the main motif makes another appearance, fortissimo, in the oboes
+and bassoons.
+
+The celli continue to climb chromatically through a series of flourishes,
+steadily increasing in intensity and dynamics.
+
+The harps, violins, violas, and bassi also take part in the crescendo.
+
+You desperately scan the sheet music in front of you, but what you're hearing
+right now is nowhere to be found.
+
+> french horns
+You are immensely grateful for your solid French horn section, consisting of
+Conrad (first), Jennifer (second), Eve (third), and Thomas (fourth).
+
+The main motif takes a turn upwards, and the oboes and bassoons land on the
+tonic. At the same time, the celli reach the end of their chromatic climbing.
+
+The French horns enter on cue, adding a dignified, solemn timbre to the slow
+cycle of chords in the accompaniment.
+
+The two harps switch to playing in unison, plucking out individual chord notes
+in rising and falling waves, while the second violins, violas, and bassi
+continue to play pizzicato.
+
+With a glance at the printed score you get your bearings: This is the first bar
+on the left-hand page.
+
+> first violins
+The twelve first violins are headed by the concertmaster, Isabelle.
+
+Encouraged by your look, the flutes, clarinets, English horn, celli, and first
+violins pour out their hearts in another instance of the main motif, sempre
+fortissimo.
+
+The harps continue to play in unison, over the harmonic cycle now carried by the
+horns, together with the unyielding, steady pulse of pizzicato chords in the
+second violins, violas, and bassi.
+
+A glance at the score confirms that you're currently listening to the second bar
+on the left-hand page.
+
+> bass clarinet
+The bass clarinet, Kevin, is a large, muscular fellow with a shaved head, ring
+in one of his ears, tattooed knuckles, and a very kind and humble disposition.
+He is the older brother of Agnes.
+
+At your cue, the bass clarinet makes a humble entrance with a sustained,
+mezzoforte note.
+
+Meanwhile, the overall intensity falls back in a diminuendo, as the flutes,
+clarinets, English horn, celli, and first violins reach the end of the scale.
+
+The harps, horns, second violins, violas, and bassi continue their
+accompaniment, but join in the diminuendo.
+
+A glance at the score confirms that you're currently hearing the first bar on
+the right-hand page.
+
+> next page
+You flip to pages 424-425.
+
+Four bars, two per page, are visible on this spread. The fourth is marked with
+rehearsal letter B. The music continues in the same general style as on the
+previous spread.
+
+In the third bar, the first bassoon starts to play a sustained note.
+
+You could look at the next or previous page, turn to a given page number, or
+close the score.
+
+The end of the motif is restated in mezzoforte with an embellishment, still by
+the flutes, clarinets, English horn, celli, and first violins, like a whimper
+echoing the fierce outburst.
+
+The harps, horns, second violins, violas, and bassi continue their
+accompaniment.
+
+The bass clarinet continues to play a sustained note.
+
+You scan the sheet music in front of you, but what you can hear right now is
+nowhere to be found.
+
+> wait
+You listen to the music.
+
+In the flutes, clarinets, English horn, celli, and first violins, the end of the
+motif is restated once more, before it begins to increase dynamically in
+anticipation of the next outburst.
+
+The harps, horns, second violins, violas, and bassi take part in the crescendo.
+
+The bass clarinet also joins the crescendo.
+
+With a glance at the printed score you get your bearings: This is the first bar
+on the left-hand page.
+
+> wait
+You listen to the music.
+
+The flutes, clarinets, English horn, celli, and first violins call out in
+fortissimo once more, with the descending scale that begins the main motif.
+
+The accompaniment carries on in the harps, horns, bass clarinet, second violins,
+violas, and bassi.
+
+A glance at the score confirms that you're currently hearing the second bar on
+the left-hand page.
+
+> first bassoon
+David, first bassoon, is a short, aubergine-shaped fellow with a black mop of
+hair and a degree in cartography.
+
+He usually keeps to himself, although he seems to get on well with Thomas. And
+ever since October he's been having animated discussions with Ed about some kind
+of computerized adventure stories that they both like.
+
+On your cue, the first bassoon enters with a sustained note, in mezzoforte.
+
+In the flutes, clarinets, English horn, celli, and first violins, the descending
+scale of the main motif reaches its final note.
+
+The accompaniment carries on in the harps, horns, bass clarinet, second violins,
+violas, and bassi.
+
+A glance at the score confirms that you're currently hearing the first bar on
+the right-hand page.
+
+> next page
+You turn to pages 426-427.
+
+Two bars are visible on the left-hand page. There's a stringendo in the first,
+leading to a tempo change, poco più mosso, in the second. The first oboe plays a
+solo melody starting at the poco più mosso.
+
+There are six bars on the right-hand page. In the fourth of them, the solo
+melody is taken over by the bass clarinet.
+
+You could look at the next or previous page, turn to a given page number, or
+close the score.
+
+Rehearsal letter B
+The end of the motif is restated by the flutes, clarinets, English horn, celli,
+and first violins, softly, with an embellishment.
+
+The harps, horns, bass clarinet, second violins, violas, and bassi keep up the
+clockwork accompaniment, but begin to withdraw dynamically.
+
+The first bassoon continues to play a sustained note.
+
+You scan the sheet music in front of you, but what you can hear right now is
+nowhere to be found.
+
+> wait
+You listen to the music.
+
+Poco stringendo
+In the flutes, clarinets, English horn, celli, and first violins, the end of the
+main motif is heard again, even softer, as a last, faint echo.
+
+The harps, horns, bass clarinet, first bassoon, second violins, violas, and
+bassi settle down into a piano dynamic, and eventually the accompaniment comes
+to rest.
+
+With a glance at the printed score you get your bearings: This is the first bar
+on the left-hand page.
+
+> first oboe
+Sarah, first oboe, is hardly a day over twenty. Tight braids arranged in a bun;
+thin gold-rimmed glasses. She likes to visit Chez Anna, especially on days when
+Steve is working, and you have fond memories of the time when you did Salieri's
+Concerto for Flute and Oboe with her and Pia as soloists.
+
+She's usually grinning from ear to ear, but right now she looks very focused.
+
+Poco più mosso
+Visibly grateful for your cue, the first oboe introduces a touching solo melody,
+dolce cantabile, softly accompanied by triplets in the French horns.
+
+The second violins play a rapid, ascending scale. It is repeated half a bar
+later by the first violins.
+
+A glance at the score confirms that you're currently listening to the second bar
+on the left-hand page.
+
+> tuba
+Oh dear. Anthony seems to be sound asleep.
+
+Anthony, tuba player and son of Conrad, has his brown hair tied in a bun. He
+actually left Bournebrook Rill to study engineering, but still comes to
+rehearsals every week. You've got a hunch that he sticks around because of
+Melody.
+
+The first oboe continues to play a solemn melody.
+
+The French horns are playing triplets.
+
+The first harp plays a rapid, ascending scale.
+
+A glance at the score confirms that you're currently hearing the first bar on
+the right-hand page.
+
+> bass trombone
+Peter, bass trombone, has a respectable lung capacity, and the frame that goes
+with it. Reliable, cordial, and good-natured. One of his eyes is made of
+porcelain.
+
+He works at Harold's Garden Supplies, and used to be in a book club with Joy and
+Liu Yang.
+
+The bass trombone gives you a quizzical look.
+
+The first oboe continues to play a solemn melody.
+
+The French horns are playing triplets.
+
+The celli play a rapid, ascending scale. It is repeated half a bar later by the
+violas.
+
+A glance at the score confirms that you're currently hearing the second bar on
+the right-hand page.
+
+> tuba
+The bass trombone follows your gaze towards the tuba. He notices that Anthony
+has fallen asleep, and gives him a friendly but dream-shattering kick on the
+malleolus lateralis. Then he leans forward to indicate a place in the sheet
+music on his dazed neighbour's stand.
+
+Anthony, tuba player and son of Conrad, has his brown hair tied in a bun. He
+actually left Bournebrook Rill to study engineering, but still comes to
+rehearsals every week. You've got a hunch that he sticks around because of
+Melody.
+
+The solemn melody played by the solo oboist comes to a conclusion.
+
+The French horns are playing triplets.
+
+The second harp plays a rapid, ascending scale.
+
+A glance at the score confirms that you're currently hearing the third bar on
+the right-hand page.
+
+> bass clarinet
+The bass clarinet, Kevin, is a large, muscular fellow with a shaved head, ring
+in one of his ears, tattooed knuckles, and a very kind and humble disposition.
+He is the older brother of Agnes.
+
+Reassured by your cue, the bass clarinet introduces a second solo melody, this
+one cautiously hopeful, although still an elaboration of the earlier statement
+by the oboe.
+
+The celli and bassi accentuate the first beat of the bar with a subtle
+pizzicato.
+
+The French horns are playing triplets.
+
+The second violins play a rapid, ascending scale. It is repeated half a bar
+later by the first violins.
+
+A glance at the score confirms that you're currently hearing the fourth bar on
+the right-hand page.
+
+> wait
+As you listen to the music, you keep watching the bass clarinet.
+
+The bass clarinet continues to play a hopeful, reassuring melody.
+
+The celli and bassi accentuate the first beat of the bar with a subtle
+pizzicato.
+
+The French horns are playing triplets.
+
+The first harp plays a rapid, ascending scale.
+
+A glance at the score confirms that you're currently hearing the fifth bar on
+the right-hand page.
+
+> next page
+You flip to pages 428-429.
+
+There are six bars on this spread, three per page. The French horns are playing
+triplets the entire time. The second bar of the first page is marked
+“incalzando”.
+
+At the start of the incalzando, the violas and celli introduce a yearning
+counter-motif, and the tuba enters with a sustained, pianissimo note. The horns
+are joined by the flutes and oboes in the second bar of the right-hand page. One
+bar later, a timpani tremolo begins, pianissimo at first.
+
+You could look at the next or previous page, turn to a given page number, or
+close the score.
+
+The bass clarinet continues to play a hopeful, reassuring melody, with a slight
+crescendo at this point.
+
+The celli and bassi accentuate the first beat of the bar with a subtle
+pizzicato.
+
+The French horns are playing triplets.
+
+The second violins play a rapid, ascending scale. It is repeated half a bar
+later by the first violins.
+
+You scan the sheet music in front of you, but what you're hearing right now is
+nowhere to be found.
+
+> wait
+You listen to the music.
+
+The bass clarinet concludes the hopeful melody on a long, tender note, gradually
+fading to nothing.
+
+The French horns are playing triplets.
+
+The second harp plays a rapid, ascending scale.
+
+With a glance at the printed score you get your bearings: This is the first bar
+on the left-hand page.
+
+> tuba
+Anthony, tuba player and son of Conrad, has his brown hair tied in a bun. He
+actually left Bournebrook Rill to study engineering, but still comes to
+rehearsals every week. You've got a hunch that he sticks around because of
+Melody.
+
+Incalzando
+At your cue, the tuba starts to play a sustained, pianissimo note.
+
+The violins and violas also pick up on your cue to the tuba, and introduce a
+yearning counter-motif, softly at first, but with emotional intensity.
+
+The French horns are playing triplets.
+
+The bassi play short notes on every beat, alternating between two octaves. The
+ostinato contributes to a subtle feeling of unrest.
+
+A glance at the score confirms that you're currently listening to the second bar
+on the left-hand page.
+
+> wait
+As you listen to the music, you keep watching the tuba.
+
+The celli join the yearning melody played by the first violins and violas.
+
+Both harps respond to the yearning motif with a flurry of notes, ascending and
+then descending.
+
+The French horns are playing triplets.
+
+The tuba is playing a sustained note.
+
+The ostinato in the bassi contributes to a general feeling of agitation.
+
+A glance at the score confirms that you're currently hearing the third bar on
+the left-hand page.
+
+> next page
+You flip to pages 430-431.
+
+There's an animando for three bars on the left-hand page, followed by a ritenuto
+for four bars on the right-hand page. The last of the animando bars is marked
+with rehearsal letter C.
+
+At letter C, a grand fanfare begins in the trumpets and trombones.
+
+You could look at the next or previous page, turn to a given page number, or
+close the score.
+
+The yearning motif is repeated with more intensity by the first violins, violas,
+and celli. The melody is somewhat elaborated this time.
+
+The French horns are playing triplets.
+
+The tuba is playing a sustained note.
+
+The ostinato in the bassi contributes to an unsettling feeling of anxiety.
+
+You scan the sheet music in front of you, but what you're hearing right now is
+nowhere to be found.
+
+> flutes
+Pia and Frank play first and second flute, respectively.
+
+At your cue, the flutes and oboes join the French horns in their triplets.
+
+The yearning motif continues in the first violins, violas, and celli.
+
+Again, the harps respond with a flurry of notes, ascending and then descending.
+
+The tuba is playing a sustained note.
+
+The ostinato in the bassi contributes to an ominous feeling of tension.
+
+You desperately scan the sheet music in front of you, but what you can hear
+right now is nowhere to be found.
+
+> timpani
+Rakesh, timpani, is in his late thirties, and sports a shiny black pompadour and
+a trimmed beard. He makes his own mallets, and has maybe a dozen pairs of
+various sizes lined up on a table next to him.
+
+Every day, Rakesh takes his Labrador for a walk in the Botanic Garden, where
+they predictably run into Jeanette and her Yorkshire Terrier.
+
+At your cue, a very faint, dramatic tremolo begins in the timpani.
+
+The second violins join the first violins, violas, and celli in a crescendo as
+the yearning motif is extended.
+
+The harps play another flurry of notes, ascending and then descending, somewhat
+louder this time.
+
+The flutes, oboes, and French horns are playing triplets. They are joined by the
+clarinets and bassoons, and begin to crescendo.
+
+The tuba is playing a sustained note, poco a poco crescendo.
+
+The ostinato in the bassi contributes to an increasing sense of alarm.
+
+You desperately scan the sheet music in front of you, but what you're hearing
+right now is nowhere to be found.
+
+> wait
+As you listen to the music, you keep your eyes on the timpanist.
+
+Animando
+The violins, violas, and celli repeat a part of the yearning motif over and
+over, each time a little higher on the scale.
+
+The flutes, oboes, clarinets, bassoons, and French horns are playing triplets.
+
+The tuba is playing a sustained note, poco a poco crescendo.
+
+The timpani tremolo grows louder.
+
+The ostinato in the bassi contributes to a general feeling of distress and
+emotional turmoil.
+
+Everybody takes part in the crescendo now.
+
+With a glance at the printed score you get your bearings: This is the first bar
+on the left-hand page.
+
+> wait
+As you listen to the music, you continue to watch the timpanist.
+
+With every recurrence, the repeated part of the yearning motif gets more
+intense, more passionate, each time a little higher on the scale.
+
+The flutes, oboes, clarinets, bassoons, and French horns are playing triplets.
+
+The tuba is playing a sustained note, poco a poco crescendo.
+
+The timpani tremolo grows louder.
+
+The ostinato in the bassi contributes to a turbulent, almost violent sense of
+anticipation.
+
+The crescendo intensifies.
+
+A glance at the score confirms that you're currently listening to the second bar
+on the left-hand page.
+
+> trumpets
+Michael and Anna play first and second trumpet, respectively.
+
+Rehearsal letter C
+The violins, violas, and celli bring the yearning motif to a climactic release.
+
+Acknowledging your glance, the trumpets and trombones erupt in a grand, exalted
+fanfare.
+
+The flutes, oboes, clarinets, bassoons, and French horns are playing triplets in
+fortissimo.
+
+The tuba is playing a sustained note, poco a poco crescendo.
+
+The timpani tremolo grows even louder.
+
+The bassi, too, switch to a tremolo.
+
+A glance at the score confirms that you're currently listening to the third bar
+on the left-hand page.
+
+> wait
+As you listen to the music, you continue to watch the trumpets.
+
+Ritenuto
+The yearning motif in the violins, violas, and celli develops into a descending
+scale of long notes.
+
+The trumpets and trombones continue to play a piercing fanfare.
+
+The flutes, oboes, clarinets, bassoons, and French horns are playing triplets in
+fortissimo.
+
+The tuba is playing a sustained note, now embellished by the bass trombone.
+
+The timpani and bassi keep up their tremolo.
+
+A glance at the score confirms that you're currently hearing the first bar on
+the right-hand page.
+
+> wait
+As you listen to the music, you keep watching the trumpets.
+
+The violins, violas, and celli play a descending scale of long notes.
+
+The trumpets and trombones continue to play a piercing fanfare.
+
+The flutes, oboes, clarinets, bassoons, and French horns are playing triplets in
+fortissimo.
+
+The tuba is playing a sustained note, embellished by the bass trombone.
+
+The timpani and bassi keep up their tremolo, now with a crescendo in the
+timpani.
+
+A glance at the score confirms that you're currently hearing the second bar on
+the right-hand page.
+
+> wait
+As you listen to the music, you keep watching the trumpets.
+
+The violins, violas, and celli conclude their yearning melody.
+
+The flutes, oboes, clarinets, bassoons, and French horns cease to play triplets.
+
+A loud note in the bass trombone accentuates the end of the tuba's sustained
+note.
+
+The timpani tremolo comes to a sudden halt.
+
+The bassi join the trumpets and trombones in their fortissimo fanfare, which has
+transformed into a descending scale.
+
+A glance at the score confirms that you're currently hearing the third bar on
+the right-hand page.
+
+> next page
+You turn to pages 432-433.
+
+Four bars, two per page:
+
+In the first bar, marked Tempo I, the French horns, trumpets, trombones, bass
+trombone, bass clarinet, tuba, and bassi begin to play a series of loud half-
+note chords.
+
+In the second bar, the rest of the orchestra joins in with a climactic
+restatement of the main motif.
+
+You could look at the next or previous page, turn to a given page number, or
+close the score.
+
+As the loud descending scale reaches new depths, the bassi are unfazed, but the
+trumpets and trombones hand over their share to the bass trombone and tuba.
+
+You scan the sheet music in front of you, but what you're hearing right now is
+nowhere to be found.
+
+> french horns
+You are grateful for your solid French horn section, consisting of Conrad
+(first), Jennifer (second), Eve (third), and Thomas (fourth).
+
+Tempo I
+At your cue: Long, stately chords, forte, in the French horns, trumpets,
+trombones, bass trombone, bass clarinet, tuba, and bassi.
+
+The two harps embellish the chords with wave-like flourishes.
+
+The timpanist plays another tremolo, pianissimo at first, then gradually growing
+into a forte.
+
+With a glance at the printed score you get your bearings: This is the first bar
+on the left-hand page.
+
+> first violins
+The twelve first violins are headed by the concertmaster, Isabelle.
+
+With full force, the descending major scale of the main motif returns,
+fortissimo marcato, played in unison by the piccolo, flutes, oboes, English
+horn, clarinets, bassoons, violins, violas, and celli.
+
+Long, stately chords in the horns, trumpets, trombones, bass trombone, bass
+clarinet, tuba, bassi, and timpani accompany the melody.
+
+The two harps embellish the chords with wave-like flourishes.
+
+A glance at the score confirms that you're currently listening to the second bar
+on the left-hand page.
+
+> wait
+As you listen to the music, you keep your eyes on the first violins.
+
+The piccolo, flutes, oboes, English horn, clarinets, bassoons, violins, violas,
+and celli continue to play the main motif, fortissimo marcato.
+
+Long, stately chords in the horns, trumpets, trombones, bass trombone, bass
+clarinet, tuba, and bassi accompany the melody.
+
+The two harps embellish the chords with wave-like flourishes.
+
+The timpanist plays another tremolo, pianissimo at first, then gradually growing
+into a forte.
+
+A glance at the score confirms that you're currently listening to the first bar
+on the right-hand page.
+
+> next page
+You flip to pages 434-435.
+
+Two bars are visible on each page of this spread. The first bar is marked with
+rehearsal letter D, and a stringendo begins in the second.
+
+You could look at the next or previous page, turn to a given page number, or
+close the score.
+
+A rapid, rising scale, still played in unison, serves as upbeat leading to a
+restatement of the main motif in the piccolo, flutes, oboes, English horn,
+clarinets, bassoons, violins, violas, and celli, sempre fortissimo marcato.
+
+Long, stately chords in the horns, trumpets, trombones, bass trombone, bass
+clarinet, tuba, bassi, and timpani accompany the melody.
+
+The two harps embellish the chords with wave-like flourishes.
+
+You scan the sheet music in front of you, but what you can hear right now is
+nowhere to be found.
+
+> wait
+You listen to the music.
+
+Rehearsal letter D
+The piccolo, flutes, oboes, English horn, clarinets, bassoons, violins, violas,
+and celli continue to play the main motif, still in an unyielding fortissimo.
+
+Long, stately chords in the horns, trumpets, trombones, bass trombone, bass
+clarinet, tuba, and bassi accompany the melody.
+
+The two harps embellish the chords with wave-like flourishes.
+
+The timpanist plays another tremolo, pianissimo at first, then gradually growing
+into a mezzoforte.
+
+With a glance at the printed score you get your bearings: This is the first bar
+on the left-hand page.
+
+> wait
+You listen to the music.
+
+Poco stringendo
+Another rapidly rising scale leading to a restatement of the main motif in the
+piccolo, flutes, oboes, English horn, clarinets, bassoons, violins, violas, and
+celli. The first few notes of the main motif are repeated a second time, with
+increasing tension.
+
+The horns, trumpets, trombones, bass trombone, bass clarinet, tuba, and bassi
+continue to accompany the melody with long, stately chords, now in a crescendo.
+
+The two harps embellish the chords with wave-like flourishes.
+
+The timpani tremolo grows louder.
+
+A glance at the score confirms that you're currently hearing the second bar on
+the left-hand page.
+
+> wait
+You listen to the music.
+
+The first few notes of the main motif are repeated, incessantly, now as
+triplets, by the piccolo, flutes, oboes, English horn, clarinets, bassoons,
+violins, violas, and celli.
+
+The horns, trumpets, trombones, bass trombone, bass clarinet, tuba, and bassi
+continue to accompany the melody with long, stately chords.
+
+The two harps embellish the chords with wave-like flourishes.
+
+The timpani tremolo grows louder.
+
+A glance at the score confirms that you're currently listening to the first bar
+on the right-hand page.
+
+> next page
+You flip to pages 436-437.
+
+Four bars, two per page. The stringendo ends with a Tempo I in the second bar on
+the left-hand page. Here, most of the orchestra is busy supporting the trumpets
+as they repeat the main motif in the very Russian dynamic of forte forte
+fortissimo.
+
+Each of these four bars contains a single, loud strike of the cymbals.
+
+You could look at the next or previous page, turn to a given page number, or
+close the score.
+
+The first few notes of the main motif are repeated, with unyielding intensity,
+now as sixteenth notes, by the piccolo, flutes, oboes, English horn, clarinets,
+bassoons, violins, violas, and celli.
+
+The horns, trumpets, trombones, bass trombone, bass clarinet, tuba, and bassi
+continue to accompany the melody with long, stately chords.
+
+The two harps embellish the chords with wave-like flourishes.
+
+The timpanist continues to play a tremolo.
+
+You scan the sheet music in front of you, but what you're hearing right now is
+nowhere to be found.
+
+> cymbals
+Steve is a skinny young man with blond hair and freckles, who is a regular at
+Frank's gym. A bit gawky, but conscientious, and a very versatile percussionist.
+Tonight he's been allotted the concert cymbals.
+
+He is currently sitting down on a chair.
+
+The first few notes of the main motif are repeated, mercilessly, now as
+sextuplets, by the piccolo, flutes, oboes, English horn, clarinets, bassoons,
+violins, violas, and celli.
+
+The trumpets, trombones, bass trombone, bass clarinet, tuba, and bassi play a
+rising scale of eighth notes.
+
+The percussionist acknowledges your cue, swiftly gets on his feet, and plays the
+cymbals, forte fortissimo, on the third beat.
+
+With a glance at the printed score you get your bearings: This is the first bar
+on the left-hand page.
+
+> trumpets
+Michael and Anna play first and second trumpet, respectively.
+
+Tempo I
+In a spectacular release of tension, the full descending scale of the main motif
+is played, now in the trumpets, forte forte fortissimo.
+
+The flutes, oboes, English horn, French horns, clarinets, bass clarinet,
+bassoons, trombones, bass trombone, tuba, and timpani accompany the melody with
+long, stately chords, forte forte fortissimo.
+
+The cymbals ring out again, on the downbeat.
+
+The violins, violas, and celli embellish the chords with wave-like flourishes,
+forte forte fortissimo.
+
+The bassi play sextuplets, forte forte fortissimo.
+
+Cutting through all of this, the piccolo delivers a series of rapidly descending
+and ascending scales, forte forte fortissimo.
+
+A glance at the score confirms that you're currently hearing the second bar on
+the left-hand page.
+
+> wait
+As you listen to the music, you keep watching the trumpets.
+
+The trumpets continue to play the main motif.
+
+The flutes, oboes, English horn, French horns, clarinets, bass clarinet,
+bassoons, trombones, bass trombone, tuba, and timpani accompany the melody with
+long, stately chords.
+
+The percussionist plays the cymbals on the third beat.
+
+The violins, violas, and celli embellish the chords with wave-like flourishes.
+
+The bassi play sextuplets.
+
+The piccolo delivers a series of rapidly descending and ascending scales.
+
+A glance at the score confirms that you're currently hearing the first bar on
+the right-hand page.
+
+> next page
+You flip to pages 438-439.
+
+There are three bars on either page of this spread. The strings are elaborating
+on a wistful, sigh-like motif, while the harps are doing arpeggios, and the
+woodwinds play chords.
+
+The oboes enter in the second bar, the flutes and clarinets in the third, and
+the bass clarinet in the fourth.
+
+You could look at the next or previous page, turn to a given page number, or
+close the score.
+
+The trumpets restate the descending major scale of the main motif.
+
+The flutes, oboes, English horn, French horns, clarinets, bass clarinet,
+bassoons, trombones, bass trombone, tuba, and timpani accompany the melody with
+long, stately chords.
+
+The cymbals ring out a fourth time, on the downbeat.
+
+The violins, violas, and celli embellish the chords with wave-like flourishes.
+
+The bassi play sextuplets.
+
+The piccolo delivers a series of rapidly descending and ascending scales.
+
+You scan the sheet music in front of you, but what you're hearing right now is
+nowhere to be found.
+
+> wait
+You listen to the music.
+
+The trumpets reach the final note of the descending scale on the downbeat.
+
+Likewise, the flutes, oboes, trombones, bass trombone, tuba, violins, violas,
+and celli end their accompaniment on the downbeat.
+
+Lingering, sustained notes remain in the English horn, bass clarinet, and bassi.
+
+The timpani tremolo is also sustained, but in a diminuendo.
+
+The French horns and bassoons continue to play stately chords, with a touch of
+serenity now.
+
+The first harp plays a rising figure.
+
+With a glance at the printed score you get your bearings: This is the first bar
+on the left-hand page.
+
+> oboes
+Sarah and Stanislav play first and second oboe, respectively.
+
+A heartbroken, wistful motif, like a deep sigh, is played by the violas and
+celli.
+
+The second harp responds to the sigh with a rising figure.
+
+Acknowledging your brief look, the oboes join the French horns and bassoons in
+their serene, stately chords.
+
+A pedal point is sustained by the bassi and timpani.
+
+A glance at the score confirms that you're currently listening to the second bar
+on the left-hand page.
+
+> flutes
+Pia and Frank play first and second flute, respectively.
+
+The heartbroken sigh is repeated in a higher register by the violins, violas,
+and celli.
+
+The first harp responds to the sigh with a rising figure.
+
+In response to your look, the flutes and clarinets join the oboes, French horns,
+and bassoons in their serene, stately chords.
+
+A pedal point is sustained by the bassi and timpani.
+
+A glance at the score confirms that you're currently listening to the third bar
+on the left-hand page.
+
+The cymbalist discreetly sits down again.
+
+> bass clarinet
+The bass clarinet, Kevin, is a large, muscular fellow with a shaved head, ring
+in one of his ears, tattooed knuckles, and a very kind and humble disposition.
+He is the older brother of Agnes.
+
+At your glance, the bass clarinet joins the bassi and timpani in the pedal
+point, which goes into a crescendo.
+
+The heartbroken sigh is repeated with greater intensity in an even higher
+register by the violins, violas, and celli.
+
+The second harp responds to the sigh with a rising figure.
+
+The flutes, clarinets, oboes, French horns, and bassoons are playing stately
+chords.
+
+A glance at the score confirms that you're currently listening to the first bar
+on the right-hand page.
+
+> wait
+As you listen to the music, you continue to watch the bass clarinet.
+
+In a higher register still, and with even greater intensity, the violins,
+violas, and celli repeat the heartbroken sigh motif.
+
+The first harp responds to the sigh with a rising figure.
+
+The flutes, clarinets, oboes, French horns, and bassoons are playing stately
+chords.
+
+A pedal point is sustained by the bass clarinet, bassi, and timpani.
+
+A glance at the score confirms that you're currently hearing the second bar on
+the right-hand page.
+
+> next page
+You flip to pages 440-441.
+
+Four bars, the first of which bears rehearsal letter E. In the first two bars,
+on the left-hand page, the strings continue the wistful theme until it comes to
+a sudden stop at the beginning of the right-hand page. There, the woodwinds
+respond with a rapid clatter of sextuplets.
+
+In the fourth bar, as everybody else goes quiet, the harps enter with a loud
+arpeggiated figure.
+
+You could look at the next or previous page, turn to a given page number, or
+close the score.
+
+The violins, violas, and celli repeat the heartbroken sigh motif, this time in
+the same, high register.
+
+The second harp responds to the sigh with a rising figure.
+
+The flutes, clarinets, oboes, French horns, and bassoons are playing stately
+chords.
+
+A pedal point is sustained by the bass clarinet, bassi, and timpani.
+
+You scan the sheet music in front of you, but what you're hearing right now is
+nowhere to be found.
+
+> next page
+You turn to pages 442-443.
+
+There are two bars on the left-hand page, and one bar on the right-hand page.
+The harps continue with their arpeggios, while the brass section provides
+accompaniment in the form of long notes.
+
+The first and second violins enter with a long, melodic note, fortissimo, in the
+first bar. In the second bar, the French horns, flutes and clarinets join them,
+and in the third bar, the oboes and bassoons do the same.
+
+You silently curse the fact that there are no printed bar numbers in this
+edition of the score.
+
+You could look at the next or previous page, turn to a given page number, or
+close the score.
+
+Rehearsal letter E
+In the violins, violas, and celli, the repeated heartbroken sigh motif evolves
+into a passionate melody spiralling downwards.
+
+Both harps are playing rising figures in rapid succession.
+
+The flutes, clarinets, oboes, French horns, and bassoons are playing stately
+chords.
+
+A pedal point is sustained by the bass clarinet, bassi, and timpani.
+
+You desperately scan the sheet music in front of you, but what you're hearing
+right now is nowhere to be found.
+
+> next page
+You flip to pages 444-445.
+
+This last spread comprises four bars, one on the left-hand page and three on the
+right-hand page. Everybody is taking part in a prolonged, boisterous tonic,
+although the English horn and bass clarinet don't join in until the first bar of
+the right-hand page. The piece ends with a bang on the third beat of the final
+bar.
+
+The timpanist has brief, loud notes at the beginning of the first bar of each
+page, and a tremolo beginning in the second-to-last bar.
+
+You could look at the previous page, turn to a given page number, or close the
+score.
+
+The passionate melody continues to spiral downwards in the violins, violas, and
+celli.
+
+Both harps are playing rising figures in rapid succession.
+
+The flutes, clarinets, oboes, French horns, and bassoons are playing stately
+chords.
+
+A pedal point is sustained by the bass clarinet, bassi, and timpani.
+
+You desperately scan the sheet music in front of you, but what you're hearing
+right now is nowhere to be found.
+
+> woodwinds
+The woodwind section comprises two flutes and a piccolo, two oboes, an English
+horn, two clarinets, a bass clarinet, two bassoons, and four French horns.
+
+The violins, violas, celli, flutes, timpani, harps, and bassi suddenly stop, on
+the downbeat.
+
+The trumpets, trombones, bass trombone, tuba, and piccolo join them in a brief,
+loud chord on the downbeat.
+
+The clarinets, bass clarinet, English horn, bassoons, and then also the oboes
+and French horns, play an increasingly rapid series of chords: First triplets,
+then sixteenth notes, in a crescendo.
+
+You desperately scan the sheet music in front of you, but what you can hear
+right now is nowhere to be found.
+
+> harps
+This piece calls for two harps, but for practical reasons it's usually performed
+with just one. Tonight, you're very happy to be able to present the music the
+way the composer intended.
+
+The clarinets, bass clarinet, English horn, bassoons, oboes, and French horns
+continue to play a series of rapid chords, now sextuplets, in ever-increasing
+dynamics.
+
+The flutes and piccolo join them.
+
+Suddenly they all stop, and the harps respond with a flurry of activity, forte
+fortissimo.
+
+You desperately scan the sheet music in front of you, but what you can hear
+right now is nowhere to be found.
+
+> first violins
+The twelve first violins are headed by the concertmaster, Isabelle.
+
+At your brief look, the first and second violins play a long tremolo, in
+fortissimo.
+
+The trumpets, trombones, bass trombone, and tuba play long chord notes.
+
+The harps are busy with a flurry of activity.
+
+You desperately scan the sheet music in front of you, but what you can hear
+right now is nowhere to be found.
+
+> french horns
+You are grateful for your solid French horn section, consisting of Conrad
+(first), Jennifer (second), Eve (third), and Thomas (fourth).
+
+In response to your cue, the flutes, clarinets, and French horns join the
+trumpets, trombones, bass trombone, and tuba in the long chord notes.
+
+After a brief two-note upbeat, the violins move their tremolo one step up the
+scale. The violas join them.
+
+The harps are busy with a flurry of activity.
+
+You desperately scan the sheet music in front of you, but what you can hear
+right now is nowhere to be found.
+
+> oboes
+Sarah and Stanislav play first and second oboe, respectively.
+
+After another brief two-note upbeat, the violins and violas move their tremolo
+one step up the scale.
+
+Acknowledging your glance, the oboes and bassoons join the flutes, clarinets,
+French horns, trumpets, trombones, bass trombone, and tuba in the long chord
+notes.
+
+The harps are busy with a flurry of activity.
+
+The celli and bassi accentuate each beat, stepping downwards through the tonic
+chord, pizzicato fortissimo.
+
+You desperately scan the sheet music in front of you, but what you're hearing
+right now is nowhere to be found.
+
+> timpani
+Rakesh, timpani, is in his late thirties, and sports a shiny black pompadour and
+a trimmed beard. He makes his own mallets, and has maybe a dozen pairs of
+various sizes lined up on a table next to him.
+
+He also likes to play badminton with Frank.
+
+At your cue, the timpanist plays a single, loud note on the first beat of the
+bar.
+
+After another brief two-note upbeat, the violins and violas move their tremolo
+one third higher.
+
+The oboes, bassoons, flutes, clarinets, French horns, trumpets, trombones, bass
+trombone, and tuba continue to play long chord notes.
+
+The harps are busy with a flurry of activity.
+
+The celli and bassi accentuate each beat, stepping downwards through the tonic
+chord, pizzicato, sempre fortissimo.
+
+With a glance at the printed score you get your bearings: This is the first bar
+on the left-hand page.
+
+> english horn
+Mark used to play the oboe until he unexpectedly inherited a cor anglais from a
+distant relative in London.
+
+After another brief two-note upbeat, the violins and violas move their tremolo
+one fourth higher, reaching the tonic.
+
+At your brief look, the English horn and bass clarinet join the oboes, bassoons,
+flutes, clarinets, French horns, trumpets, trombones, bass trombone, and tuba in
+the long chord notes, which are now in fortissimo.
+
+The timpanist plays another loud note on the first beat of the bar.
+
+The harps are busy with a flurry of activity.
+
+The celli and bassi accentuate each beat, stepping downwards through the tonic
+chord, pizzicato, sempre fortissimo.
+
+A glance at the score confirms that you're currently hearing the first bar on
+the right-hand page.
+
+> timpani
+Rakesh, timpani, is in his late thirties, and sports a shiny black pompadour and
+a trimmed beard. He makes his own mallets, and has maybe a dozen pairs of
+various sizes lined up on a table next to him.
+
+He also likes to play badminton with Frank.
+
+All the strings, brass, and woodwinds, as well as the two harps, stop on the
+downbeat with a brief, fortissimo tonic chord.
+
+The timpanist plunges into a solo tremolo, fortissimo, on the tonic.
+
+On the third beat, the strings, brass, and woodwinds play the tonic chord again,
+briefly, in a different inversion.
+
+A glance at the score confirms that you're currently hearing the second bar on
+the right-hand page.
+
+> wait
+As you listen to the music, you keep your eyes on the timpanist.
+
+The timpanist continues to play a tremolo, fortissimo, on the tonic.
+
+The strings, brass, and woodwinds play the tonic chord yet again, briefly, in a
+different inversion.
+
+On the third beat, the timpani tremolo ends with a bang. At the same time, the
+strings, brass, and woodwinds play the tonic chord one final time.
+
+Then, silence.
+
+> wait
+As you listen to the silence, you keep watching the timpanist.
+
+Your right hand slowly returns to your side.
+
+> wait
+You take a moment to enjoy the silence.
+
+Suddenly, applause, like a whip across your neck. “Bravo!” cries some
+particularly annoying member of the audience.
+
+> audience
+You turn to face the audience.
+
+Rows upon rows of beaming, clapping people.
+
+You smile genially.
+
+It's a full house. Press, politicians, and the local upper crust, mixed with the
+usual coterie of friends and relatives of orchestra members.
+
+A roaring applause fills the concert hall.
+
+The concertmaster stands up, and the rest of the orchestra follows her example.
+
+> applause
+The sound of applause is indistinguishable from that of frying pork.
+
+Eventually, the applause dwindles, and the audience settles down, eager for the
+next piece. You turn once more to the orchestra.
+
+The rest of the concert proceeds in much the same way as the opening piece. The
+audience remains exuberant, and you feel rather invigorated by their puppy-like
+enthusiasm.
+
+Encores, flowers. The doors open, and the concert hall is gradually vacated.
+Spectators and musicians congregate in small groups that drift into the night.
+As usual, you end up personally clearing the stage of chairs and stands before
+driving the long way home.
+
+You sleep until early afternoon the next day.
+
+* * *
+
+Kitchen
+Breakfast is English muffins with ham and eggs, a dab of hollandaise, and a cup
+of steaming hot Darjeeling.
+
+The Herald lies unopened in front of you.
+
+> herald
+You snatch the Bournebrook Rill Herald off the table, and eagerly turn to the
+culture pages.
+
+
+Organizers of charity events always run the risk of delivering such astounding
+performances that they, rather than the paying spectators, are remembered as the
+main benefactors. During last night's concert for the benefit of the Botanic
+Garden, maestro Nevada Elmsbee fell into precisely this trap. Technically
+immaculate and musically deep, the performance reduced the members of the
+audience to mere consumers, getting their money's worth of entertainment for the
+evening. They will be all but forgotten by future visitors to the Garden, who,
+as they come upon the new Mallard Habitat, will be admiring and rejoicing at the
+splashing, quacking, lasting legacy of the Bournebrook Rill Community Orchestra.
+— Ignatius E. Putterson, D.Mus.A.
+
+
+*** Five batons out of five ***
+
+A non-diegetic suggestion: There are many online videos of orchestras performing
+Tchaikovsky's Pas De Deux. If you haven't already done so, please go ahead and
+watch one now, to get a glimpse of yourself in action.
+
+Would you like to:
+     UNDO the last move,
+     RESTORE a saved position,
+     read a NOTE by the author,
+     QUIT the program,
+     or RESTART from the beginning?
+> note
+
+Thank you for playing my game!
+
+In a Pas De Deux (steps for two), a pair of dancers, usually a male and a
+female, perform ballet steps together. A similar kind of timing-critical
+interplay exists between conductor and orchestra, and between a work of
+interactive fiction and its reader.
+
+The role of the conductor has of course been greatly simplified in the story, to
+improve gameplay. While it is true, in a sense, that it's a good idea to move
+and behave just as during rehearsals, a real conductor will also use their body
+language to communicate and tweak dynamics and timing in response to what the
+musicians are doing.
+
+But knowing when and where to look is crucial. And you cannot observe without
+being observed.
+
+Linus Åkesson
+
+Would you like to:
+     UNDO the last move,
+     RESTORE a saved position,
+     read a NOTE by the author,
+     QUIT the program,
+     or RESTART from the beginning?
+> quit
+
+Thanks for playing!

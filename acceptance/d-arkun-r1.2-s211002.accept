@@ -1,0 +1,282 @@
+! SEED=1
+! GAME=../entharion/dialog-code/D-ARKUN.aastory
+
+# D'ARKUN, by Michael Baltes, played to its ending. A week in a
+# rented house on a northern island, where the reading turns out to
+# matter more than the sightseeing. The walkthrough the author
+# published for the 2021 competition, which reaches the ending with
+# fourteen of the thirty achievements found.
+
+<space>
+<space>
+<space>
+<space>
+open trunk
+open suitcase
+get gear
+get coat
+e
+se
+d
+get amulet
+u
+nw
+w
+n
+<space>
+get key
+g
+g
+n
+u
+e
+open curtains
+<space>
+<space>
+w
+d
+lock door
+u
+e
+sleep
+<space>
+<space>
+open floorboard
+get key
+w
+d
+w
+n
+search things
+get lamp
+nw
+u
+jump over floorboard
+get map
+sw
+d
+se
+s
+e
+n
+n
+get matches
+s
+s
+wear coat
+s
+find top of cliff
+d
+drop gear
+light lamp
+w
+open bag
+get diary
+e
+blow lamp
+get gear
+u
+find portal
+ne
+in
+ride bike to altenkirchen
+<space>
+s
+ask about morpheus
+x local
+get secret
+buy it
+n
+se
+show amulet to vicar
+show map to vicar
+show diary to vicar
+e
+open casket
+get flask
+w
+nw
+n
+nw
+x grave
+x roses
+push rose
+get key
+se
+ne
+nw
+u
+w
+push debris
+d
+<space>
+get vial
+g
+drink it
+drop gear
+n
+open panel
+get fuse
+s
+open drawer
+get syringe
+get gear
+find bike
+ride bike to putgarten
+<space>
+find portrait
+d
+light lamp
+open panel
+fill liquid into bulge
+enter door
+find bike
+ride bike to altenkirchen
+<space>
+nw
+s
+remove undergrowth
+get shelf
+get tin
+open tin
+fill tin in lamp
+find bike
+ride bike to vitt
+<space>
+s
+z
+z
+<space>
+<space>
+get shard
+hit wall
+g
+g
+d
+ne
+w
+w
+blind villager
+shard
+nw
+d
+get sticks
+g
+hit drum
+z
+z
+z
+z
+z
+z
+<space>
+<space>
+find bike
+ride bike to stein
+<space>
+d
+light lamp
+drop gear
+nw
+nw
+x last
+nw
+nw
+n
+nw
+w
+get algae
+find exit
+take gear
+u
+blow lamp
+ride bike to vitt
+<space>
+e
+e
+e
+x kraken
+inject syringe into kraken
+w
+n
+d
+get cucumber
+find bike
+ride bike to putgarten
+<space>
+find wine racks
+put fuse in panel
+enter door
+fill algae in funnel
+g
+g
+g
+fill larvae in funnel
+g
+g
+fill blood in funnel
+g
+x belly
+put flask on slab
+touch impression
+take flask
+find bike
+ride bike to vitt
+<space>
+w
+nw
+d
+hit drum
+fill liquid in bulge
+enter door
+drink vial
+g
+get hand
+se
+put hand on stela
+w
+touch impression
+se
+d
+<space>
+<space>
+<space>
+jump
+w
+w
+feel block
+get tin
+open lid
+fill it in lamp
+light lamp
+<space>
+<space>
+<space>
+drink vial
+drink vial
+e
+s
+break glass with lamp
+<space>
+<space>
+n
+in
+get flask
+out
+n
+fill liquid into bulge
+enter maelstrom
+<space>
+<space>
+<space>
+<space>
+w
+d
+s
+s
+drive home
+<space>
+<space>
+<space>
+<space>
+quit
