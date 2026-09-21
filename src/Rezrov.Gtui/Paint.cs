@@ -1,3 +1,4 @@
+using Rezrov.Grid;
 using Rezrov.ZMachine.Screen;
 
 namespace Rezrov.Gtui;
@@ -32,46 +33,94 @@ public static class Paint
         (Math.Max(width / CellWidth, 1), Math.Max(height / CellHeight, 1));
 
     /// <summary>
-    /// Draws the whole screen onto the surface.
+    /// [zm 8] Draws the whole Z-machine screen onto the surface, in
+    /// whatever colors the game has asked the screen to default to.
     /// </summary>
     public static void Screen(Surface surface, BufferedScreen screen)
     {
-        ArgumentNullException.ThrowIfNull(surface);
         ArgumentNullException.ThrowIfNull(screen);
+
+        Cells(
+            surface,
+            screen.Width,
+            screen.Height,
+            (row, column) => screen[row, column],
+            screen.Cursor,
+            Pixel(screen.DefaultForeground, Surface.White),
+            Pixel(screen.DefaultBackground, Surface.Black));
+    }
+
+    /// <summary>
+    /// Draws a grid of cells that some other machine keeps, in the
+    /// colors this program draws in where the cells name none.
+    /// </summary>
+    /// <remarks>
+    /// [aam output] The Aa-machine has no default colors of its own to
+    /// ask for, since its style sheet names the color of everything it
+    /// cares about and says nothing about the page behind, so the page
+    /// is this program's to choose.
+    /// </remarks>
+    public static void Picture(Surface surface, IGridPicture picture)
+    {
+        ArgumentNullException.ThrowIfNull(picture);
+
+        Cells(
+            surface,
+            picture.Width,
+            picture.Height,
+            (row, column) => picture[row, column],
+            picture.Cursor,
+            Surface.White,
+            Surface.Black);
+    }
+
+    /// <summary>
+    /// The drawing itself, which is the same whichever machine filled
+    /// the cells.
+    /// </summary>
+    private static void Cells(
+        Surface surface,
+        int width,
+        int height,
+        Func<int, int, Cell> at,
+        (int Row, int Column)? cursor,
+        uint ink,
+        uint paper)
+    {
+        ArgumentNullException.ThrowIfNull(surface);
 
         // [zm 8.4] A window is rarely a whole number of characters
         // across and down, so a strip is left over at the right and the
         // bottom. It is the screen's own color, not a border, or the
         // game appears to sit on a sheet of paper a size too small.
-        surface.Fill(Pixel(screen.DefaultBackground, Surface.Black));
+        surface.Fill(paper);
 
-        for (var row = 0; row < screen.Height; row++)
+        for (var row = 0; row < height; row++)
         {
-            for (var column = 0; column < screen.Width; column++)
+            for (var column = 0; column < width; column++)
             {
-                Character(surface, screen, screen[row, column], row, column);
+                Character(surface, at(row, column), row, column, ink, paper);
             }
         }
 
-        Cursor(surface, screen);
+        if (cursor is { } place)
+        {
+            Cursor(surface, place, ink);
+        }
     }
 
     /// <summary>
     /// One cell: its background, and then whatever character is in it.
     /// </summary>
-    private static void Character(Surface surface, BufferedScreen screen, Cell cell, int row, int column)
+    private static void Character(Surface surface, Cell cell, int row, int column, uint plain, uint page)
     {
         var attributes = cell.Attributes;
 
         // [zm 8.7.1] Reverse video swaps the two colors for this cell
         // only, which is how a status line is drawn.
         var reversed = attributes.Style.HasFlag(TextStyle.ReverseVideo);
-        var ink = Pixel(
-            reversed ? attributes.Background : attributes.Foreground,
-            Pixel(screen.DefaultForeground, Surface.White));
-        var paper = Pixel(
-            reversed ? attributes.Foreground : attributes.Background,
-            Pixel(screen.DefaultBackground, Surface.Black));
+        var ink = Pixel(reversed ? attributes.Background : attributes.Foreground, reversed ? page : plain);
+        var paper = Pixel(reversed ? attributes.Foreground : attributes.Background, reversed ? plain : page);
 
         var left = column * CellWidth;
         var top = row * CellHeight;
@@ -110,19 +159,14 @@ public static class Paint
     /// The cursor, as a line under the character it is on, so that it
     /// does not hide what is already there.
     /// </summary>
-    private static void Cursor(Surface surface, BufferedScreen screen)
+    private static void Cursor(Surface surface, (int Row, int Column) cursor, uint ink)
     {
-        if (screen.Cursor is not { } cursor)
-        {
-            return;
-        }
-
         surface.Fill(
             cursor.Column * CellWidth,
             ((cursor.Row + 1) * CellHeight) - 2,
             CellWidth,
             2,
-            Pixel(screen.DefaultForeground, Surface.White));
+            ink);
     }
 
     /// <summary>

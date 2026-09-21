@@ -11,7 +11,11 @@
     program hands the drawing to Avalonia, and this one shows what the
     toolkit was doing.
 
-    It cannot play a game yet. What it has so far is the font.
+    It plays the Z-machine and the Aa-machine, both of which come down
+    to a grid of characters. The grid itself, and what the Aa-machine
+    puts into it, are shared with the terminal program through
+    Rezrov.Grid, which is a project rather than a package for exactly
+    that reason.
 
     AssemblyName is lowercase for the same reason as the CLI's.
   -->
@@ -34,8 +38,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Rezrov.AaMachine\Rezrov.AaMachine.csproj" />
     <ProjectReference Include="..\Rezrov.Core\Rezrov.Core.csproj" />
     <ProjectReference Include="..\Rezrov.Glulx\Rezrov.Glulx.csproj" />
+    <ProjectReference Include="..\Rezrov.Grid\Rezrov.Grid.csproj" />
     <ProjectReference Include="..\Rezrov.ZMachine\Rezrov.ZMachine.csproj" />
   </ItemGroup>
 
