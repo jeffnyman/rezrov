@@ -195,7 +195,7 @@ The command prompt below should appear with the word "Given" already visible aft
 
 If you see the word "Given" twice, your interpreter is printing the given characters, which it shouldn't (that's the responsibility of the game file.)
 
-Preload> GivenGiven
+Preload> Given
 You just typed "given".
 
 > 13

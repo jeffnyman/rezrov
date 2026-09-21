@@ -1,5 +1,6 @@
 using Rezrov.ZMachine;
 using Rezrov.ZMachine.Input;
+using Rezrov.ZMachine.Screen;
 using Rezrov.ZMachine.Text;
 
 namespace Rezrov.Tests;
@@ -283,6 +284,56 @@ public class InputTests
     /// A story with a plausible header and, if any bytes are given, a
     /// terminating characters table holding them.
     /// </summary>
+    [Fact]
+    public void LeftoverInputIsKeptInTheBufferAndNotShownAgain()
+    {
+        // [zm op:read] Where a game leaves characters in the buffer for
+        // a command the player was interrupted in the middle of, the
+        // standard is explicit: the interpreter does not redisplay
+        // them, the game does. Beyond Zork, Zork Zero and Shogun all
+        // rely on it, and the Etude test for preloaded input watches
+        // for the word appearing twice.
+        var screen = Grid();
+        var input = new BufferedInput(screen);
+
+        // The game has already printed the characters it left behind,
+        // which is what the standard says is its job.
+        screen.Print("Given", Plain);
+
+        foreach (var character in "More")
+        {
+            input.Enqueue(character);
+        }
+
+        input.Enqueue(Zscii.Newline);
+
+        var line = input.ReadLine(Request(initial: "Given"));
+
+        // The whole of it reaches the game, leftover and typed alike.
+        Assert.Equal("GivenMore", Text(line));
+
+        // The screen shows it once: what the game printed, and then
+        // what the player typed after it.
+        Assert.Equal("GivenMore", screen.Buffer.RowText(0).TrimEnd());
+    }
+
+    [Fact]
+    public void BackspaceStopsAtWhatTheGameLeftBehind()
+    {
+        // [zm op:read] The leftover characters are the game's, not the
+        // player's, so rubbing out reaches the start of what was typed
+        // and no further.
+        var screen = Grid();
+        var input = new BufferedInput(screen);
+
+        input.Enqueue('a');
+        input.Enqueue(Zscii.Delete);
+        input.Enqueue(Zscii.Delete);
+        input.Enqueue(Zscii.Newline);
+
+        Assert.Equal("look", Text(input.ReadLine(Request(initial: "look"))));
+    }
+
     private static (ZMemory Memory, StoryHeader Header) Story(ZMachineVersion version, params byte[] terminators)
     {
         var bytes = new byte[2048];
@@ -315,4 +366,19 @@ public class InputTests
         new(maxLength, initial.Select(c => (ushort)c).ToList(), terminators ?? TerminatingCharacters.NewlineOnly, null);
 
     private static string Text(LineInput line) => string.Concat(line.Text.Select(c => (char)c));
+
+    /// <summary>A screen to read the echoed characters back off.</summary>
+    private static BufferedScreen Grid() =>
+        new(
+            40,
+            4,
+            cursorStartsAtBottom: false,
+            repaint: () => { },
+            waitForKey: () => Zscii.Newline,
+            fontWidth: 1,
+            fontHeight: 1,
+            capabilities: ScreenCapabilities.StatusLine | ScreenCapabilities.UpperWindow);
+
+    private static TextAttributes Plain =>
+        new(TextStyle.Roman, ScreenColor.Default, ScreenColor.Default, TextAttributes.NormalFont);
 }
