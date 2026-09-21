@@ -2079,7 +2079,15 @@ public sealed class Interpreter
             // [zm 7.1.1.1] Input is echoed to the screen. The keyboard
             // does that as the player types, but nobody typed this, so
             // the interpreter shows what the file said.
-            foreach (var code in replayed.Text)
+            //
+            // [zm op:read] Only what the file said, though. Where a game
+            // left characters in the buffer for an interrupted command,
+            // the standard is explicit that the interpreter does not
+            // redisplay them and the game must, and Beyond Zork, Zork
+            // Zero and Shogun all do. Echoing them here would print them
+            // a second time, which is what the Etude test for preloaded
+            // input watches for.
+            foreach (var code in replayed.Text.Skip(request.Initial.Count))
             {
                 Display.Print(code);
             }
