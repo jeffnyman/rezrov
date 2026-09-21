@@ -207,6 +207,24 @@ public class BufferedScreen : IScreen
         _repaint();
     }
 
+    /// <summary>
+    /// [arc contract 3] Which picture the band is showing, or 0 while
+    /// there is no band. What to make of the number is whatever paints
+    /// this screen; the grid only knows how many rows it lost.
+    /// </summary>
+    public int BandPicture { get; private set; }
+
+    public void DrawImageBand(int picture, int mode)
+    {
+        lock (Sync)
+        {
+            BandPicture = picture;
+            Buffer.SetBand(picture == 0 ? 0 : mode);
+        }
+
+        _repaint();
+    }
+
     public void UpdateWindows(WindowedScreenModel model)
     {
         ArgumentNullException.ThrowIfNull(model);

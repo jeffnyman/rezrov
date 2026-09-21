@@ -618,7 +618,14 @@ internal static class Program
             capabilities: ScreenCapabilities.StatusLine | ScreenCapabilities.UpperWindow
                 | ScreenCapabilities.Colors | ScreenCapabilities.Bold | ScreenCapabilities.Italic
                 | ScreenCapabilities.FixedPitch | ScreenCapabilities.FixedGrid
-                | ScreenCapabilities.CharacterGraphicsFont | ScreenCapabilities.Pictures);
+                | ScreenCapabilities.CharacterGraphicsFont | ScreenCapabilities.Pictures
+
+                // [arc contract 1] And an Arcturus story is told its
+                // picture band will be drawn, which sends it down the
+                // path where it issues draw_image at all. Only a story
+                // whose resource file declares an arc_image pack is
+                // ever told so; the interpreter sees to that.
+                | ScreenCapabilities.PictureBand);
 
         // [zm 10.3.2] Clicks are reported in screen units, which are
         // cells before Version 6 and the font's size in Version 6.

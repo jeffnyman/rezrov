@@ -198,6 +198,26 @@ internal static class Corpus
     }
 
     /// <summary>
+    /// One named Arcturus resource file, or null if the submodule is
+    /// not populated.
+    /// </summary>
+    public static string? ArcturusPack(string name) =>
+        ArcturusPacks().FirstOrDefault(f => Path.GetFileName(f) == name);
+
+    /// <summary>
+    /// One named Arcturus story, or null if the submodule is not
+    /// populated. These are ordinary Z-machine files: the pictures ride
+    /// in a resource file beside them.
+    /// </summary>
+    public static string? ArcturusStory(string name)
+    {
+        var root = FindRepositoryRoot();
+        var path = root is null ? null : Path.Combine(root, "entharion", "arcturus-code", name);
+
+        return path is not null && File.Exists(path) ? path : null;
+    }
+
+    /// <summary>
     /// Every Aa-machine story in the corpus, which is what Dialog
     /// compiles to when it is not compiling to the Z-Machine, sorted,
     /// or empty if the submodule is not populated.

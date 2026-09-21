@@ -1164,6 +1164,7 @@ internal sealed class Board : Control
         // text, which is the order a Version 6 game draws them in: it
         // paints a picture and then writes over it.
         PaintPictures(context, screen);
+        PaintBand(context, screen);
 
         for (var row = 0; row < screen.Height; row++)
         {
@@ -1185,6 +1186,51 @@ internal sealed class Board : Control
                     _glyphs.CellWidth,
                     2));
         }
+    }
+
+    /// <summary>
+    /// [arc contract 3] The arc_image band: an Arcturus story's scene
+    /// across the top rows, with every piece of the text screen below
+    /// it.
+    /// </summary>
+    /// <remarks>
+    /// The band's height comes from the mode the story sent, never from
+    /// the picture, so a picture that is not the shape the band expects
+    /// is fitted rather than allowed to set the layout. The rest is the
+    /// freedom [arc contract 3] gives a modern interpreter: the picture
+    /// keeps its own shape, is scaled as far as it will go, and is
+    /// centered in what rows it has, with the band's own background
+    /// showing where it falls short.
+    /// </remarks>
+    private void PaintBand(DrawingContext context, BufferedScreen screen)
+    {
+        var rows = screen.Buffer.BandRows;
+
+        if (rows <= 0)
+        {
+            return;
+        }
+
+        var place = new Rect(0, 0, screen.Width * _glyphs.CellWidth, rows * _glyphs.CellHeight);
+
+        context.FillRectangle(Brush(ScreenColor.Black), place);
+
+        if (screen.BandPicture == 0 || Pictures?.Bitmap(screen.BandPicture) is not { } picture)
+        {
+            return;
+        }
+
+        var scale = Math.Min(place.Width / picture.PixelSize.Width, place.Height / picture.PixelSize.Height);
+        var width = picture.PixelSize.Width * scale;
+        var height = picture.PixelSize.Height * scale;
+
+        context.DrawImage(
+            picture,
+            new Rect(
+                place.X + ((place.Width - width) / 2),
+                place.Y + ((place.Height - height) / 2),
+                width,
+                height));
     }
 
     /// <summary>

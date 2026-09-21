@@ -94,6 +94,15 @@ public interface IScreenModel : IOutput
     void Reset();
 
     /// <summary>
+    /// [arc contract 2] Puts a picture in the band across the top of
+    /// the screen, or takes the band down where the number is 0. A
+    /// model with no band of its own does nothing.
+    /// </summary>
+    void DrawImageBand(int picture, int mode)
+    {
+    }
+
+    /// <summary>
     /// The interpreter is about to wait for input: buffered text comes
     /// out, the [MORE] count starts over, and the frontend repaints.
     /// </summary>
