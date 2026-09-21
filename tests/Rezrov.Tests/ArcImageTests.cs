@@ -315,6 +315,38 @@ public partial class InterpreterTests
     }
 
     [Fact]
+    public void TheCloakWalkthroughDrawsTheShallowerBandFromOneFile()
+    {
+        var packed = Corpus.ArcturusPack("cloak-of-darkness-r3-s221116.zblorb");
+
+        Assert.SkipUnless(packed is not null, "The entharion submodule is not populated.");
+
+        // [arc blorb] The single-file shape: the story rides inside the
+        // resource file as Exec 0, with the pictures and the
+        // declaration beside it.
+        var blorb = BlorbFile.Read(File.ReadAllBytes(packed));
+        Assert.Equal(new ArcImageDeclaration(1, 9), blorb.ArcImage);
+        Assert.NotNull(blorb.Executable);
+
+        var screen = new RecordingScreen(80, 24, WithBand);
+        var interpreter = new Interpreter(
+            new ZMemory(blorb.Executable.Data.ToArray()),
+            screen,
+            new ScriptedInput("south", "north", "quit", "y"));
+
+        interpreter.UseResources(blorb);
+        interpreter.Run();
+
+        // The other band shape, and the other demo. Cloak's plot is the
+        // darkness test: the bar is dark while the cloak is carried, so
+        // it shows its own darkness scene rather than nothing, and the
+        // foyer's picture returns on the way back. The leading 0 is the
+        // same no-op clear Rabenstein opens with.
+        Assert.Equal("0,1,4,1", string.Join(",", screen.Bands.Select(b => b.Picture)));
+        Assert.All(screen.Bands, band => Assert.Equal(9, band.Mode));
+    }
+
+    [Fact]
     public void EveryArcturusPackInTheCorpusDeclaresABandWeKnow()
     {
         var packs = Corpus.ArcturusPacks();
