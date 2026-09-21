@@ -8,6 +8,7 @@ using Avalonia.Media;
 using Avalonia.Media.Immutable;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Rezrov.AaMachine;
 using Rezrov.Core.Graphics;
 using Rezrov.Glulx.Glk;
 using Rezrov.ZMachine.Input;
@@ -43,10 +44,12 @@ internal sealed class Board : Control
     private readonly Dictionary<Pixels, WriteableBitmap> _inline =
         new(ReferenceEqualityComparer.Instance);
 
+    private readonly Dictionary<uint, ImmutableSolidColorBrush> _washes = [];
     private readonly HashSet<GlkWindow> _seen = [];
     private readonly Glyphs _glyphs;
     private GuiGlkDisplay? _display;
     private BufferedScreen? _screen;
+    private GuiAaDisplay? _page;
 
     /// <param name="glyphs">The fonts to draw with.</param>
     /// <param name="smoothing">
@@ -111,6 +114,21 @@ internal sealed class Board : Control
     }
 
     /// <summary>
+    /// [aam output] The Aa-machine page to paint, for a game of that
+    /// machine. A frontend shows one machine of the three, so whichever
+    /// of these was set is what is drawn.
+    /// </summary>
+    public GuiAaDisplay? Page
+    {
+        get => _page;
+        set
+        {
+            _page = value;
+            InvalidateVisual();
+        }
+    }
+
+    /// <summary>
     /// [zm 10] Where the Z-machine's keys go, for a game of that
     /// machine.
     /// </summary>
@@ -120,6 +138,12 @@ internal sealed class Board : Control
     /// [zm 8.8.6] The pictures a Version 6 game draws.
     /// </summary>
     public GuiPictures? Pictures { get; set; }
+
+    /// <summary>
+    /// [aam story] The faces an Aa-machine story is set in, which it
+    /// names for itself rather than choosing among the frontend's.
+    /// </summary>
+    public GuiAaGlyphs? AaGlyphs { get; set; }
 
     /// <summary>
     /// A title picture the interpreter is showing before the game
@@ -142,6 +166,12 @@ internal sealed class Board : Control
         if (Title != 0 && Pictures?.Bitmap(Title) is { } title)
         {
             PaintTitle(context, title);
+            return;
+        }
+
+        if (Page is { } page)
+        {
+            PaintPage(context, page);
             return;
         }
 
@@ -205,7 +235,12 @@ internal sealed class Board : Control
             return;
         }
 
-        if (Keys is { } keys && GuiKeyMap.ToZscii(e.Key) is { } zscii)
+        if (Page is { } page && GuiKeyMap.ToAa(e.Key) is { } character)
+        {
+            page.Enqueue(character);
+            e.Handled = true;
+        }
+        else if (Keys is { } keys && GuiKeyMap.ToZscii(e.Key) is { } zscii)
         {
             keys.Enqueue(zscii);
             e.Handled = true;
@@ -229,7 +264,16 @@ internal sealed class Board : Control
             return;
         }
 
-        if (Keys is { } keys)
+        if (Page is { } page)
+        {
+            foreach (var character in AaKeys.Pasted(text))
+            {
+                page.Enqueue(character);
+            }
+
+            e.Handled = true;
+        }
+        else if (Keys is { } keys)
         {
             // [zm 3.8] Only what ZSCII has a code for can be typed at a
             // Z-machine game; anything else is not a key it knows.
@@ -323,7 +367,18 @@ internal sealed class Board : Control
         // the game is waiting for it.
         Focus();
 
-        if (Display is { Root: { } root } display)
+        if (Page is { } page)
+        {
+            if (Clicked(page, e.GetPosition(this)) is { } link)
+            {
+                // [aam output] A link stands for a command rather than
+                // for a letter, so it goes on the same queue as the
+                // keys but as something a key can never be.
+                page.Enqueue(-link);
+                e.Handled = true;
+            }
+        }
+        else if (Display is { Root: { } root } display)
         {
             var at = e.GetPosition(this);
 
@@ -412,6 +467,21 @@ internal sealed class Board : Control
     {
         ArgumentNullException.ThrowIfNull(e);
 
+        if (Page is { } page)
+        {
+            // Three lines to a notch of the wheel, as everywhere else
+            // that text scrolls.
+            page.Main.ScrollBy(
+                e.Delta.Y * _glyphs.CellHeight * 3,
+                page.Column,
+                page.MainHeight);
+
+            InvalidateVisual();
+            e.Handled = true;
+            base.OnPointerWheelChanged(e);
+            return;
+        }
+
         if (Display is { Root: { } root } display)
         {
             lock (display.Sync)
@@ -438,6 +508,7 @@ internal sealed class Board : Control
         ArgumentNullException.ThrowIfNull(e);
 
         Display?.Resize(e.NewSize.Width, e.NewSize.Height);
+        Page?.Resize(e.NewSize.Width, e.NewSize.Height);
         Screen?.Resize(
             Math.Max((int)(e.NewSize.Width / _glyphs.CellWidth), 1),
             Math.Max((int)(e.NewSize.Height / _glyphs.CellHeight), 1));
@@ -528,6 +599,253 @@ internal sealed class Board : Control
             default:
                 break;
         }
+    }
+
+    /// <summary>
+    /// [aam output] An Aa-machine story: the status area across the
+    /// top, a line under it, and the main text below, all in a column
+    /// no wider than a comfortable measure and set in the middle of
+    /// the window.
+    /// </summary>
+    /// <remarks>
+    /// Nothing is decided here. The page has already been laid out
+    /// into a list of boxes and a list of lines, both measured from
+    /// the top of the page, so painting is a matter of putting each
+    /// one where it was worked out to go.
+    ///
+    /// The main text is shown from the bottom up, so that a story
+    /// shorter than the window sits at the top of it and a longer one
+    /// has its newest text against the bottom, which is where a player
+    /// is reading.
+    /// </remarks>
+    private void PaintPage(DrawingContext context, GuiAaDisplay page)
+    {
+        context.FillRectangle(Washed(page.Background), new Rect(Bounds.Size));
+
+        var width = page.Column;
+        var left = page.Left;
+        var status = page.StatusHeight;
+
+        if (status > 0)
+        {
+            using (context.PushClip(new Rect(left, 0, width, status)))
+            {
+                PaintPart(context, page, page.Status, left, 0, width, status, fromBottom: false);
+            }
+
+            // [aam output] The line that sets the status area off from
+            // the text, which the reference interpreter draws in the
+            // color of the text itself.
+            context.FillRectangle(Washed(AaTheme.Ink), new Rect(left, status, width, page.Rule));
+        }
+
+        var top = status + page.Rule;
+
+        using var clip = context.PushClip(new Rect(left, top, width, Math.Max(Bounds.Height - top, 0)));
+
+        PaintPart(context, page, page.Main, left, top, width, page.MainHeight, fromBottom: true);
+    }
+
+    /// <summary>
+    /// One of the two pages, painted into the strip of the window it
+    /// was given.
+    /// </summary>
+    private void PaintPart(
+        DrawingContext context,
+        GuiAaDisplay page,
+        AaText text,
+        double left,
+        double top,
+        double width,
+        double height,
+        bool fromBottom)
+    {
+        var laid = text.Lay(width);
+        var offset = top + (fromBottom ? text.Offset(width, height) : 0);
+
+        // The boxes a style sheet asked for go behind everything, in
+        // the order they were opened, so an inner one paints over the
+        // one it is inside.
+        foreach (var frame in laid.Frames)
+        {
+            PaintFrame(context, frame, left, offset);
+        }
+
+        foreach (var line in laid.Lines)
+        {
+            var y = offset + line.Top;
+
+            if (y + line.Height < top || y > top + height)
+            {
+                continue;
+            }
+
+            // A span printed on a color of its own is painted behind
+            // its own pieces and nothing else, so a run of it shows as
+            // a band across exactly the words it covers.
+            foreach (var piece in line.Pieces)
+            {
+                if (piece.Look.HasPaper)
+                {
+                    context.FillRectangle(
+                        Washed(piece.Look.Paper),
+                        new Rect(left + piece.Left, y, piece.Width, line.Height));
+                }
+            }
+
+            foreach (var inset in line.Pictures)
+            {
+                if (Inline(inset.Picture) is { } bitmap)
+                {
+                    context.DrawImage(
+                        bitmap,
+                        new Rect(bitmap.Size),
+                        new Rect(left + inset.Left, y + inset.Top, inset.Width, inset.Height));
+                }
+            }
+
+            foreach (var piece in line.Pieces)
+            {
+                PaintPiece(context, page, piece, left, y + line.Baseline);
+            }
+        }
+    }
+
+    /// <summary>
+    /// One piece of a line, standing on the line the text stands on
+    /// rather than hanging from the top of it, so that a heading and
+    /// the prose beside it sit together.
+    /// </summary>
+    /// <remarks>
+    /// [aam story] A class that asks for its letters to stand apart is
+    /// drawn a letter at a time, since a face has no such setting and
+    /// the layout has already measured the line as though it had. The
+    /// one title in the corpus that asks for it is a handful of
+    /// letters once a game.
+    /// </remarks>
+    private void PaintPiece(DrawingContext context, GuiAaDisplay page, AaPiece piece, double left, double baseline)
+    {
+        if (piece.Words == " ")
+        {
+            return;
+        }
+
+        var glyphs = AaGlyphs!;
+        var live = piece.Link != 0 && page.IsLive(piece.Link);
+        var top = baseline - glyphs.Ascent(piece.Look);
+
+        if (piece.Look.Spacing == 0)
+        {
+            context.DrawText(Drawn(piece.Words, piece.Look, live), new Point(left + piece.Left, top));
+            return;
+        }
+
+        var pen = left + piece.Left;
+
+        foreach (var letter in piece.Words)
+        {
+            var one = letter.ToString();
+
+            context.DrawText(Drawn(one, piece.Look, live), new Point(pen, top));
+            pen += glyphs.Width(one, piece.Look) + piece.Look.Spacing;
+        }
+    }
+
+    /// <summary>
+    /// [aam story] A box a style class asked for: the color behind it
+    /// first, then the line around it, with the corners rounded as far
+    /// as it asked.
+    /// </summary>
+    private void PaintFrame(DrawingContext context, AaFrame frame, double left, double top)
+    {
+        var place = new Rect(left + frame.Left, top + frame.Top, frame.Width, frame.Height);
+
+        if ((frame.Background >> 24) != 0)
+        {
+            context.DrawRectangle(Washed(frame.Background), null, place, frame.Radius, frame.Radius);
+        }
+
+        if (frame.Border > 0 && (frame.BorderColor >> 24) != 0)
+        {
+            // A line is drawn along the middle of its own thickness, so
+            // the rectangle is brought in by half of it to leave the
+            // outside of the line where the box said its edge was.
+            context.DrawRectangle(
+                null,
+                new Pen(Washed(frame.BorderColor), frame.Border),
+                place.Deflate(frame.Border / 2),
+                frame.Radius,
+                frame.Radius);
+        }
+    }
+
+    /// <summary>
+    /// A piece of an Aa-machine story's text ready to draw, in the
+    /// face and color its style class calls for.
+    /// </summary>
+    /// <remarks>
+    /// [aam output] A piece that is part of a link that can still be
+    /// used is drawn in the color links are drawn in and underlined,
+    /// whatever its class said, since a link has to look like one. A
+    /// link the story has since retired is drawn as ordinary text,
+    /// which is what retiring it means.
+    /// </remarks>
+    private FormattedText Drawn(string words, AaLook look, bool live)
+    {
+        var formatted = new FormattedText(
+            words,
+            CultureInfo.InvariantCulture,
+            FlowDirection.LeftToRight,
+            AaGlyphs!.Face(look),
+            look.Size,
+            Washed(live ? AaTheme.Link : look.Ink));
+
+        if (live)
+        {
+            formatted.SetTextDecorations(TextDecorations.Underline);
+        }
+
+        return formatted;
+    }
+
+    /// <summary>
+    /// [aam output] The link under a point in the window, or null where
+    /// there is none there.
+    /// </summary>
+    private static int? Clicked(GuiAaDisplay page, Point at)
+    {
+        var width = page.Column;
+        var left = page.Left;
+        var status = page.StatusHeight;
+        var top = status + page.Rule;
+
+        var link = at.Y < status
+            ? page.Status.LinkAt(at.X - left, at.Y, width, status)
+            : page.Main.LinkAt(at.X - left, at.Y - top, width, page.MainHeight);
+
+        return link != 0 && page.IsLive(link) ? link : null;
+    }
+
+    /// <summary>
+    /// [aam story] A color with how much of it there is honored, since
+    /// an Aa-machine style sheet washes a color over a box as often as
+    /// it fills one. The other two machines have no such thing, and
+    /// their colors go through the plain brush above.
+    /// </summary>
+    private ImmutableSolidColorBrush Washed(uint color)
+    {
+        if (!_washes.TryGetValue(color, out var brush))
+        {
+            brush = new ImmutableSolidColorBrush(Color.FromArgb(
+                (byte)(color >> 24),
+                (byte)(color >> 16),
+                (byte)(color >> 8),
+                (byte)color));
+
+            _washes[color] = brush;
+        }
+
+        return brush;
     }
 
     private void PaintBuffer(DrawingContext context, GlkWindow window, Rect place)

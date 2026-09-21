@@ -31,6 +31,14 @@ internal sealed class GuiFiles(Window window, string directory) : IFileChooser
     private static readonly FilePickerFileType SavedGame =
         new("Saved game") { Patterns = ["*.sav", "*.qzl", "*.glksave"] };
 
+    /// <summary>
+    /// [aam savefile] An Aa-machine story saves in a form of its own
+    /// rather than in Quetzal, and the reference interpreter calls one
+    /// an .aasave.
+    /// </summary>
+    private static readonly FilePickerFileType AaSaved =
+        new("Saved game") { Patterns = ["*.aasave"] };
+
     private static readonly FilePickerFileType Transcript =
         new("Transcript") { Patterns = ["*.txt", "*.log"] };
 
@@ -120,6 +128,14 @@ internal sealed class GuiFiles(Window window, string directory) : IFileChooser
             _ => Data,
         },
         mode != GlkFileMode.Read);
+
+    /// <summary>
+    /// [aam savefile] Where an Aa-machine story's saved game goes. That
+    /// machine asks for a name rather than for something already open,
+    /// since it writes the whole file itself.
+    /// </summary>
+    public string? AskForAaSave(bool writing) =>
+        Ask(writing ? "Save game as" : "Restore game from", AaSaved, writing);
 
     private StreamWriter? Writer(string title, FilePickerFileType kind)
     {

@@ -102,6 +102,15 @@ public sealed record AaPage(IReadOnlyList<AaFrame> Frames, IReadOnlyList<AaLine>
 /// </remarks>
 public sealed class AaText
 {
+    /// <summary>
+    /// [aam output] How tall a line is as a multiple of the size of
+    /// its text, which is what the reference interpreter's own style
+    /// sheet asks its browser for. A frontend that has to answer how
+    /// many lines fit in a window has to divide by the same number
+    /// the layout laid them out with.
+    /// </summary>
+    public const double LineSpacing = 1.35;
+
     private readonly IAaGlyphs _glyphs;
     private readonly AaSheet _sheet;
     private readonly Group _root;
@@ -122,7 +131,7 @@ public sealed class AaText
 
         _glyphs = glyphs;
         _sheet = sheet;
-        _root = new Group(NoClass, sheet.Plain, []);
+        _root = new Group(NoClass, []) { Look = sheet.Plain };
         _open.Add(_root);
         _looks.Add(sheet.Plain);
         _shouts.Add(false);
@@ -174,6 +183,21 @@ public sealed class AaText
         Changed();
     }
 
+    /// <summary>
+    /// Takes back the last character written, which is what a player
+    /// who is typing and changes their mind wants.
+    /// </summary>
+    public void Backspace()
+    {
+        var children = _open[^1].Children;
+
+        if (children.Count > 0 && children[^1] is Words last && last.Letters.Length > 0)
+        {
+            last.Letters.Length--;
+            Changed();
+        }
+    }
+
     /// <summary>Ends the line without ending the paragraph.</summary>
     public void Newline() => Add(new Ending());
 
@@ -186,7 +210,7 @@ public sealed class AaText
     public void EnterDiv(int styleClass)
     {
         var look = _sheet.Inside(Look, styleClass, span: false);
-        var group = new Group(styleClass, look, []);
+        var group = new Group(styleClass, []) { Look = look };
 
         _open[^1].Children.Add(group);
         _open.Add(group);
@@ -253,6 +277,34 @@ public sealed class AaText
     /// [aam opcode] Puts a bar showing how far along something is.
     /// </summary>
     public void ProgressBar(int amount, int total) => Add(new Bar(amount, total));
+
+    /// <summary>
+    /// [aam opcode] Sets how text outside every class is to be set,
+    /// which a story asks for to change the look of the whole page.
+    /// </summary>
+    /// <remarks>
+    /// It reaches the text that follows rather than the text already
+    /// written, since what is written has already been settled. The
+    /// Dialog manual says as much: whether a body style reaches
+    /// existing text is the interpreter's own business, and a story
+    /// that wants to be sure clears the screen after asking.
+    /// </remarks>
+    public void SetBody(AaLook plain)
+    {
+        _root.Look = plain;
+        _looks[0] = plain;
+        Changed();
+    }
+
+    /// <summary>
+    /// [aam opcode] Throws away what is in the innermost div, leaving
+    /// the div itself and everything outside it.
+    /// </summary>
+    public void ClearDiv()
+    {
+        _open[^1].Children.Clear();
+        Changed();
+    }
 
     /// <summary>Throws all of it away, but keeps the open divs.</summary>
     public void Clear()
@@ -402,7 +454,17 @@ public sealed class AaText
     private sealed record Parting : Node;
 
     /// <summary>A div: a box with things inside it.</summary>
-    private sealed record Group(int StyleClass, AaLook Look, List<Node> Children) : Node;
+    /// <remarks>
+    /// How its text is set is settled when it is opened rather than
+    /// when it is laid out, since nothing about it depends on the
+    /// width. It can still be set again afterwards, which is what
+    /// [aam opcode] a story does when it changes the style of the
+    /// whole body of the document.
+    /// </remarks>
+    private sealed record Group(int StyleClass, List<Node> Children) : Node
+    {
+        public AaLook Look { get; set; }
+    }
 
     /// <summary>
     /// The layout itself: a pen moving along a line, a line box growing
@@ -425,13 +487,6 @@ public sealed class AaText
     /// </remarks>
     private sealed class Layout
     {
-        /// <summary>
-        /// How tall a line is as a multiple of the size of its text,
-        /// which is what the reference interpreter's own style sheet
-        /// asks its browser for.
-        /// </summary>
-        private const double Spacing = 1.35;
-
         private readonly List<AaLine> _lines = [];
         private readonly List<AaFrame> _frames = [];
         private readonly List<AaPiece> _pieces = [];
@@ -919,7 +974,7 @@ public sealed class AaText
         {
             var ascent = _glyphs.Ascent(look);
             var descent = _glyphs.Descent(look);
-            var leading = Math.Max(((look.Size * Spacing) - ascent - descent) / 2, 0);
+            var leading = Math.Max(((look.Size * LineSpacing) - ascent - descent) / 2, 0);
 
             _above = Math.Max(_above, ascent + leading);
             _below = Math.Max(_below, descent + leading);

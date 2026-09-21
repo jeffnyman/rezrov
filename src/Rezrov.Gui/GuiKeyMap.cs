@@ -1,4 +1,5 @@
 using Avalonia.Input;
+using Rezrov.AaMachine;
 using Rezrov.Glulx.Glk;
 using Rezrov.ZMachine.Text;
 
@@ -38,6 +39,24 @@ internal static class GuiKeyMap
         // [glk #character_input] The function keys run downward from
         // Func1, so the twelfth is eleven below the first.
         >= Key.F1 and <= Key.F12 => GlkKeyCode.Func1 - (uint)(key - Key.F1),
+        _ => null,
+    };
+
+    /// <summary>
+    /// [aam text] The character an Aa-machine story reads a key as, or
+    /// null for a key the machine has no character for. It names only
+    /// backspace, return and the four arrows; everything else it takes
+    /// is a printable character and arrives as text rather than as a
+    /// key.
+    /// </summary>
+    public static int? ToAa(Key key) => key switch
+    {
+        Key.Enter or Key.Return => AaKeys.Return,
+        Key.Back or Key.Delete => AaKeys.Backspace,
+        Key.Up => AaKeys.Up,
+        Key.Down => AaKeys.Down,
+        Key.Left => AaKeys.Left,
+        Key.Right => AaKeys.Right,
         _ => null,
     };
 
