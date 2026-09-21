@@ -801,6 +801,38 @@ public partial class InterpreterTests
     }
 
     [Fact]
+    public void NothingIsInsideNothingAndInsideNothingElse()
+    {
+        // [zm 12.3 deviates] Object 0 is "nothing" and the standard
+        // says nothing about what jin branches on when it is given one.
+        // Rezrov answers object 0 as having no parent everywhere else,
+        // and get_parent returns 0 for it, so asking whether its parent
+        // is 0 has to be true or the two opcodes disagree. Frotz
+        // answers the same, and the strict checker counts anything else
+        // as wrong.
+        var run = Execute(new Assembler()
+            // True, so a branch on false is not taken and the store
+            // below it runs.
+            .Long(Op.Jin, Small(0), Small(0)).Branch(false, SkipStore)
+            .Long(Op.Store, Small(G0), Small(1))
+
+            // False, so the branch is taken and the store is skipped.
+            .Long(Op.Jin, Small(0), Small(1)).Branch(false, SkipStore)
+            .Long(Op.Store, Small(G1), Small(1))
+            .Quit());
+
+        Assert.Equal(1, run.Global(G0));
+        Assert.Equal(0, run.Global(G1));
+
+        // [zm A] Both are errors all the same, reported once for the
+        // kind rather than once for each.
+        var errors = run.Interpreter.RuntimeErrors;
+
+        Assert.Single(errors);
+        Assert.Contains("jin", errors[0], StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void PullingFromAnEmptyStackIsReportedAndGivesZero()
     {
         // [zm 6.3.2] and [zm op:pull deviates] Zork I release 2 does this,

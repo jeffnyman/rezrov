@@ -572,7 +572,19 @@ public sealed class Interpreter
                 // [zm op:jin] The parent of the first is the second. The
                 // second may be 0, which asks whether the first has no
                 // parent at all.
-                Branch(instruction, ObjectExists(instruction, a[0]) && Objects.Parent(a[0]) == a[1]);
+                //
+                // [zm 12.3 deviates] Object 0 as the first is an error
+                // to report, and the standard says nothing about what
+                // to branch on afterwards. Nothing has no parent, and
+                // get_parent answers 0 for it, so the question of
+                // whether its parent is the second is the question of
+                // whether the second is nothing too. Answering anything
+                // else would have this opcode contradict the one beside
+                // it. Frotz reaches the same answer, and the strict
+                // checker counts any other as wrong.
+                Branch(
+                    instruction,
+                    ObjectExists(instruction, a[0]) ? Objects.Parent(a[0]) == a[1] : a[1] == 0);
                 break;
             case Opcode.TestAttr:
                 // [zm op:test_attr]
