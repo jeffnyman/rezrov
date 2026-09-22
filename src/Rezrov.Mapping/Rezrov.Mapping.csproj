@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The map a game draws of itself as it is played: rooms, the passages
+    walked between them, and where each one sits on a grid.
+
+    This project references nothing. It is fed a stream of "which room am
+    I in" and "which way did I come", and knows nothing about the machine
+    that answered. That is deliberate: the Z-Machine, Glulx, and the
+    Aa-machine each work out the player's location differently, and none
+    of that difference belongs here. Everything this project needs comes
+    from Directory.Build.props.
+  -->
+
+</Project>

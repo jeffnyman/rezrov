@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text;
 using Rezrov.Core.Blorb;
 using Rezrov.Core.Graphics;
 using Rezrov.ZMachine.Input;
@@ -220,6 +221,13 @@ public sealed class Interpreter
 
     /// <summary>Input stream 0, the keyboard.</summary>
     public IInput Input { get; }
+
+    /// <summary>
+    /// Something following the game turn by turn, or null when nothing
+    /// is. Set by whoever built the interpreter, and never read by the
+    /// machine for anything of its own.
+    /// </summary>
+    public ITurnWatcher? Watcher { get; set; }
 
     /// <summary>
     /// [zm 10.2] Which input stream is current: 0 for the keyboard or 1
@@ -1592,6 +1600,7 @@ public sealed class Interpreter
         // [zm 10.5.1] In Versions 1 to 3 the status line is redisplayed
         // before input is accepted.
         ShowStatusLine(instruction);
+        ReportStanding();
         Display.PrepareForInput(InputStream == 1);
         Sound.InputHappened();
 
@@ -1651,6 +1660,8 @@ public sealed class Interpreter
             WriteParseTable(parse, typed.ToArray(), offset, Dictionary, keepUnknownSlots: false);
         }
 
+        ReportTyped(typed);
+
         // [zm op:read] In Version 5 and later this is a store instruction
         // whose result is the terminating character: 13 for the enter
         // key, whatever the keyboard called it, and 0 for a timeout.
@@ -1658,6 +1669,61 @@ public sealed class Interpreter
         {
             Store(instruction, line.Terminator);
         }
+    }
+
+    /// <summary>
+    /// Tells <see cref="Watcher"/> which room the player is standing in,
+    /// where the story says so plainly.
+    /// </summary>
+    /// <remarks>
+    /// [zm 8.2] The first global holds the room in Versions 1 to 3, which
+    /// is the same place <see cref="ShowStatusLine"/> reads it from and
+    /// for the same reason. Later versions keep it wherever they like, so
+    /// nothing is said about them here rather than something guessed at.
+    /// A bad object number is left alone too; the status line already
+    /// reports that as a runtime error, and saying it twice a turn would
+    /// bury everything else.
+    /// </remarks>
+    private void ReportStanding()
+    {
+        if (Watcher is not { } watcher || Header.Version > ZMachineVersion.V3)
+        {
+            return;
+        }
+
+        var obj = State.ReadGlobal(0x10);
+        if (obj >= 1 && obj <= Objects.Count)
+        {
+            watcher.Standing(obj, Objects.ShortName(obj));
+        }
+    }
+
+    /// <summary>
+    /// Tells <see cref="Watcher"/> what was typed, as the game itself
+    /// will read it.
+    /// </summary>
+    /// <remarks>
+    /// The text after the machine has finished with it, which is lower
+    /// case and holds only the codes [zm 10.7.2] allows, so a watcher
+    /// sees exactly the letters the game's own parser will.
+    /// </remarks>
+    private void ReportTyped(List<byte> typed)
+    {
+        if (Watcher is not { } watcher)
+        {
+            return;
+        }
+
+        var command = new StringBuilder(typed.Count);
+        foreach (var code in typed)
+        {
+            if (Zscii.ToUnicode(code, Header.Version, ExtraCharacters) is { } character)
+            {
+                command.Append(character);
+            }
+        }
+
+        watcher.Typed(command.ToString());
     }
 
     private void ReadChar(Instruction instruction, ushort[] a)

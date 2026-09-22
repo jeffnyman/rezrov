@@ -12,6 +12,7 @@ using GlulxMachine = Rezrov.Glulx.Execution.GlulxMachine;
 using GlulxRandom = Rezrov.Glulx.Execution.GlulxRandom;
 using Rezrov.Glulx.Glk;
 using Rezrov.Glulx.Text;
+using Rezrov.Mapping;
 using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
 using Rezrov.ZMachine.Instructions;
@@ -61,6 +62,7 @@ internal static class Program
         string? record = null;
         string? save = null;
         string? blorb = null;
+        string? map = null;
         int? seed = null;
         InterpreterNumber? machine = null;
         var usage = args.Length < 1;
@@ -99,6 +101,10 @@ internal static class Program
                     break;
                 case "--blorb" when i + 1 < args.Length:
                     blorb = args[++i];
+                    break;
+                case "--map" when i + 1 < args.Length:
+                    run = true;
+                    map = args[++i];
                     break;
                 case "--seed" when i + 1 < args.Length && int.TryParse(args[i + 1], out var parsed) && parsed >= 1:
                     run = true;
@@ -144,6 +150,7 @@ internal static class Program
                     ("trace", trace),
                     ("transcript", transcript is not null),
                     ("record", record is not null),
+                    ("map", map is not null),
                     ("blorb", blorb is not null)))
                 {
                     Console.Error.WriteLine($"rezrov: the {option} option does not apply to the Aa-machine");
@@ -164,11 +171,16 @@ internal static class Program
                     Console.Error.WriteLine("rezrov: the tandy option does not apply to Glulx");
                 }
 
+                if (map is not null)
+                {
+                    Console.Error.WriteLine("rezrov: the map option does not apply to Glulx yet");
+                }
+
                 var directory = Path.GetDirectoryName(Path.GetFullPath(path)) ?? Directory.GetCurrentDirectory();
                 return RunGlulx(story.Bytes, story.Resources, directory, trace, commands, transcript, record, save, seed);
             }
 
-            return RunZMachine(story.Bytes, trace, commands, transcript, record, save, story.Resources, seed, machine, tandy, pictures);
+            return RunZMachine(story.Bytes, trace, commands, transcript, record, save, story.Resources, seed, machine, tandy, pictures, map);
         }
 
         if (!File.Exists(path))
@@ -331,6 +343,7 @@ internal static class Program
               --save <file>            save to and restore from this file, unasked
               --blorb <file>           take sounds and pictures from this resource file
               --pictures <file>        take pictures from an Infocom graphics file
+              --map <file>             write a map of the rooms played through
               --seed <number>          seed the game's random numbers, so a play repeats
               --interpreter <machine>  tell the game which machine it is running on
               --tandy                  set the Tandy bit for a Version 1 to 3 game
@@ -342,7 +355,46 @@ internal static class Program
             recording beside it: --update records the play afresh, and --resume
             hands the game over at the console where the script ends.
 
+            A map is drawn only for the games that say where the player is: the
+            Z-Machine keeps the room in a global variable through Version 3, and
+            from Version 4 a game draws its own status line and may keep it
+            anywhere.
+
             """);
+    }
+
+    /// <summary>
+    /// Writes the map the watcher built, or says why there is none.
+    /// </summary>
+    /// <remarks>
+    /// An empty map is not a failure of the run. From Version 4 a game
+    /// draws its own status line and keeps the player's room wherever it
+    /// likes, so there was nothing to watch. Saying which of the two
+    /// happened is more use than an empty file.
+    /// </remarks>
+    private static void WriteMap(RoomWatcher watcher, string path, StoryHeader header)
+    {
+        try
+        {
+            if (watcher.Graph.Rooms.Count == 0)
+            {
+                Console.Error.WriteLine(header.Version > ZMachineVersion.V3
+                    ? $"rezrov: no map written: a Version {(int)header.Version} game does not say where the player is"
+                    : "rezrov: no map written: the game reached no room");
+                return;
+            }
+
+            File.WriteAllText(path, MapDrawing.Draw(watcher.Graph));
+
+            var rooms = watcher.Graph.Rooms.Count;
+            var passages = watcher.Graph.Rooms.Sum(room => room.Exits.Count);
+            Console.Error.WriteLine(
+                $"rezrov: mapped {rooms} room{(rooms == 1 ? "" : "s")} and {passages} passage{(passages == 1 ? "" : "s")} to {path}");
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException)
+        {
+            Console.Error.WriteLine($"rezrov: could not write the map: {e.Message}");
+        }
     }
 
     private static int DescribeBlorb(byte[] bytes, string path)
@@ -513,7 +565,7 @@ internal static class Program
     /// go without asking either. Resources, if there are any, give the
     /// game its sounds, though the console can only ring its bell.
     /// </summary>
-    private static int RunZMachine(byte[] bytes, bool trace, string? commands, string? transcript, string? record, string? save, BlorbFile? resources, int? seed, InterpreterNumber? machine, bool tandy, string? pictures = null)
+    private static int RunZMachine(byte[] bytes, bool trace, string? commands, string? transcript, string? record, string? save, BlorbFile? resources, int? seed, InterpreterNumber? machine, bool tandy, string? pictures = null, string? map = null)
     {
         var memory = new ZMemory(bytes);
         var header = new StoryHeader(memory);
@@ -569,6 +621,12 @@ internal static class Program
             }
         }
 
+        // The map of the rooms the game is played through, built from
+        // the machine rather than from the screen: where the player is
+        // standing at each prompt, and what they typed there.
+        var watcher = map is null ? null : new RoomWatcher();
+        interpreter.Watcher = watcher;
+
         if (commands is not null)
         {
             interpreter.PlayCommands(new StreamReader(commands));
@@ -617,6 +675,14 @@ internal static class Program
         finally
         {
             interpreter.Streams.Flush();
+
+            // Written however the run ended, since a map of where the
+            // game got to before it stopped is worth as much as one of
+            // a game played to the end.
+            if (watcher is not null && map is not null)
+            {
+                WriteMap(watcher, map, header);
+            }
 
             // [zm A] Whatever the game did that it should not have, at
             // the level the interpreter was asked to notice.
