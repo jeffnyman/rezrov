@@ -38,7 +38,7 @@ public static class Directions
     /// stepped over before the direction itself is read.
     /// </summary>
     private static readonly string[] MovementVerbs =
-        ["go", "walk", "run", "head", "travel", "proceed"];
+        ["go", "walk", "run", "head", "travel", "proceed", "geh", "gehe"];
 
     /// <summary>
     /// Reads the direction a typed command names, if it names one.
@@ -107,11 +107,22 @@ public static class Directions
     /// The one table of direction words. Everything else here reads it.
     /// </summary>
     /// <remarks>
-    /// The nautical words at the end are for the games played aboard a
-    /// ship, where the bow points north. Only their unambiguous spellings
-    /// are here: a game that means "port" by "p" also has a hundred other
-    /// uses for a single letter, and a wrong direction draws a passage
-    /// that does not exist, which costs more than the one it misses.
+    /// The nautical words are for the games played aboard a ship, where
+    /// the bow points north. Only their unambiguous spellings are here:
+    /// a game that means "port" by "p" also has a hundred other uses for
+    /// a single letter, and a wrong direction draws a passage that does
+    /// not exist, which costs more than the one it misses.
+    ///
+    /// The German words are the ones Infocom's own translation of Zork
+    /// answers to, read out of that story's own dictionary rather than
+    /// guessed at, in both the spellings it takes: a story may be typed
+    /// at with umlauts or with the e that stands in for one.
+    ///
+    /// One of its words is deliberately missing. "no" is northeast in
+    /// German and the answer to a question in English, and nothing here
+    /// knows which language it is reading. A German player still has
+    /// "nordost" and "nordosten", and neither of those means anything in
+    /// English.
     /// </remarks>
     private static bool TryReadWord(string word, out Direction direction)
     {
@@ -133,6 +144,20 @@ public static class Directions
             "aft" or "stern" => Direction.South,
             "port" => Direction.West,
             "starboard" => Direction.East,
+            "nord" or "norden" => Direction.North,
+            "sued" or "süd" or "sueden" or "süden" => Direction.South,
+            "o" or "ost" or "osten" => Direction.East,
+            "westen" => Direction.West,
+            "nordost" or "nordosten" => Direction.Northeast,
+            "nordwest" or "nordwesten" => Direction.Northwest,
+            "so" or "suedost" or "südost" or "suedosten" or "südosten" =>
+                Direction.Southeast,
+            "suedwest" or "südwest" or "suedwesten" or "südwesten" =>
+                Direction.Southwest,
+            "rauf" or "hinauf" or "hoch" => Direction.Up,
+            "runter" or "hinunter" or "herab" or "herunter" => Direction.Down,
+            "hinein" => Direction.In,
+            "raus" => Direction.Out,
             _ => null,
         };
 
