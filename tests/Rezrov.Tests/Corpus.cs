@@ -198,6 +198,32 @@ internal static class Corpus
     }
 
     /// <summary>
+    /// Every Infocom graphics file in the corpus, sorted, or empty if
+    /// the submodule is not populated. These are the artwork the DOS
+    /// releases carried beside a Version 6 story, kept by the graphics
+    /// standard they were drawn for.
+    /// </summary>
+    public static List<string> InfocomGraphics()
+    {
+        var root = FindRepositoryRoot();
+        var path = root is null ? null : Path.Combine(root, "entharion", "infocom-graphics");
+
+        return path is not null && Directory.Exists(path)
+            ? Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories)
+                .Where(f => Path.GetExtension(f).ToUpperInvariant() is ".CG1" or ".EG1" or ".EG2" or ".MG1")
+                .Order(StringComparer.Ordinal)
+                .ToList()
+            : [];
+    }
+
+    /// <summary>
+    /// One named Infocom graphics file, or null if the submodule is not
+    /// populated.
+    /// </summary>
+    public static string? InfocomGraphics(string name) =>
+        InfocomGraphics().FirstOrDefault(f => Path.GetFileName(f) == name);
+
+    /// <summary>
     /// One named Arcturus resource file, or null if the submodule is
     /// not populated.
     /// </summary>
