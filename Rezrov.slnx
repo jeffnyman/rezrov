@@ -7,6 +7,7 @@
     <Project Path="src/Rezrov.Grid/Rezrov.Grid.csproj" />
     <Project Path="src/Rezrov.Gtui/Rezrov.Gtui.csproj" />
     <Project Path="src/Rezrov.Gui/Rezrov.Gui.csproj" />
+    <Project Path="src/Rezrov.Mapping/Rezrov.Mapping.csproj" />
     <Project Path="src/Rezrov.Tui/Rezrov.Tui.csproj" />
     <Project Path="src/Rezrov.ZMachine/Rezrov.ZMachine.csproj" />
   </Folder>
