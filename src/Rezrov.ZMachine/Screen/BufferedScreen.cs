@@ -236,7 +236,13 @@ public class BufferedScreen : IScreen
             // [zm op:draw_picture] Where every picture went, kept for
             // whatever is showing the screen. A frontend of characters
             // has nothing to do with these; one with pixels draws them.
-            Pictures = model.Pictures;
+            //
+            // Copied rather than shared. The model's own list goes on
+            // being added to by the machine's thread, and whatever
+            // paints reads this one on another, so handing over the
+            // list itself is a crash waiting for a game that draws
+            // while the screen is being painted.
+            Pictures = [.. model.Pictures];
         }
 
         _repaint();

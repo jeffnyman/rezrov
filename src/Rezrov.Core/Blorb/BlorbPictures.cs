@@ -1,4 +1,5 @@
 using System.Buffers.Binary;
+using Rezrov.Core.Graphics;
 
 namespace Rezrov.Core.Blorb;
 
@@ -19,6 +20,13 @@ public enum PictureKind
     /// erased but not drawn.
     /// </summary>
     Rectangle,
+
+    /// <summary>
+    /// [infocom pictures] A picture out of one of Infocom's own
+    /// graphics files rather than a Blorb, whose pixels are kept by the
+    /// file it came from rather than encoded in the catalog.
+    /// </summary>
+    Infocom,
 }
 
 /// <summary>
@@ -65,6 +73,8 @@ public sealed class BlorbPictures
     /// <summary>The pictures by number, in resource order.</summary>
     public IReadOnlyList<PictureInfo> Pictures { get; private set; } = [];
 
+    private InfocomPictures? _graphics;
+
     /// <summary>How many pictures there are.</summary>
     public int Count => Pictures.Count;
 
@@ -85,6 +95,81 @@ public sealed class BlorbPictures
     /// ordinary picture plotted before them.
     /// </summary>
     public IReadOnlySet<int> Adaptive { get; private set; } = new HashSet<int>();
+
+    /// <summary>
+    /// [infocom pictures] The pictures of one of Infocom's own graphics
+    /// files, as a catalog a Version 6 game can be told about.
+    /// </summary>
+    /// <remarks>
+    /// A game asks for pictures by number and never learns where they
+    /// came from, so a graphics file stands exactly where a Blorb
+    /// stands.
+    ///
+    /// [blorb 11.2] A picture is reported at the size it covers on the
+    /// Version 6 screen, which is its stored size times the rendition's
+    /// scale: twice on both axes for the 320 by 200 files, twice
+    /// vertically for the 640 by 200 ones. Every rendition lands on one
+    /// 640 by 400 screen that way.
+    ///
+    /// Screen and pictures have to scale together or nothing lands
+    /// where the game meant it. Given a screen larger than 640 by 400,
+    /// an Infocom Version 6 game puts its border art in a corner and
+    /// runs its menu labels into each other, because every coordinate
+    /// it computes is for the screen it was written against.
+    /// </remarks>
+    public static BlorbPictures From(InfocomPictures graphics)
+    {
+        ArgumentNullException.ThrowIfNull(graphics);
+
+        var pictures = new BlorbPictures
+        {
+            Release = graphics.Version,
+            _graphics = graphics,
+            StandardWindow = InfocomPictures.UnitScreen,
+        };
+        var list = new List<PictureInfo>();
+
+        foreach (var picture in graphics.Pictures)
+        {
+            // The catalog speaks in units, so a picture is as large
+            // as it will be on the screen. The pixels behind it stay
+            // the size they were stored, and whatever paints scales
+            // them into the place the game asked for.
+            var info = new PictureInfo(
+                picture.Number,
+                PictureKind.Infocom,
+                picture.Width * graphics.Scale.X,
+                picture.Height * graphics.Scale.Y,
+                default);
+
+            list.Add(info);
+            pictures._pictures[picture.Number] = info;
+        }
+
+        pictures.Pictures = list;
+        return pictures;
+    }
+
+    /// <summary>
+    /// The pixels of a picture, whatever kind of file it came out of,
+    /// or null for one that cannot be drawn.
+    /// </summary>
+    /// <param name="number">Which picture.</param>
+    /// <param name="palette">
+    /// [blorb 11.3] Colors to plot an indexed PNG with in place of its
+    /// own, which only an adaptive picture ever asks for.
+    /// </param>
+    public Pixels? Decode(int number, ReadOnlySpan<byte> palette = default)
+    {
+        if (Find(number) is not { } picture)
+        {
+            return null;
+        }
+
+        return picture.Kind == PictureKind.Infocom
+            ? _graphics?.Decode(number)
+            : PictureReader.Decode(picture, palette);
+    }
 
     /// <summary>
     /// Reads the pictures out of a Blorb file.
