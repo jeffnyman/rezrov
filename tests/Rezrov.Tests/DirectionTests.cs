@@ -53,6 +53,49 @@ public class DirectionTests
     }
 
     [Theory]
+    [InlineData("norden", Direction.North)]
+    [InlineData("nord", Direction.North)]
+    [InlineData("süden", Direction.South)]
+    [InlineData("sueden", Direction.South)]
+    [InlineData("osten", Direction.East)]
+    [InlineData("o", Direction.East)]
+    [InlineData("westen", Direction.West)]
+    [InlineData("nordosten", Direction.Northeast)]
+    [InlineData("südosten", Direction.Southeast)]
+    [InlineData("suedosten", Direction.Southeast)]
+    [InlineData("so", Direction.Southeast)]
+    [InlineData("südwesten", Direction.Southwest)]
+    [InlineData("rauf", Direction.Up)]
+    [InlineData("hoch", Direction.Up)]
+    [InlineData("runter", Direction.Down)]
+    [InlineData("hinunter", Direction.Down)]
+    [InlineData("hinein", Direction.In)]
+    [InlineData("raus", Direction.Out)]
+    [InlineData("geh norden", Direction.North)]
+    public void AGermanStorysOwnWordsAreRead(string command, Direction expected)
+    {
+        // These are the words Infocom's German Zork answers to, taken
+        // from its dictionary. A story may be typed at with an umlaut or
+        // with the e that stands in for one, and it takes both.
+        Assert.True(Directions.TryParse(command, out var direction));
+        Assert.Equal(expected, direction);
+    }
+
+    [Fact]
+    public void TheOneGermanWordThatIsAlsoAnEnglishAnswerIsRefused()
+    {
+        // "no" is northeast in German. It is also what an English game
+        // is told when it asks whether you are sure, and nothing here
+        // knows which game it is reading, so it is left out. The German
+        // player still has the two longer spellings, which mean nothing
+        // in English.
+        Assert.False(Directions.TryParse("no", out _));
+
+        Assert.True(Directions.TryParse("nordost", out var direction));
+        Assert.Equal(Direction.Northeast, direction);
+    }
+
+    [Theory]
     [InlineData("take lamp")]
     [InlineData("open the trap door")]
     [InlineData("go")]
