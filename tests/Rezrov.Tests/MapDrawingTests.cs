@@ -201,12 +201,13 @@ public class MapDrawingTests
             MapDrawing.Draw(walk.Graph));
     }
 
-    [Fact]
-    public void ALineWithARoomStandingInItIsNamedInstead()
+    /// <summary>
+    /// A map with somewhere standing in the way of a passage: the
+    /// landing leads south to the cellar, and the middle room sits
+    /// between them.
+    /// </summary>
+    private static MapWalk Blocked()
     {
-        // The same walk, with somewhere in the way. Drawing the line
-        // would run it straight over a room that has nothing to do with
-        // the passage.
         var walk = new MapWalk();
         walk.To("Cellar");
         walk.To("Vault", "in");
@@ -215,11 +216,132 @@ public class MapDrawingTests
         walk.To("Middle", "down");
         walk.To("Landing", "up");
         walk.To("Cellar", "south");
+        return walk;
+    }
 
-        Assert.Contains(
-            "  Landing             s    Cellar              (no clear line)",
-            MapDrawing.Draw(walk.Graph),
-            StringComparison.Ordinal);
+    [Fact]
+    public void ALineBendsRoundWhatStandsInItsWay()
+    {
+        // A straight line from the landing to the cellar would run over
+        // the middle room. The gaps between the boxes are free the whole
+        // way across the picture, though, so the line goes round.
+        //
+        // Both of the landing's passages are drawn: the staircase down
+        // to the middle room keeps the straight line it needs, because
+        // every straight line is drawn before any bent one is allowed to
+        // take up room, and the bent line starts a little along the same
+        // wall rather than not at all.
+        Assert.Equal(
+            Lines(
+                "+------------------+     +------------------+",
+                "| Ledge            |---->| Landing          |",
+                "+------------------+     +------------------+",
+                new string(' ', 10) + "^" + new string(' ', 13) + "+----------:",
+                "+------------------+" + new string(' ', 4) + "|+------------------+",
+                "| Vault            |" + new string(' ', 4) + "|| Middle           |",
+                "+------------------+" + new string(' ', 4) + "|+------------------+",
+                new string(' ', 24) + "+----------v",
+                new string(' ', 25) + "+------------------+",
+                new string(' ', 25) + "|*Cellar           |",
+                new string(' ', 25) + "+------------------+",
+                "",
+                "Joined by a line that bends:",
+                "  Landing             s    Cellar              (bends)",
+                "",
+                "Passages not drawn:",
+                "  Cellar              in   Vault               (nowhere to point on a grid)"),
+            MapDrawing.Draw(Blocked().Graph));
+    }
+
+    [Fact]
+    public void AStraightLineIsNeverGivenUpForABentOne()
+    {
+        // The staircase down to the middle room is next door and wants
+        // the gap under the landing. The passage to the cellar wants it
+        // too and has the whole picture to go round by, so the straight
+        // one keeps it.
+        var drawing = MapDrawing.Draw(Blocked().Graph);
+
+        Assert.Contains(':', drawing);
+        Assert.DoesNotContain("Middle", drawing[drawing.IndexOf(
+            "Passages not drawn:", StringComparison.Ordinal)..], StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ABentLinePointsIntoTheRoomItLeadsTo()
+    {
+        // The line arrives from the west and the passage is south, so
+        // the arrowhead reads down. An arrow following the line would
+        // say east, which is not a thing the player could type.
+        var drawing = MapDrawing.Draw(Blocked().Graph);
+        var grid = drawing[..drawing.IndexOf("Joined by", StringComparison.Ordinal)];
+
+        Assert.Contains('v', grid);
+        Assert.DoesNotContain('>', grid[grid.IndexOf('+')..].Split('\n')[7]);
+    }
+
+    [Fact]
+    public void ThePassageBackAlongABentLineSharesIt()
+    {
+        // One line, walked both ways. Drawing it twice would put a
+        // second line beside the first between the same two rooms, and
+        // the line carries no arrowhead at all, because something is
+        // known to come back along it.
+        //
+        // The whole picture is asked for rather than a piece of it,
+        // since where an arrowhead would appear is exactly what is in
+        // question and a test that looked in one place would miss it
+        // turning up in another.
+        var walk = Blocked();
+        walk.To("Landing", "north");
+
+        Assert.Equal(
+            Lines(
+                "+------------------+     +------------------+",
+                "| Ledge            |---->|*Landing          |",
+                "+------------------+     +------------------+",
+                new string(' ', 10) + "^" + new string(' ', 13) + "+----------:",
+                "+------------------+" + new string(' ', 4) + "|+------------------+",
+                "| Vault            |" + new string(' ', 4) + "|| Middle           |",
+                "+------------------+" + new string(' ', 4) + "|+------------------+",
+                new string(' ', 24) + "+-----------",
+                new string(' ', 25) + "+------------------+",
+                new string(' ', 25) + "| Cellar           |",
+                new string(' ', 25) + "+------------------+",
+                "",
+                "Joined by a line that bends:",
+                "  Cellar              n    Landing             (bends)",
+                "  Landing             s    Cellar              (on that same line)",
+                "",
+                "Passages not drawn:",
+                "  Cellar              in   Vault               (nowhere to point on a grid)"),
+            MapDrawing.Draw(walk.Graph));
+    }
+
+    [Fact]
+    public void ABentLineNeverRunsOverARoom()
+    {
+        // The one thing routing must not do. A line is only ever put
+        // through characters that are blank, so a box cannot be written
+        // over, and this checks every room of a sprawling map still
+        // reads as itself afterwards.
+        string[] compass =
+            ["north", "east", "south", "west", "northeast", "up", "in", "down", "southwest", "west"];
+
+        var walk = new MapWalk();
+        walk.To("R0");
+        for (var step = 1; step <= 80; step++)
+        {
+            walk.To("R" + (step % 17), compass[step % compass.Length]);
+        }
+
+        MapTidy.Tidy(walk.Graph);
+        var drawing = MapDrawing.Draw(walk.Graph);
+
+        foreach (var room in walk.Graph.Rooms)
+        {
+            Assert.Contains(room.Name + " ", drawing, StringComparison.Ordinal);
+        }
     }
 
     [Fact]
