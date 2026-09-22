@@ -387,6 +387,12 @@ internal static class Program
                 return;
             }
 
+            // The map is finished with, so it can be rearranged. Rooms
+            // are never moved while a game is being played, which is
+            // what keeps a live map steady, and the price of that is a
+            // map that has drifted by the end.
+            MapTidy.Tidy(watcher.Graph);
+
             File.WriteAllText(path, MapDrawing.Draw(watcher.Graph));
 
             var rooms = watcher.Graph.Rooms.Count;

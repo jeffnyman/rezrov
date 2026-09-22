@@ -20,6 +20,11 @@ namespace Rezrov.Mapping;
 /// on a flat grid, which is what in and out are, is named there too.
 /// Directions that were tried and came to nothing are not drawn at all;
 /// they are in the graph for something with more room to show them.
+///
+/// One thing is drawn and named: a diagonal that runs one way. It is a
+/// single character with nowhere to put an arrowhead, and a line the
+/// reader has to look up beats no line at all, since the line is the
+/// only thing that shows the two rooms are joined.
 /// </remarks>
 public static class MapDrawing
 {
@@ -65,12 +70,13 @@ public static class MapDrawing
         var occupied = placed.Select(room => room.Position!.Value).ToHashSet();
 
         var undrawn = new List<string>();
+        var oneWay = new List<string>();
         foreach (var room in placed)
         {
-            DrawExits(canvas, graph, room, minX, minY, occupied, undrawn);
+            DrawExits(canvas, graph, room, minX, minY, occupied, undrawn, oneWay);
         }
 
-        return Assemble(canvas, truncated, undrawn);
+        return Assemble(canvas, truncated, undrawn, oneWay);
     }
 
     /// <summary>
@@ -120,7 +126,8 @@ public static class MapDrawing
         int minX,
         int minY,
         HashSet<(int X, int Y)> occupied,
-        List<string> undrawn)
+        List<string> undrawn,
+        List<string> oneWay)
     {
         foreach (var direction in Directions.All)
         {
@@ -140,6 +147,16 @@ public static class MapDrawing
             if (!DrawPassage(canvas, room, destination, direction, minX, minY, run))
             {
                 undrawn.Add(Describe(room, direction, destination, "line already taken"));
+                continue;
+            }
+
+            // A diagonal is one character of line with nowhere to put an
+            // arrowhead. Drawing it and saying underneath which way it
+            // runs shows more than leaving it off the map did.
+            if (Directions.Offset(direction) is { X: not 0, Y: not 0 }
+                && !IsTwoWay(room, destination, direction))
+            {
+                oneWay.Add(Describe(room, direction, destination, "one way"));
             }
         }
     }
@@ -226,16 +243,6 @@ public static class MapDrawing
         if (Run(room, destination, direction, occupied) is null)
         {
             return "no clear line";
-        }
-
-        // A diagonal is one character long, with no room on it for an
-        // arrowhead, so a one-way diagonal has to be said in words.
-        if (Directions.Offset(direction) is { } offset
-            && offset.X != 0
-            && offset.Y != 0
-            && !IsTwoWay(room, destination, direction))
-        {
-            return "one way";
         }
 
         return null;
@@ -437,7 +444,11 @@ public static class MapDrawing
         + "  " + destination.Name.PadRight(InnerWidth)
         + "  (" + reason + ")";
 
-    private static string Assemble(char[][] canvas, List<Room> truncated, List<string> undrawn)
+    private static string Assemble(
+        char[][] canvas,
+        List<Room> truncated,
+        List<string> undrawn,
+        List<string> oneWay)
     {
         var text = new StringBuilder();
 
@@ -452,6 +463,15 @@ public static class MapDrawing
             foreach (var room in truncated)
             {
                 text.Append("  ").Append(room.Name).Append('\n');
+            }
+        }
+
+        if (oneWay.Count > 0)
+        {
+            text.Append("\nDrawn, but running one way only:\n");
+            foreach (var line in oneWay)
+            {
+                text.Append(line).Append('\n');
             }
         }
 
