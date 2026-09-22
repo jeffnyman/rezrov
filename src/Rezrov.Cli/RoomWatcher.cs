@@ -29,12 +29,26 @@ public sealed class RoomWatcher : ITurnWatcher
     /// <summary>The map as far as the game has been played.</summary>
     public RoomGraph Graph { get; } = new();
 
-    public void Standing(int room, string name)
-    {
-        Graph.Observe(RoomKey.ForObject(room), name, _walked);
-        _walked = null;
-    }
+    public void Standing(int room, string name) =>
+        Arrive(RoomKey.ForObject(room), name);
+
+    /// <summary>
+    /// The room the player is standing in, known only by its name.
+    /// </summary>
+    /// <remarks>
+    /// What a Glulx story leaves to go on: there is no object behind the
+    /// name, so two rooms a game calls the same thing are one room here.
+    /// That loss belongs to the game, and inventing a difference would
+    /// be worse than recording the one it admits to.
+    /// </remarks>
+    public void StandingIn(string name) => Arrive(RoomKey.ForName(name), name);
 
     public void Typed(string command) =>
         _walked = Directions.TryParse(command, out var direction) ? direction : null;
+
+    private void Arrive(RoomKey key, string name)
+    {
+        Graph.Observe(key, name, _walked);
+        _walked = null;
+    }
 }

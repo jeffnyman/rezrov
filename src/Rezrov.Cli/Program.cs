@@ -171,13 +171,8 @@ internal static class Program
                     Console.Error.WriteLine("rezrov: the tandy option does not apply to Glulx");
                 }
 
-                if (map is not null)
-                {
-                    Console.Error.WriteLine("rezrov: the map option does not apply to Glulx yet");
-                }
-
                 var directory = Path.GetDirectoryName(Path.GetFullPath(path)) ?? Directory.GetCurrentDirectory();
-                return RunGlulx(story.Bytes, story.Resources, directory, trace, commands, transcript, record, save, seed);
+                return RunGlulx(story.Bytes, story.Resources, directory, trace, commands, transcript, record, save, seed, map);
             }
 
             return RunZMachine(story.Bytes, trace, commands, transcript, record, save, story.Resources, seed, machine, tandy, pictures, map);
@@ -355,10 +350,10 @@ internal static class Program
             recording beside it: --update records the play afresh, and --resume
             hands the game over at the console where the script ends.
 
-            A map is drawn only for the games that say where the player is: the
-            Z-Machine keeps the room in a global variable through Version 3, and
-            from Version 4 a game draws its own status line and may keep it
-            anywhere.
+            A map is drawn from wherever a game says which room the player is
+            in: a global variable through Version 3, the status line from
+            Version 4, and for a Glulx story the heading it prints as the
+            player walks in.
 
             """);
     }
@@ -370,20 +365,13 @@ internal static class Program
     /// An empty map is not a failure of the run, and which way it came
     /// to be empty is worth more than an empty file.
     /// </remarks>
-    private static void WriteMap(RoomWatcher watcher, string path, StoryHeader header)
+    private static void WriteMap(RoomWatcher watcher, string path, string whenEmpty)
     {
         try
         {
             if (watcher.Graph.Rooms.Count == 0)
             {
-                var why = header.Version switch
-                {
-                    ZMachineVersion.V6 => "a Version 6 game paints its screen and has no status line to read",
-                    <= ZMachineVersion.V3 => "the game reached no room",
-                    _ => "the status line never named a room the story has an object for",
-                };
-
-                Console.Error.WriteLine($"rezrov: no map written: {why}");
+                Console.Error.WriteLine($"rezrov: no map written: {whenEmpty}");
                 return;
             }
 
@@ -690,7 +678,12 @@ internal static class Program
             // a game played to the end.
             if (watcher is not null && map is not null)
             {
-                WriteMap(watcher, map, header);
+                WriteMap(watcher, map, header.Version switch
+                {
+                    ZMachineVersion.V6 => "a Version 6 game paints its screen and has no status line to read",
+                    <= ZMachineVersion.V3 => "the game reached no room",
+                    _ => "the status line never named a room the story has an object for",
+                });
             }
 
             // [zm A] Whatever the game did that it should not have, at
@@ -714,7 +707,7 @@ internal static class Program
     /// The resource file, if there is one, is what the game's resource
     /// streams read. A seed makes the game's random numbers predictable.
     /// </summary>
-    private static int RunGlulx(byte[] bytes, BlorbFile? resources, string directory, bool trace, string? commands, string? transcript, string? record, string? save, int? seed)
+    private static int RunGlulx(byte[] bytes, BlorbFile? resources, string directory, bool trace, string? commands, string? transcript, string? record, string? save, int? seed, string? map = null)
     {
         // [glk #encoding] Glk text is Latin-1 and Unicode, which the
         // console shows only as UTF-8.
@@ -744,7 +737,18 @@ internal static class Program
             files.NamedFiles[FileUsage.SavedGame] = Path.GetFullPath(save);
         }
 
-        var glk = new GlkLibrary(new TextWriterGlkDisplay(Console.Out, reader), files) { Resources = resources };
+        // [glk #stream_styles] A Glulx story says where the player is
+        // only by printing the room's name as a heading, so the map is
+        // built by watching the display rather than by asking the
+        // machine, which has nothing to be asked.
+        IGlkDisplay display = new TextWriterGlkDisplay(Console.Out, reader);
+        var watcher = map is null ? null : new RoomWatcher();
+        if (watcher is not null)
+        {
+            display = new HeadingWatcher(display, watcher);
+        }
+
+        var glk = new GlkLibrary(display, files) { Resources = resources };
         GlulxMachine machine;
         try
         {
@@ -800,6 +804,11 @@ internal static class Program
         {
             glk.CloseFiles();
             Console.Out.Flush();
+
+            if (watcher is not null && map is not null)
+            {
+                WriteMap(watcher, map, "the story never printed a room heading");
+            }
 
             // Whatever the game asked Glk for that Glk calls illegal.
             foreach (var warning in glk.Warnings)
