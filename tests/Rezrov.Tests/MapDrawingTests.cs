@@ -247,18 +247,40 @@ public class MapDrawingTests
     }
 
     [Fact]
-    public void AOneWayDiagonalIsNamedBecauseTheGlyphCannotCarryAnArrow()
+    public void AOneWayDiagonalIsDrawnAndItsDirectionSaidUnderneath()
     {
-        // One character of line, and no room on it to say which way the
-        // passage runs. Saying so underneath beats drawing something
-        // that reads as a passage walked both ways.
+        // One character of line, and no room on it for an arrowhead. The
+        // line is still worth drawing, since it is the only thing that
+        // shows the two rooms are joined at all, and which way it runs
+        // is said underneath rather than left to look like both.
         var walk = new MapWalk();
         walk.To("Forest Path");
         walk.To("Clearing", "northeast");
 
         var drawing = MapDrawing.Draw(walk.Graph);
 
-        Assert.DoesNotContain('/', drawing);
-        Assert.Contains("(one way)", drawing, StringComparison.Ordinal);
+        Assert.Contains('/', drawing);
+        Assert.Contains("Drawn, but running one way only:", drawing, StringComparison.Ordinal);
+        Assert.Contains(
+            "  Forest Path         ne   Clearing            (one way)",
+            drawing,
+            StringComparison.Ordinal);
+
+        // And it is not also called undrawn, which it plainly is not.
+        Assert.DoesNotContain("Passages not drawn:", drawing, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ADiagonalWalkedBothWaysNeedsNoSuchNote()
+    {
+        var walk = new MapWalk();
+        walk.To("Forest Path");
+        walk.To("Clearing", "northeast");
+        walk.To("Forest Path", "southwest");
+
+        Assert.DoesNotContain(
+            "Drawn, but running one way only:",
+            MapDrawing.Draw(walk.Graph),
+            StringComparison.Ordinal);
     }
 }
