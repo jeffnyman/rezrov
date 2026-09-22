@@ -55,6 +55,7 @@ internal static class Program
         var run = false;
         var trace = false;
         var tandy = false;
+        string? pictures = null;
         string? commands = null;
         string? transcript = null;
         string? record = null;
@@ -92,6 +93,9 @@ internal static class Program
                 case "--save" when i + 1 < args.Length:
                     run = true;
                     save = args[++i];
+                    break;
+                case "--pictures" when i + 1 < args.Length:
+                    pictures = args[++i];
                     break;
                 case "--blorb" when i + 1 < args.Length:
                     blorb = args[++i];
@@ -164,7 +168,7 @@ internal static class Program
                 return RunGlulx(story.Bytes, story.Resources, directory, trace, commands, transcript, record, save, seed);
             }
 
-            return RunZMachine(story.Bytes, trace, commands, transcript, record, save, story.Resources, seed, machine, tandy);
+            return RunZMachine(story.Bytes, trace, commands, transcript, record, save, story.Resources, seed, machine, tandy, pictures);
         }
 
         if (!File.Exists(path))
@@ -326,6 +330,7 @@ internal static class Program
               --record <file>          write the commands typed to a file
               --save <file>            save to and restore from this file, unasked
               --blorb <file>           take sounds and pictures from this resource file
+              --pictures <file>        take pictures from an Infocom graphics file
               --seed <number>          seed the game's random numbers, so a play repeats
               --interpreter <machine>  tell the game which machine it is running on
               --tandy                  set the Tandy bit for a Version 1 to 3 game
@@ -508,7 +513,7 @@ internal static class Program
     /// go without asking either. Resources, if there are any, give the
     /// game its sounds, though the console can only ring its bell.
     /// </summary>
-    private static int RunZMachine(byte[] bytes, bool trace, string? commands, string? transcript, string? record, string? save, BlorbFile? resources, int? seed, InterpreterNumber? machine, bool tandy)
+    private static int RunZMachine(byte[] bytes, bool trace, string? commands, string? transcript, string? record, string? save, BlorbFile? resources, int? seed, InterpreterNumber? machine, bool tandy, string? pictures = null)
     {
         var memory = new ZMemory(bytes);
         var header = new StoryHeader(memory);
@@ -521,7 +526,12 @@ internal static class Program
         // so a scripted run plays the same way every time.
         var interpreter = new Interpreter(
             memory,
-            new TextWriterScreen(Console.Out),
+            // [zm 8.8.6] A graphics file given here means the game is
+            // told pictures are available, which is what sends a
+            // Version 6 game down its graphical path. A stream of text
+            // draws none of them, but the game lays its screen out the
+            // way it would on a screen that could.
+            new TextWriterScreen(Console.Out, hasPictures: pictures is not null),
             new ConsoleInput(header, memory),
             seed is { } s ? new RandomGenerator(s) : null,
             files: new ConsoleFiles(transcript, record, save),
@@ -539,6 +549,23 @@ internal static class Program
             {
                 // [blorb 6] Complain righteously, then carry on without.
                 Console.Error.WriteLine($"rezrov: ignoring the resource file: {e.Message}");
+            }
+        }
+
+        // [infocom pictures] The artwork Infocom's DOS releases carried
+        // beside a Version 6 story. A console is a stream of text and
+        // draws none of it, but the game is told the pictures are
+        // there and measures its screen by them, which is what sends
+        // the Version 6 games down their graphical paths.
+        if (pictures is not null)
+        {
+            try
+            {
+                interpreter.UsePictures(InfocomPictures.Read(File.ReadAllBytes(pictures)));
+            }
+            catch (Exception e) when (e is InvalidDataException or IOException)
+            {
+                Console.Error.WriteLine($"rezrov: ignoring the graphics file: {e.Message}");
             }
         }
 

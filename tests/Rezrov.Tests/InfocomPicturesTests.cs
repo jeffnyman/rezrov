@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using Rezrov.Core.Blorb;
 using Rezrov.Core.Graphics;
 
 namespace Rezrov.Tests;
@@ -113,6 +114,73 @@ public class InfocomPicturesTests
         }
 
         Assert.Equal(ReferenceTitle, Convert.ToHexString(SHA256.HashData(rgb)));
+    }
+
+    [Fact]
+    public void AGraphicsFileStandsWhereAResourceFilesPicturesWould()
+    {
+        var path = Corpus.InfocomGraphics("zorkzero.mg1");
+
+        Assert.SkipUnless(path is not null, "The entharion submodule is not populated.");
+
+        var graphics = InfocomPictures.Read(File.ReadAllBytes(path));
+        var catalog = BlorbPictures.From(graphics);
+
+        // [infocom pictures] A game asks by number and is never told
+        // which kind of file answered, so the catalog reports the same
+        // things either way, and decoding goes to the graphics file.
+        Assert.Equal(graphics.Count, catalog.Count);
+        Assert.Equal(graphics.Version, catalog.Release);
+        Assert.Equal(PictureKind.Infocom, catalog.Find(1)!.Kind);
+
+        // [infocom pictures] The MCGA rendition is drawn in a 320 by
+        // 200 space and doubles onto the 640 by 400 screen, so a
+        // full-screen picture is reported as covering all of it.
+        Assert.Equal((320, 200), graphics.Space);
+        Assert.Equal((2, 2), graphics.Scale);
+        Assert.Equal((640, 400), (catalog.Find(1)!.Width, catalog.Find(1)!.Height));
+
+        // [blorb 11.2] And the window has no say in it: these carry no
+        // scaling chunk, so the size is the rendition's own whatever
+        // the screen is.
+        Assert.Equal((640, 400), catalog.ScaledSize(1, 960, 700));
+        Assert.Equal((640, 400), catalog.ScaledSize(1, 320, 200));
+        Assert.NotNull(catalog.Decode(1));
+    }
+
+    [Theory]
+    [InlineData("zorkzero.mg1", 320, 2, 2)]
+    [InlineData("journey.mg1", 320, 2, 2)]
+    [InlineData("shogun.mg1", 320, 2, 2)]
+    [InlineData("arthur.mg1", 320, 2, 2)]
+    [InlineData("zork0.eg1", 640, 1, 2)]
+    [InlineData("arthur.eg1", 640, 1, 2)]
+    [InlineData("arthur.eg2", 640, 1, 2)]
+    [InlineData("journey.eg1", 640, 1, 2)]
+    [InlineData("shogun.eg1", 640, 1, 2)]
+    [InlineData("zork0.cg1", 640, 1, 2)]
+    public void TheFlagsSayWhichSpaceARenditionIsDrawnIn(string name, int width, int x, int y)
+    {
+        var path = Corpus.InfocomGraphics(name);
+
+        Assert.SkipUnless(path is not null, "The entharion submodule is not populated.");
+
+        var graphics = InfocomPictures.Read(File.ReadAllBytes(path));
+
+        // [infocom pictures] Bit 3 of the flags byte, which is what
+        // Frotz reads as x_scale = (flags & 0x08) ? 640 : 320. Every
+        // rendition lands on the same 640 by 400 screen.
+        Assert.Equal((width, 200), graphics.Space);
+        Assert.Equal((x, y), graphics.Scale);
+        Assert.Equal((640, 400), (graphics.Space.Width * x, graphics.Space.Height * y));
+
+        // And no picture in the file is larger than the space it is
+        // drawn in, which is the check that the flag was read right.
+        Assert.All(graphics.Pictures, p =>
+        {
+            Assert.True(p.Width <= width, $"{name} picture {p.Number} is {p.Width} wide in a {width} space.");
+            Assert.True(p.Height <= 200, $"{name} picture {p.Number} is {p.Height} tall in a 200 space.");
+        });
     }
 
     [Fact]

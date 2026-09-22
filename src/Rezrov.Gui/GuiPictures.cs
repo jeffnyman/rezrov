@@ -28,6 +28,13 @@ internal sealed class GuiPictures
     private readonly Dictionary<(int Number, byte[]? Palette), WriteableBitmap?> _bitmaps = [];
     private readonly BlorbPictures? _catalog;
 
+    /// <summary>
+    /// [infocom pictures] The pictures of a catalog already read,
+    /// which is how the artwork of Infocom's own graphics files gets
+    /// here rather than through a Blorb.
+    /// </summary>
+    public GuiPictures(BlorbPictures catalog) => _catalog = catalog;
+
     public GuiPictures(BlorbFile? resources)
     {
         if (resources is null)
@@ -113,7 +120,5 @@ internal sealed class GuiPictures
     }
 
     private WriteableBitmap? Read(int number, byte[]? palette) =>
-        _catalog?.Find(number) is { } picture && PictureReader.Decode(picture, palette) is { } pixels
-            ? ToBitmap(pixels)
-            : null;
+        _catalog?.Decode(number, palette) is { } pixels ? ToBitmap(pixels) : null;
 }

@@ -46,7 +46,7 @@ internal sealed class Board : Control
 
     private readonly Dictionary<uint, ImmutableSolidColorBrush> _washes = [];
     private readonly HashSet<GlkWindow> _seen = [];
-    private readonly Glyphs _glyphs;
+    private Glyphs _glyphs;
     private GuiGlkDisplay? _display;
     private BufferedScreen? _screen;
     private GuiAaDisplay? _page;
@@ -140,6 +140,31 @@ internal sealed class Board : Control
     public GuiPictures? Pictures { get; set; }
 
     /// <summary>
+    /// [infocom pictures] The screen a Version 6 game is being played
+    /// on, in units, when that is a fixed one rather than the window's
+    /// own size. Null for everything else.
+    /// </summary>
+    /// <remarks>
+    /// Infocom's Version 6 games compute every coordinate for the
+    /// screen they were written against, so they are given that screen
+    /// and the whole of it is scaled into the window. Handing one a
+    /// window-sized screen instead leaves its border art in a corner
+    /// and runs its menu labels into each other.
+    /// </remarks>
+    public (int Width, int Height)? UnitScreen { get; set; }
+
+    /// <summary>
+    /// [infocom pictures] The fonts to paint a fixed unit screen with,
+    /// which are smaller than the reading fonts because the whole
+    /// screen is scaled up afterwards. Setting this replaces the fonts
+    /// for good, and only the Version 6 path ever does.
+    /// </summary>
+    public Glyphs UnitGlyphs
+    {
+        set => _glyphs = value;
+    }
+
+    /// <summary>
     /// [aam story] The faces an Aa-machine story is set in, which it
     /// names for itself rather than choosing among the frontend's.
     /// </summary>
@@ -191,7 +216,20 @@ internal sealed class Board : Control
             lock (screen.Sync)
             {
                 context.FillRectangle(Brush(screen.DefaultBackground), new Rect(Bounds.Size));
-                PaintScreen(context, screen);
+
+                if (Fitted() is { } fit)
+                {
+                    using (context.PushTransform(
+                        Matrix.CreateScale(fit.Scale, fit.Scale)
+                        * Matrix.CreateTranslation(fit.Across, fit.Down)))
+                    {
+                        PaintScreen(context, screen);
+                    }
+                }
+                else
+                {
+                    PaintScreen(context, screen);
+                }
             }
 
             return;
@@ -389,6 +427,34 @@ internal sealed class Board : Control
                 }
             }
         }
+        else if (Screen is { } clicked && Keys is { } keys)
+        {
+            // [zm 10.3] A Version 6 game reads the mouse, and the
+            // terminal has always reported clicks to it. Here the
+            // screen may be drawn scaled, so the pointer is taken back
+            // out of the window and into the game's own cells before
+            // anyone hears about it.
+            var at = Unscaled(e.GetPosition(this));
+            var column = (int)(at.X / _glyphs.CellWidth);
+            var row = (int)(at.Y / _glyphs.CellHeight);
+
+            if (column >= 0 && row >= 0 && column < clicked.Width && row < clicked.Height)
+            {
+                var properties = e.GetCurrentPoint(this).Properties;
+
+                // [zm op:read_mouse] The primary button is bit 0, the
+                // secondary bit 1, and the middle button bit 2, which
+                // is the Windows and X order and what the terminal
+                // reports.
+                var buttons = 0;
+                if (properties.IsLeftButtonPressed) { buttons |= 1; }
+                if (properties.IsRightButtonPressed) { buttons |= 2; }
+                if (properties.IsMiddleButtonPressed) { buttons |= 4; }
+
+                keys.EnqueueClick(column, row, e.ClickCount >= 2, buttons == 0 ? 1 : buttons);
+                e.Handled = true;
+            }
+        }
         else if (Display is { Root: { } root } display)
         {
             var at = e.GetPosition(this);
@@ -517,15 +583,47 @@ internal sealed class Board : Control
         base.OnPointerWheelChanged(e);
     }
 
+    /// <summary>
+    /// [infocom pictures] A point in the window, taken back into the
+    /// coordinates the screen is drawn in. The two are the same unless
+    /// a fixed screen is being scaled into the window.
+    /// </summary>
+    private Point Unscaled(Point at)
+    {
+        if (Fitted() is not { } fit)
+        {
+            return at;
+        }
+
+        var (x, y) = fit.Unscaled(at.X, at.Y);
+        return new Point(x, y);
+    }
+
+    /// <summary>
+    /// [infocom pictures] How a fixed screen sits in this window, or
+    /// null when the screen is the window's own size, which is every
+    /// game but an Infocom Version 6 one.
+    /// </summary>
+    private ScreenFit? Fitted() =>
+        UnitScreen is { } units ? ScreenFit.Of((Bounds.Width, Bounds.Height), units) : null;
+
     protected override void OnSizeChanged(SizeChangedEventArgs e)
     {
         ArgumentNullException.ThrowIfNull(e);
 
         Display?.Resize(e.NewSize.Width, e.NewSize.Height);
         Page?.Resize(e.NewSize.Width, e.NewSize.Height);
-        Screen?.Resize(
-            Math.Max((int)(e.NewSize.Width / _glyphs.CellWidth), 1),
-            Math.Max((int)(e.NewSize.Height / _glyphs.CellHeight), 1));
+
+        // [infocom pictures] A fixed screen keeps its size whatever the
+        // window does, because the game laid itself out for that screen
+        // and re-gridding it would undo the whole point. The window
+        // only changes how far it is scaled.
+        if (UnitScreen is null)
+        {
+            Screen?.Resize(
+                Math.Max((int)(e.NewSize.Width / _glyphs.CellWidth), 1),
+                Math.Max((int)(e.NewSize.Height / _glyphs.CellHeight), 1));
+        }
 
         base.OnSizeChanged(e);
     }

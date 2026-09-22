@@ -57,6 +57,7 @@ internal static class Program
     private static BlorbFile? _resources;
     private static int? _seed;
     private static string? _commands;
+    private static string? _pictures;
     private static InterpreterNumber? _machine;
     private static bool _tandy;
     private static string _prose = Glyphs.ProseFamily;
@@ -140,6 +141,9 @@ internal static class Program
                 case "--commands" when i + 1 < args.Length:
                     _commands = args[++i];
                     break;
+                case "--pictures" when i + 1 < args.Length:
+                    _pictures = args[++i];
+                    break;
                 case "--seed" when i + 1 < args.Length && int.TryParse(args[i + 1], out var seed) && seed >= 1:
                     _seed = seed;
                     i++;
@@ -197,6 +201,34 @@ internal static class Program
         "none" => TextRenderingMode.Alias,
         _ => null,
     };
+
+    /// <summary>
+    /// [infocom pictures] The fonts at whatever size makes a character
+    /// closest to <paramref name="units"/> units across.
+    /// </summary>
+    /// <remarks>
+    /// A face has its own proportions, so no size makes a cell exactly
+    /// eight by sixteen the way an 8 by 16 bitmap font did. Matching
+    /// the width is what matters, because the width is what decides how
+    /// many columns the screen has and the games were laid out in
+    /// eighty of them.
+    /// </remarks>
+    private static Glyphs Narrowest(double units)
+    {
+        var best = new Glyphs(_size, _prose, _fixed);
+
+        for (var size = 4.0; size <= 24.0; size += 0.5)
+        {
+            var glyphs = new Glyphs(size, _prose, _fixed);
+
+            if (Math.Abs(glyphs.CellWidth - units) < Math.Abs(best.CellWidth - units))
+            {
+                best = glyphs;
+            }
+        }
+
+        return best;
+    }
 
     /// <summary>
     /// Prints what the fonts measure and leaves, with no window.
@@ -591,8 +623,37 @@ internal static class Program
         var memory = new ZMemory(_bytes);
         var header = new StoryHeader(memory);
 
-        var columns = Math.Max((int)(board.Bounds.Width / glyphs.CellWidth), 1);
-        var rows = Math.Max((int)(board.Bounds.Height / glyphs.CellHeight), 1);
+        // [infocom pictures] A Version 6 game playing from one of
+        // Infocom's own graphics files is given the screen it was
+        // written against, and Board scales the whole of it into the
+        // window. Every other game gets the window's own size, which is
+        // what the Blorb releases and their scaling chunks expect.
+        var unit = header.Version == ZMachineVersion.V6 && _pictures is not null
+            ? InfocomPictures.UnitScreen
+            : ((int Width, int Height)?)null;
+
+        // On a fixed screen a character is eight units across, which
+        // is what gives the eighty columns Infocom laid these games
+        // out in. The fonts are chosen to measure that, small on their
+        // own and scaled up with the rest of the screen.
+        if (unit is not null)
+        {
+            glyphs = Narrowest(8);
+            board.UnitGlyphs = glyphs;
+        }
+
+        var columns = unit is { } u
+            ? Math.Max((int)(u.Width / glyphs.CellWidth), 1)
+            : Math.Max((int)(board.Bounds.Width / glyphs.CellWidth), 1);
+        var rows = unit is { } v
+            ? Math.Max((int)(v.Height / glyphs.CellHeight), 1)
+            : Math.Max((int)(board.Bounds.Height / glyphs.CellHeight), 1);
+
+        // The screen is a whole number of characters, so it is rarely
+        // exactly the unit screen; Board scales what there actually is.
+        board.UnitScreen = unit is null
+            ? null
+            : ((int)(columns * glyphs.CellWidth), (int)(rows * glyphs.CellHeight));
 
         // The screen needs the input for the [MORE] key and the input
         // needs the screen for its echo, so each reaches the other
@@ -689,6 +750,25 @@ internal static class Program
             {
                 // [blorb 6] Complain righteously, then carry on without.
                 Console.Error.WriteLine($"rezrov-gui: {e.Message}");
+            }
+        }
+
+        // [infocom pictures] The artwork Infocom's DOS releases carried
+        // beside a Version 6 story, which this window can actually
+        // draw.
+        if (_pictures is not null)
+        {
+            try
+            {
+                var graphics = InfocomPictures.Read(File.ReadAllBytes(_pictures));
+
+                interpreter.UsePictures(graphics);
+                pictures = new GuiPictures(BlorbPictures.From(graphics));
+                board.Pictures = pictures;
+            }
+            catch (Exception e) when (e is InvalidDataException or IOException)
+            {
+                Console.Error.WriteLine($"rezrov-gui: ignoring the graphics file: {e.Message}");
             }
         }
 

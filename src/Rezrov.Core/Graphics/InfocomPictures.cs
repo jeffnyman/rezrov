@@ -71,11 +71,13 @@ public sealed class InfocomPictures
     private readonly byte[] _file;
     private readonly Dictionary<int, InfocomPicture> _pictures = [];
 
-    private InfocomPictures(byte[] file, int part, int version, List<InfocomPicture> pictures)
+    private InfocomPictures(byte[] file, int part, int flags, int version, List<InfocomPicture> pictures)
     {
         _file = file;
         Part = part;
         Version = version;
+        Space = ((flags & 0x08) != 0 ? 640 : 320, 200);
+        Scale = (UnitScreen.Width / Space.Width, UnitScreen.Height / Space.Height);
         Pictures = pictures;
 
         foreach (var picture in pictures)
@@ -92,6 +94,42 @@ public sealed class InfocomPictures
 
     /// <summary>The release of the artwork, as the file states it.</summary>
     public int Version { get; }
+
+    /// <summary>
+    /// [infocom pictures] The space this file's pictures are drawn in:
+    /// 640 by 200 for the EGA and CGA renditions, 320 by 200 for the
+    /// MCGA and Amiga ones. Bit 3 of the file's flags says which, which
+    /// is what Frotz reads as <c>x_scale = (flags &amp; 0x08) ? 640 :
+    /// 320</c>.
+    /// </summary>
+    public (int Width, int Height) Space { get; }
+
+    /// <summary>
+    /// [infocom pictures] How many unit pixels one of this file's art
+    /// pixels covers, on each axis, on the way onto the Version 6
+    /// screen.
+    /// </summary>
+    /// <remarks>
+    /// Every rendition lands on one 640 by 400 screen, because the
+    /// denser drawing's pixels are half as wide: an EGA pixel really is
+    /// narrower than an MCGA one, and the two are two drawings of the
+    /// same screen rather than two screens. So 320 by 200 art doubles
+    /// on both axes and 640 by 200 art doubles only vertically, and
+    /// both cover the same rectangle.
+    ///
+    /// This is a measurement rather than a choice. Frotz's DOS and SDL
+    /// ports both present Version 6 on a 640 by 400 screen at these
+    /// factors, and Bocfel writes the same thing as a pixel width of
+    /// 1.0 at 320 and 0.5 at 640. A game's own layout arithmetic only
+    /// lands where it should when it is given that screen.
+    /// </remarks>
+    public (int X, int Y) Scale { get; }
+
+    /// <summary>
+    /// [infocom pictures] The screen every rendition is presented on,
+    /// in units.
+    /// </summary>
+    public static (int Width, int Height) UnitScreen => (640, 400);
 
     /// <summary>Every picture the directory lists, in file order.</summary>
     public IReadOnlyList<InfocomPicture> Pictures { get; }
@@ -126,6 +164,7 @@ public sealed class InfocomPictures
         }
 
         var part = file[0];
+        var fileFlags = file[1];
         var count = BinaryPrimitives.ReadUInt16LittleEndian(file.AsSpan(4));
         var entry = file[8];
         var version = BinaryPrimitives.ReadUInt16LittleEndian(file.AsSpan(14));
@@ -174,7 +213,7 @@ public sealed class InfocomPictures
             });
         }
 
-        return new InfocomPictures(file, part, version, pictures);
+        return new InfocomPictures(file, part, fileFlags, version, pictures);
     }
 
     /// <summary>

@@ -1,5 +1,6 @@
 using System.Globalization;
 using Rezrov.Core.Blorb;
+using Rezrov.Core.Graphics;
 using Rezrov.ZMachine.Input;
 using Rezrov.ZMachine.Instructions;
 using Rezrov.ZMachine.Lexing;
@@ -195,6 +196,25 @@ public sealed class Interpreter
         // an arc_image band is available is a thing only the resource
         // file can answer. So the interpreter describes itself again
         // now that it knows.
+        DescribeInterpreterInHeader();
+    }
+
+    /// <summary>
+    /// [infocom pictures] Takes the pictures of one of Infocom's own
+    /// graphics files, which is what its DOS releases carried beside a
+    /// Version 6 story instead of a Blorb.
+    /// </summary>
+    /// <remarks>
+    /// A game asks for pictures by number and is never told which kind
+    /// of file answered, so these stand exactly where a Blorb's
+    /// pictures stand. Sound still comes from a resource file, so a
+    /// game may be given both.
+    /// </remarks>
+    public void UsePictures(InfocomPictures graphics)
+    {
+        ArgumentNullException.ThrowIfNull(graphics);
+
+        Windows?.UsePictures(BlorbPictures.From(graphics));
         DescribeInterpreterInHeader();
     }
 
