@@ -10,12 +10,12 @@ namespace Rezrov.ZMachine.Execution;
 /// they typed. Both come from the machine rather than from the screen,
 /// and neither is interpreted here.
 ///
-/// A watcher is told where the player is only when the story says so
-/// plainly. [zm 8.2] Versions 1 to 3 keep the room in the first global
+/// A watcher is told where the player is whenever the room can be
+/// worked out. [zm 8.2] Versions 1 to 3 keep it in the first global
 /// variable because the interpreter draws the status line and has to
-/// know what to write on it. From Version 4 the game draws its own and
-/// may keep the room anywhere, so nothing is reported for those, and a
-/// watcher hears only what was typed.
+/// know what to write on it. From Version 4 the game draws its own bar,
+/// and the room is recovered from it by <see cref="RoomSense"/>, which
+/// can fail; a watcher then hears only what was typed.
 /// </remarks>
 public interface ITurnWatcher
 {
