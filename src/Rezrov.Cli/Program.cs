@@ -367,10 +367,8 @@ internal static class Program
     /// Writes the map the watcher built, or says why there is none.
     /// </summary>
     /// <remarks>
-    /// An empty map is not a failure of the run. From Version 4 a game
-    /// draws its own status line and keeps the player's room wherever it
-    /// likes, so there was nothing to watch. Saying which of the two
-    /// happened is more use than an empty file.
+    /// An empty map is not a failure of the run, and which way it came
+    /// to be empty is worth more than an empty file.
     /// </remarks>
     private static void WriteMap(RoomWatcher watcher, string path, StoryHeader header)
     {
@@ -378,9 +376,14 @@ internal static class Program
         {
             if (watcher.Graph.Rooms.Count == 0)
             {
-                Console.Error.WriteLine(header.Version > ZMachineVersion.V3
-                    ? $"rezrov: no map written: a Version {(int)header.Version} game does not say where the player is"
-                    : "rezrov: no map written: the game reached no room");
+                var why = header.Version switch
+                {
+                    ZMachineVersion.V6 => "a Version 6 game paints its screen and has no status line to read",
+                    <= ZMachineVersion.V3 => "the game reached no room",
+                    _ => "the status line never named a room the story has an object for",
+                };
+
+                Console.Error.WriteLine($"rezrov: no map written: {why}");
                 return;
             }
 

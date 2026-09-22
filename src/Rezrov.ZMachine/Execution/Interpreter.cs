@@ -230,6 +230,13 @@ public sealed class Interpreter
     public ITurnWatcher? Watcher { get; set; }
 
     /// <summary>
+    /// Works out the room from the status line, for the versions that do
+    /// not keep it in a global. Built on first use, since it reads every
+    /// object's name to do its work and most sessions never want it.
+    /// </summary>
+    private RoomSense? _rooms;
+
+    /// <summary>
     /// [zm 10.2] Which input stream is current: 0 for the keyboard or 1
     /// for a file of commands.
     /// </summary>
@@ -1672,29 +1679,49 @@ public sealed class Interpreter
     }
 
     /// <summary>
-    /// Tells <see cref="Watcher"/> which room the player is standing in,
-    /// where the story says so plainly.
+    /// Tells <see cref="Watcher"/> which room the player is standing in.
     /// </summary>
     /// <remarks>
     /// [zm 8.2] The first global holds the room in Versions 1 to 3, which
     /// is the same place <see cref="ShowStatusLine"/> reads it from and
-    /// for the same reason. Later versions keep it wherever they like, so
-    /// nothing is said about them here rather than something guessed at.
-    /// A bad object number is left alone too; the status line already
-    /// reports that as a runtime error, and saying it twice a turn would
-    /// bury everything else.
+    /// for the same reason, so those games are simply asked. A bad object
+    /// number is left alone; the status line already reports that as a
+    /// runtime error, and saying it twice a turn would bury everything
+    /// else.
+    ///
+    /// From Version 4 the game draws its own bar and keeps the room
+    /// wherever it likes, so the room's name is read off that bar and
+    /// turned back into an object by <see cref="RoomSense"/>. A Version 6
+    /// game has no such bar, and no <see cref="Screen"/> to read one
+    /// from, so nothing is reported for those.
     /// </remarks>
     private void ReportStanding()
     {
-        if (Watcher is not { } watcher || Header.Version > ZMachineVersion.V3)
+        if (Watcher is not { } watcher)
         {
             return;
         }
 
-        var obj = State.ReadGlobal(0x10);
-        if (obj >= 1 && obj <= Objects.Count)
+        if (Header.Version <= ZMachineVersion.V3)
         {
-            watcher.Standing(obj, Objects.ShortName(obj));
+            var obj = State.ReadGlobal(0x10);
+            if (obj >= 1 && obj <= Objects.Count)
+            {
+                watcher.Standing(obj, Objects.ShortName(obj));
+            }
+
+            return;
+        }
+
+        if (Screen?.UpperWindow is not { Lines: > 0 } upper)
+        {
+            return;
+        }
+
+        _rooms ??= new RoomSense(Objects);
+        if (_rooms.Standing(upper.RowText(1)) is { } standing)
+        {
+            watcher.Standing(standing.Room, standing.Name);
         }
     }
 
