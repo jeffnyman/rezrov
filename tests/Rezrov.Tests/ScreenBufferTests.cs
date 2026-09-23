@@ -181,6 +181,59 @@ public class ScreenBufferTests
     }
 
     [Fact]
+    public void AWidenedScreenCarriesTheStatusBandToTheNewEdge()
+    {
+        // [zm 8.6.1.1] The status line was drawn to the old width and
+        // only the next turn draws it again, so a screen that grows
+        // would otherwise show the band stopping short with the
+        // ordinary page color beyond it, which on most of these games
+        // is a black gap across the top of the window.
+        var (buffer, model) = MakeWithModel(20, 6, ZMachineVersion.V3);
+        model.ShowStatusLine("Forest", timeGame: false, 0, 0);
+        buffer.UpdateUpper(model);
+
+        var band = buffer[0, 19].Attributes;
+
+        // The band is made of reverse video, which is why the
+        // attributes have to go over as they are: blanking a cell
+        // strips exactly that.
+        Assert.True(band.Style.HasFlag(TextStyle.ReverseVideo), "the status line should be reversed");
+
+        buffer.Resize(30, 6);
+
+        for (var column = 20; column < 30; column++)
+        {
+            Assert.Equal(band, buffer[0, column].Attributes);
+            Assert.Equal(' ', buffer[0, column].Character);
+        }
+    }
+
+    [Fact]
+    public void AWidenedScreenLeavesTheRestOfThePageAlone()
+    {
+        // Only the one row the interpreter draws itself is carried.
+        // The upper window belongs to the game, which sized it and
+        // will paint it again, and the lower window is ordinary page.
+        var (buffer, model) = MakeWithModel(20, 6, ZMachineVersion.V3);
+        model.ShowStatusLine("Forest", timeGame: false, 0, 0);
+        model.SplitWindow(2);
+        model.SetWindow(ScreenModel.Upper);
+        Print(model, "GAME DREW THIS");
+        model.SetWindow(ScreenModel.Lower);
+        buffer.UpdateUpper(model);
+        buffer.Print("prose", Blank);
+
+        buffer.Resize(30, 6);
+
+        foreach (var row in new[] { 1, 2, 5 })
+        {
+            Assert.Equal(
+                Cell.Blank(Blank),
+                buffer[row, 25]);
+        }
+    }
+
+    [Fact]
     public void CellsKeepTheirAttributes()
     {
         var buffer = new ScreenBuffer(4, 1, Blank, cursorStartsAtBottom: false);

@@ -303,11 +303,42 @@ public sealed class ScreenBuffer
         ArgumentOutOfRangeException.ThrowIfLessThan(height, 1);
 
         var rows = MakeRows(width, height, _blank);
+
+        // [zm 8.6.1.1] Where the status line is, so that the one row
+        // the interpreter draws itself can be carried across a widened
+        // screen. The upper window is deliberately not: those rows
+        // belong to the game, which sized its own window and will
+        // paint it again, and inventing cells in it would be guessing
+        // at a layout only the game knows.
+        var status = StatusRows > 0 ? Math.Min(BandRows, Height - 1) : -1;
+
         for (var row = 0; row < Math.Min(height, Height); row++)
         {
             for (var column = 0; column < Math.Min(width, Width); column++)
             {
                 rows[row][column] = _rows[row][column];
+            }
+
+            if (row != status)
+            {
+                continue;
+            }
+
+            // The status line was drawn to the old width and only the
+            // next turn will draw it again. Left at the default, the
+            // new columns are the ordinary page color, which on these
+            // games is usually black, so widening the screen breaks
+            // the band across the top with a gap until the player
+            // types something. Carrying the last cell's own attributes
+            // keeps the band whole. The attributes go over verbatim
+            // rather than through Cell.Blank, which strips reverse
+            // video, and reverse video is exactly what most of these
+            // games make their status line out of.
+            var carried = _rows[row][Width - 1].Attributes;
+
+            for (var column = Width; column < width; column++)
+            {
+                rows[row][column] = new Cell(' ', carried);
             }
         }
 
