@@ -13,6 +13,7 @@ using GlulxRandom = Rezrov.Glulx.Execution.GlulxRandom;
 using Rezrov.Glulx.Glk;
 using Rezrov.Glulx.Text;
 using Rezrov.Mapping;
+using Rezrov.Watching;
 using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
 using Rezrov.ZMachine.Instructions;

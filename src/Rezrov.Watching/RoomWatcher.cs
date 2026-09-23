@@ -1,7 +1,7 @@
 using Rezrov.Mapping;
 using Rezrov.ZMachine.Execution;
 
-namespace Rezrov.Cli;
+namespace Rezrov.Watching;
 
 /// <summary>
 /// Turns a game being played into a map of the rooms it was played
@@ -24,10 +24,50 @@ namespace Rezrov.Cli;
 /// </remarks>
 public sealed class RoomWatcher : ITurnWatcher
 {
+    private readonly Lock _lock = new();
+
     private Direction? _walked;
 
     /// <summary>The map as far as the game has been played.</summary>
+    /// <remarks>
+    /// Safe to reach for directly only where the game and whatever
+    /// reads the map are the same thread, which in a terminal they are:
+    /// the map is written out once the game has stopped. A program that
+    /// draws the map while the game is still being played is two
+    /// threads, and has to go through <see cref="Read"/> instead.
+    /// </remarks>
     public RoomGraph Graph { get; } = new();
+
+    /// <summary>
+    /// Raised once the map has taken in another turn.
+    /// </summary>
+    /// <remarks>
+    /// Raised on whichever thread is running the game, which is not
+    /// the one a window draws on. A handler that repaints something
+    /// has to get itself back onto its own thread first.
+    /// </remarks>
+    public event Action? Changed;
+
+    /// <summary>
+    /// Runs <paramref name="reading"/> over the map with the game held
+    /// off it.
+    /// </summary>
+    /// <remarks>
+    /// The graph is a plain object graph with no thread safety of its
+    /// own, and a room arriving while the map is being walked would be
+    /// a torn read at best. Whatever is done in here should be short
+    /// and should copy out what it needs: the game cannot take another
+    /// turn until it returns.
+    /// </remarks>
+    public void Read(Action<RoomGraph> reading)
+    {
+        ArgumentNullException.ThrowIfNull(reading);
+
+        lock (_lock)
+        {
+            reading(Graph);
+        }
+    }
 
     public void Standing(int room, string name) =>
         Arrive(RoomKey.ForObject(room), name);
@@ -48,7 +88,16 @@ public sealed class RoomWatcher : ITurnWatcher
 
     private void Arrive(RoomKey key, string name)
     {
-        Graph.Observe(key, name, _walked);
+        lock (_lock)
+        {
+            Graph.Observe(key, name, _walked);
+        }
+
         _walked = null;
+
+        // Outside the lock, so that a handler which takes a while, or
+        // which waits on another thread to draw, cannot stop the game
+        // from taking its next turn.
+        Changed?.Invoke();
     }
 }

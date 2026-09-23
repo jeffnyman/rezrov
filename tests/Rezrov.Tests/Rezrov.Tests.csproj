@@ -35,6 +35,7 @@
     <ProjectReference Include="..\..\src\Rezrov.Gui\Rezrov.Gui.csproj" />
     <ProjectReference Include="..\..\src\Rezrov.Mapping\Rezrov.Mapping.csproj" />
     <ProjectReference Include="..\..\src\Rezrov.Tui\Rezrov.Tui.csproj" />
+    <ProjectReference Include="..\..\src\Rezrov.Watching\Rezrov.Watching.csproj" />
     <ProjectReference Include="..\..\src\Rezrov.ZMachine\Rezrov.ZMachine.csproj" />
   </ItemGroup>
 

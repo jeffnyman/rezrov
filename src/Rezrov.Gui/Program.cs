@@ -2,6 +2,8 @@ using System.Globalization;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Rezrov.AaMachine;
@@ -13,6 +15,7 @@ using Rezrov.Core.Blorb;
 using Rezrov.Glulx;
 using Rezrov.Glulx.Execution;
 using Rezrov.Glulx.Glk;
+using Rezrov.Watching;
 using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
 using Rezrov.ZMachine.Input;
@@ -60,6 +63,7 @@ internal static class Program
     private static string? _pictures;
     private static InterpreterNumber? _machine;
     private static bool _tandy;
+    private static bool _map;
     private static string _prose = Glyphs.ProseFamily;
     private static string _sans = GuiAaGlyphs.SansFamily;
     private static string _fixed = Glyphs.FixedFamily;
@@ -69,6 +73,20 @@ internal static class Program
     private static int _result;
     private static string? _trouble;
     private static AudioEngine? _audio;
+
+    /// <summary>
+    /// The map of the rooms the game is played through, built whether
+    /// or not the player ever opens the pane.
+    /// </summary>
+    /// <remarks>
+    /// A map can only be made from the turns it was there for, so
+    /// building it from the first turn is the only way opening the pane
+    /// halfway through a game can show anything but the room the player
+    /// happens to be standing in. What it costs is a look at the status
+    /// line once a turn, which is nothing beside drawing the screen it
+    /// was read from.
+    /// </remarks>
+    private static RoomWatcher? _watcher;
 
     [STAThread]
     internal static int Main(string[] args)
@@ -151,6 +169,9 @@ internal static class Program
                 case "--interpreter" when i + 1 < args.Length && InterpreterNumbers.TryParse(args[i + 1], out var number):
                     _machine = number;
                     i++;
+                    break;
+                case "--map":
+                    _map = true;
                     break;
                 case "--tandy":
                     _tandy = true;
@@ -386,6 +407,7 @@ internal static class Program
               --fixed <family>         set the grids and preformatted text in this one
               --size <pixels>          the size of ordinary text, from 6 to 72
               --smoothing <s>          subpixel, grayscale, or none
+              --map                    open the map beside the game at the start
               --version                print the version and leave
               --probe                  print what the fonts measure and leave
               --help                   print this and leave
@@ -400,6 +422,12 @@ internal static class Program
               --sans "Verdana, Helvetica Neue, DejaVu Sans, sans-serif"
               --fixed "Consolas, Menlo, DejaVu Sans Mono, monospace"
               --size 16 --smoothing subpixel
+
+            The map is drawn as the game is played, from wherever the
+            story says which room the player is in, and opens and closes
+            on control and M whether or not it was asked for at the
+            start. Drag the divider to give it more or less of the
+            window, drag the map to move it, and roll the wheel to zoom.
 
             All three machines: a Z-machine game from a .z3 to a .z8 or
             a .zblorb, a Glulx game from a .ulx or a .gblorb, and a
@@ -564,6 +592,17 @@ internal static class Program
 
         board.Display = display;
 
+        // [glk #stream_styles] A Glulx story keeps nothing an
+        // interpreter can ask: no status line holding the room, no
+        // agreed global, no object tree. It does print the room's name
+        // as a heading on the way in, so the map is built by watching
+        // what goes to the display rather than by asking the machine.
+        // The board still draws through the display itself; only what
+        // the library writes passes through the watcher.
+        IGlkDisplay watched = _watcher is null
+            ? display
+            : new HeadingWatcher(display, _watcher);
+
         // [glk op:fileref_create_by_prompt] The player is asked for a
         // file through the toolkit's own dialogs.
         var directory = Path.GetDirectoryName(Path.GetFullPath(_path)) ?? Directory.GetCurrentDirectory();
@@ -572,7 +611,7 @@ internal static class Program
 
         // [glk #sound] The machine's audio output, or nothing on a
         // machine with none, which the gestalt answers then report.
-        var library = new GlkLibrary(display, files, sound: new EngineGlkSound(_audio))
+        var library = new GlkLibrary(watched, files, sound: new EngineGlkSound(_audio))
         {
             Resources = _resources,
         };
@@ -721,6 +760,11 @@ internal static class Program
             // or the other and behave differently.
             interpreterNumber: _machine,
             tandy: _tandy);
+
+        // Where the player is standing, turn by turn, which the machine
+        // reads out of a global before Version 4 and off the status
+        // line after it.
+        interpreter.Watcher = _watcher;
 
         // The title screen of the one story that has one the game
         // never draws: the picture fills the window until the player
@@ -925,13 +969,41 @@ internal static class Program
             {
                 var glyphs = new Glyphs(_size, _prose, _fixed);
                 var board = new Board(glyphs, _smoothing);
+
+                // An Aa-machine story says where the player is in no
+                // way anything here can read, so its map is honestly
+                // nothing rather than an empty one.
+                _watcher = _format == StoryFormat.AaMachine ? null : new RoomWatcher();
+
+                var side = new MapSide(_watcher, _sans);
+                var split = new MapSplit(board, side);
+
                 var window = new Window
                 {
                     Title = $"{Named()} - rezrov",
                     Icon = Mark(),
-                    Content = board,
+                    Content = split,
                     WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 };
+
+                // Caught on the way down, so that the board never sees
+                // the key and no game can be holding it for something
+                // of its own. The modifier is the one this machine uses
+                // everywhere else, as it is for pasting.
+                window.AddHandler(
+                    InputElement.KeyDownEvent,
+                    (_, e) =>
+                    {
+                        if (e.Key == Key.M
+                            && (e.KeyModifiers.HasFlag(KeyModifiers.Control)
+                                || e.KeyModifiers.HasFlag(KeyModifiers.Meta)))
+                        {
+                            split.Toggle();
+                            board.Focus();
+                            e.Handled = true;
+                        }
+                    },
+                    RoutingStrategies.Tunnel);
 
                 var (width, height) = Opening(window, glyphs);
                 window.Width = width;
@@ -939,6 +1011,14 @@ internal static class Program
 
                 window.Opened += (_, _) =>
                 {
+                    // Opened here rather than at the window's building,
+                    // because how wide the map should be is a share of
+                    // a window that does not have a size until now.
+                    if (_map)
+                    {
+                        split.Toggle();
+                    }
+
                     board.Focus();
                     _audio = AudioEngine.Create();
                     Start(window, board, glyphs);
@@ -946,6 +1026,10 @@ internal static class Program
 
                 window.Closed += (_, _) =>
                 {
+                    // The game's thread may still be finishing a turn,
+                    // and a turn tells the map it has changed.
+                    side.Release();
+
                     _audio?.Dispose();
                     _audio = null;
                 };

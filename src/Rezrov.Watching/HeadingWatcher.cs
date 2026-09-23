@@ -3,7 +3,7 @@ using System.Text;
 using Rezrov.Core.Graphics;
 using Rezrov.Glulx.Glk;
 
-namespace Rezrov.Cli;
+namespace Rezrov.Watching;
 
 /// <summary>
 /// Follows a Glulx game by watching what it prints, so that the rooms it

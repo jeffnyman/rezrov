@@ -46,4 +46,17 @@ public readonly record struct ScreenFit(double Scale, double Across, double Down
     /// </summary>
     public (double X, double Y) Unscaled(double x, double y) =>
         ((x - Across) / Scale, (y - Down) / Scale);
+
+    /// <summary>
+    /// A point in the screen's own coordinates, put where it belongs in
+    /// the window.
+    /// </summary>
+    /// <remarks>
+    /// The other half of <see cref="Unscaled"/>, and the reason both
+    /// are here: painting goes one way and the pointer comes back the
+    /// other, and the only way they cannot disagree is for there to be
+    /// one piece of arithmetic with the two of them written against it.
+    /// </remarks>
+    public (double X, double Y) Scaled(double x, double y) =>
+        ((x * Scale) + Across, (y * Scale) + Down);
 }
