@@ -702,19 +702,11 @@ public sealed class ScreenModel : IScreenModel
     /// <param name="first">The second global: score, or hours.</param>
     /// <param name="second">The third global: turns, or minutes.</param>
     /// <remarks>
-    /// The layout follows the formats the standard's author prefers in
-    /// the remarks on section 8: the score and turns as "80/733" and the
-    /// time as "12:03 PM", each fitting in eight characters at the right.
-    /// [zm 8.2.2.2] A name too long for the room left is broken at its
-    /// last space and given an ellipsis. The line is shown in reverse
-    /// video, as most interpreters show it.
+    /// How the line is arranged is <see cref="StatusBar"/>'s, because
+    /// a screen that changes width has to arrange it again and the two
+    /// must not be able to differ. What is kept here is what the game
+    /// said, so that there is something to arrange again from.
     /// </remarks>
-    /// <summary>
-    /// How much of the line the room name must still get before the
-    /// score is written out in words rather than compactly.
-    /// </summary>
-    private const int LeastRoom = 16;
-
     public void ShowStatusLine(string name, bool timeGame, short first, short second)
     {
         ArgumentNullException.ThrowIfNull(name);
@@ -724,36 +716,27 @@ public sealed class ScreenModel : IScreenModel
             return;
         }
 
-        var right = timeGame ? FormatTime(first, second) : FormatScore(first, second, Width);
+        // Kept, because the game is only asked for the status line
+        // once a turn and the screen can change width in between. A
+        // frontend that resizes lays the line out again from these
+        // rather than leaving the score stranded at the width it was
+        // last drawn for.
+        Status = new StatusValues(name, timeGame, first, second);
 
-        // One space at the left, two before the right-hand text, and
-        // one after it.
-        var room = Width - right.Length - 4;
-        if (name.Length > room)
-        {
-            var cut = room > 3 ? name.LastIndexOf(' ', room - 3) : -1;
-            name = (cut > 0 ? name[..cut] : name[..Math.Max(room - 3, 0)]) + "...";
-        }
-
-        var attributes = DefaultAttributes with { Style = TextStyle.ReverseVideo | TextStyle.FixedPitch };
-        var cells = new Cell[Width];
-        Array.Fill(cells, new Cell(' ', attributes));
-
-        for (var i = 0; i < name.Length && i + 1 < Width; i++)
-        {
-            cells[i + 1] = new Cell(name[i], attributes);
-        }
-
-        var start = Width - right.Length - 1;
-        for (var i = 0; i < right.Length && start + i >= 0 && start + i < Width; i++)
-        {
-            cells[start + i] = new Cell(right[i], attributes);
-        }
-
-        StatusLine = cells;
+        StatusLine = StatusBar.Compose(name, timeGame, first, second, Width, StatusAttributes);
         _upperChanged = true;
         Sync();
     }
+
+    /// <summary>
+    /// What the game last said the status line should show, or null
+    /// before it has said anything or in a version that has none.
+    /// </summary>
+    public StatusValues? Status { get; private set; }
+
+    /// <summary>[zm 8.2] The status line is in reverse video.</summary>
+    public TextAttributes StatusAttributes =>
+        DefaultAttributes with { Style = TextStyle.ReverseVideo | TextStyle.FixedPitch };
 
     /// <summary>
     /// The status line's characters, for display and tests.
@@ -830,44 +813,6 @@ public sealed class ScreenModel : IScreenModel
         FlushWord();
         _upperChanged = true;
         Pause();
-    }
-
-    /// <summary>
-    /// [zm 8.2] The score and the turn count, for the right-hand end
-    /// of the status line.
-    /// </summary>
-    /// <remarks>
-    /// The standard leaves the layout to the interpreter, and its
-    /// remarks on section 8 suggest a compact "80/733". Infocom's own
-    /// interpreters wrote the words out, and that is the status line
-    /// anyone who has played these games remembers, so the words are
-    /// what this writes. The compact form is kept for the case those
-    /// remarks were really answering: a screen too narrow to carry
-    /// both the words and a room name worth reading.
-    /// </remarks>
-    private static string FormatScore(short score, short turns, int width)
-    {
-        var written = string.Create(CultureInfo.InvariantCulture, $"Score: {score}     Moves: {turns}");
-
-        // One space at the left of the room name, two before this and
-        // one after it, which is what ShowStatusLine lays out.
-        return width - written.Length - 4 >= LeastRoom
-            ? written
-            : string.Create(CultureInfo.InvariantCulture, $"{score}/{turns}");
-    }
-
-    // [zm 8.2.3.2] Twelve-hour clock with AM or PM, so that 4am and 4pm
-    // can be told apart.
-    private static string FormatTime(short hours, short minutes)
-    {
-        var meridian = hours >= 12 ? "PM" : "AM";
-        var shown = hours % 12;
-        if (shown == 0)
-        {
-            shown = 12;
-        }
-
-        return string.Create(CultureInfo.InvariantCulture, $"{shown}:{minutes:D2} {meridian}");
     }
 
     private void PrintUpper(char character)

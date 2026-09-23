@@ -31,6 +31,8 @@ public sealed class ScreenBuffer
 
     private Cell[][] _rows;
     private readonly TextAttributes _blank;
+    private StatusValues? _status;
+    private TextAttributes _statusAttributes;
 
     public ScreenBuffer(int width, int height, TextAttributes blank, bool cursorStartsAtBottom)
     {
@@ -161,6 +163,13 @@ public sealed class ScreenBuffer
     public void UpdateUpper(ScreenModel model)
     {
         ArgumentNullException.ThrowIfNull(model);
+
+        // Kept so that the line can be arranged again if the screen
+        // changes width, since the game is only asked for it once a
+        // turn and would otherwise leave the score stranded at the old
+        // right-hand edge until the player typed something.
+        _status = model.Status;
+        _statusAttributes = model.StatusAttributes;
 
         StatusRows = model.StatusLine is null ? 0 : 1;
         if (model.StatusLine is { } status)
@@ -390,11 +399,12 @@ public sealed class ScreenBuffer
 
         // [zm 8.6.1.1] Where the status line is, so that the one row
         // the interpreter draws itself can be carried across a widened
-        // screen. The upper window is deliberately not: those rows
-        // belong to the game, which sized its own window and will
-        // paint it again, and inventing cells in it would be guessing
-        // at a layout only the game knows.
-        var status = StatusRows > 0 ? Math.Min(BandRows, Height - 1) : -1;
+        // screen. Only needed where there is nothing to arrange the
+        // line again from; with the game's own words kept, the row is
+        // rebuilt below instead. The upper window is deliberately
+        // neither: those rows belong to the game, which sized its own
+        // window and will paint it again.
+        var status = StatusRows > 0 && _status is null ? Math.Min(BandRows, Height - 1) : -1;
 
         for (var row = 0; row < Math.Min(height, Height); row++)
         {
@@ -442,6 +452,22 @@ public sealed class ScreenBuffer
         if (_said.Any(paragraph => paragraph.Count > 0))
         {
             Relay();
+        }
+
+        // [zm 8.2] And the status line is arranged again for the width
+        // it now has, so the score goes back to the right-hand edge
+        // rather than sitting where that edge used to be.
+        if (StatusRows > 0 && _status is { } said)
+        {
+            CopyRow(
+                Math.Min(BandRows, Height - 1),
+                StatusBar.Compose(
+                    said.Name,
+                    said.TimeGame,
+                    said.First,
+                    said.Second,
+                    Width,
+                    _statusAttributes));
         }
     }
 
