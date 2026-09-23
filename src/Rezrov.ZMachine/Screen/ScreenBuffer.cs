@@ -16,6 +16,19 @@ namespace Rezrov.ZMachine.Screen;
 /// </remarks>
 public sealed class ScreenBuffer
 {
+    /// <summary>
+    /// How many of the lower window's paragraphs are kept so that the
+    /// text can be laid out again at another width.
+    /// </summary>
+    /// <remarks>
+    /// Enough to fill any window several times over, and bounded so
+    /// that a long game does not carry every word it has ever printed.
+    /// What falls off the end is text that scrolled away long ago.
+    /// </remarks>
+    private const int Kept = 400;
+
+    private readonly List<List<Piece>> _said = [[]];
+
     private Cell[][] _rows;
     private readonly TextAttributes _blank;
 
@@ -221,6 +234,14 @@ public sealed class ScreenBuffer
     {
         ArgumentNullException.ThrowIfNull(text);
 
+        // Kept as it was printed, unwrapped, so that the text can be
+        // laid out again if the screen is ever a different width. The
+        // cells below are this paragraph at the width it has now.
+        if (text.Length > 0 && CursorRow >= LowerTop)
+        {
+            _said[^1].Add(new Piece(text, attributes));
+        }
+
         foreach (var character in text)
         {
             if (CursorColumn >= Width)
@@ -238,6 +259,38 @@ public sealed class ScreenBuffer
     /// lower window when the cursor is on the bottom row.
     /// </summary>
     public void NewLine()
+    {
+        // The game ended the line, so it is part of the text and is
+        // kept. A break the width forced comes through WrapLine and is
+        // deliberately not kept, because it is a fact about the width
+        // rather than about the text.
+        _said.Add([]);
+
+        if (_said.Count > Kept)
+        {
+            _said.RemoveRange(0, _said.Count - Kept);
+        }
+
+        WrapLine();
+    }
+
+    /// <summary>
+    /// [zm 7.2] Keeps a space that was not drawn because the line had
+    /// no room for it.
+    /// </summary>
+    public void Swallow(TextAttributes attributes)
+    {
+        if (CursorRow >= LowerTop)
+        {
+            _said[^1].Add(new Piece(" ", attributes));
+        }
+    }
+
+    /// <summary>
+    /// Ends the line because the width ran out, leaving the paragraph
+    /// it broke unfinished.
+    /// </summary>
+    public void WrapLine()
     {
         CursorColumn = 0;
         if (CursorRow < Height - 1)
@@ -266,6 +319,32 @@ public sealed class ScreenBuffer
 
         CursorColumn--;
         _rows[CursorRow][CursorColumn] = Cell.Blank(_blank);
+
+        // Taken back out of what was said as well, so that a line
+        // being edited does not come back on a resize with the
+        // characters the player already deleted.
+        Unsay();
+    }
+
+    /// <summary>Drops the last character of the kept text.</summary>
+    private void Unsay()
+    {
+        var paragraph = _said[^1];
+
+        if (paragraph.Count == 0)
+        {
+            return;
+        }
+
+        var last = paragraph[^1];
+
+        if (last.Text.Length <= 1)
+        {
+            paragraph.RemoveAt(paragraph.Count - 1);
+            return;
+        }
+
+        paragraph[^1] = last with { Text = last.Text[..^1] };
     }
 
     /// <summary>
@@ -273,6 +352,11 @@ public sealed class ScreenBuffer
     /// </summary>
     public void EraseLower(TextAttributes background)
     {
+        // What was said is gone with the cells that showed it, or a
+        // resize would bring a cleared screen back.
+        _said.Clear();
+        _said.Add([]);
+
         for (var row = LowerTop; row < Height; row++)
         {
             _rows[row] = BlankRow(Width, background);
@@ -348,6 +432,145 @@ public sealed class ScreenBuffer
         UpperLines = Math.Min(UpperLines, Math.Max(height - StatusRows, 0));
         CursorRow = Math.Clamp(CursorRow, LowerTop, height - 1);
         CursorColumn = Math.Min(CursorColumn, width - 1);
+
+        // The cells copied above were wrapped for the old width, and
+        // narrowing has just cut the end off every one of them. The
+        // text itself was kept, so the lower window is laid out again
+        // from that instead. A screen with nothing said on it, which
+        // is what a Version 6 game painting its own cells looks like
+        // from here, is left exactly as it was.
+        if (_said.Any(paragraph => paragraph.Count > 0))
+        {
+            Relay();
+        }
+    }
+
+    /// <summary>
+    /// A run of the lower window's text as the game printed it.
+    /// </summary>
+    private readonly record struct Piece(string Text, TextAttributes Attributes);
+
+    /// <summary>
+    /// Lays the kept text out again at the width the grid has now and
+    /// puts the result back on the lower window's rows.
+    /// </summary>
+    /// <remarks>
+    /// [zm 7.2] The rules are <see cref="LineFit"/>'s, the same ones
+    /// the screen model applies as the game prints, so text laid out
+    /// here and text that arrived at this width come out the same. A
+    /// test holds them to that, because the two walking the rules
+    /// separately is the one way this can go quietly wrong.
+    ///
+    /// Only the lower window. The status line and the upper window are
+    /// cells somebody else owns and are left exactly as they were.
+    /// </remarks>
+    private void Relay()
+    {
+        var lines = new List<List<Cell>>();
+        var line = new List<Cell>();
+        var word = new List<Cell>();
+
+        void Place()
+        {
+            if (word.Count == 0)
+            {
+                return;
+            }
+
+            if (LineFit.Breaks(line.Count, word.Count, Width))
+            {
+                lines.Add(line);
+                line = [];
+            }
+
+            foreach (var cell in word)
+            {
+                if (LineFit.Full(line.Count, Width))
+                {
+                    lines.Add(line);
+                    line = [];
+                }
+
+                line.Add(cell);
+            }
+
+            word.Clear();
+        }
+
+        for (var paragraph = 0; paragraph < _said.Count; paragraph++)
+        {
+            foreach (var piece in _said[paragraph])
+            {
+                foreach (var character in piece.Text)
+                {
+                    if (character == ' ')
+                    {
+                        Place();
+
+                        // A space at the right edge is swallowed, so
+                        // that the next word starts the new line.
+                        if (!LineFit.Full(line.Count, Width))
+                        {
+                            line.Add(new Cell(' ', piece.Attributes));
+                        }
+                    }
+                    else
+                    {
+                        word.Add(new Cell(character, piece.Attributes));
+                    }
+                }
+            }
+
+            Place();
+
+            // The last paragraph has not been ended by the game, so the
+            // line it is on is the one the cursor is still sitting on.
+            if (paragraph < _said.Count - 1)
+            {
+                lines.Add(line);
+                line = [];
+            }
+        }
+
+        lines.Add(line);
+
+        Show(lines);
+    }
+
+    /// <summary>
+    /// Puts laid-out lines on the lower window's rows, keeping the end
+    /// of the text rather than the start, since that is where the game
+    /// and the player both are.
+    /// </summary>
+    private void Show(List<List<Cell>> lines)
+    {
+        var rows = Height - LowerTop;
+
+        for (var row = LowerTop; row < Height; row++)
+        {
+            _rows[row] = BlankRow(Width, _blank);
+        }
+
+        // Bottom of the window when the text fills it, and also when
+        // the lower window is one that fills from the bottom, which is
+        // how [zm 8.6.3] Versions 1 to 4 start.
+        var top = lines.Count >= rows || CursorStartsAtBottom
+            ? Height - Math.Min(lines.Count, rows)
+            : LowerTop;
+
+        var first = Math.Max(lines.Count - rows, 0);
+
+        for (var i = first; i < lines.Count; i++)
+        {
+            var row = top + (i - first);
+            for (var column = 0; column < lines[i].Count && column < Width; column++)
+            {
+                _rows[row][column] = lines[i][column];
+            }
+        }
+
+        CursorRow = Math.Clamp(top + (lines.Count - 1 - first), LowerTop, Height - 1);
+        CursorColumn = Math.Min(lines[^1].Count, Width - 1);
     }
 
     private void CopyRow(int row, IReadOnlyList<Cell> cells)

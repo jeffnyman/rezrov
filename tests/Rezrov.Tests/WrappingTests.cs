@@ -60,6 +60,75 @@ public class WrappingTests
         Assert.Equal(["Here is an abacu", "s and a bead"], Written(screen));
     }
 
+    [Theory]
+    [InlineData(80, 40)]
+    [InlineData(40, 80)]
+    [InlineData(80, 20)]
+    [InlineData(20, 80)]
+    [InlineData(64, 12)]
+    [InlineData(12, 64)]
+    public void TextLaidOutAgainReadsAsIfItHadArrivedAtThatWidth(int first, int then)
+    {
+        // The whole point of keeping the text. Printing at one width
+        // and resizing to another has to give the same screen as
+        // printing at the second width to begin with, or a resize
+        // quietly rewrites what the game said.
+        //
+        // This is also what holds the two walks of [zm 7.2] together.
+        // The screen model applies the rules as the game prints and the
+        // grid applies them again when it lays the text out; they share
+        // LineFit, but they walk it separately, and nothing else would
+        // notice them drifting apart.
+        var (screen, model) = Make(first, 40);
+
+        Say(model, Passage);
+        screen.Resize(then, 40);
+
+        Assert.Equal(Expected(then), string.Join("\n", Written(screen)));
+    }
+
+    [Fact]
+    public void NarrowingAndWideningBackLosesNothing()
+    {
+        // What the bug looked like from the outside: the grid was the
+        // only copy of the text, so narrowing cut the end off every
+        // line and widening brought back blanks.
+        var (screen, model) = Make(80, 40);
+
+        Say(model, Passage);
+        screen.Resize(30, 40);
+        screen.Resize(80, 40);
+
+        Assert.Equal(Expected(80), string.Join("\n", Written(screen)));
+    }
+
+    [Fact]
+    public void ALineTheGameEndedStaysEnded()
+    {
+        // A break the game printed belongs to the text. A break the
+        // width forced does not, and has to be forgotten before the
+        // text is laid out again, or the paragraphs would fossilise
+        // at whatever width they first came out at.
+        var (screen, model) = Make(20, 20);
+
+        Say(model, "one\ntwo\nthree\n");
+        screen.Resize(60, 20);
+
+        Assert.Equal(["one", "two", "three"], Written(screen));
+    }
+
+    [Fact]
+    public void AClearedScreenDoesNotComeBackOnAResize()
+    {
+        var (screen, model) = Make(40, 20);
+
+        Say(model, Passage);
+        model.EraseWindow(ScreenModel.Lower);
+        screen.Resize(70, 20);
+
+        Assert.Empty(Written(screen));
+    }
+
     /// <summary>The whole of the lower window, as lines of text.</summary>
     private static string Grid(int width)
     {

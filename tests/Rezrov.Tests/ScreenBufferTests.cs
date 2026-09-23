@@ -168,16 +168,22 @@ public class ScreenBufferTests
     }
 
     [Fact]
-    public void ResizeKeepsWhatFitsAndTheCursorInside()
+    public void ResizeLaysTheTextOutAgainAndBringsTheCursorWithIt()
     {
         var buffer = new ScreenBuffer(10, 4, Blank, cursorStartsAtBottom: true);
         buffer.Print("bottom row", Blank);
 
         buffer.Resize(6, 2);
 
+        // [zm 7.2] Ten characters do not fit on a line of six, so the
+        // text comes out as two lines rather than being cut off, and
+        // the cursor sits after the last of it rather than wherever
+        // the old column happened to land.
         Assert.Equal((6, 2), (buffer.Width, buffer.Height));
+        Assert.Equal("bottom", buffer.RowText(0));
+        Assert.Equal("row   ", buffer.RowText(1));
         Assert.Equal(1, buffer.CursorRow);
-        Assert.Equal(5, buffer.CursorColumn);
+        Assert.Equal(3, buffer.CursorColumn);
     }
 
     [Fact]

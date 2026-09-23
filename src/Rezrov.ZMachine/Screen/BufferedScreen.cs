@@ -145,6 +145,27 @@ public class BufferedScreen : IScreen
         _repaint();
     }
 
+    public void WrapLine()
+    {
+        lock (Sync)
+        {
+            Buffer.WrapLine();
+        }
+
+        _repaint();
+    }
+
+    public void SwallowedSpace(TextAttributes attributes)
+    {
+        // Nothing is drawn, so nothing is repainted. The space is kept
+        // only so that the text can be laid out again at a width where
+        // it would have been visible.
+        lock (Sync)
+        {
+            Buffer.Swallow(attributes);
+        }
+    }
+
     public void EraseLowerWindow(ScreenColor background)
     {
         lock (Sync)

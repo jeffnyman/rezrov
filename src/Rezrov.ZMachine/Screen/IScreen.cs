@@ -68,6 +68,37 @@ public interface IScreen
     void NewLine();
 
     /// <summary>
+    /// Ends the current line because the text ran out of width rather
+    /// than because the game ended it.
+    /// </summary>
+    /// <remarks>
+    /// The same break on the screen, and a frontend that only paints
+    /// is right to treat it as one, which is why it falls back to
+    /// <see cref="NewLine"/>. It is told apart for the sake of a
+    /// frontend that keeps the text: a break the game printed belongs
+    /// to the text and must survive, while a break the width forced is
+    /// a fact about the old width and has to be forgotten before the
+    /// text can be laid out again at a new one.
+    /// </remarks>
+    void WrapLine() => NewLine();
+
+    /// <summary>
+    /// [zm 7.2] A space that fell at the right edge and was not drawn,
+    /// because the line had no room for it and the next word starts
+    /// the next line.
+    /// </summary>
+    /// <remarks>
+    /// Nothing to paint, so a frontend that only paints ignores it.
+    /// A frontend that keeps its text keeps the space: it is part of
+    /// what the game said, and only the width it arrived at made it
+    /// invisible. Dropped, it would come back as two words run
+    /// together the moment the screen was laid out any wider.
+    /// </remarks>
+    void SwallowedSpace(TextAttributes attributes)
+    {
+    }
+
+    /// <summary>
     /// [zm 8.7.3.2] Clears the lower window to the background color.
     /// </summary>
     void EraseLowerWindow(ScreenColor background);

@@ -893,9 +893,9 @@ public sealed class ScreenModel : IScreenModel
             return;
         }
 
-        if (IsGrid && _lowerColumn > 0 && _lowerColumn + _word.Count > Width && _word.Count <= Width)
+        if (IsGrid && LineFit.Breaks(_lowerColumn, _word.Count, Width))
         {
-            NewLineLower();
+            NewLineLower(wrapped: true);
         }
 
         var word = _word.ToArray();
@@ -907,8 +907,9 @@ public sealed class ScreenModel : IScreenModel
     // wrapped, so that the next word starts the new line.
     private void EmitSpace()
     {
-        if (IsGrid && _lowerColumn >= Width)
+        if (IsGrid && LineFit.Full(_lowerColumn, Width))
         {
+            _screen.SwallowedSpace(Attributes);
             return;
         }
 
@@ -924,10 +925,10 @@ public sealed class ScreenModel : IScreenModel
 
         foreach (var (character, attributes) in characters)
         {
-            if (IsGrid && _lowerColumn >= Width)
+            if (IsGrid && LineFit.Full(_lowerColumn, Width))
             {
                 EmitRun();
-                NewLineLower();
+                NewLineLower(wrapped: true);
             }
 
             if (run.Length > 0 && runAttributes != attributes)
@@ -954,9 +955,21 @@ public sealed class ScreenModel : IScreenModel
 
     // [zm 8.4.1] The frontend pauses once a screenful has gone by since
     // the player last had a chance to read.
-    private void NewLineLower()
+    //
+    // A break the width forced is told apart from one the game printed,
+    // because a frontend that keeps its text has to forget the first
+    // kind to lay the text out again at another width.
+    private void NewLineLower(bool wrapped = false)
     {
-        _screen.NewLine();
+        if (wrapped)
+        {
+            _screen.WrapLine();
+        }
+        else
+        {
+            _screen.NewLine();
+        }
+
         _lowerColumn = 0;
 
         if (!IsGrid || _pagingSuppressed)
