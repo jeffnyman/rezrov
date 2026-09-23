@@ -17,24 +17,72 @@ namespace Rezrov.ZMachine.Screen;
 /// </remarks>
 public sealed class UpperWindow
 {
-    private readonly Cell[][] _rows;
+    private Cell[][] _rows;
 
     internal UpperWindow(int width, int maxLines, TextAttributes blank)
     {
         Width = width;
-        _rows = new Cell[maxLines][];
-        for (var row = 0; row < maxLines; row++)
-        {
-            _rows[row] = new Cell[width];
-        }
-
-        Clear(blank);
+        _rows = Make(width, maxLines, blank);
     }
 
     /// <summary>
     /// The width in characters, the same as the screen's.
     /// </summary>
-    public int Width { get; }
+    public int Width { get; private set; }
+
+    /// <summary>
+    /// Fits the window to a screen that has changed size, keeping the
+    /// cells that still have somewhere to be.
+    /// </summary>
+    /// <remarks>
+    /// [zm 8.7.2.1] The upper window is as wide as the screen, so when
+    /// the screen stops being one width it stops being that width too.
+    /// Without this it kept whatever width the screen happened to have
+    /// when the game started, forever: a window opened narrow and then
+    /// widened left a Version 4 or later game, which draws its own
+    /// status line up here, writing into a strip the width it first
+    /// saw and unable to reach the rest of the screen ever again.
+    ///
+    /// What was on it is kept rather than cleared, because the game is
+    /// not told to redraw and may not do so for several turns. A
+    /// stale status line is worth more than an empty one.
+    /// </remarks>
+    internal void Fit(int width, int maxLines, TextAttributes blank)
+    {
+        if (width == Width && maxLines == _rows.Length)
+        {
+            return;
+        }
+
+        var rows = Make(width, maxLines, blank);
+
+        for (var row = 0; row < Math.Min(maxLines, _rows.Length); row++)
+        {
+            for (var column = 0; column < Math.Min(width, Width); column++)
+            {
+                rows[row][column] = _rows[row][column];
+            }
+        }
+
+        _rows = rows;
+        Width = width;
+        Lines = Math.Min(Lines, maxLines);
+        CursorRow = Math.Clamp(CursorRow, 1, Math.Max(maxLines, 1));
+        CursorColumn = Math.Clamp(CursorColumn, 1, Math.Max(width, 1));
+    }
+
+    private static Cell[][] Make(int width, int maxLines, TextAttributes blank)
+    {
+        var rows = new Cell[maxLines][];
+
+        for (var row = 0; row < maxLines; row++)
+        {
+            rows[row] = new Cell[width];
+            Array.Fill(rows[row], Cell.Blank(blank));
+        }
+
+        return rows;
+    }
 
     /// <summary>
     /// [zm 8.7.2.1] The current height in lines, 0 when unsplit.

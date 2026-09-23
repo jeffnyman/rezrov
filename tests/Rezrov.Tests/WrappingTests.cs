@@ -118,6 +118,58 @@ public class WrappingTests
     }
 
     [Fact]
+    public void TheUpperWindowFollowsTheScreensWidth()
+    {
+        // [zm 8.7.2.1] The upper window is as wide as the screen. It
+        // used to be given the width the screen had when the game
+        // started and keep it forever, so a window opened narrow left
+        // a Version 4 or later game, which draws its own status line
+        // up here, unable ever to reach the rest of the screen.
+        var (screen, model) = Make(30, 10);
+
+        model.SplitWindow(1);
+        model.SetWindow(ScreenModel.Upper);
+        model.SetCursor(1, 1);
+
+        Assert.Equal(30, model.UpperWindow.Width);
+
+        screen.Resize(70, 10);
+        model.SetCursor(1, 1);
+
+        Assert.Equal(70, model.UpperWindow.Width);
+
+        // And the game can now write out to the new edge.
+        Assert.True(model.SetCursor(1, 70));
+    }
+
+    [Fact]
+    public void WhatTheUpperWindowSaysSurvivesAResize()
+    {
+        // The game is not told to redraw and may not for several
+        // turns, so a stale status line beats an empty one.
+        var (screen, model) = Make(40, 10);
+
+        model.SplitWindow(1);
+        model.SetWindow(ScreenModel.Upper);
+        model.SetCursor(1, 1);
+
+        foreach (var character in "Cragne Manor")
+        {
+            model.Print(character);
+        }
+
+        screen.Resize(70, 10);
+
+        // The fit happens when the machine next has anything to do
+        // with the upper window, so the game taking its next turn is
+        // what has to be made to happen here.
+        model.SetCursor(1, 1);
+
+        Assert.Equal(70, model.UpperWindow.Width);
+        Assert.StartsWith("Cragne Manor", model.UpperWindow.RowText(1));
+    }
+
+    [Fact]
     public void AClearedScreenDoesNotComeBackOnAResize()
     {
         var (screen, model) = Make(40, 20);

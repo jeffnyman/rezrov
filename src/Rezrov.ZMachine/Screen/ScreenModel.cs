@@ -374,6 +374,7 @@ public sealed class ScreenModel : IScreenModel
     /// </remarks>
     public void SplitWindow(int lines)
     {
+        FitUpper();
         FlushWord();
 
         lines = Math.Clamp(lines, 0, MaxUpperLines);
@@ -482,6 +483,7 @@ public sealed class ScreenModel : IScreenModel
     /// <returns>False if the position was outside the window.</returns>
     public bool SetCursor(int row, int column)
     {
+        FitUpper();
         FlushWord();
 
         if (CurrentWindow != Upper)
@@ -870,6 +872,8 @@ public sealed class ScreenModel : IScreenModel
 
     private void PrintUpper(char character)
     {
+        FitUpper();
+
         // [zm 8.7.3.1] A character may be printed at the bottom right,
         // after which the cursor stays put, so anything further is
         // dropped rather than wrapped.
@@ -993,8 +997,23 @@ public sealed class ScreenModel : IScreenModel
         _linesSincePause = 0;
     }
 
+    /// <summary>
+    /// [zm 8.7.2.1] Keeps the upper window as wide as the screen.
+    /// </summary>
+    /// <remarks>
+    /// Checked here rather than pushed in from the frontend, because a
+    /// resize arrives on whatever thread owns the window while the
+    /// upper window's cells belong to the machine. Noticing the change
+    /// on the machine's own thread, the next time it has anything to
+    /// do with the upper window, keeps one owner for those cells.
+    /// </remarks>
+    private void FitUpper() =>
+        UpperWindow.Fit(_screen.Width, Math.Max(_screen.Height, 1), BlankAttributes);
+
     private void Sync()
     {
+        FitUpper();
+
         if (_upperChanged)
         {
             _upperChanged = false;
