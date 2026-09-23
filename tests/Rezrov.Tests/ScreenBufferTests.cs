@@ -187,30 +187,35 @@ public class ScreenBufferTests
     }
 
     [Fact]
-    public void AWidenedScreenCarriesTheStatusBandToTheNewEdge()
+    public void AWidenedScreenArrangesTheStatusLineForItsNewWidth()
     {
-        // [zm 8.6.1.1] The status line was drawn to the old width and
-        // only the next turn draws it again, so a screen that grows
-        // would otherwise show the band stopping short with the
-        // ordinary page color beyond it, which on most of these games
-        // is a black gap across the top of the window.
+        // [zm 8.2] The game is only asked for the status line once a
+        // turn, so a screen that grows in between used to leave the
+        // score stranded where the old right-hand edge had been, with
+        // a gap of ordinary page color beyond it, which on most of
+        // these games is black. What the game said is kept, so the
+        // line is laid out again instead.
         var (buffer, model) = MakeWithModel(20, 6, ZMachineVersion.V3);
-        model.ShowStatusLine("Forest", timeGame: false, 0, 0);
+        model.ShowStatusLine("Forest", timeGame: false, 0, 3);
         buffer.UpdateUpper(model);
 
-        var band = buffer[0, 19].Attributes;
-
-        // The band is made of reverse video, which is why the
-        // attributes have to go over as they are: blanking a cell
-        // strips exactly that.
-        Assert.True(band.Style.HasFlag(TextStyle.ReverseVideo), "the status line should be reversed");
+        Assert.True(
+            buffer[0, 19].Attributes.Style.HasFlag(TextStyle.ReverseVideo),
+            "the status line should be reversed");
 
         buffer.Resize(30, 6);
 
-        for (var column = 20; column < 30; column++)
+        // The room still at the left, the score back at the right, and
+        // reverse video the whole way across rather than stopping at
+        // the width the line was last drawn for.
+        Assert.StartsWith(" Forest", buffer.RowText(0));
+        Assert.EndsWith("0/3 ", buffer.RowText(0));
+
+        for (var column = 0; column < 30; column++)
         {
-            Assert.Equal(band, buffer[0, column].Attributes);
-            Assert.Equal(' ', buffer[0, column].Character);
+            Assert.True(
+                buffer[0, column].Attributes.Style.HasFlag(TextStyle.ReverseVideo),
+                $"column {column} fell out of the band");
         }
     }
 
