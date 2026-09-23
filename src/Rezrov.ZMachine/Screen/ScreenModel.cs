@@ -707,6 +707,12 @@ public sealed class ScreenModel : IScreenModel
     /// last space and given an ellipsis. The line is shown in reverse
     /// video, as most interpreters show it.
     /// </remarks>
+    /// <summary>
+    /// How much of the line the room name must still get before the
+    /// score is written out in words rather than compactly.
+    /// </summary>
+    private const int LeastRoom = 16;
+
     public void ShowStatusLine(string name, bool timeGame, short first, short second)
     {
         ArgumentNullException.ThrowIfNull(name);
@@ -716,7 +722,7 @@ public sealed class ScreenModel : IScreenModel
             return;
         }
 
-        var right = timeGame ? FormatTime(first, second) : FormatScore(first, second);
+        var right = timeGame ? FormatTime(first, second) : FormatScore(first, second, Width);
 
         // One space at the left, two before the right-hand text, and
         // one after it.
@@ -824,8 +830,29 @@ public sealed class ScreenModel : IScreenModel
         Pause();
     }
 
-    private static string FormatScore(short score, short turns) =>
-        string.Create(CultureInfo.InvariantCulture, $"{score}/{turns}");
+    /// <summary>
+    /// [zm 8.2] The score and the turn count, for the right-hand end
+    /// of the status line.
+    /// </summary>
+    /// <remarks>
+    /// The standard leaves the layout to the interpreter, and its
+    /// remarks on section 8 suggest a compact "80/733". Infocom's own
+    /// interpreters wrote the words out, and that is the status line
+    /// anyone who has played these games remembers, so the words are
+    /// what this writes. The compact form is kept for the case those
+    /// remarks were really answering: a screen too narrow to carry
+    /// both the words and a room name worth reading.
+    /// </remarks>
+    private static string FormatScore(short score, short turns, int width)
+    {
+        var written = string.Create(CultureInfo.InvariantCulture, $"Score: {score}     Moves: {turns}");
+
+        // One space at the left of the room name, two before this and
+        // one after it, which is what ShowStatusLine lays out.
+        return width - written.Length - 4 >= LeastRoom
+            ? written
+            : string.Create(CultureInfo.InvariantCulture, $"{score}/{turns}");
+    }
 
     // [zm 8.2.3.2] Twelve-hour clock with AM or PM, so that 4am and 4pm
     // can be told apart.

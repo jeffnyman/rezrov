@@ -423,7 +423,9 @@ public class ScreenModelTests
     [Fact]
     public void TheStatusLineShowsScoreAndTurnsOrTheTime()
     {
-        // [zm 8.2] in the format the standard's author prefers.
+        // [zm 8.2] On a screen this narrow the score is written the
+        // compact way the standard's author prefers in the remarks on
+        // section 8, because the words would crowd out the room name.
         var (screen, model) = Make(width: 40, version: ZMachineVersion.V3);
         var updates = screen.UpperWindowUpdates;
 
@@ -439,6 +441,28 @@ public class ScreenModelTests
         Assert.EndsWith("12:07 AM ", model.StatusLineText);
         model.ShowStatusLine("Lincoln Memorial", timeGame: true, 16, 30);
         Assert.EndsWith(" 4:30 PM ", model.StatusLineText);
+    }
+
+    [Fact]
+    public void AScreenWithRoomForItGetsTheStatusLineInfocomWrote()
+    {
+        // [zm 8.2] The standard leaves the layout open. Infocom's own
+        // interpreters wrote the words out, and on the eighty column
+        // screen these games were written for there is ample room, so
+        // that is what a player sees.
+        var (_, model) = Make(width: 80, version: ZMachineVersion.V3);
+
+        model.ShowStatusLine("West of House", timeGame: false, 0, 0);
+
+        Assert.Equal(
+            " West of House".PadRight(58) + "Score: 0     Moves: 0 ",
+            model.StatusLineText);
+
+        // And the room name still has room to breathe beside it.
+        model.ShowStatusLine("Entrance to Hades", timeGame: false, 350, 1024);
+
+        Assert.StartsWith(" Entrance to Hades ", model.StatusLineText);
+        Assert.EndsWith("Score: 350     Moves: 1024 ", model.StatusLineText);
     }
 
     [Fact]
