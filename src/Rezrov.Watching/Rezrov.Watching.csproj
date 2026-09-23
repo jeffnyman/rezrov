@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    How each machine tells a map where the player is.
+
+    Rezrov.Mapping holds the map itself and deliberately references
+    nothing, because the difference between the machines is not its
+    business. That difference has to live somewhere, though, and this is
+    where: the Z-Machine hands over a room object, a Glulx story is read
+    from the headings it prints, and neither of those belongs in the
+    other's project.
+
+    It is a project rather than a file in a frontend because both the
+    terminal program and the window program map a game, and a class that
+    turns turns into rooms should not be written twice.
+  -->
+
+  <ItemGroup>
+    <ProjectReference Include="..\Rezrov.Glulx\Rezrov.Glulx.csproj" />
+    <ProjectReference Include="..\Rezrov.Mapping\Rezrov.Mapping.csproj" />
+    <ProjectReference Include="..\Rezrov.ZMachine\Rezrov.ZMachine.csproj" />
+  </ItemGroup>
+
+</Project>

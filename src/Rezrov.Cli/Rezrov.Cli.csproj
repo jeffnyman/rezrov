@@ -22,6 +22,7 @@
     <ProjectReference Include="..\Rezrov.Core\Rezrov.Core.csproj" />
     <ProjectReference Include="..\Rezrov.Glulx\Rezrov.Glulx.csproj" />
     <ProjectReference Include="..\Rezrov.Mapping\Rezrov.Mapping.csproj" />
+    <ProjectReference Include="..\Rezrov.Watching\Rezrov.Watching.csproj" />
     <ProjectReference Include="..\Rezrov.ZMachine\Rezrov.ZMachine.csproj" />
   </ItemGroup>
 

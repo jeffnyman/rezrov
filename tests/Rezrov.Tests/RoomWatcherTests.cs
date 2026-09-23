@@ -1,4 +1,4 @@
-using Rezrov.Cli;
+using Rezrov.Watching;
 using Rezrov.Mapping;
 
 namespace Rezrov.Tests;
@@ -83,5 +83,88 @@ public class RoomWatcherTests
 
         Assert.Empty(watcher.Graph.Rooms);
         Assert.Null(watcher.Graph.Current);
+    }
+
+    [Fact]
+    public void EachRoomSeenSaysSoOnce()
+    {
+        // What a window listens to, so that it repaints the map on the
+        // turns the map changed and on no others.
+        var watcher = new RoomWatcher();
+        var said = 0;
+
+        watcher.Changed += () => said++;
+
+        watcher.Standing(1, "West of House");
+        watcher.Typed("north");
+        watcher.Standing(2, "North of House");
+
+        Assert.Equal(2, said);
+    }
+
+    [Fact]
+    public void ATurnAndAReadOfTheMapDoNotCollide()
+    {
+        // The game plays on one thread and a window draws on another.
+        // The graph is a plain object graph with no thread safety of
+        // its own, so a room arriving partway through a walk of the
+        // rooms would throw, or worse, quietly hand back half a map.
+        var watcher = new RoomWatcher();
+        var rooms = 400;
+        var trouble = new List<Exception>();
+
+        var playing = new Thread(() =>
+        {
+            try
+            {
+                for (var i = 1; i <= rooms; i++)
+                {
+                    watcher.Typed("north");
+                    watcher.Standing(i, $"Room {i}");
+                }
+            }
+            catch (Exception e)
+            {
+                lock (trouble)
+                {
+                    trouble.Add(e);
+                }
+            }
+        });
+
+        playing.Start();
+
+        // Reading the whole map over and over while it is being built,
+        // which is what a repaint does.
+        var seen = 0;
+
+        while (playing.IsAlive)
+        {
+            try
+            {
+                watcher.Read(graph =>
+                {
+                    foreach (var room in graph.Rooms)
+                    {
+                        seen += room.Exits.Count;
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                lock (trouble)
+                {
+                    trouble.Add(e);
+                }
+
+                break;
+            }
+        }
+
+        playing.Join();
+
+        Assert.Empty(trouble);
+        Assert.Equal(rooms, watcher.Graph.Rooms.Count);
+        Assert.True(seen >= 0, "the map was walked at least once");
     }
 }

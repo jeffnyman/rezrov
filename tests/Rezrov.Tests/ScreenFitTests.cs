@@ -70,12 +70,15 @@ public class ScreenFitTests
         // transform comes back to where it started. This is the whole
         // reason the arithmetic lives in one place: a click that lands
         // near enough to look right and is wrong would go unnoticed.
+        // Both halves are called here rather than one of them written
+        // out again, since a copy of the painting is not the painting.
         foreach (var (x, y) in new[] { (0.0, 0.0), (319.0, 199.0), (640.0, 400.0) })
         {
-            var (back, down) = fit.Unscaled((x * fit.Scale) + fit.Across, (y * fit.Scale) + fit.Down);
+            var (across, down) = fit.Scaled(x, y);
+            var (back, up) = fit.Unscaled(across, down);
 
             Assert.Equal(x, back, 6);
-            Assert.Equal(y, down, 6);
+            Assert.Equal(y, up, 6);
         }
     }
 
