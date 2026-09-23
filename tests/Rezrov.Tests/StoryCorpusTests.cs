@@ -285,7 +285,7 @@ public class StoryCorpusTests
         // Adventure, a Version 5 Inform game, draws its own status line
         // in the upper window, as every Inform game does.
         Assert.Contains("West of House", zorkStatus);
-        Assert.Contains("0/4", zorkStatus);
+        Assert.Contains("Score: 0     Moves: 4", zorkStatus);
         Assert.Contains("At End Of Road", adventUpper);
         Assert.Contains("Score: 36", adventUpper);
 
