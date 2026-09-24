@@ -98,6 +98,9 @@ internal static class Program
     /// </remarks>
     private static RoomWatcher? _watcher;
 
+    /// <summary>Where this story's map is kept between sessions.</summary>
+    private static MapStore? _maps;
+
     [STAThread]
     internal static int Main(string[] args)
     {
@@ -453,6 +456,11 @@ internal static class Program
             on control and M whether or not it was asked for at the
             start. Drag the divider to give it more or less of the
             window, drag the map to move it, and roll the wheel to zoom.
+
+            Each story's map is kept between sessions, so closing the
+            window, restarting, and restoring a save all leave it where
+            it was. Clear starts a new one, and nothing else ever
+            throws a map away.
 
             All three machines: a Z-machine game from a .z3 to a .z8 or
             a .zblorb, a Glulx game from a .ulx or a .gblorb, and a
@@ -974,6 +982,31 @@ internal static class Program
         worker.Start();
     }
 
+    /// <summary>
+    /// Keeps the map for the next time this story is opened.
+    /// </summary>
+    /// <remarks>
+    /// The game's own thread may still be finishing a turn, so the map
+    /// is read the way anything else reads it, with the game held off
+    /// it. Failing to write is said once and otherwise let go: the
+    /// game is over and there is nothing useful to do about it.
+    /// </remarks>
+    private static void Keep()
+    {
+        if (_watcher is null || _maps is null)
+        {
+            return;
+        }
+
+        string? trouble = null;
+        _watcher.Read(graph => trouble = _maps.Save(graph));
+
+        if (trouble is not null)
+        {
+            Console.Error.WriteLine($"rezrov-gui: the map could not be kept: {trouble}");
+        }
+    }
+
     /// <summary>The application the toolkit runs.</summary>
     private sealed class GameApp : Application
     {
@@ -1003,9 +1036,23 @@ internal static class Program
                 // An Aa-machine story says where the player is in no
                 // way anything here can read, so its map is honestly
                 // nothing rather than an empty one.
-                _watcher = _format == StoryFormat.AaMachine ? null : new RoomWatcher();
+                //
+                // Anything else picks up the map this story already
+                // has. A map is what the player worked out about the
+                // game, and closing the window is not a reason to
+                // take it away from them.
+                if (_format != StoryFormat.AaMachine)
+                {
+                    _maps = new MapStore(_bytes);
+                    _watcher = new RoomWatcher(_maps.Load());
+                }
 
                 var side = new MapSide(_watcher, _sans);
+
+                // Clearing throws the kept map away too, or the next
+                // time this story was opened the map the player just
+                // asked to be rid of would be back.
+                side.Forget += () => _maps?.Forget();
                 var split = new MapSplit(board, side);
 
                 var window = new Window
@@ -1059,6 +1106,8 @@ internal static class Program
                     // The game's thread may still be finishing a turn,
                     // and a turn tells the map it has changed.
                     side.Release();
+
+                    Keep();
 
                     _audio?.Dispose();
                     _audio = null;

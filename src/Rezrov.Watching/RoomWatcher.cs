@@ -28,6 +28,12 @@ public sealed class RoomWatcher : ITurnWatcher
 
     private Direction? _walked;
 
+    /// <param name="kept">
+    /// A map of this game from an earlier session, which the player
+    /// goes on adding to, or null to start a fresh one.
+    /// </param>
+    public RoomWatcher(RoomGraph? kept = null) => Graph = kept ?? new RoomGraph();
+
     /// <summary>The map as far as the game has been played.</summary>
     /// <remarks>
     /// Safe to reach for directly only where the game and whatever
@@ -36,7 +42,29 @@ public sealed class RoomWatcher : ITurnWatcher
     /// draws the map while the game is still being played is two
     /// threads, and has to go through <see cref="Read"/> instead.
     /// </remarks>
-    public RoomGraph Graph { get; } = new();
+    public RoomGraph Graph { get; private set; }
+
+    /// <summary>
+    /// Throws the map away and starts another, which the player asks
+    /// for and nothing else ever does.
+    /// </summary>
+    /// <remarks>
+    /// Restarting a game does not do this, and neither does restoring
+    /// a save. Both of those change where the player is, not what they
+    /// have found out, and a game that restarts itself would otherwise
+    /// take the map with it without anyone having asked.
+    /// </remarks>
+    public void Forget()
+    {
+        lock (_lock)
+        {
+            Graph = new RoomGraph();
+        }
+
+        _walked = null;
+
+        Changed?.Invoke();
+    }
 
     /// <summary>
     /// Raised once the map has taken in another turn.
