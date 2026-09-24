@@ -101,6 +101,9 @@ internal static class Program
     /// <summary>Where this story's map is kept between sessions.</summary>
     private static MapStore? _maps;
 
+    /// <summary>Whether a map that will not write has been said.</summary>
+    private static bool _complained;
+
     [STAThread]
     internal static int Main(string[] args)
     {
@@ -1001,8 +1004,12 @@ internal static class Program
         string? trouble = null;
         _watcher.Read(graph => trouble = _maps.Save(graph));
 
-        if (trouble is not null)
+        // Said once. A map that cannot be written is unlikely to
+        // become writable before the game ends, and a line of
+        // complaint on every turn would be worse than the fault.
+        if (trouble is not null && !_complained)
         {
+            _complained = true;
             Console.Error.WriteLine($"rezrov-gui: the map could not be kept: {trouble}");
         }
     }
@@ -1045,6 +1052,13 @@ internal static class Program
                 {
                     _maps = new MapStore(_bytes);
                     _watcher = new RoomWatcher(_maps.Load());
+
+                    // Kept as the game is played rather than only on
+                    // the way out, so that a window closed the hard
+                    // way, or a machine that stops, costs the player
+                    // nothing they had found. Most turns find no new
+                    // room and write nothing at all.
+                    _watcher.Changed += Keep;
                 }
 
                 var side = new MapSide(_watcher, _sans);

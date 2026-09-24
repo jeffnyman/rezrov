@@ -42,6 +42,12 @@ public sealed class MapStore
     public string Kept { get; }
 
     /// <summary>
+    /// The map as it was last written, so that a turn which found
+    /// nothing new does not write the same file again.
+    /// </summary>
+    private string? _written;
+
+    /// <summary>
     /// The map kept for this story, or null where there is none yet or
     /// it cannot be read.
     /// </summary>
@@ -79,13 +85,25 @@ public sealed class MapStore
             return null;
         }
 
+        var text = MapFile.Written(graph);
+
+        // Called once a turn, and most turns find no new room: the
+        // player picks something up, reads it, and puts it down again.
+        // Comparing what would be written against what was written
+        // means the disk is touched when the map actually grows rather
+        // than once for every command typed. The file is checked too,
+        // so that a map deleted from underneath comes back.
+        if (text == _written && File.Exists(Kept))
+        {
+            return null;
+        }
+
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(Kept)!);
+            File.WriteAllText(Kept, text);
 
-            using var writer = new StreamWriter(Kept);
-
-            MapFile.Write(graph, writer);
+            _written = text;
 
             return null;
         }
@@ -98,6 +116,8 @@ public sealed class MapStore
     /// <summary>Throws the kept map away, when the player asks.</summary>
     public void Forget()
     {
+        _written = null;
+
         try
         {
             File.Delete(Kept);
@@ -114,13 +134,47 @@ public sealed class MapStore
     /// This machine's own place for the things a program keeps for
     /// itself, which is where maps go.
     /// </summary>
-    private static string Ordinary() =>
-        Path.Combine(
+    private static string Ordinary() => Path.Combine(Kind(), "rezrov", "maps");
+
+    /// <summary>
+    /// The folder this machine keeps a program's own files in.
+    /// </summary>
+    /// <remarks>
+    /// Windows and Linux are both answered correctly by asking the
+    /// runtime for local application data: it gives %LOCALAPPDATA% on
+    /// one, and XDG_DATA_HOME or ~/.local/share on the other, which is
+    /// what each platform expects.
+    ///
+    /// macOS is the one that has to be said out loud. The runtime
+    /// answers ~/.local/share there as well, because it shares the
+    /// Unix implementation, but that is not where a Mac keeps these
+    /// things and a file left there is somewhere no Mac user would
+    /// think to look. The Apple convention is Application Support
+    /// under the user's own Library, so that is what is used.
+    /// </remarks>
+    private static string Kind() =>
+        Folder(
+            OperatingSystem.IsMacOS(),
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             Environment.GetFolderPath(
                 Environment.SpecialFolder.LocalApplicationData,
-                Environment.SpecialFolderOption.Create),
-            "rezrov",
-            "maps");
+                Environment.SpecialFolderOption.Create));
+
+    /// <summary>
+    /// Which of the two a machine of the given kind wants.
+    /// </summary>
+    /// <remarks>
+    /// Taken apart from the machine it runs on so that the choice can
+    /// be checked anywhere. The Apple answer is the one that needs
+    /// checking and is the one that cannot be run here.
+    /// </remarks>
+    /// <param name="apple">Whether this is a Mac.</param>
+    /// <param name="home">The user's own folder.</param>
+    /// <param name="local">What the runtime offers for this.</param>
+    public static string Folder(bool apple, string home, string local) =>
+        apple && !string.IsNullOrEmpty(home)
+            ? Path.Combine(home, "Library", "Application Support")
+            : local;
 
     /// <summary>
     /// What this story is called among the kept maps: a hash of its

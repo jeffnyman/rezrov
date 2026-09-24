@@ -26,6 +26,39 @@ public class MapStoreTests : IDisposable
     }
 
     [Fact]
+    public void AMacKeepsItsMapsWhereAMacKeepsThings()
+    {
+        // The runtime answers ~/.local/share on macOS as well, because
+        // it shares the Unix implementation, and a file left there is
+        // somewhere no Mac user would think to look. This is the one
+        // platform choice that cannot be run on the machine it is
+        // written on, so it is checked as a decision instead.
+        Assert.Equal(
+            Path.Combine("/Users/someone", "Library", "Application Support"),
+            MapStore.Folder(apple: true, "/Users/someone", "/Users/someone/.local/share"));
+    }
+
+    [Fact]
+    public void EverywhereElseTakesWhatTheRuntimeOffers()
+    {
+        // Windows gives %LOCALAPPDATA% and Linux gives XDG_DATA_HOME
+        // or ~/.local/share, both of which are already right.
+        Assert.Equal(
+            @"C:\Users\someone\AppData\Local",
+            MapStore.Folder(apple: false, @"C:\Users\someone", @"C:\Users\someone\AppData\Local"));
+
+        Assert.Equal(
+            "/home/someone/.local/share",
+            MapStore.Folder(apple: false, "/home/someone", "/home/someone/.local/share"));
+    }
+
+    [Fact]
+    public void AMacWithNowhereToCallHomeFallsBack()
+    {
+        Assert.Equal("/fallback", MapStore.Folder(apple: true, "", "/fallback"));
+    }
+
+    [Fact]
     public void AStoryWithNoMapYetHasNone()
     {
         Assert.Null(new MapStore(Story, _folder).Load());
@@ -86,6 +119,49 @@ public class MapStoreTests : IDisposable
         var store = new MapStore(Story, _folder);
         store.Save(walk.Graph);
         store.Save(new RoomGraph());
+
+        Assert.Equal(2, store.Load()!.Rooms.Count);
+    }
+
+    [Fact]
+    public void ATurnThatFoundNothingNewWritesNothing()
+    {
+        // Kept once a turn, and most turns find no new room, so the
+        // disk is touched when the map grows rather than for every
+        // command the player types.
+        var walk = new MapWalk();
+        walk.To("West of House");
+
+        var store = new MapStore(Story, _folder);
+        store.Save(walk.Graph);
+
+        File.Delete(store.Kept);
+        store.Save(walk.Graph);
+
+        // Written again, because the file it was compared against is
+        // not there any more. Without that check a map deleted from
+        // underneath would never come back.
+        Assert.True(File.Exists(store.Kept));
+
+        var written = File.GetLastWriteTimeUtc(store.Kept);
+        File.SetLastWriteTimeUtc(store.Kept, written.AddDays(-1));
+
+        store.Save(walk.Graph);
+
+        Assert.Equal(written.AddDays(-1), File.GetLastWriteTimeUtc(store.Kept));
+    }
+
+    [Fact]
+    public void ATurnThatFoundARoomWritesIt()
+    {
+        var walk = new MapWalk();
+        walk.To("West of House");
+
+        var store = new MapStore(Story, _folder);
+        store.Save(walk.Graph);
+
+        walk.To("North of House", "north");
+        store.Save(walk.Graph);
 
         Assert.Equal(2, store.Load()!.Rooms.Count);
     }
