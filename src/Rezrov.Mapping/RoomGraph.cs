@@ -79,6 +79,32 @@ public sealed class RoomGraph
         return room;
     }
 
+    /// <summary>
+    /// Puts back a room that was read from a map written earlier,
+    /// exactly where it was, rather than placing it afresh.
+    /// </summary>
+    /// <remarks>
+    /// The whole point of keeping a map is that it is the same map
+    /// when it comes back, so nothing here is worked out again: the
+    /// cell comes from the file. Rooms are read in the order they were
+    /// written, which is the order they were found, so the identifiers
+    /// line up with this list without being written down twice.
+    /// </remarks>
+    internal Room Reopen(RoomKey key, string name, (int X, int Y)? position)
+    {
+        var room = new Room(_rooms.Count, key, name) { Position = position };
+
+        _rooms.Add(room);
+        _byKey[key] = room;
+
+        return room;
+    }
+
+    /// <summary>
+    /// Puts the player back in a room, for a map being read back.
+    /// </summary>
+    internal void StandIn(Room room) => Current = room;
+
     private Room Find(RoomKey key, string name)
     {
         if (_byKey.TryGetValue(key, out var known))

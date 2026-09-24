@@ -163,6 +163,28 @@ internal sealed class MapSide : Grid
         Refresh();
     }
 
+    /// <summary>
+    /// Throws this map away and starts another.
+    /// </summary>
+    /// <remarks>
+    /// The only thing in the program that discards a map. Restarting
+    /// a game does not, restoring a save does not, and closing the
+    /// window does not: all of those change where the player is
+    /// standing rather than what they have found out. Starting over is
+    /// a thing the player says, here.
+    /// </remarks>
+    private void Clear()
+    {
+        Forget?.Invoke();
+        _watcher?.Forget();
+        _under = null;
+        Refresh();
+        _pane?.Follow();
+    }
+
+    /// <summary>Asked for the kept map to be thrown away.</summary>
+    public event Action? Forget;
+
     /// <summary>The bar above the map.</summary>
     private Border Heading(string family)
     {
@@ -175,6 +197,7 @@ internal sealed class MapSide : Grid
 
         if (_watcher is not null)
         {
+            buttons.Children.Add(new Tap("clear", family, Clear));
             buttons.Children.Add(new Tap("tidy", family, Tidy));
             buttons.Children.Add(new Tap("fit", family, () => _pane?.Whole()));
         }
