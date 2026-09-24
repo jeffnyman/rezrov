@@ -86,6 +86,44 @@ internal sealed class Board : Control
     }
 
     /// <summary>
+    /// How much blank a window is given by default, in pixels.
+    /// </summary>
+    /// <remarks>
+    /// About half a character at the ordinary text size, which is
+    /// enough to stop the text touching the frame and not enough to
+    /// look like a border.
+    /// </remarks>
+    public const double OrdinaryPadding = 6;
+
+    /// <summary>
+    /// Blank kept between the game and the edges of the window.
+    /// </summary>
+    /// <remarks>
+    /// Text set hard against the frame of a window is uncomfortable to
+    /// read and looks like an oversight, which is why every other
+    /// program that shows prose leaves a margin. The padding takes the
+    /// game's own background color rather than the window's, so what
+    /// it looks like is a page with a margin rather than a screen that
+    /// does not quite fill its frame.
+    ///
+    /// The game is not told about it: what it is given is the size
+    /// inside the padding, so a game that lays itself out to the
+    /// screen lays itself out to what it can actually use.
+    /// </remarks>
+    public double Padding { get; init; }
+
+    /// <summary>The part of the window the game is drawn in.</summary>
+    public Size Sheet => new(
+        Math.Max(Bounds.Width - (Padding * 2), 1),
+        Math.Max(Bounds.Height - (Padding * 2), 1));
+
+    /// <summary>
+    /// The whole window, in the coordinates the game is drawn in, so
+    /// that a background still reaches the edges through the padding.
+    /// </summary>
+    private Rect Whole => new(-Padding, -Padding, Bounds.Width, Bounds.Height);
+
+    /// <summary>
     /// The display to paint, once the game has been started on it.
     /// </summary>
     public GuiGlkDisplay? Display
@@ -194,6 +232,11 @@ internal sealed class Board : Control
             return;
         }
 
+        // Everything below is drawn inside the padding. The one thing
+        // above is the title screen, which is a cover rather than part
+        // of the game and fills the window.
+        using var margin = context.PushTransform(Matrix.CreateTranslation(Padding, Padding));
+
         if (Page is { } page)
         {
             // The machine writes on its own thread, so the page is
@@ -215,7 +258,7 @@ internal sealed class Board : Control
             // sheet of paper a little too small for it.
             lock (screen.Sync)
             {
-                context.FillRectangle(Brush(screen.DefaultBackground), new Rect(Bounds.Size));
+                context.FillRectangle(Brush(screen.DefaultBackground), Whole);
 
                 if (Fitted() is { } fit)
                 {
@@ -235,7 +278,7 @@ internal sealed class Board : Control
             return;
         }
 
-        context.FillRectangle(Brush(GlkLook.Paper), new Rect(Bounds.Size));
+        context.FillRectangle(Brush(GlkLook.Paper), Whole);
 
         if (Display is not { Root: { } root })
         {
@@ -585,17 +628,29 @@ internal sealed class Board : Control
 
     /// <summary>
     /// [infocom pictures] A point in the window, taken back into the
-    /// coordinates the screen is drawn in. The two are the same unless
-    /// a fixed screen is being scaled into the window.
+    /// coordinates the screen is drawn in: past the padding, and past
+    /// the scaling too where a fixed screen is being fitted.
     /// </summary>
+    /// <remarks>
+    /// The one way back. Everything drawn goes out through the padding
+    /// and, for a fixed screen, through <see cref="Fitted"/>, so a
+    /// pointer that did not come back through both would land a little
+    /// off the thing it was aimed at, which is the kind of fault that
+    /// looks almost right and survives for years.
+    /// </remarks>
     private Point Unscaled(Point at)
     {
+        // Undone in the order it was done. Painting goes out through
+        // the padding and then, for a fixed screen, through the fit,
+        // so coming back means the fit first and the padding last.
+        var inside = new Point(at.X - Padding, at.Y - Padding);
+
         if (Fitted() is not { } fit)
         {
-            return at;
+            return inside;
         }
 
-        var (x, y) = fit.Unscaled(at.X, at.Y);
+        var (x, y) = fit.Unscaled(inside.X, inside.Y);
         return new Point(x, y);
     }
 
@@ -604,15 +659,29 @@ internal sealed class Board : Control
     /// null when the screen is the window's own size, which is every
     /// game but an Infocom Version 6 one.
     /// </summary>
+    /// <remarks>
+    /// Measured inside the padding, and holding none of it. The
+    /// padding is a transform of its own that everything is drawn
+    /// through, this one included, so a fit that carried the padding
+    /// as well would apply it twice on the way out and once on the
+    /// way back.
+    /// </remarks>
     private ScreenFit? Fitted() =>
-        UnitScreen is { } units ? ScreenFit.Of((Bounds.Width, Bounds.Height), units) : null;
+        UnitScreen is { } units ? ScreenFit.Of((Sheet.Width, Sheet.Height), units) : null;
 
     protected override void OnSizeChanged(SizeChangedEventArgs e)
     {
         ArgumentNullException.ThrowIfNull(e);
 
-        Display?.Resize(e.NewSize.Width, e.NewSize.Height);
-        Page?.Resize(e.NewSize.Width, e.NewSize.Height);
+        // What the game is given is the size inside the padding, not
+        // the size of the window, so it lays itself out to what it can
+        // actually draw on.
+        var inside = new Size(
+            Math.Max(e.NewSize.Width - (Padding * 2), 1),
+            Math.Max(e.NewSize.Height - (Padding * 2), 1));
+
+        Display?.Resize(inside.Width, inside.Height);
+        Page?.Resize(inside.Width, inside.Height);
 
         // [infocom pictures] A fixed screen keeps its size whatever the
         // window does, because the game laid itself out for that screen
@@ -621,8 +690,8 @@ internal sealed class Board : Control
         if (UnitScreen is null)
         {
             Screen?.Resize(
-                Math.Max((int)(e.NewSize.Width / _glyphs.CellWidth), 1),
-                Math.Max((int)(e.NewSize.Height / _glyphs.CellHeight), 1));
+                Math.Max((int)(inside.Width / _glyphs.CellWidth), 1),
+                Math.Max((int)(inside.Height / _glyphs.CellHeight), 1));
         }
 
         base.OnSizeChanged(e);
@@ -657,12 +726,12 @@ internal sealed class Board : Control
         {
             if (window.Left + window.Width >= display.Width)
             {
-                right = Math.Max(right, Bounds.Width);
+                right = Math.Max(right, Sheet.Width);
             }
 
             if (window.Top + window.Height >= display.Height)
             {
-                bottom = Math.Max(bottom, Bounds.Height);
+                bottom = Math.Max(bottom, Sheet.Height);
             }
         }
 
@@ -732,7 +801,7 @@ internal sealed class Board : Control
     /// </remarks>
     private void PaintPage(DrawingContext context, GuiAaDisplay page)
     {
-        context.FillRectangle(Washed(page.Background), new Rect(Bounds.Size));
+        context.FillRectangle(Washed(page.Background), Whole);
 
         var width = page.Column;
         var left = page.Left;
@@ -753,7 +822,7 @@ internal sealed class Board : Control
 
         var top = status + page.Rule;
 
-        using var clip = context.PushClip(new Rect(left, top, width, Math.Max(Bounds.Height - top, 0)));
+        using var clip = context.PushClip(new Rect(left, top, width, Math.Max(Sheet.Height - top, 0)));
 
         PaintPart(context, page, page.Main, left, top, width, page.MainHeight, fromBottom: true);
     }

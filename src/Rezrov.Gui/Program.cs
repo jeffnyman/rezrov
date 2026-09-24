@@ -64,6 +64,16 @@ internal static class Program
     private static InterpreterNumber? _machine;
     private static bool _tandy;
     private static bool _map;
+
+    /// <summary>
+    /// Blank kept between the game and the edges of the window.
+    /// </summary>
+    /// <remarks>
+    /// Text set hard against a window frame is uncomfortable to read,
+    /// and the window is opened wide enough to pay for this out of the
+    /// space that would otherwise be a part-used column at the right.
+    /// </remarks>
+    private static double _padding = Board.OrdinaryPadding;
     private static string _prose = Glyphs.ProseFamily;
     private static string _sans = GuiAaGlyphs.SansFamily;
     private static string _fixed = Glyphs.FixedFamily;
@@ -173,6 +183,10 @@ internal static class Program
                 case "--map":
                     _map = true;
                     break;
+                case "--padding" when i + 1 < args.Length && Blank(args[i + 1]) is { } blank:
+                    _padding = blank;
+                    i++;
+                    break;
                 case "--tandy":
                     _tandy = true;
                     break;
@@ -200,6 +214,16 @@ internal static class Program
 
         return true;
     }
+
+    /// <summary>
+    /// A margin in pixels, small enough to still leave a window worth
+    /// playing in.
+    /// </summary>
+    private static double? Blank(string value) =>
+        double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var blank)
+        && blank is >= 0 and <= 64
+            ? blank
+            : null;
 
     /// <summary>
     /// A size in pixels, which has to be large enough to read and small
@@ -408,6 +432,7 @@ internal static class Program
               --size <pixels>          the size of ordinary text, from 6 to 72
               --smoothing <s>          subpixel, grayscale, or none
               --map                    open the map beside the game at the start
+              --padding <pixels>       blank between the game and the window, 0 to 64
               --version                print the version and leave
               --probe                  print what the fonts measure and leave
               --help                   print this and leave
@@ -476,14 +501,19 @@ internal static class Program
                 Math.Max(Math.Min(wanted.Height, room.Height), least.Height));
         }
 
+        // The padding is paid for out of the window rather than out of
+        // the game: the columns are fitted inside it and it is added
+        // back on, so asking for a margin does not cost a column.
+        var blank = _padding * 2;
+
         var (columns, rows) = Screenful.Fit(
-            wanted.Width,
-            wanted.Height,
+            Math.Max(wanted.Width - blank, glyphs.CellWidth),
+            Math.Max(wanted.Height - blank, glyphs.CellHeight),
             glyphs.CellWidth,
             glyphs.CellHeight,
             Drawn());
 
-        return (columns * glyphs.CellWidth, rows * glyphs.CellHeight);
+        return ((columns * glyphs.CellWidth) + blank, (rows * glyphs.CellHeight) + blank);
     }
 
     /// <summary>
@@ -587,8 +617,8 @@ internal static class Program
         var display = new GuiGlkDisplay(
             glyphs,
             () => Dispatcher.UIThread.Post(board.InvalidateVisual),
-            board.Bounds.Width,
-            board.Bounds.Height);
+            board.Sheet.Width,
+            board.Sheet.Height);
 
         board.Display = display;
 
@@ -683,10 +713,10 @@ internal static class Program
 
         var columns = unit is { } u
             ? Math.Max((int)(u.Width / glyphs.CellWidth), 1)
-            : Math.Max((int)(board.Bounds.Width / glyphs.CellWidth), 1);
+            : Math.Max((int)(board.Sheet.Width / glyphs.CellWidth), 1);
         var rows = unit is { } v
             ? Math.Max((int)(v.Height / glyphs.CellHeight), 1)
-            : Math.Max((int)(board.Bounds.Height / glyphs.CellHeight), 1);
+            : Math.Max((int)(board.Sheet.Height / glyphs.CellHeight), 1);
 
         // The screen is a whole number of characters, so it is rarely
         // exactly the unit screen; Board scales what there actually is.
@@ -886,7 +916,7 @@ internal static class Program
 
         board.AaGlyphs = faces;
         board.Page = display;
-        display.Resize(board.Bounds.Width, board.Bounds.Height);
+        display.Resize(board.Sheet.Width, board.Sheet.Height);
 
         var machine = new Machine(story, display, _seed);
 
@@ -968,7 +998,7 @@ internal static class Program
             else if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime playing)
             {
                 var glyphs = new Glyphs(_size, _prose, _fixed);
-                var board = new Board(glyphs, _smoothing);
+                var board = new Board(glyphs, _smoothing) { Padding = _padding };
 
                 // An Aa-machine story says where the player is in no
                 // way anything here can read, so its map is honestly
