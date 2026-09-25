@@ -204,6 +204,51 @@ public class DisassemblyTests
         Assert.Empty(failures);
     }
 
+    [Fact]
+    public void TheListingForZorkOneReadsAsItDid()
+    {
+        // A characterization test. Its job is to notice a change in
+        // the listing, not to argue that this is the best shape for
+        // one. If a deliberate change breaks it, read the new output,
+        // and if it reads better than this does, pin that instead.
+        var root = Corpus.FindRepositoryRoot();
+        Assert.SkipWhen(root is null, SubmoduleAbsent);
+
+        var file = Path.Combine(root, "entharion", "zcode-infocom", "zork1-r88-s840726.z3");
+        Assert.SkipUnless(File.Exists(file), SubmoduleAbsent);
+
+        var memory = new ZMemory(File.ReadAllBytes(file));
+        var listing = Disassembly.Of(memory, new StoryHeader(memory));
+
+        Assert.Equal(411, listing.Routines.Count);
+        Assert.Equal(54, listing.Gaps.Count);
+        Assert.Equal(177, listing.Padding);
+
+        // The newline is fixed so the same text is pinned whichever
+        // machine the test runs on.
+        using var written = new StringWriter { NewLine = "\n" };
+        listing.Write(written);
+
+        var head = string.Join("\n", written.ToString().Split('\n').Take(12));
+
+        Assert.Equal(
+            """
+            ; Version 3, release 88, serial 840726, checksum A129
+            ; dynamic memory at 0000, static at 2E53, high at 4E37
+            ; 84876 bytes in the file, execution begins at 4F05
+            ; 411 routines, 54 gaps, 177 bytes of padding
+
+            routine 4E38, 1 local
+                   4E3B  print         "a "
+                   4E3E  print_obj     L00
+                   4E40  rtrue
+
+            routine 4E42, 1 local
+                   4E45  jz            G3C ?L1
+            """,
+            head);
+    }
+
     /// <summary>
     /// The listing of the one routine a fixture holds, line by line.
     /// </summary>

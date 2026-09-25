@@ -2,6 +2,7 @@ using Rezrov.AaMachine;
 using Rezrov.Core;
 using Rezrov.Core.Blorb;
 using Rezrov.Core.Graphics;
+using Rezrov.Debugging;
 using Rezrov.Glulx;
 // The two machines have an InstructionDecoder each, so the Glulx
 // types are named individually rather than imported as a namespace.
@@ -64,6 +65,7 @@ internal static class Program
         string? save = null;
         string? blorb = null;
         string? map = null;
+        string? listing = null;
         int? seed = null;
         InterpreterNumber? machine = null;
         var usage = args.Length < 1;
@@ -107,6 +109,9 @@ internal static class Program
                     run = true;
                     map = args[++i];
                     break;
+                case "--disassemble" when i + 1 < args.Length:
+                    listing = args[++i];
+                    break;
                 case "--seed" when i + 1 < args.Length && int.TryParse(args[i + 1], out var parsed) && parsed >= 1:
                     run = true;
                     seed = parsed;
@@ -134,6 +139,25 @@ internal static class Program
         {
             Console.Error.WriteLine($"rezrov: no such file: {commands}");
             return 1;
+        }
+
+        // Reading a story file is not playing one, so this comes
+        // before the options about a game being played and takes none
+        // of them.
+        if (listing is not null)
+        {
+            if (StoryLoader.Load(path, blorb, Console.Error) is not { } read)
+            {
+                return 1;
+            }
+
+            if (read.Format != StoryFormat.ZMachine)
+            {
+                Console.Error.WriteLine($"rezrov: only a Z-machine story can be disassembled, and this is {read.Format}");
+                return 1;
+            }
+
+            return Disassemble(read.Bytes, listing);
         }
 
         if (run || trace)
@@ -340,6 +364,7 @@ internal static class Program
               --blorb <file>           take sounds and pictures from this resource file
               --pictures <file>        take pictures from an Infocom graphics file
               --map <file>             write a map of the rooms played through
+              --disassemble <file>     write a listing of the story file, or - for output
               --seed <number>          seed the game's random numbers, so a play repeats
               --interpreter <machine>  tell the game which machine it is running on
               --tandy                  set the Tandy bit for a Version 1 to 3 game
@@ -351,12 +376,67 @@ internal static class Program
             recording beside it: --update records the play afresh, and --resume
             hands the game over at the console where the script ends.
 
+            A listing is a Z-machine story read rather than played: what every
+            byte of the file is for, and then every routine found in it, with
+            the stretches of text between them.
+
             A map is drawn from wherever a game says which room the player is
             in: a global variable through Version 3, the status line from
             Version 4, and for a Glulx story the heading it prints as the
             player walks in.
 
             """);
+    }
+
+    /// <summary>
+    /// Writes what the story file says it is made of: the memory map
+    /// first, then the routines and the stretches between them.
+    /// </summary>
+    /// <remarks>
+    /// A listing runs to hundreds of thousands of characters, which is
+    /// why it goes to a file rather than to the terminal by default.
+    /// The usual name for standard output is accepted so it can be
+    /// read through a pager without leaving a file behind.
+    /// </remarks>
+    private static int Disassemble(byte[] bytes, string path)
+    {
+        try
+        {
+            var memory = new ZMemory(bytes);
+            var header = new StoryHeader(memory);
+            var disassembly = Disassembly.Of(memory, header);
+
+            if (path == "-")
+            {
+                Written(memory, header, disassembly, Console.Out);
+                return 0;
+            }
+
+            using (var writer = new StreamWriter(path))
+            {
+                Written(memory, header, disassembly, writer);
+            }
+
+            var routines = disassembly.Routines.Count;
+            var gaps = disassembly.Gaps.Count;
+            Console.Error.WriteLine(
+                $"rezrov: listed {routines} routine{(routines == 1 ? "" : "s")} "
+                + $"and {gaps} gap{(gaps == 1 ? "" : "s")} to {path}");
+
+            return 0;
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException or InvalidDataException)
+        {
+            Console.Error.WriteLine($"rezrov: could not write the listing: {e.Message}");
+            return 1;
+        }
+    }
+
+    private static void Written(ZMemory memory, StoryHeader header, Disassembly disassembly, TextWriter to)
+    {
+        MemoryMap.Write(memory, header, to);
+        to.WriteLine();
+        disassembly.Write(to);
     }
 
     /// <summary>
