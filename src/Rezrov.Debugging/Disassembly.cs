@@ -101,6 +101,43 @@ public sealed class Disassembly
         return new Disassembly(memory, header, text, routines, gaps) { Padding = padding };
     }
 
+    /// <summary>
+    /// The routine an address falls inside, or null where the scan
+    /// claims no routine there.
+    /// </summary>
+    /// <remarks>
+    /// The routines are in address order and never overlap, so this is
+    /// a binary search. It is what turns an address a running game
+    /// hands over, such as where a call will return to, into the
+    /// routine a reader can be shown.
+    /// </remarks>
+    public ScannedRoutine? RoutineAt(int address)
+    {
+        var low = 0;
+        var high = Routines.Count - 1;
+
+        while (low <= high)
+        {
+            var middle = low + ((high - low) / 2);
+            var routine = Routines[middle];
+
+            if (address < routine.Address)
+            {
+                high = middle - 1;
+            }
+            else if (address >= routine.EndAddress)
+            {
+                low = middle + 1;
+            }
+            else
+            {
+                return routine;
+            }
+        }
+
+        return null;
+    }
+
     /// <summary>Writes the whole listing.</summary>
     public void Write(TextWriter to)
     {

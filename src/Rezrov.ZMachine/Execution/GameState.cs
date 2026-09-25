@@ -63,6 +63,24 @@ public sealed class GameState
     public CallFrame CurrentFrame => _frames[^1];
 
     /// <summary>
+    /// [zm 6.1] The whole call chain, the outermost routine first and
+    /// the one currently running last.
+    /// </summary>
+    /// <remarks>
+    /// The machine itself only ever looks at the last one. This is for
+    /// whatever wants to show a call stack, and it is a view rather
+    /// than a copy, so it follows the game as it runs.
+    /// </remarks>
+    public IReadOnlyList<CallFrame> Frames => _frames;
+
+    /// <summary>
+    /// [zm 6.3] Every value on the stack, oldest first, across all the
+    /// frames. A frame's own values begin at its
+    /// <see cref="CallFrame.StackBase"/>.
+    /// </summary>
+    public IReadOnlyList<ushort> Stack => _stack;
+
+    /// <summary>
     /// [zm 6.5] The current stack frame as a Z-machine number: how many
     /// routines deep the call chain is, with the first at 1. This is what
     /// catch returns and throw takes.
@@ -262,7 +280,8 @@ public sealed class GameState
             throw new InvalidOperationException("The call stack has overflowed.");
         }
 
-        var routine = RoutineHeader.Read(Memory, Header.Version, Header.UnpackRoutineAddress(packedAddress));
+        var address = Header.UnpackRoutineAddress(packedAddress);
+        var routine = RoutineHeader.Read(Memory, Header.Version, address);
 
         var locals = routine.InitialLocals.ToArray();
         var supplied = Math.Min(arguments.Length, locals.Length);
@@ -273,7 +292,7 @@ public sealed class GameState
 
         // [zm 6.3.1] The stack is empty as far as the new routine is
         // concerned, which the frame records as its base.
-        _frames.Add(new CallFrame(returnAddress, storeVariable, locals, arguments.Length, _stack.Count));
+        _frames.Add(new CallFrame(returnAddress, storeVariable, locals, arguments.Length, _stack.Count, address));
         ProgramCounter = routine.CodeAddress;
     }
 
