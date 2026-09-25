@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Looking at a story file rather than running one: where its routines
+    are, what they say, and what every byte of it is for.
+
+    This references the Z-machine and nothing else, and it takes no part
+    in a game being played. A disassembly is made from the bytes on
+    disk, so the same listing comes out whether a game is running, has
+    finished, or was never started. Keeping it separate is what lets a
+    debugger, a command line switch, and a test all ask the same
+    question and get the same answer.
+  -->
+
+  <ItemGroup>
+    <ProjectReference Include="..\Rezrov.ZMachine\Rezrov.ZMachine.csproj" />
+  </ItemGroup>
+
+</Project>

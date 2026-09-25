@@ -29,6 +29,7 @@
     <ProjectReference Include="..\..\src\Rezrov.AaMachine\Rezrov.AaMachine.csproj" />
     <ProjectReference Include="..\..\src\Rezrov.Cli\Rezrov.Cli.csproj" />
     <ProjectReference Include="..\..\src\Rezrov.Core\Rezrov.Core.csproj" />
+    <ProjectReference Include="..\..\src\Rezrov.Debugging\Rezrov.Debugging.csproj" />
     <ProjectReference Include="..\..\src\Rezrov.Glulx\Rezrov.Glulx.csproj" />
     <ProjectReference Include="..\..\src\Rezrov.Grid\Rezrov.Grid.csproj" />
     <ProjectReference Include="..\..\src\Rezrov.Gtui\Rezrov.Gtui.csproj" />
