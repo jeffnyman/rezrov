@@ -279,6 +279,51 @@ public class DebugSessionTests
         }
     }
 
+    [Fact]
+    public void OneLookGathersWhatSeveralCommandsWouldSaySeparately()
+    {
+        // A window shows these side by side rather than one at a time,
+        // and all of them have to be read from a game standing still.
+        var (session, _) = Session();
+
+        session.Obey("step");
+
+        var view = session.Look();
+
+        Assert.False(view.Quit);
+        Assert.Equal(session.Obey("where"), view.Chain);
+        Assert.Equal(session.Obey("list"), view.Listing);
+        Assert.Equal(session.Obey("locals"), view.Locals);
+        Assert.Equal(session.Obey("globals"), view.Globals);
+        Assert.Equal(session.Obey("stack"), view.Stack);
+        Assert.Equal(session.Stopped(), view.Position);
+    }
+
+    [Fact]
+    public void ALookAtAGameThatHasQuitSaysOnlyThat()
+    {
+        var (session, machine) = Session();
+
+        session.Obey("continue");
+        Assert.True(machine.HasQuit);
+
+        var view = session.Look();
+
+        Assert.True(view.Quit);
+        Assert.Contains("quit", view.Listing, StringComparison.Ordinal);
+        Assert.Contains("quit", view.Chain, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void TheOpeningLineNamesTheWaysIntoTheGame()
+    {
+        var opening = DebugSession.Opening();
+
+        Assert.Contains("continue", opening, StringComparison.Ordinal);
+        Assert.Contains("step", opening, StringComparison.Ordinal);
+        Assert.Contains("help", opening, StringComparison.Ordinal);
+    }
+
     private static (DebugSession Session, Interpreter Machine) Session()
     {
         var (memory, header, machine) = DebugGame.Of();

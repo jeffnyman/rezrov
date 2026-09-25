@@ -11,6 +11,7 @@ using Rezrov.AaMachine.Execution;
 using Rezrov.Core;
 using Rezrov.Core.Audio;
 using Rezrov.Core.Graphics;
+using Rezrov.Debugging;
 using Rezrov.Core.Blorb;
 using Rezrov.Glulx;
 using Rezrov.Glulx.Execution;
@@ -64,6 +65,18 @@ internal static class Program
     private static InterpreterNumber? _machine;
     private static bool _tandy;
     private static bool _map;
+
+    /// <summary>
+    /// How large the debugger's own text is drawn, which is its own
+    /// business rather than the game's: the game is drawn at whatever
+    /// size the player asked for and this has to stay readable beside
+    /// it either way.
+    /// </summary>
+    private const double Lettering = 13;
+
+    private static bool _debugging;
+
+    private static System.Collections.Concurrent.BlockingCollection<string>? _asked;
 
     /// <summary>
     /// Blank kept between the game and the edges of the window.
@@ -185,6 +198,9 @@ internal static class Program
                 case "--interpreter" when i + 1 < args.Length && InterpreterNumbers.TryParse(args[i + 1], out var number):
                     _machine = number;
                     i++;
+                    break;
+                case "--debug":
+                    _debugging = true;
                     break;
                 case "--map":
                     _map = true;
@@ -438,6 +454,7 @@ internal static class Program
               --size <pixels>          the size of ordinary text, from 6 to 72
               --smoothing <s>          subpixel, grayscale, or none
               --map                    open the map beside the game at the start
+              --debug                  lay the window out for debugging the game
               --padding <pixels>       blank between the game and the window, 0 to 64
               --version                print the version and leave
               --probe                  print what the fonts measure and leave
@@ -464,6 +481,13 @@ internal static class Program
             window, restarting, and restoring a save all leave it where
             it was. Clear starts a new one, and nothing else ever
             throws a map away.
+
+            The debug option lays the window out for taking a Z-machine
+            game apart instead of for playing one: the listing and the
+            variables above, the game and the call chain below, and a
+            prompt of its own across the bottom. Type help at that
+            prompt for the commands. There is no map in that layout, so
+            the two never have to share a window.
 
             All three machines: a Z-machine game from a .z3 to a .z8 or
             a .zblorb, a Glulx game from a .ulx or a .gblorb, and a
@@ -594,17 +618,42 @@ internal static class Program
     /// <summary>
     /// The size a page of text comes to, before the screen has a say.
     /// </summary>
+    /// <summary>
+    /// How large to open a window whose game is only one panel of it.
+    /// </summary>
+    /// <remarks>
+    /// Half as wide again leaves the game panel the width the game
+    /// would have had on its own, and the extra height is shared out
+    /// among the panels below it. The screen still has the last word,
+    /// as it does for a window that is all game.
+    /// </remarks>
+    private static (double Width, double Height) Spread(Window window, double width, double height)
+    {
+        var wanted = (Width: width * 1.5, Height: height * 2.2);
+
+        if (window.Screens?.Primary is { } screen)
+        {
+            var scaling = screen.Scaling > 0 ? screen.Scaling : 1;
+
+            wanted = (
+                Math.Min(wanted.Width, (screen.WorkingArea.Width / scaling) - Margin),
+                Math.Min(wanted.Height, (screen.WorkingArea.Height / scaling) - Margin));
+        }
+
+        return wanted;
+    }
+
     private static (double Width, double Height) Page(Glyphs glyphs) =>
         (glyphs.CellWidth * Screenful.Columns, glyphs.CellHeight * Screenful.Rows);
 
     /// <summary>
     /// Starts the game once the window is up and its size is known.
     /// </summary>
-    private static void Start(Window window, Board board, Glyphs glyphs)
+    private static void Start(Window window, Board board, Glyphs glyphs, DebugBench? bench)
     {
         if (_format == StoryFormat.ZMachine)
         {
-            StartZMachine(window, board, glyphs);
+            StartZMachine(window, board, glyphs, bench);
             return;
         }
 
@@ -698,7 +747,7 @@ internal static class Program
     /// model wraps and pages for, and whose size is the window's own
     /// divided by a character.
     /// </summary>
-    private static void StartZMachine(Window window, Board board, Glyphs glyphs)
+    private static void StartZMachine(Window window, Board board, Glyphs glyphs, DebugBench? bench = null)
     {
         var memory = new ZMemory(_bytes);
         var header = new StoryHeader(memory);
@@ -865,6 +914,12 @@ internal static class Program
             interpreter.PlayCommands(new StreamReader(_commands));
         }
 
+        if (bench is not null)
+        {
+            Debugging(window, board, interpreter, memory, header, bench);
+            return;
+        }
+
         var worker = new Thread(() =>
         {
             try
@@ -885,6 +940,95 @@ internal static class Program
         };
 
         worker.Start();
+    }
+
+    /// <summary>
+    /// Runs the game under the debugger: the typed commands go one way
+    /// and what they found comes back the other, across the two
+    /// threads.
+    /// </summary>
+    /// <remarks>
+    /// The game runs on its own thread as it always does, and this is
+    /// the only thread allowed to touch it. A command typed at the
+    /// prompt is handed over rather than carried out, and what comes
+    /// back is a gathered view, which the drawing thread may then hold
+    /// for as long as it likes.
+    ///
+    /// While a command is running, the keyboard belongs to the game
+    /// rather than to the prompt, because the commonest reason a
+    /// command takes any time at all is that the game has stopped to
+    /// ask the player something.
+    /// </remarks>
+    private static void Debugging(
+        Window window,
+        Board board,
+        Interpreter interpreter,
+        ZMemory memory,
+        StoryHeader header,
+        DebugBench bench)
+    {
+        var session = new DebugSession(interpreter, Disassembly.Of(memory, header));
+        var asked = new System.Collections.Concurrent.BlockingCollection<string>();
+
+        _asked = asked;
+
+        bench.Prompt.Entered += line =>
+        {
+            bench.Prompt.Busy = true;
+            board.Focus();
+            asked.Add(line);
+        };
+
+        var worker = new Thread(() =>
+        {
+            // Stopping wherever the game takes a command, so that
+            // running on always comes back rather than disappearing
+            // into the game with no way out.
+            Told(
+                string.Empty,
+                session.Obey("break reads") + Environment.NewLine + DebugSession.Opening());
+
+            try
+            {
+                foreach (var line in asked.GetConsumingEnumerable())
+                {
+                    var said = session.Obey(line);
+                    var quit = Told(line, said);
+
+                    if (session.Finished || quit)
+                    {
+                        break;
+                    }
+                }
+            }
+            catch (Exception e) when (e is InvalidOperationException or ObjectDisposedException)
+            {
+                // The window closed while a command was waiting.
+                _ = e;
+            }
+
+            Dispatcher.UIThread.Post(window.Close);
+        })
+        {
+            IsBackground = true,
+            Name = "debugger",
+        };
+
+        worker.Start();
+
+        bool Told(string typed, string said)
+        {
+            var view = session.Look();
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                bench.Show(typed, said, view);
+                bench.Prompt.Busy = false;
+                bench.Prompt.Focus();
+            });
+
+            return view.Quit;
+        }
     }
 
     /// <summary>
@@ -1061,19 +1205,44 @@ internal static class Program
                     _watcher.Changed += Keep;
                 }
 
-                var side = new MapSide(_watcher, _sans);
+                // A window laid out for taking a game apart, where the
+                // game is one panel of it. There is no map pane in
+                // that layout, so the two never have to share.
+                var taking = _debugging && _format == StoryFormat.ZMachine;
 
-                // Clearing throws the kept map away too, or the next
-                // time this story was opened the map the player just
-                // asked to be rid of would be back.
-                side.Forget += () => _maps?.Forget();
-                var split = new MapSplit(board, side);
+                if (_debugging && !taking)
+                {
+                    Console.Error.WriteLine(
+                        $"rezrov-gui: the debug option applies to a Z-machine story, and this is {_format}");
+                }
+
+                MapSide? side = null;
+                MapSplit? split = null;
+                DebugBench? bench = null;
+                Control content;
+
+                if (taking)
+                {
+                    bench = new DebugBench(board, _sans, _fixed, Lettering);
+                    content = bench;
+                }
+                else
+                {
+                    side = new MapSide(_watcher, _sans);
+
+                    // Clearing throws the kept map away too, or the
+                    // next time this story was opened the map the
+                    // player just asked to be rid of would be back.
+                    side.Forget += () => _maps?.Forget();
+                    split = new MapSplit(board, side);
+                    content = split;
+                }
 
                 var window = new Window
                 {
                     Title = $"{Named()} - rezrov",
                     Icon = Mark(),
-                    Content = split,
+                    Content = content,
                     WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 };
 
@@ -1085,7 +1254,8 @@ internal static class Program
                     InputElement.KeyDownEvent,
                     (_, e) =>
                     {
-                        if (e.Key == Key.M
+                        if (split is not null
+                            && e.Key == Key.M
                             && (e.KeyModifiers.HasFlag(KeyModifiers.Control)
                                 || e.KeyModifiers.HasFlag(KeyModifiers.Meta)))
                         {
@@ -1097,6 +1267,12 @@ internal static class Program
                     RoutingStrategies.Tunnel);
 
                 var (width, height) = Opening(window, glyphs);
+
+                if (bench is not null)
+                {
+                    (width, height) = Spread(window, width, height);
+                }
+
                 window.Width = width;
                 window.Height = height;
 
@@ -1105,21 +1281,25 @@ internal static class Program
                     // Opened here rather than at the window's building,
                     // because how wide the map should be is a share of
                     // a window that does not have a size until now.
-                    if (_map)
+                    if (_map && split is not null)
                     {
                         split.Toggle();
                     }
 
                     board.Focus();
                     _audio = AudioEngine.Create();
-                    Start(window, board, glyphs);
+                    Start(window, board, glyphs, bench);
                 };
 
                 window.Closed += (_, _) =>
                 {
                     // The game's thread may still be finishing a turn,
                     // and a turn tells the map it has changed.
-                    side.Release();
+                    side?.Release();
+
+                    // And the debugger's thread may be waiting for a
+                    // command that is never going to be typed.
+                    _asked?.CompleteAdding();
 
                     Keep();
 

@@ -25,6 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Rezrov.AaMachine\Rezrov.AaMachine.csproj" />
     <ProjectReference Include="..\Rezrov.Core\Rezrov.Core.csproj" />
+    <ProjectReference Include="..\Rezrov.Debugging\Rezrov.Debugging.csproj" />
     <ProjectReference Include="..\Rezrov.Glulx\Rezrov.Glulx.csproj" />
     <ProjectReference Include="..\Rezrov.Watching\Rezrov.Watching.csproj" />
     <ProjectReference Include="..\Rezrov.ZMachine\Rezrov.ZMachine.csproj" />

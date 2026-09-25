@@ -431,6 +431,7 @@ internal static class Program
         // command is also the rhythm a story is debugged in, and
         // delete gives it up for a free run.
         Console.Error.WriteLine(session.Obey("break reads"));
+        Console.Error.WriteLine(DebugSession.Opening());
         Console.Error.WriteLine(session.Stopped());
 
         while (!session.Finished && !interpreter.HasQuit)
