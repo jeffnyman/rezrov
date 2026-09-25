@@ -57,6 +57,7 @@ internal static class Program
 
         var run = false;
         var trace = false;
+        var debug = false;
         var tandy = false;
         string? pictures = null;
         string? commands = null;
@@ -79,6 +80,10 @@ internal static class Program
                     break;
                 case "--trace":
                     trace = true;
+                    break;
+                case "--debug":
+                    debug = true;
+                    run = true;
                     break;
                 case "--tandy":
                     tandy = true;
@@ -172,6 +177,7 @@ internal static class Program
                 foreach (var option in Inapplicable(
                     ("interpreter", machine is not null),
                     ("tandy", tandy),
+                    ("debug", debug),
                     ("trace", trace),
                     ("transcript", transcript is not null),
                     ("record", record is not null),
@@ -196,11 +202,16 @@ internal static class Program
                     Console.Error.WriteLine("rezrov: the tandy option does not apply to Glulx");
                 }
 
+                if (debug)
+                {
+                    Console.Error.WriteLine("rezrov: the debug option does not apply to Glulx");
+                }
+
                 var directory = Path.GetDirectoryName(Path.GetFullPath(path)) ?? Directory.GetCurrentDirectory();
                 return RunGlulx(story.Bytes, story.Resources, directory, trace, commands, transcript, record, save, seed, map);
             }
 
-            return RunZMachine(story.Bytes, trace, commands, transcript, record, save, story.Resources, seed, machine, tandy, pictures, map);
+            return RunZMachine(story.Bytes, trace, commands, transcript, record, save, story.Resources, seed, machine, tandy, pictures, map, debug);
         }
 
         if (!File.Exists(path))
@@ -357,6 +368,7 @@ internal static class Program
             options:
               --run                    play the game
               --trace                  play, listing every instruction on standard error
+              --debug                  play under the debugger, with a prompt of its own
               --commands <file>        take commands from a file before the console
               --transcript <file>      write the transcript the game keeps to a file
               --record <file>          write the commands typed to a file
@@ -376,6 +388,11 @@ internal static class Program
             recording beside it: --update records the play afresh, and --resume
             hands the game over at the console where the script ends.
 
+            The debugger plays the game with a prompt of its own beside it:
+            breakpoints, stepping in and over and out, the call chain, the
+            listing around wherever the game is, and its variables and memory.
+            Type help at that prompt for the commands.
+
             A listing is a Z-machine story read rather than played: what every
             byte of the file is for, and then every routine found in it, with
             the stretches of text between them.
@@ -386,6 +403,54 @@ internal static class Program
             player walks in.
 
             """);
+    }
+
+    /// <summary>
+    /// Plays a game under the debugger: the game's text goes where it
+    /// always goes, and the debugger's prompt and answers go to
+    /// standard error, so the two can be told apart and a transcript
+    /// of the play stays a transcript.
+    /// </summary>
+    /// <remarks>
+    /// The game and the debugger read the same console, one at a time.
+    /// When the game stops for a command the player is typing to the
+    /// game, and when the debugger prompts they are typing to the
+    /// debugger, which is the whole of how the two share a terminal.
+    /// </remarks>
+    private static void Debug(Interpreter interpreter, ZMemory memory, StoryHeader header)
+    {
+        var listing = Disassembly.Of(memory, header);
+        var session = new DebugSession(interpreter, listing);
+
+        Console.Error.WriteLine(
+            $"rezrov: {listing.Routines.Count} routines found. Type help for the commands.");
+
+        // Without this a player who types continue disappears into the
+        // game with no way back, since the debugger only gets a turn
+        // when the game stops. Stopping wherever the game takes a
+        // command is also the rhythm a story is debugged in, and
+        // delete gives it up for a free run.
+        Console.Error.WriteLine(session.Obey("break reads"));
+        Console.Error.WriteLine(session.Stopped());
+
+        while (!session.Finished && !interpreter.HasQuit)
+        {
+            Console.Out.Flush();
+            Console.Error.Write("(rezrov) ");
+
+            if (Console.In.ReadLine() is not { } line)
+            {
+                return;
+            }
+
+            var said = session.Obey(line);
+
+            if (said.Length > 0)
+            {
+                Console.Out.Flush();
+                Console.Error.WriteLine(said);
+            }
+        }
     }
 
     /// <summary>
@@ -643,7 +708,7 @@ internal static class Program
     /// go without asking either. Resources, if there are any, give the
     /// game its sounds, though the console can only ring its bell.
     /// </summary>
-    private static int RunZMachine(byte[] bytes, bool trace, string? commands, string? transcript, string? record, string? save, BlorbFile? resources, int? seed, InterpreterNumber? machine, bool tandy, string? pictures = null, string? map = null)
+    private static int RunZMachine(byte[] bytes, bool trace, string? commands, string? transcript, string? record, string? save, BlorbFile? resources, int? seed, InterpreterNumber? machine, bool tandy, string? pictures = null, string? map = null, bool debug = false)
     {
         var memory = new ZMemory(bytes);
         var header = new StoryHeader(memory);
@@ -712,7 +777,11 @@ internal static class Program
 
         try
         {
-            if (trace)
+            if (debug)
+            {
+                Debug(interpreter, memory, header);
+            }
+            else if (trace)
             {
                 while (!interpreter.HasQuit)
                 {
