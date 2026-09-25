@@ -121,6 +121,41 @@ public sealed class DebugSession
         }
     }
 
+    /// <summary>
+    /// What to say before anything has been typed, which is that
+    /// nothing has run yet and what the two ways into the game are.
+    /// </summary>
+    public static string Opening() =>
+        Say("nothing has run yet. continue plays the game, step walks into it, help lists the rest.");
+
+    /// <summary>
+    /// Everything at once, for something that shows several of these
+    /// side by side rather than one at a time.
+    /// </summary>
+    /// <remarks>
+    /// This reads the game and does not move it, so it is safe to ask
+    /// for between commands. It has to be asked for on the thread the
+    /// game runs on, because everything it reads is the game's.
+    /// </remarks>
+    public DebugView Look()
+    {
+        if (_machine.HasQuit)
+        {
+            var ended = Say("the game has quit");
+
+            return new DebugView(ended, ended, ended, ended, ended, ended, Quit: true);
+        }
+
+        return new DebugView(
+            Stopped(),
+            List(null),
+            Where(),
+            Locals(),
+            Globals(null),
+            Stack(),
+            Quit: false);
+    }
+
     private string Break(string? argument)
     {
         // The one place a debugger nearly always wants to stop is
