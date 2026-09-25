@@ -3,6 +3,7 @@
     <Project Path="src/Rezrov.AaMachine/Rezrov.AaMachine.csproj" />
     <Project Path="src/Rezrov.Cli/Rezrov.Cli.csproj" />
     <Project Path="src/Rezrov.Core/Rezrov.Core.csproj" />
+    <Project Path="src/Rezrov.Debugging/Rezrov.Debugging.csproj" />
     <Project Path="src/Rezrov.Glulx/Rezrov.Glulx.csproj" />
     <Project Path="src/Rezrov.Grid/Rezrov.Grid.csproj" />
     <Project Path="src/Rezrov.Gtui/Rezrov.Gtui.csproj" />
