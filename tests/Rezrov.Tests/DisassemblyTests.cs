@@ -144,6 +144,28 @@ public class DisassemblyTests
     }
 
     [Fact]
+    public void AnAddressBelongsToARoutineUpToTheByteAfterIt()
+    {
+        // The routine runs from $40 to $43, and $44 is the string
+        // after it, which is nobody's instruction.
+        var (memory, header) = DebugStory.Of(new Assembler()
+            .Bytes(0x00)
+            .Short0(Op.NewLine)
+            .Short0(Op.NewLine)
+            .Short0(Op.Rtrue)
+            .Bytes(0x80, 0x00)
+            .ToArray());
+
+        var listing = Disassembly.Of(memory, header);
+        var routine = Assert.Single(listing.Routines);
+
+        Assert.Equal(routine, listing.RoutineAt(0x40));
+        Assert.Equal(routine, listing.RoutineAt(0x43));
+        Assert.Null(listing.RoutineAt(0x3F));
+        Assert.Null(listing.RoutineAt(0x44));
+    }
+
+    [Fact]
     public void EveryStoryFileReadsAsAListing()
     {
         var files = Corpus.StoryFiles();
