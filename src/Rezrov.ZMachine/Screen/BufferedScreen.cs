@@ -235,15 +235,87 @@ public class BufferedScreen : IScreen
     /// </summary>
     public int BandPicture { get; private set; }
 
-    public void DrawImageBand(int picture, int mode)
+    public bool DrawImageBand(int picture, int mode, bool paging)
     {
+        var rows = picture == 0 ? 0 : mode;
+
+        IReadOnlyList<IReadOnlyList<Cell>>? page = null;
+        bool moved;
+
         lock (Sync)
         {
+            // [arc contract 3] No line on the page has been read,
+            // since no input has intervened, so the band may not
+            // cover any of it. What is on it is taken now, while the
+            // window is still the size it was written at.
+            if (rows > Buffer.BandRows)
+            {
+                page = Buffer.Page();
+            }
+
             BandPicture = picture;
-            Buffer.SetBand(picture == 0 ? 0 : mode);
+            moved = Buffer.SetBand(rows);
+        }
+
+        if (!moved)
+        {
+            _repaint();
+
+            return false;
+        }
+
+        var paused = page is not null && Repage(page, paging);
+
+        lock (Sync)
+        {
+            // [arc contract 3] The last frame is the same tail either
+            // way: the newest lines, bottom-anchored above the prompt.
+            Buffer.Settle();
         }
 
         _repaint();
+
+        return paused;
+    }
+
+    /// <summary>
+    /// [arc contract 3] Shows a page that no longer fits below the
+    /// band, a window-full at a time from its top, behind honest
+    /// [MORE]s, so that every line passes the player's eyes.
+    /// </summary>
+    /// <remarks>
+    /// The pause waits on a key, which cannot happen while the lock
+    /// is held: the thread that would draw the prompt is the thread
+    /// that wants the lock. So each frame is put on the grid under
+    /// the lock and the waiting is done outside it.
+    /// </remarks>
+    private bool Repage(IReadOnlyList<IReadOnlyList<Cell>> page, bool paging)
+    {
+        int window;
+
+        lock (Sync)
+        {
+            window = Math.Max(Buffer.Height - Buffer.LowerTop, 1);
+        }
+
+        var at = 0;
+
+        // A page that fits below the band goes there whole and the
+        // player is held up for nothing, which is the same statement
+        // as this loop not running: whether they were held up is
+        // whether anything was shown behind a prompt.
+        while (paging && page.Count - at > window)
+        {
+            lock (Sync)
+            {
+                at += Buffer.ShowFrom(page, at);
+            }
+
+            _repaint();
+            MorePrompt();
+        }
+
+        return at > 0;
     }
 
     public void UpdateWindows(WindowedScreenModel model)
