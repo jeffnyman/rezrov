@@ -20,6 +20,11 @@ public enum StopReason
     Breakpoint,
 
     /// <summary>
+    /// A word the caller was watching is not what it was.
+    /// </summary>
+    Changed,
+
+    /// <summary>
     /// The call chain came back to the depth the caller asked for,
     /// which is what running to a return looks like from outside.
     /// </summary>

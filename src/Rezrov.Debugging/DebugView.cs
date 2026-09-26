@@ -21,6 +21,7 @@ namespace Rezrov.Debugging;
 /// <param name="Locals">The running routine's local variables.</param>
 /// <param name="Globals">The globals the game has written to.</param>
 /// <param name="Stack">What the running routine has pushed.</param>
+/// <param name="Watching">The words being kept an eye on.</param>
 /// <param name="Quit">Whether the game has ended.</param>
 public sealed record DebugView(
     string Position,
@@ -29,4 +30,5 @@ public sealed record DebugView(
     string Locals,
     string Globals,
     string Stack,
+    string Watching,
     bool Quit);

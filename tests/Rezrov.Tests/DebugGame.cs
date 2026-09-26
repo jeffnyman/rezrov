@@ -7,11 +7,16 @@ namespace Rezrov.Tests;
 /// <summary>
 /// A small Version 5 game for the debugger to be pointed at: the start
 /// calls the routine at $1100, which calls the one at $1200, which
-/// takes a command and returns. It is given two commands to answer
+/// takes a command and returns. On the way back the first routine
+/// writes 7 into global 0, so there is something for a watch to
+/// notice. It is given two commands to answer
 /// with, so a run that is let go reaches the end rather than stopping
 /// with nothing left to read.
 /// </summary>
 /// <remarks>
+/// The globals are at $40, which leaves the two input buffers and the
+/// dictionary above them and still inside dynamic memory.
+///
 /// High memory begins at $400 and everything above it is zero except
 /// the three pieces of code, so a scan of the file finds those and
 /// nothing else. A zero byte reads as a routine of no locals whose
@@ -24,7 +29,10 @@ internal static class DebugGame
     public const int First = 0x1100;
     public const int Second = 0x1200;
 
-    private const int Text = 0x200;
+    /// <summary>[zm 6.2] Where the 240 words of globals begin.</summary>
+    public const int Globals = 0x40;
+
+    private const int Text = 0x240;
     private const int Parse = 0x300;
 
     public static (ZMemory Memory, StoryHeader Header, Interpreter Machine) Of(ScriptedInput? input = null)
@@ -35,6 +43,7 @@ internal static class DebugGame
         Put(bytes, 0x04, 0x0400);   // [zm 11.1] high memory base
         Put(bytes, 0x06, Start);    // [zm 11.1] initial program counter
         Put(bytes, 0x08, 0x0380);   // [zm 11.1] dictionary
+        Put(bytes, 0x0C, Globals);  // [zm 11.1] global variables
         Put(bytes, 0x0E, 0x0400);   // [zm 11.1] static memory base
 
         // [zm 13.2] An empty dictionary: no separators, six-byte
@@ -56,7 +65,7 @@ internal static class DebugGame
         bytes[First] = 0;
         new Assembler()
             .Variable(Op.Call, true, Assembler.Large(Second / 4)).Store(0)
-            .Short0(Op.Nop)
+            .Long(Op.Store, Assembler.Small(0x10), Assembler.Small(7))
             .Short0(Op.Rtrue)
             .ToArray()
             .CopyTo(bytes, First + 1);

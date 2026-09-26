@@ -194,6 +194,120 @@ public partial class InterpreterTests
     }
 
     [Fact]
+    public void AWatchedWordChangingStopsTheRun()
+    {
+        // The question a watch answers is which instruction changed a
+        // value, so the run comes back at the one that did.
+        var machine = Machine(new Assembler()
+            .Short0(Op.Nop)
+            .Long(Op.Store, Small(G0), Small(7))
+            .Short0(Op.Nop)
+            .Quit());
+
+        machine.State.Watch(Globals);
+
+        Assert.Equal(StopReason.Changed, machine.Continue());
+        Assert.Equal(new Disturbance(Globals, 0, 7), machine.State.Disturbed);
+        Assert.Equal(2, machine.InstructionsExecuted);
+    }
+
+    [Fact]
+    public void AWriteThatLeavesAWordAloneIsNotAChange()
+    {
+        var machine = Machine(new Assembler()
+            .Long(Op.Store, Small(G0), Small(0))
+            .Quit());
+
+        machine.State.Watch(Globals);
+
+        Assert.Equal(StopReason.Quit, machine.Continue());
+        Assert.Null(machine.State.Disturbed);
+    }
+
+    [Fact]
+    public void AByteWrittenToEitherHalfOfAWatchedWordCounts()
+    {
+        // [zm op:storeb] A game may reach half a global as memory, and
+        // half a global is still the global.
+        foreach (var (offset, expected) in new[] { (0, 0x0900), (1, 0x0009) })
+        {
+            var machine = Machine(new Assembler()
+                .Variable(Op.Storeb, true, Large(Globals), Small(offset), Small(9))
+                .Quit());
+
+            machine.State.Watch(Globals);
+
+            Assert.Equal(StopReason.Changed, machine.Continue());
+            Assert.Equal(expected, machine.State.Disturbed!.Value.Now);
+        }
+    }
+
+    [Fact]
+    public void NothingIsWatchedUntilSomethingAsks()
+    {
+        var machine = Machine(new Assembler()
+            .Long(Op.Store, Small(G0), Small(7))
+            .Quit());
+
+        Assert.Empty(machine.State.Watched);
+        Assert.Equal(StopReason.Quit, machine.Continue());
+        Assert.Null(machine.State.Disturbed);
+    }
+
+    [Fact]
+    public void WhatChangedBelongsToTheInstructionThatChangedIt()
+    {
+        var machine = Machine(new Assembler()
+            .Long(Op.Store, Small(G0), Small(7))
+            .Short0(Op.Nop)
+            .Quit());
+
+        machine.State.Watch(Globals);
+        machine.Step();
+        Assert.NotNull(machine.State.Disturbed);
+
+        // The next instruction did not change it, so by the time that
+        // one has been carried out there is nothing to report.
+        machine.Step();
+        Assert.Null(machine.State.Disturbed);
+    }
+
+    [Fact]
+    public void RestoringAGameIsNotTheGameChangingAValue()
+    {
+        // [zm 6.1.2] A restore replaces the whole of dynamic memory,
+        // which is the state being put back rather than a game writing
+        // to a word, and reporting it as one would be a lie.
+        var machine = Machine(new Assembler().Short0(Op.Nop).Quit());
+
+        machine.State.Watch(Globals);
+
+        var saved = machine.State.Snapshot();
+        machine.State.WriteGlobal(G0, 5);
+        Assert.NotNull(machine.State.Disturbed);
+
+        machine.State.Restore(saved);
+        Assert.Null(machine.State.Disturbed);
+    }
+
+    [Fact]
+    public void AWatchCanBeGivenUp()
+    {
+        var machine = Machine(new Assembler()
+            .Long(Op.Store, Small(G0), Small(7))
+            .Quit());
+
+        machine.State.Watch(Globals);
+        Assert.Equal([Globals], machine.State.Watched);
+
+        Assert.True(machine.State.Unwatch(Globals));
+        Assert.False(machine.State.Unwatch(Globals));
+        Assert.Empty(machine.State.Watched);
+
+        Assert.Equal(StopReason.Quit, machine.Continue());
+    }
+
+    [Fact]
     public void TheValueStackCanBeReadFrameByFrame()
     {
         // [zm 6.3.1] A routine sees only what it pushed itself, and

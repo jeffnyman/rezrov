@@ -29,6 +29,9 @@ public sealed class DebugSession
     private const int Before = 4;
     private const int After = 9;
 
+    /// <summary>[zm 6.2] How many globals a game has.</summary>
+    private const int HowManyGlobals = 240;
+
     private static readonly Dictionary<int, string> NoLabels = [];
 
     private readonly Interpreter _machine;
@@ -79,6 +82,8 @@ public sealed class DebugSession
                 "locals" => Locals(),
                 "globals" => Globals(argument),
                 "stack" => Stack(),
+                "watch" => Watch(argument),
+                "unwatch" => Unwatch(argument),
                 "read" => Read(argument),
                 "q" or "quit" => Quit(),
                 "h" or "help" or "?" => Help(),
@@ -143,7 +148,7 @@ public sealed class DebugSession
         {
             var ended = Say("the game has quit");
 
-            return new DebugView(ended, ended, ended, ended, ended, ended, Quit: true);
+            return new DebugView(ended, ended, ended, ended, ended, ended, Watching(), Quit: true);
         }
 
         return new DebugView(
@@ -153,6 +158,7 @@ public sealed class DebugSession
             Locals(),
             Globals(null),
             Stack(),
+            Watching(),
             Quit: false);
     }
 
@@ -297,8 +303,101 @@ public sealed class DebugSession
     {
         StopReason.Quit => "the game has quit.",
         StopReason.Breakpoint => Say("stopped") + Environment.NewLine + Stopped(),
+        StopReason.Changed => Changed() + Environment.NewLine + Stopped(),
         _ => Stopped(),
     };
+
+    /// <summary>
+    /// What a game just did to a word that was being watched, which is
+    /// the whole point of having watched it.
+    /// </summary>
+    private string Changed() => _machine.State.Disturbed is { } what
+        ? Say($"{Named(what.Address)} changed from {Hex(what.Was)} to {Hex(what.Now)}")
+        : Say("something being watched changed");
+
+    private string Watch(string? argument)
+    {
+        if (argument is null)
+        {
+            return Watching();
+        }
+
+        if (Spot(argument) is not { } address)
+        {
+            return Wanted("watch", "a global such as G3C, or an address in memory");
+        }
+
+        _machine.State.Watch(address);
+
+        return Say($"watching {Named(address)}, which holds {Held(address)}");
+    }
+
+    private string Unwatch(string? argument)
+    {
+        if (argument is null)
+        {
+            var many = _machine.State.Watched.Count;
+            _machine.State.Unwatch();
+
+            return Say($"{many} {(many == 1 ? "watch" : "watches")} gone");
+        }
+
+        if (Spot(argument) is not { } address)
+        {
+            return Wanted("unwatch", "a global, an address, or nothing at all to clear them");
+        }
+
+        return _machine.State.Unwatch(address)
+            ? Say($"no longer watching {Named(address)}")
+            : Say($"{Named(address)} was not being watched");
+    }
+
+    /// <summary>What is being watched, and what it holds now.</summary>
+    private string Watching()
+    {
+        var watched = _machine.State.Watched;
+
+        return watched.Count == 0
+            ? Say("nothing is being watched")
+            : Columns(watched.Order().Select(address => $"{Named(address)} {Held(address)}"));
+    }
+
+    /// <summary>
+    /// [zm 6.2] The name for an address: the global it is, where it is
+    /// one, since that is how a game's own code thinks of it.
+    /// </summary>
+    private string Named(int address)
+    {
+        var offset = address - _machine.State.Header.GlobalVariablesAddress;
+
+        return offset >= 0 && offset < HowManyGlobals * 2 && offset % 2 == 0
+            ? Operand.VariableName((offset / 2) + 16)
+            : Hex(address);
+    }
+
+    /// <summary>
+    /// An address written either as a global, the way the listing
+    /// writes one, or as a plain address.
+    /// </summary>
+    private int? Spot(string text)
+    {
+        if (text.Length > 1
+            && text[0] is 'G' or 'g'
+            && Address(text[1..]) is { } number
+            && number is >= 0 and < HowManyGlobals)
+        {
+            return _machine.State.Header.GlobalVariablesAddress + (number * 2);
+        }
+
+        return Address(text);
+    }
+
+    private string Held(int address)
+    {
+        var memory = _machine.State.Memory;
+
+        return address >= 0 && address + 1 < memory.Length ? Hex(memory.ReadWord(address)) : "nothing";
+    }
 
     private string Where()
     {
@@ -400,7 +499,7 @@ public sealed class DebugSession
             // [zm 4.2.2] Globals are variables $10 upward, and the
             // listing names them from 0, so that is how they are asked
             // for here.
-            if (Address(argument) is not { } number || number is < 0 or > 239)
+            if (Address(argument.TrimStart('G', 'g')) is not { } number || number is < 0 or >= HowManyGlobals)
             {
                 return Wanted("globals", "a global from 0 to EF, or nothing at all");
             }
@@ -414,7 +513,7 @@ public sealed class DebugSession
         //
         // All 240 would be thirty lines of mostly nothing, and a global
         // that is still zero is one the game has not used.
-        var set = Enumerable.Range(0, 240)
+        var set = Enumerable.Range(0, HowManyGlobals)
             .Select(number => (Number: number, Value: _machine.State.ReadGlobal(number + 16)))
             .Where(global => global.Value != 0)
             .Select(global => $"{Operand.VariableName(global.Number + 16)} {Hex(global.Value)}")
@@ -490,11 +589,15 @@ public sealed class DebugSession
         "  locals              this routine's local variables",
         "  globals [<number>]  the globals a game has written, or one of them",
         "  stack               what this routine has pushed",
+        "  watch <thing>       stop when a global such as G3C, or the word at",
+        "                      an address, is changed by the game",
+        "  unwatch [<thing>]   stop doing that, or clear every watch",
         "  read <address>      sixteen bytes of memory",
         "  quit                leave the game",
         "",
-        "  Addresses are hexadecimal. Every command has its first letter",
-        "  as a short form, except breaks, locals, globals, stack and read.");
+        "  Addresses are hexadecimal. break, delete, step, next, finish,",
+        "  continue, where, list and quit have their first letter as a",
+        "  short form; the rest are typed out.");
 
     /// <summary>
     /// [zm 4] An address as the listing writes one, so that what is
