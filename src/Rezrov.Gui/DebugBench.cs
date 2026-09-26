@@ -37,6 +37,7 @@ internal sealed class DebugBench : Grid
     private readonly DebugText _routine;
     private readonly DebugText _globals;
     private readonly DebugText _chain;
+    private readonly DebugText _watching;
     private readonly DebugText _log;
     private readonly List<string> _said = [];
 
@@ -52,6 +53,7 @@ internal sealed class DebugBench : Grid
         _routine = new DebugText(typewriter, size);
         _globals = new DebugText(typewriter, size);
         _chain = new DebugText(typewriter, size);
+        _watching = new DebugText(typewriter, size);
         _log = new DebugText(typewriter, size) { Trails = true };
 
         Prompt = new DebugPrompt(typewriter, size);
@@ -65,7 +67,7 @@ internal sealed class DebugBench : Grid
         ];
 
         Add(Across(Framed("listing", sans, _listing), Beside(sans)), 0);
-        Add(Across(Framed("the game", sans, board), Framed("call chain", sans, _chain)), 1);
+        Add(Across(Framed("the game", sans, board), Under(sans)), 1);
         Add(Framed("the debugger", sans, _log), 2);
         Add(Prompt, 3);
     }
@@ -109,11 +111,37 @@ internal sealed class DebugBench : Grid
         _listing.Lines = Lines(view.Listing);
         _chain.Lines = Lines(view.Chain);
         _globals.Lines = Lines(view.Globals);
+        _watching.Lines = Lines(view.Watching);
         _routine.Lines = [.. Lines(view.Locals), string.Empty, .. Lines(view.Stack)];
     }
 
     private static string[] Lines(string text) =>
         text.Length == 0 ? [] : text.Split(Environment.NewLine);
+
+    /// <summary>
+    /// The right hand column beside the game: the routines it is
+    /// inside, and whatever is being kept an eye on.
+    /// </summary>
+    private Grid Under(string sans)
+    {
+        var column = new Grid
+        {
+            RowDefinitions =
+            [
+                new RowDefinition(new GridLength(1, GridUnitType.Star)),
+                new RowDefinition(new GridLength(1, GridUnitType.Star)),
+            ],
+        };
+
+        var chain = Framed("call chain", sans, _chain);
+        var watching = Framed("watching", sans, _watching);
+
+        SetRow(watching, 1);
+        column.Children.Add(chain);
+        column.Children.Add(watching);
+
+        return column;
+    }
 
     /// <summary>The right hand column above the game.</summary>
     private Grid Beside(string sans)

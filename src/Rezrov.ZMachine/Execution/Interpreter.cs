@@ -356,6 +356,10 @@ public sealed class Interpreter
             throw new InvalidOperationException("The game has quit.");
         }
 
+        // Whatever was last noticed changing belongs to the
+        // instruction that changed it, not to this one.
+        State.Settle();
+
         // [zm 9.4.4] A sound that ended by itself has a routine to call,
         // which happens between instructions, as an interrupt routine.
         if (Sound.HasPendingEvents)
@@ -425,6 +429,10 @@ public sealed class Interpreter
     /// 5,553,351 with it, which is to say the difference is noise. So
     /// there is no fast path here that skips the check, and a game
     /// being played simply has nothing in the set.
+    ///
+    /// A run also comes back when a word the caller asked
+    /// <see cref="GameState.Watch"/> to keep an eye on is changed by
+    /// the instruction just carried out.
     /// </remarks>
     public StopReason Continue(int unwind = 0, long limit = long.MaxValue)
     {
@@ -458,6 +466,13 @@ public sealed class Interpreter
             if (HasQuit)
             {
                 return StopReason.Quit;
+            }
+
+            // A watched word changing is reported at the instruction
+            // that changed it, which is the one just carried out.
+            if (State.Disturbed is not null)
+            {
+                return StopReason.Changed;
             }
 
             if (unwind > 0 && State.FrameNumber <= unwind)

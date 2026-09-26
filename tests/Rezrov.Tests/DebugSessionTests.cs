@@ -280,6 +280,83 @@ public class DebugSessionTests
     }
 
     [Fact]
+    public void AGlobalIsWatchedByTheNameTheListingGivesIt()
+    {
+        var (session, machine) = Session();
+
+        var said = session.Obey("watch G02");
+
+        Assert.Contains("watching G02", said, StringComparison.Ordinal);
+        Assert.Equal([DebugGame.Globals + 4], machine.State.Watched);
+    }
+
+    [Fact]
+    public void AnAddressMayBeWatchedAsWellAsAGlobal()
+    {
+        var (session, machine) = Session();
+
+        session.Obey($"watch {DebugGame.Globals + 4:X4}");
+
+        // The same word either way, and named as the global it is.
+        Assert.Equal([DebugGame.Globals + 4], machine.State.Watched);
+        Assert.Contains("G02", session.Obey("watch"), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AWatchedGlobalChangingSaysWhatItWasAndWhatItIs()
+    {
+        var (session, machine) = Session();
+
+        session.Obey("watch G00");
+
+        var said = session.Obey("continue");
+
+        Assert.Contains("G00 changed from 0000 to 0007", said, StringComparison.Ordinal);
+        Assert.False(machine.HasQuit);
+
+        // And the run stopped at the instruction after the one that
+        // did it, which is what makes the answer worth having.
+        Assert.Contains("rtrue", said, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AGameLeftToRunWithNoWatchesNeverStopsForOne()
+    {
+        var (session, machine) = Session();
+
+        session.Obey("continue");
+
+        Assert.True(machine.HasQuit);
+    }
+
+    [Fact]
+    public void WatchesCanBeListedAndGivenUp()
+    {
+        var (session, machine) = Session();
+
+        Assert.Contains("nothing is being watched", session.Obey("watch"), StringComparison.Ordinal);
+
+        session.Obey("watch G02");
+        session.Obey("watch G03");
+        Assert.Equal(2, machine.State.Watched.Count);
+
+        Assert.Contains("no longer watching G02", session.Obey("unwatch G02"), StringComparison.Ordinal);
+        Assert.Contains("was not being watched", session.Obey("unwatch G02"), StringComparison.Ordinal);
+        Assert.Contains("1 watch gone", session.Obey("unwatch"), StringComparison.Ordinal);
+
+        Assert.Empty(machine.State.Watched);
+    }
+
+    [Fact]
+    public void WatchWantsAGlobalOrAnAddress()
+    {
+        var (session, _) = Session();
+
+        Assert.Contains("watch wants", session.Obey("watch zzz"), StringComparison.Ordinal);
+        Assert.Contains("unwatch wants", session.Obey("unwatch zzz"), StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void OneLookGathersWhatSeveralCommandsWouldSaySeparately()
     {
         // A window shows these side by side rather than one at a time,
@@ -296,6 +373,7 @@ public class DebugSessionTests
         Assert.Equal(session.Obey("locals"), view.Locals);
         Assert.Equal(session.Obey("globals"), view.Globals);
         Assert.Equal(session.Obey("stack"), view.Stack);
+        Assert.Equal(session.Obey("watch"), view.Watching);
         Assert.Equal(session.Stopped(), view.Position);
     }
 

@@ -35,6 +35,10 @@ public sealed class GameState
     private readonly List<ushort> _stack = [];
     private readonly List<CallFrame> _frames = [];
 
+    // Nothing is watched until a debugger says so, and a null set is
+    // what keeps a game that is only being played from paying for it.
+    private HashSet<int>? _watched;
+
     public GameState(ZMemory memory, StoryHeader header)
     {
         ArgumentNullException.ThrowIfNull(memory);
@@ -237,7 +241,53 @@ public sealed class GameState
     /// </remarks>
     public ushort ReadGlobal(int number) => Memory.ReadWord(GlobalAddress(number));
 
-    public void WriteGlobal(int number, ushort value) => Memory.WriteWord(GlobalAddress(number), value);
+    public void WriteGlobal(int number, ushort value)
+    {
+        var address = GlobalAddress(number);
+        var was = Kept(address);
+
+        Memory.WriteWord(address, value);
+
+        Compare(address, was);
+    }
+
+    /// <summary>
+    /// Begins keeping an eye on the word at an address, so that a game
+    /// changing it can be noticed.
+    /// </summary>
+    /// <remarks>
+    /// [zm 6.2] A global is a word of dynamic memory and a game may
+    /// reach it as a variable or as memory, so this watches the bytes
+    /// rather than the opcode: a store, a storew, and a storeb that
+    /// lands on either half all count.
+    ///
+    /// Nothing is watched until something asks, and while nothing is
+    /// watched the cost is one test against null on each write.
+    /// </remarks>
+    public void Watch(int address) => (_watched ??= []).Add(address);
+
+    /// <summary>Stops watching one address.</summary>
+    public bool Unwatch(int address) => _watched?.Remove(address) ?? false;
+
+    /// <summary>Stops watching everything.</summary>
+    public void Unwatch() => _watched = null;
+
+    /// <summary>The addresses being watched.</summary>
+    public IReadOnlyCollection<int> Watched => _watched ?? (IReadOnlyCollection<int>)[];
+
+    /// <summary>
+    /// The watched word a game has just changed, or null where none
+    /// has changed since this was last cleared.
+    /// </summary>
+    /// <remarks>
+    /// Only the first change is kept. One instruction can write more
+    /// than one watched word, and whatever stops to look is going to
+    /// stop at that instruction either way.
+    /// </remarks>
+    public Disturbance? Disturbed { get; private set; }
+
+    /// <summary>Forgets whatever was last changed.</summary>
+    public void Settle() => Disturbed = null;
 
     /// <summary>
     /// Calls a routine: creates its frame and locals, passes the
@@ -387,14 +437,59 @@ public sealed class GameState
     public void WriteByte(int address, byte value)
     {
         RequireDynamic(address);
+
+        // A byte write lands on the high half of the word beginning
+        // here and on the low half of the one before it.
+        var over = Kept(address - 1);
+        var at = Kept(address);
+
         Memory.WriteByte(address, value);
+
+        Compare(address - 1, over);
+        Compare(address, at);
     }
 
     public void WriteWord(int address, ushort value)
     {
         RequireDynamic(address);
         RequireDynamic(address + 1);
+
+        var over = Kept(address - 1);
+        var at = Kept(address);
+        var under = Kept(address + 1);
+
         Memory.WriteWord(address, value);
+
+        Compare(address - 1, over);
+        Compare(address, at);
+        Compare(address + 1, under);
+    }
+
+    /// <summary>
+    /// What a watched word holds before a write, or null where it is
+    /// not watched and there is nothing to compare it against.
+    /// </summary>
+    private ushort? Kept(int address) =>
+        _watched is not null && address >= 0 && address + 1 < Memory.Length && _watched.Contains(address)
+            ? Memory.ReadWord(address)
+            : null;
+
+    /// <summary>
+    /// Records that a watched word is not what it was.
+    /// </summary>
+    private void Compare(int address, ushort? was)
+    {
+        if (was is not { } before || Disturbed is not null)
+        {
+            return;
+        }
+
+        var now = Memory.ReadWord(address);
+
+        if (now != before)
+        {
+            Disturbed = new Disturbance(address, before, now);
+        }
     }
 
     /// <summary>
@@ -467,6 +562,11 @@ public sealed class GameState
         }
 
         ProgramCounter = state.ProgramCounter;
+
+        // The whole of dynamic memory has just been replaced, which is
+        // not the game changing a value and is not worth reporting as
+        // one.
+        Settle();
     }
 
     /// <summary>
@@ -490,6 +590,7 @@ public sealed class GameState
         }
 
         Memory.WriteWord(0x10, flags2);
+        Settle();
         Start();
     }
 

@@ -390,7 +390,8 @@ internal static class Program
 
             The debugger plays the game with a prompt of its own beside it:
             breakpoints, stepping in and over and out, the call chain, the
-            listing around wherever the game is, and its variables and memory.
+            listing around wherever the game is, its variables and memory, and
+            a watch that stops the game wherever a value it names is changed.
             Type help at that prompt for the commands.
 
             A listing is a Z-machine story read rather than played: what every
