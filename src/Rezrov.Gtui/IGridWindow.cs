@@ -23,6 +23,23 @@ internal interface IGridWindow : IDisposable
     Surface Surface { get; }
 
     /// <summary>
+    /// How many of the window's pixels one drawn pixel should become,
+    /// which is 1 on a display showing its own pixels.
+    /// </summary>
+    /// <remarks>
+    /// A system that scales its displays hands a program that has not
+    /// said otherwise a smaller window and stretches the result, which
+    /// blurs a font drawn a bit at a time. A platform that says so and
+    /// is given real pixels instead answers with how many of them a
+    /// drawn pixel is worth, and the drawing is magnified by that
+    /// whole number rather than smeared across it.
+    ///
+    /// Answering 1, which is what a platform that does none of this
+    /// does, leaves the drawing exactly as it was.
+    /// </remarks>
+    int Magnification => 1;
+
+    /// <summary>
     /// [zm 3.8] A key the player pressed, as a Z-machine character, or
     /// nothing at all for a key the Z-machine has no name for.
     /// </summary>
