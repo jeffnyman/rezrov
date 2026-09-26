@@ -22,6 +22,16 @@ internal sealed partial class Win32Window : IGridWindow
 {
     private const string ClassName = "RezrovGrid";
 
+    // [win32] DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2, which is a
+    // handle Windows defines as a small negative number rather than
+    // something to be looked up.
+    private const nint PerMonitorAwareV2 = -4;
+
+    // How many pixels a display calls one, which is settled once for
+    // the process before any window exists, because that is when
+    // Windows will listen.
+    private static readonly int Pixels = Real();
+
     private const uint WsOverlappedWindow = 0x00CF0000;
     private const uint SwShow = 5;
 
@@ -66,6 +76,17 @@ internal sealed partial class Win32Window : IGridWindow
     public Surface Surface { get; private set; }
 
     /// <summary>
+    /// How many of this window's pixels one drawn pixel becomes.
+    /// </summary>
+    /// <remarks>
+    /// [win32] Settled from the system's own scaling, once, rather
+    /// than followed from monitor to monitor: a game whose text
+    /// changed size when its window was dragged between displays
+    /// would be worse than one that did not.
+    /// </remarks>
+    public int Magnification => Pixels;
+
+    /// <summary>
     /// [zm 3.8] A key the player pressed, already turned into the
     /// Z-machine's own code.
     /// </summary>
@@ -89,6 +110,48 @@ internal sealed partial class Win32Window : IGridWindow
     /// for is the drawing area, and the frame is added around it, so a
     /// program that wants eighty columns gets eighty columns.
     /// </summary>
+    /// <summary>
+    /// Asks Windows for real pixels, and says how many of them the
+    /// display is calling one.
+    /// </summary>
+    /// <remarks>
+    /// [win32] A program that says nothing is handed a window of
+    /// however many pixels it asked for and has the result stretched
+    /// by the display's scaling, which for a font drawn a bit at a
+    /// time and artwork drawn a pixel at a time is a blur. Saying so
+    /// gives the program the pixels that are really there, and then
+    /// the drawing is magnified by a whole number instead.
+    ///
+    /// The two calls that do this arrived in Windows 10, so an older
+    /// Windows falls back to the one that has been there since Vista
+    /// and then to doing nothing at all, which is what this program
+    /// did before and is no worse than it was.
+    ///
+    /// Rounded to the nearest whole number, so a display at 150% or
+    /// 175% draws at two pixels to one and a display at 125% draws at
+    /// its own size, slightly smaller than before but sharp.
+    /// </remarks>
+    private static int Real()
+    {
+        try
+        {
+            if (!SetProcessDpiAwarenessContext(PerMonitorAwareV2))
+            {
+                SetProcessDPIAware();
+            }
+
+            var dpi = GetDpiForSystem();
+
+            return dpi > 0 ? Math.Max((int)Math.Round(dpi / 96.0, MidpointRounding.AwayFromZero), 1) : 1;
+        }
+        catch (EntryPointNotFoundException)
+        {
+            // A Windows old enough not to have these is a Windows
+            // whose displays are not scaled either.
+            return 1;
+        }
+    }
+
     public void Open(string title, int width, int height)
     {
         var self = GetModuleHandleW(null);
@@ -442,6 +505,17 @@ internal sealed partial class Win32Window : IGridWindow
         public long Reserved2;
         public long Reserved3;
     }
+
+    [LibraryImport("user32", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool SetProcessDpiAwarenessContext(nint context);
+
+    [LibraryImport("user32", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool SetProcessDPIAware();
+
+    [LibraryImport("user32")]
+    private static partial uint GetDpiForSystem();
 
     [LibraryImport("kernel32", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
     private static partial nint GetModuleHandleW(string? name);

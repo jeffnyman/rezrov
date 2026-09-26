@@ -94,6 +94,15 @@ public sealed class Surface
                 continue;
             }
 
+            // Pixel for pixel is a row at a time, which is the case a
+            // display at its own resolution takes and is worth not
+            // doing one rectangle at a time.
+            if (scale == 1 && left >= 0 && left + from.Width <= Width && down >= 0)
+            {
+                Array.Copy(from.Pixels, y * from.Width, Pixels, (down * Width) + left, from.Width);
+                continue;
+            }
+
             for (var x = 0; x < from.Width; x++)
             {
                 Fill(left + (x * scale), down, scale, scale, from.Pixels[(y * from.Width) + x]);

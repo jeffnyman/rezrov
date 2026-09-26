@@ -40,12 +40,6 @@ internal static class Program
     private const int Columns = 80;
     private const int Rows = 30;
 
-    // [infocom pictures] How many window pixels a screen pixel becomes
-    // when a game is laid out for a screen of a fixed size. The art is
-    // 320 by 200 doubled into a 640 by 400 screen, so doubling that
-    // again is the size it was meant to be looked at.
-    private const int Magnification = 2;
-
     private static int? _seed;
     private static InterpreterNumber? _machine;
     private static bool _tandy;
@@ -171,14 +165,21 @@ internal static class Program
             : ((int Width, int Height)?)null;
 
         using var window = Window();
+
+        // What is drawn, and how it reaches the window: a fixed screen
+        // for a game laid out for one, and a whole number of the
+        // window's pixels to each of this program's.
+        var page = new Page(window.Magnification, unit);
+        var (wide, high) = page.Opening(Columns, Rows);
+
         // [babel legacy Z-code IFID] A game Infocom made is named
         // after itself rather than after whatever the file on disk
         // happens to be called, and the window says what machine
         // it runs on.
         window.Open(
             $"{StoryBadges.Title(path, StoryFormat.ZMachine, bytes, packaged)} - rezrov",
-            unit is { } opening ? opening.Width * Magnification : Columns * Paint.CellWidth,
-            unit is { } tall ? tall.Height * Magnification : Rows * Paint.CellHeight);
+            wide,
+            high);
 
         // The mark the window wears, which is whose game it is
         // where that can be told, and the program's own otherwise.
@@ -187,14 +188,7 @@ internal static class Program
             window.SetIcon(mark);
         }
 
-        // The page a fixed screen is drawn on, at its own size, which
-        // the window then magnifies. Everything else is drawn straight
-        // into the window and the grid is whatever fits.
-        var page = unit is { } size ? new Surface(size.Width, size.Height) : null;
-
-        var (columns, rows) = page is null
-            ? Paint.Fits(window.Surface.Width, window.Surface.Height)
-            : Paint.Fits(page.Width, page.Height);
+        var (columns, rows) = page.Fits(window.Surface);
 
         // The screen needs the input for the [MORE] key and the input
         // needs the screen for its echo, so each reaches the other
@@ -231,33 +225,16 @@ internal static class Program
         // its lock rather than caught halfway through a line.
         window.Painting = surface =>
         {
-            if (page is null)
+            page.Show(surface, drawn =>
             {
                 lock (screen.Sync)
                 {
-                    Paint.Screen(surface, screen);
+                    Paint.Screen(
+                        drawn,
+                        screen,
+                        behind: art is null ? null : at => Paint.Pictures(at, screen.Pictures, art));
                 }
-
-                return;
-            }
-
-            lock (screen.Sync)
-            {
-                Paint.Screen(page, screen, behind: at => Paint.Pictures(at, screen.Pictures, art!));
-
-            }
-
-            // A whole number of pixels to a pixel, and the rest of the
-            // window left dark around it, because half a pixel of this
-            // artwork is not a thing that can be drawn honestly.
-            var scale = Math.Max(1, Math.Min(surface.Width / page.Width, surface.Height / page.Height));
-
-            surface.Fill(Surface.Black);
-            surface.Magnify(
-                page,
-                scale,
-                (surface.Width - (page.Width * scale)) / 2,
-                (surface.Height - (page.Height * scale)) / 2);
+            });
         };
 
         window.Key = input.Enqueue;
@@ -269,12 +246,12 @@ internal static class Program
             // A fixed screen does not change size with the window. The
             // window only magnifies it by more or less, which the
             // painting works out for itself.
-            if (page is not null)
+            if (!page.Follows)
             {
                 return;
             }
 
-            var (across, down) = Paint.Fits(window.Surface.Width, window.Surface.Height);
+            var (across, down) = page.Fits(window.Surface);
             screen.Resize(across, down);
         };
 
@@ -374,10 +351,16 @@ internal static class Program
         }
 
         using var window = Window();
+
+        // A whole number of the window's pixels to each of this
+        // program's, which is one until a display says otherwise.
+        var page = new Page(window.Magnification);
+        var (wide, high) = page.Opening(Columns, Rows);
+
         window.Open(
             $"{StoryBadges.Title(path, StoryFormat.AaMachine, bytes, false)} - rezrov",
-            Columns * Paint.CellWidth,
-            Rows * Paint.CellHeight);
+            wide,
+            high);
 
         // The mark the window wears, which is whose game it is
         // where that can be told, and the program's own otherwise.
@@ -386,13 +369,13 @@ internal static class Program
             window.SetIcon(mark);
         }
 
-        var (columns, rows) = Paint.Fits(window.Surface.Width, window.Surface.Height);
+        var (columns, rows) = page.Fits(window.Surface);
         var display = new AaGridDisplay(story, columns, rows, window.Redraw);
 
         // The game fills the cells on its own thread while the window
         // is painted on the thread that owns it, so the picture is
         // brought up to date and read under its own lock.
-        window.Painting = surface =>
+        window.Painting = surface => page.Show(surface, drawn =>
         {
             lock (display.Sync)
             {
@@ -400,9 +383,9 @@ internal static class Program
                 // without the game getting in between, or the cells are
                 // painted halfway through a line the story is writing.
                 display.Repaint();
-                Paint.Picture(surface, display);
+                Paint.Picture(drawn, display);
             }
-        };
+        });
 
         // [aam text] The window reports the Z-machine's key codes,
         // since that is what it was built to report and what the
@@ -418,7 +401,7 @@ internal static class Program
 
         window.Resized = () =>
         {
-            var (across, down) = Paint.Fits(window.Surface.Width, window.Surface.Height);
+            var (across, down) = page.Fits(window.Surface);
             display.Resize(across, down);
         };
 
