@@ -1,3 +1,4 @@
+using Rezrov.Core.Graphics;
 using Rezrov.Grid;
 using Rezrov.ZMachine.Screen;
 
@@ -36,7 +37,7 @@ public static class Paint
     /// [zm 8] Draws the whole Z-machine screen onto the surface, in
     /// whatever colors the game has asked the screen to default to.
     /// </summary>
-    public static void Screen(Surface surface, BufferedScreen screen)
+    public static void Screen(Surface surface, BufferedScreen screen, Action<Surface>? behind = null)
     {
         ArgumentNullException.ThrowIfNull(screen);
 
@@ -47,7 +48,88 @@ public static class Paint
             (row, column) => screen[row, column],
             screen.Cursor,
             Pixel(screen.DefaultForeground, Surface.White),
-            Pixel(screen.DefaultBackground, Surface.Black));
+            Pixel(screen.DefaultBackground, Surface.Black),
+            behind);
+    }
+
+    /// <summary>
+    /// [zm 8.8.6] The pictures a Version 6 game has drawn, each where
+    /// it put it.
+    /// </summary>
+    /// <remarks>
+    /// [zm 8.8.1] The placement carries the cells it covers and where
+    /// it really is in units, and a unit is a pixel here, so the unit
+    /// rectangle is the one to use. Rounding to whole characters would
+    /// move artwork drawn to the pixel by as much as a character,
+    /// which on these games is plainly visible.
+    /// </remarks>
+    public static void Pictures(
+        Surface surface,
+        IReadOnlyList<PicturePlacement> placements,
+        GridPictures pictures)
+    {
+        ArgumentNullException.ThrowIfNull(placements);
+        ArgumentNullException.ThrowIfNull(pictures);
+
+        foreach (var placement in placements)
+        {
+            if (pictures.Decode(placement.Number, placement.Palette) is not { } drawn)
+            {
+                continue;
+            }
+
+            Artwork(surface, drawn, placement.UnitLeft, placement.UnitTop, placement.UnitWidth, placement.UnitHeight);
+        }
+    }
+
+    /// <summary>
+    /// Draws a picture into a rectangle of the surface, taking the
+    /// nearest pixel of it for each pixel drawn.
+    /// </summary>
+    /// <remarks>
+    /// [blorb 2.3] A picture may be asked for at a size other than its
+    /// own, and these games do ask: the MCGA artwork is 320 by 200 in
+    /// a 640 by 400 screen, so every picture is drawn at twice its
+    /// size. Taking the nearest pixel is what keeps it the pixel art
+    /// it is.
+    ///
+    /// A pixel that is not fully opaque is left alone rather than
+    /// blended, because nothing here keeps a partly transparent pixel:
+    /// the decoders give a picture's own colors or nothing at all.
+    /// </remarks>
+    public static void Artwork(Surface surface, Pixels picture, int left, int top, int width, int height)
+    {
+        ArgumentNullException.ThrowIfNull(surface);
+        ArgumentNullException.ThrowIfNull(picture);
+
+        // A picture asked for at no size at all, which a game may do
+        // and which would otherwise divide by nothing.
+        if (width <= 0 || height <= 0)
+        {
+            return;
+        }
+
+        for (var y = 0; y < height; y++)
+        {
+            var down = top + y;
+
+            if (down < 0 || down >= surface.Height)
+            {
+                continue;
+            }
+
+            var from = y * picture.Height / height;
+
+            for (var x = 0; x < width; x++)
+            {
+                var (red, green, blue, alpha) = picture.At(x * picture.Width / width, from);
+
+                if (alpha != 0)
+                {
+                    surface.Set(left + x, down, (uint)((red << 16) | (green << 8) | blue));
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -85,7 +167,8 @@ public static class Paint
         Func<int, int, Cell> at,
         (int Row, int Column)? cursor,
         uint ink,
-        uint paper)
+        uint paper,
+        Action<Surface>? behind = null)
     {
         ArgumentNullException.ThrowIfNull(surface);
 
@@ -94,6 +177,19 @@ public static class Paint
         // bottom. It is the screen's own color, not a border, or the
         // game appears to sit on a sheet of paper a size too small.
         surface.Fill(paper);
+
+        for (var row = 0; row < height; row++)
+        {
+            for (var column = 0; column < width; column++)
+            {
+                Background(surface, at(row, column), row, column, ink, paper);
+            }
+        }
+
+        // [zm 8.8.6] Whatever goes over the backgrounds and under the
+        // text, which is the order a Version 6 game draws in: it
+        // paints a picture and then writes over it.
+        behind?.Invoke(surface);
 
         for (var row = 0; row < height; row++)
         {
@@ -110,22 +206,49 @@ public static class Paint
     }
 
     /// <summary>
-    /// One cell: its background, and then whatever character is in it.
+    /// One cell's background, where it is not the color the whole
+    /// screen was already filled with.
+    /// </summary>
+    /// <remarks>
+    /// Leaving the rest alone is what lets a picture show through the
+    /// blank cells over it, and it saves filling most of the screen
+    /// twice into the bargain.
+    /// </remarks>
+    private static void Background(Surface surface, Cell cell, int row, int column, uint plain, uint page)
+    {
+        var (_, paper) = Colors(cell, plain, page);
+
+        if (paper != page)
+        {
+            surface.Fill(column * CellWidth, row * CellHeight, CellWidth, CellHeight, paper);
+        }
+    }
+
+    /// <summary>
+    /// [zm 8.7.1] The two colors a cell is drawn in, which reverse
+    /// video swaps for that cell only and nothing else.
+    /// </summary>
+    private static (uint Ink, uint Paper) Colors(Cell cell, uint plain, uint page)
+    {
+        var attributes = cell.Attributes;
+        var reversed = attributes.Style.HasFlag(TextStyle.ReverseVideo);
+
+        return (
+            Pixel(reversed ? attributes.Background : attributes.Foreground, reversed ? page : plain),
+            Pixel(reversed ? attributes.Foreground : attributes.Background, reversed ? plain : page));
+    }
+
+    /// <summary>
+    /// Whatever character is in one cell, over the background that
+    /// has already been laid down for it.
     /// </summary>
     private static void Character(Surface surface, Cell cell, int row, int column, uint plain, uint page)
     {
         var attributes = cell.Attributes;
-
-        // [zm 8.7.1] Reverse video swaps the two colors for this cell
-        // only, which is how a status line is drawn.
-        var reversed = attributes.Style.HasFlag(TextStyle.ReverseVideo);
-        var ink = Pixel(reversed ? attributes.Background : attributes.Foreground, reversed ? page : plain);
-        var paper = Pixel(reversed ? attributes.Foreground : attributes.Background, reversed ? plain : page);
+        var (ink, _) = Colors(cell, plain, page);
 
         var left = column * CellWidth;
         var top = row * CellHeight;
-
-        surface.Fill(left, top, CellWidth, CellHeight, paper);
 
         if (cell.Character is '\0' or ' ')
         {

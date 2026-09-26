@@ -55,6 +55,53 @@ public sealed class Surface
     public void Fill(uint color) => Array.Fill(Pixels, color);
 
     /// <summary>
+    /// Sets one pixel, and ignores a point off the surface.
+    /// </summary>
+    public void Set(int x, int y, uint color)
+    {
+        if (x >= 0 && x < Width && y >= 0 && y < Height)
+        {
+            Pixels[(y * Width) + x] = color;
+        }
+    }
+
+    /// <summary>
+    /// Copies another surface in, every pixel of it becoming a square
+    /// of <paramref name="scale"/> pixels a side.
+    /// </summary>
+    /// <remarks>
+    /// [infocom pictures] A whole number and nearest neighbour, which
+    /// is not a shortcut but the point: this artwork is 320 by 200
+    /// pixels drawn by hand, and any smoothing turns a hard edge into
+    /// a smear of colors nobody chose. Doubling it keeps every pixel
+    /// the shape the artist drew.
+    /// </remarks>
+    public void Magnify(Surface from, int scale, int left, int top)
+    {
+        ArgumentNullException.ThrowIfNull(from);
+
+        if (scale < 1)
+        {
+            return;
+        }
+
+        for (var y = 0; y < from.Height; y++)
+        {
+            var down = top + (y * scale);
+
+            if (down + scale <= 0 || down >= Height)
+            {
+                continue;
+            }
+
+            for (var x = 0; x < from.Width; x++)
+            {
+                Fill(left + (x * scale), down, scale, scale, from.Pixels[(y * from.Width) + x]);
+            }
+        }
+    }
+
+    /// <summary>
     /// Makes a rectangle one color, clipped to the surface.
     /// </summary>
     public void Fill(int left, int top, int width, int height, uint color)

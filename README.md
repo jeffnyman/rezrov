@@ -215,6 +215,14 @@ dotnet run --project src/Rezrov.Gtui -- --glyphs
 dotnet run --project src/Rezrov.Gtui -- --glyphs "The quick brown fox"
 ```
 
+That eight by sixteen font turns out to be exactly the right size for the four Version 6 games Infocom drew artwork for. Those games computed every coordinate for a 640 by 400 screen, which at eight pixels to a character and sixteen down is precisely the eighty columns by twenty-five rows they expect, with one of the Z-machine's units to one pixel and nothing rounded on either side. So this program does not have to hunt for a font that measures right, as the window program does; the font it already carries measures right.
+
+```sh
+dotnet run --project src/Rezrov.Gtui -- entharion/zcode-infocom/zork0-r393-s890714.z6   --pictures entharion/infocom-graphics/mcga/zorkzero.mg1
+```
+
+Point `--pictures` at the `.mg1`, `.eg1`, `.eg2` or `.cg1` file a game shipped with and it is given that fixed screen, drawn on a page of its own size which the window then magnifies by a whole number of pixels, centred, with the rest of the window left dark. A whole number and the nearest pixel are not a shortcut but the point: this is 320 by 200 art drawn by hand, and any smoothing turns an edge the artist chose into a smear of colors nobody did. Pictures go over the cell backgrounds and under the text, which is the order a Version 6 game draws in, so a blank cell shows the artwork through and a letter written over a picture stays legible. Resizing the window changes how far the page is magnified and nothing else, since a game laid out for one fixed screen has no use for a different one.
+
 The `--seed`, `--interpreter`, and `--tandy` options work here as elsewhere. Saving and restoring ask for the file name in the window itself, the way Infocom's interpreters did, since a file dialog is a toolkit and there is none here; the name offered is the story's own, so saving is one keystroke. What it does not do is play Glulx, or make any sound, or draw a Version 6 game's pictures, which is why it tells such a game there are none and gets Infocom's four in their text-only modes; a Dialog game's pictures it does draw, since the Å-machine hands it a picture already decoded and a grid of cells is somewhere to put one. The window cannot be resized on macOS. The other three programs are the complete ones; this is the one that shows how a window is made.
 
 ## Building and Testing

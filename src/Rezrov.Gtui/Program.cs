@@ -40,10 +40,19 @@ internal static class Program
     private const int Columns = 80;
     private const int Rows = 30;
 
+    // [infocom pictures] How many window pixels a screen pixel becomes
+    // when a game is laid out for a screen of a fixed size. The art is
+    // 320 by 200 doubled into a 640 by 400 screen, so doubling that
+    // again is the size it was meant to be looked at.
+    private const int Magnification = 2;
+
     private static int? _seed;
     private static InterpreterNumber? _machine;
     private static bool _tandy;
     private static string? _save;
+
+    private static string? _pictures;
+
 
     internal static int Main(string[] args)
     {
@@ -103,6 +112,9 @@ internal static class Program
                 case "--tandy":
                     _tandy = true;
                     break;
+                case "--pictures" when i + 1 < args.Length:
+                    _pictures = args[++i];
+                    break;
                 case "--save" when i + 1 < args.Length:
                     _save = args[++i];
                     break;
@@ -126,7 +138,7 @@ internal static class Program
 
         return story.Format == StoryFormat.AaMachine
             ? PlayAaMachine(path, story.Bytes)
-            : PlayZMachine(path, story.Bytes, story.Packaged);
+            : PlayZMachine(path, story.Bytes, story.Packaged, story.Resources);
     }
 
     /// <summary>
@@ -134,10 +146,29 @@ internal static class Program
     /// wraps and pages for, and whose size is the window's own divided
     /// by a character.
     /// </summary>
-    private static int PlayZMachine(string path, byte[] bytes, bool packaged)
+    private static int PlayZMachine(string path, byte[] bytes, bool packaged, BlorbFile? resources)
     {
         var memory = new ZMemory(bytes);
         var header = new StoryHeader(memory);
+
+        // [infocom pictures] The artwork Infocom's DOS releases shipped
+        // beside a Version 6 story, or whatever a resource file
+        // carries. The first is what this program was built to show.
+        var graphics = _pictures is { } file ? Artwork(file) : null;
+        var art = graphics is not null
+            ? new GridPictures(BlorbPictures.From(graphics))
+            : GridPictures.Of(resources);
+
+        // [infocom pictures] A game laid out for one fixed screen is
+        // given that screen and nothing else, and the whole of it is
+        // magnified into the window. This program's character is eight
+        // pixels across and sixteen down, so the 640 by 400 screen
+        // those games were written against is exactly the eighty
+        // columns by twenty-five rows they expect, with one unit to
+        // one pixel and no scaling of the text at all.
+        var unit = header.Version == ZMachineVersion.V6 && graphics is not null
+            ? InfocomPictures.UnitScreen
+            : ((int Width, int Height)?)null;
 
         using var window = Window();
         // [babel legacy Z-code IFID] A game Infocom made is named
@@ -146,8 +177,8 @@ internal static class Program
         // it runs on.
         window.Open(
             $"{StoryBadges.Title(path, StoryFormat.ZMachine, bytes, packaged)} - rezrov",
-            Columns * Paint.CellWidth,
-            Rows * Paint.CellHeight);
+            unit is { } opening ? opening.Width * Magnification : Columns * Paint.CellWidth,
+            unit is { } tall ? tall.Height * Magnification : Rows * Paint.CellHeight);
 
         // The mark the window wears, which is whose game it is
         // where that can be told, and the program's own otherwise.
@@ -156,7 +187,14 @@ internal static class Program
             window.SetIcon(mark);
         }
 
-        var (columns, rows) = Paint.Fits(window.Surface.Width, window.Surface.Height);
+        // The page a fixed screen is drawn on, at its own size, which
+        // the window then magnifies. Everything else is drawn straight
+        // into the window and the grid is whatever fits.
+        var page = unit is { } size ? new Surface(size.Width, size.Height) : null;
+
+        var (columns, rows) = page is null
+            ? Paint.Fits(window.Surface.Width, window.Surface.Height)
+            : Paint.Fits(page.Width, page.Height);
 
         // The screen needs the input for the [MORE] key and the input
         // needs the screen for its echo, so each reaches the other
@@ -176,13 +214,15 @@ internal static class Program
 
             // [zm 8.1.2] The character graphics font is drawn from the
             // shapes the standard gives, which this program carries, so
-            // it says it has one. [zm 8.8.6] Pictures are another
-            // matter and it does not draw them yet, so it does not
-            // claim them and a Version 6 game takes its text path.
+            // it says it has one. [zm 8.8.6] Pictures are claimed only
+            // where there are some, so a Version 6 game with no
+            // artwork beside it still takes its text path rather than
+            // drawing into a screen with nothing to draw.
             capabilities: ScreenCapabilities.StatusLine | ScreenCapabilities.UpperWindow
                 | ScreenCapabilities.Colors | ScreenCapabilities.Bold | ScreenCapabilities.Italic
                 | ScreenCapabilities.FixedPitch | ScreenCapabilities.FixedGrid
-                | ScreenCapabilities.CharacterGraphicsFont);
+                | ScreenCapabilities.CharacterGraphicsFont
+                | (art is null ? 0 : ScreenCapabilities.Pictures));
 
         input = new BufferedInput(screen);
 
@@ -191,10 +231,33 @@ internal static class Program
         // its lock rather than caught halfway through a line.
         window.Painting = surface =>
         {
+            if (page is null)
+            {
+                lock (screen.Sync)
+                {
+                    Paint.Screen(surface, screen);
+                }
+
+                return;
+            }
+
             lock (screen.Sync)
             {
-                Paint.Screen(surface, screen);
+                Paint.Screen(page, screen, behind: at => Paint.Pictures(at, screen.Pictures, art!));
+
             }
+
+            // A whole number of pixels to a pixel, and the rest of the
+            // window left dark around it, because half a pixel of this
+            // artwork is not a thing that can be drawn honestly.
+            var scale = Math.Max(1, Math.Min(surface.Width / page.Width, surface.Height / page.Height));
+
+            surface.Fill(Surface.Black);
+            surface.Magnify(
+                page,
+                scale,
+                (surface.Width - (page.Width * scale)) / 2,
+                (surface.Height - (page.Height * scale)) / 2);
         };
 
         window.Key = input.Enqueue;
@@ -203,6 +266,14 @@ internal static class Program
         // the game is told so it can lay its own windows out again.
         window.Resized = () =>
         {
+            // A fixed screen does not change size with the window. The
+            // window only magnifies it by more or less, which the
+            // painting works out for itself.
+            if (page is not null)
+            {
+                return;
+            }
+
             var (across, down) = Paint.Fits(window.Surface.Width, window.Surface.Height);
             screen.Resize(across, down);
         };
@@ -224,6 +295,25 @@ internal static class Program
                 Path.GetFileNameWithoutExtension(path)),
             interpreterNumber: _machine,
             tandy: _tandy);
+
+        // [blorb 2] What the game may ask about its own pictures: how
+        // many there are, how large each one is, and what it may draw.
+        if (graphics is not null)
+        {
+            interpreter.UsePictures(graphics);
+        }
+        else if (resources is not null && art is not null)
+        {
+            try
+            {
+                interpreter.UseResources(resources);
+            }
+            catch (InvalidDataException e)
+            {
+                // [blorb 6] Complain righteously, then carry on.
+                Console.Error.WriteLine($"rezrov-gtui: ignoring the resource file: {e.Message}");
+            }
+        }
 
         var worker = new Thread(() =>
         {
@@ -417,7 +507,26 @@ internal static class Program
     /// when the game is packaged in one, or null after saying what was
     /// wrong with it.
     /// </summary>
-    private static (byte[] Bytes, StoryFormat Format, bool Packaged)? Story(string path)
+    /// <summary>
+    /// [infocom pictures] A file of Infocom's own artwork, or null
+    /// where it cannot be read, with the reason said out loud. The
+    /// game plays on without it rather than not at all.
+    /// </summary>
+    private static InfocomPictures? Artwork(string path)
+    {
+        try
+        {
+            return InfocomPictures.Read(File.ReadAllBytes(path));
+        }
+        catch (Exception e) when (e is InvalidDataException or IOException or UnauthorizedAccessException)
+        {
+            Console.Error.WriteLine($"rezrov-gtui: ignoring the graphics file: {e.Message}");
+
+            return null;
+        }
+    }
+
+    private static (byte[] Bytes, StoryFormat Format, bool Packaged, BlorbFile? Resources)? Story(string path)
     {
         if (!File.Exists(path))
         {
@@ -440,7 +549,7 @@ internal static class Program
                     return null;
                 }
 
-                return (executable.Data.ToArray(), StoryFormat.ZMachine, true);
+                return (executable.Data.ToArray(), StoryFormat.ZMachine, true, BlorbFile.Read(bytes));
             }
             catch (InvalidDataException e)
             {
@@ -456,7 +565,7 @@ internal static class Program
             return null;
         }
 
-        return (bytes, format, false);
+        return (bytes, format, false, null);
     }
 
     private static void Help(TextWriter to)
@@ -481,10 +590,19 @@ internal static class Program
               --seed <number>          seed the game's random numbers
               --interpreter <machine>  tell the game which machine it is on
               --tandy                  set the Tandy bit for a Version 1 to 3 game
+              --pictures <file>        take pictures from an Infocom graphics file
               --save <file>            where a Dialog game's saves go
 
             machines: {string.Join(", ", names.Take(6))},
                       {string.Join(", ", names.Skip(6))}, or a number from 1 to 11
+
+            The four Version 6 games Infocom drew art for shipped it
+            beside the story, in a .mg1, .eg1, .eg2 or .cg1 file.
+            Point --pictures at one and the game is given the 640 by
+            400 screen it was written against, which is exactly eighty
+            of this program's characters across and twenty-five down,
+            and the whole screen is magnified into the window by a
+            whole number of pixels so the artwork stays as drawn.
 
             A Z-machine game asks for its save file name in the window
             itself, the way Infocom's interpreters did, since a file
