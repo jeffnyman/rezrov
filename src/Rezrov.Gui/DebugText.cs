@@ -69,6 +69,14 @@ internal sealed class DebugText : Control
     /// </summary>
     public bool Trails { get; init; }
 
+    /// <summary>
+    /// Which lines are worth clicking, for the pointer to say so.
+    /// </summary>
+    public Func<string, bool>? Clickable { get; init; }
+
+    /// <summary>A line was clicked.</summary>
+    public event Action<string>? Picked;
+
     /// <summary>The height of one line, which the wheel moves by.</summary>
     private double Step => _size * 1.35;
 
@@ -102,6 +110,53 @@ internal sealed class DebugText : Control
 
             context.DrawText(written, new Point(6, top));
         }
+    }
+
+    protected override void OnPointerPressed(PointerPressedEventArgs e)
+    {
+        ArgumentNullException.ThrowIfNull(e);
+
+        if (At(e.GetPosition(this).Y) is { } line)
+        {
+            Picked?.Invoke(line);
+            e.Handled = true;
+        }
+
+        base.OnPointerPressed(e);
+    }
+
+    protected override void OnPointerMoved(PointerEventArgs e)
+    {
+        ArgumentNullException.ThrowIfNull(e);
+
+        // A hand over the lines that lead somewhere, and nothing over
+        // the ones that do not, so a reader can see which is which
+        // without clicking to find out.
+        Cursor = At(e.GetPosition(this).Y) is null ? null : new Cursor(StandardCursorType.Hand);
+
+        base.OnPointerMoved(e);
+    }
+
+    protected override void OnPointerExited(PointerEventArgs e)
+    {
+        Cursor = null;
+
+        base.OnPointerExited(e);
+    }
+
+    /// <summary>
+    /// The clickable line at a height, or null where there is not one.
+    /// </summary>
+    private string? At(double y)
+    {
+        if (Clickable is null)
+        {
+            return null;
+        }
+
+        var index = (int)((y + _offset) / Step);
+
+        return index >= 0 && index < _lines.Count && Clickable(_lines[index]) ? _lines[index] : null;
     }
 
     protected override void OnPointerWheelChanged(PointerWheelEventArgs e)

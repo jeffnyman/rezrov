@@ -486,8 +486,9 @@ internal static class Program
             game apart instead of for playing one: the listing and the
             variables above, the game and the call chain below, and a
             prompt of its own across the bottom. Type help at that
-            prompt for the commands. There is no map in that layout, so
-            the two never have to share a window.
+            prompt for the commands, and click any line that names a
+            routine to go and read it. There is no map in that layout,
+            so the two never have to share a window.
 
             All three machines: a Z-machine game from a .z3 to a .z8 or
             a .zblorb, a Glulx game from a .ulx or a .gblorb, and a
@@ -972,7 +973,7 @@ internal static class Program
 
         _asked = asked;
 
-        bench.Prompt.Entered += line =>
+        bench.Asked += line =>
         {
             bench.Prompt.Busy = true;
             board.Focus();
