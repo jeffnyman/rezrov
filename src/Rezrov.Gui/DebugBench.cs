@@ -1,3 +1,5 @@
+using System.Globalization;
+
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
@@ -49,14 +51,15 @@ internal sealed class DebugBench : Grid
     {
         ArgumentNullException.ThrowIfNull(board);
 
-        _listing = new DebugText(typewriter, size);
+        _listing = Clickable(new DebugText(typewriter, size) { Clickable = Leads });
         _routine = new DebugText(typewriter, size);
         _globals = new DebugText(typewriter, size);
-        _chain = new DebugText(typewriter, size);
+        _chain = Clickable(new DebugText(typewriter, size) { Clickable = Leads });
         _watching = new DebugText(typewriter, size);
-        _log = new DebugText(typewriter, size) { Trails = true };
+        _log = Clickable(new DebugText(typewriter, size) { Clickable = Leads, Trails = true });
 
         Prompt = new DebugPrompt(typewriter, size);
+        Prompt.Entered += line => Asked?.Invoke(line);
 
         RowDefinitions =
         [
@@ -74,6 +77,32 @@ internal sealed class DebugBench : Grid
 
     /// <summary>Where the player types commands.</summary>
     public DebugPrompt Prompt { get; }
+
+    /// <summary>
+    /// A command to carry out, whether it was typed or clicked.
+    /// </summary>
+    public event Action<string>? Asked;
+
+    private static bool Leads(string line) => DebugSession.RoutineIn(line) is not null;
+
+    /// <summary>
+    /// Wires a panel up so that clicking a line that names a routine
+    /// shows that routine, exactly as typing it would.
+    /// </summary>
+    private DebugText Clickable(DebugText text)
+    {
+        text.Picked += line =>
+        {
+            // While a command is running the keyboard belongs to the
+            // game, and so does the pointer.
+            if (!Prompt.Busy && DebugSession.RoutineIn(line) is { } address)
+            {
+                Asked?.Invoke(string.Create(CultureInfo.InvariantCulture, $"list {address:X4}"));
+            }
+        };
+
+        return text;
+    }
 
     /// <summary>
     /// Shows what a command said and the state it left the game in.

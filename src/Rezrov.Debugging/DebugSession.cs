@@ -37,6 +37,10 @@ public sealed class DebugSession
     private readonly Interpreter _machine;
     private readonly Disassembly _listing;
 
+    // Where the reader has asked to look, which is nowhere until they
+    // ask and nowhere again as soon as the game moves.
+    private int? _looking;
+
     public DebugSession(Interpreter machine, Disassembly listing)
     {
         ArgumentNullException.ThrowIfNull(machine);
@@ -65,10 +69,20 @@ public sealed class DebugSession
         }
 
         var argument = words.Length > 1 ? words[1] : null;
+        var command = words[0].ToLowerInvariant();
+
+        // Anything that moves the game puts the listing back to
+        // following it, wherever the reader had wandered off to,
+        // because what the game is about to do is the thing they
+        // asked to see.
+        if (command is "s" or "step" or "n" or "next" or "f" or "finish" or "c" or "continue")
+        {
+            _looking = null;
+        }
 
         try
         {
-            return words[0].ToLowerInvariant() switch
+            return command switch
             {
                 "b" or "break" => Break(argument),
                 "d" or "delete" => Delete(argument),
@@ -87,7 +101,7 @@ public sealed class DebugSession
                 "read" => Read(argument),
                 "q" or "quit" => Quit(),
                 "h" or "help" or "?" => Help(),
-                _ => $"there is no {words[0]} command. Type help for the ones there are.",
+                _ => $"there is no {command} command. Type help for the ones there are.",
             };
         }
         catch (Exception e) when (e is InvalidOperationException or InvalidDataException
@@ -127,6 +141,49 @@ public sealed class DebugSession
     }
 
     /// <summary>
+    /// The routine a line of this debugger's own text names, or null
+    /// where it names none.
+    /// </summary>
+    /// <remarks>
+    /// The debugger writes "routine 5472" wherever it means one: at
+    /// the head of a listing, beside a call, and against every frame
+    /// of the call chain. So one rule reads all three back, and the
+    /// word itself is what keeps it from picking up any other number.
+    /// This is for a frontend where a line can be pointed at, which a
+    /// terminal has no way to offer.
+    /// </remarks>
+    public static int? RoutineIn(string line)
+    {
+        ArgumentNullException.ThrowIfNull(line);
+
+        const string word = "routine ";
+
+        var at = line.IndexOf(word, StringComparison.Ordinal);
+
+        if (at < 0)
+        {
+            return null;
+        }
+
+        var from = at + word.Length;
+        var to = from;
+
+        while (to < line.Length && Uri.IsHexDigit(line[to]))
+        {
+            to++;
+        }
+
+        return to > from
+            && int.TryParse(
+                line.AsSpan(from, to - from),
+                NumberStyles.HexNumber,
+                CultureInfo.InvariantCulture,
+                out var address)
+            ? address
+            : null;
+    }
+
+    /// <summary>
     /// What to say before anything has been typed, which is that
     /// nothing has run yet and what the two ways into the game are.
     /// </summary>
@@ -153,7 +210,7 @@ public sealed class DebugSession
 
         return new DebugView(
             Stopped(),
-            List(null),
+            Listing(_looking ?? _machine.State.ProgramCounter),
             Where(),
             Locals(),
             Globals(null),
@@ -421,12 +478,28 @@ public sealed class DebugSession
 
     private string List(string? argument)
     {
-        if (argument is not null && Address(argument) is null)
+        if (argument is null)
+        {
+            _looking = null;
+
+            return Listing(_machine.State.ProgramCounter);
+        }
+
+        if (Address(argument) is not { } wanted)
         {
             return Wanted("list", "an address, or nothing at all for wherever the game is");
         }
 
-        var at = Address(argument) ?? _machine.State.ProgramCounter;
+        // Somewhere else is where the reader wants to be until they
+        // move the game or ask to come back.
+        _looking = wanted;
+
+        return Listing(wanted);
+    }
+
+    /// <summary>The instructions around an address.</summary>
+    private string Listing(int at)
+    {
         var here = _machine.State.ProgramCounter;
         var routine = _listing.RoutineAt(at);
         var said = new StringBuilder();

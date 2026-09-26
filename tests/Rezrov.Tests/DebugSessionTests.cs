@@ -179,6 +179,38 @@ public class DebugSessionTests
     }
 
     [Fact]
+    public void LookingSomewhereElseStaysThereUntilTheGameMoves()
+    {
+        // Clicking a call in a window is this command, so the panel
+        // has to stay where it was sent rather than snapping back to
+        // the game after every look.
+        var (session, _) = Session();
+
+        session.Obey($"list {DebugGame.Second:X4}");
+
+        Assert.StartsWith($"; routine {DebugGame.Second:X4},", session.Look().Listing, StringComparison.Ordinal);
+
+        // A step is the reader asking to follow the game again.
+        session.Obey("step");
+
+        Assert.StartsWith($"; routine {DebugGame.First:X4},", session.Look().Listing, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ListingWithNoAddressComesBackToTheGame()
+    {
+        var (session, _) = Session();
+
+        session.Obey($"list {DebugGame.Second:X4}");
+        session.Obey("list");
+
+        // Back where the game is, which before it has run is the
+        // address it starts at and not a routine at all.
+        Assert.Contains($"{DebugGame.Start:X4}", session.Look().Listing, StringComparison.Ordinal);
+        Assert.DoesNotContain($"; routine {DebugGame.Second:X4},", session.Look().Listing, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void LocalsAndTheStackSayWhenThereIsNothing()
     {
         var (session, _) = Session();
@@ -390,6 +422,43 @@ public class DebugSessionTests
         Assert.True(view.Quit);
         Assert.Contains("quit", view.Listing, StringComparison.Ordinal);
         Assert.Contains("quit", view.Chain, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void EveryLineThatNamesARoutineCanBeReadBack()
+    {
+        // The three places the debugger writes a routine down, which a
+        // window turns into somewhere to click.
+        var (session, _) = Session();
+
+        session.Obey("step");
+
+        var listing = session.Obey("list").Split(Environment.NewLine);
+        var chain = session.Obey("where").Split(Environment.NewLine);
+
+        Assert.Equal(DebugGame.First, DebugSession.RoutineIn(listing[0]));
+        Assert.Equal(DebugGame.First, DebugSession.RoutineIn(chain[0]));
+
+        // And the comment a call carries, which is the one worth
+        // clicking most of all.
+        var call = listing.Single(line => line.Contains("call", StringComparison.Ordinal));
+        Assert.Equal(DebugGame.Second, DebugSession.RoutineIn(call));
+    }
+
+    [Theory]
+    [InlineData("", null)]
+    [InlineData("; nothing at all", null)]
+    [InlineData("       5491  add           G84, #B4 -> L02", null)]
+    [InlineData("5491  add           G84, #B4 -> L02", null)]
+    [InlineData("5472", null)]
+    [InlineData("routine 5472", 0x5472)]
+    [InlineData("  2  547F  in routine 5486", 0x5486)]
+    [InlineData("; routine 004F, 2 locals", 0x4F)]
+    [InlineData("routine ", null)]
+    [InlineData("routine zz", null)]
+    public void OnlyTheWordRoutineNamesOne(string line, int? expected)
+    {
+        Assert.Equal(expected, DebugSession.RoutineIn(line));
     }
 
     [Fact]
