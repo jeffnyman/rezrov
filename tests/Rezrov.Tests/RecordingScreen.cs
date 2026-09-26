@@ -101,5 +101,10 @@ internal sealed class RecordingScreen : IScreen
     /// <summary>Every band draw asked for, in order.</summary>
     public List<(int Picture, int Mode)> Bands { get; } = [];
 
-    public void DrawImageBand(int picture, int mode) => Bands.Add((picture, mode));
+    public bool DrawImageBand(int picture, int mode, bool paging)
+    {
+        Bands.Add((picture, mode));
+
+        return false;
+    }
 }

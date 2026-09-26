@@ -158,7 +158,15 @@ public interface IScreen
     /// picture is presentation, never game state, so there is nothing
     /// here a story can be told went wrong.
     /// </remarks>
-    void DrawImageBand(int picture, int mode)
-    {
-    }
+    /// <param name="paging">
+    /// [zm 10.2.4] Whether the player may be held up to read. False
+    /// while commands come from a file, when nothing should wait for
+    /// a key that is not going to be pressed.
+    /// </param>
+    /// <returns>
+    /// [arc contract 3] Whether the player was given a chance to read
+    /// what the band was about to cover, which is what tells the
+    /// screen model that the count of unread lines starts again.
+    /// </returns>
+    bool DrawImageBand(int picture, int mode, bool paging) => false;
 }

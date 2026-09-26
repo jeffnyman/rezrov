@@ -490,7 +490,78 @@ public sealed class ScreenBuffer
     /// Only the lower window. The status line and the upper window are
     /// cells somebody else owns and are left exactly as they were.
     /// </remarks>
-    private void Relay()
+    private void Relay() => Show(Lines());
+
+    /// <summary>
+    /// Lays the kept text out again and shows its end, which is where
+    /// the game and the player both are.
+    /// </summary>
+    public void Settle() => Relay();
+
+    /// <summary>
+    /// The lower window's text as it stands on the screen now, line by
+    /// line.
+    /// </summary>
+    /// <remarks>
+    /// [arc contract 3] For a caller about to take rows away from the
+    /// window and forbidden to lose a line doing it. What comes back
+    /// is what the player can see and has not read, laid out at this
+    /// width, so it can be shown again in a smaller window.
+    /// </remarks>
+    public IReadOnlyList<IReadOnlyList<Cell>> Page()
+    {
+        var lines = Lines();
+        var visible = Math.Max(Height - LowerTop, 1);
+
+        return lines.Count <= visible
+            ? lines
+            : lines.GetRange(lines.Count - visible, visible);
+    }
+
+    /// <summary>
+    /// Puts a window-full of lines at the top of the lower window,
+    /// starting at <paramref name="from"/>, and says how many it
+    /// showed.
+    /// </summary>
+    /// <remarks>
+    /// The top rather than the bottom, because this is for reading a
+    /// page through from its start rather than for following a game
+    /// that is writing. The cursor lands at the end of the last line
+    /// shown, which is where a [MORE] belongs.
+    /// </remarks>
+    public int ShowFrom(IReadOnlyList<IReadOnlyList<Cell>> lines, int from)
+    {
+        ArgumentNullException.ThrowIfNull(lines);
+
+        var rows = Math.Max(Height - LowerTop, 1);
+
+        for (var row = LowerTop; row < Height; row++)
+        {
+            _rows[row] = BlankRow(Width, _blank);
+        }
+
+        var shown = Math.Clamp(lines.Count - from, 0, rows);
+
+        for (var i = 0; i < shown; i++)
+        {
+            var line = lines[from + i];
+
+            for (var column = 0; column < line.Count && column < Width; column++)
+            {
+                _rows[LowerTop + i][column] = line[column];
+            }
+        }
+
+        CursorRow = Math.Clamp(LowerTop + Math.Max(shown - 1, 0), LowerTop, Height - 1);
+        CursorColumn = shown > 0 ? Math.Min(lines[from + shown - 1].Count, Width - 1) : 0;
+
+        return shown;
+    }
+
+    /// <summary>
+    /// The kept text laid out at the width the grid has now.
+    /// </summary>
+    private List<List<Cell>> Lines()
     {
         var lines = new List<List<Cell>>();
         var line = new List<Cell>();
@@ -560,7 +631,7 @@ public sealed class ScreenBuffer
 
         lines.Add(line);
 
-        Show(lines);
+        return lines;
     }
 
     /// <summary>

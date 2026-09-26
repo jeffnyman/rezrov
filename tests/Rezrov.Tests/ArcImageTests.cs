@@ -218,45 +218,192 @@ public partial class InterpreterTests
     }
 
     [Fact]
-    public void ARebaseThatWouldCoverUnreadTextPausesFirst()
+    public void ARebaseThatWouldCoverUnreadTextPagesItBelowTheBand()
     {
-        var screen = new RecordingScreen(40, 20, WithBand);
+        // [arc contract 3] The re-base never eats a line. Sixteen
+        // lines have gone by unread and only eight rows are left
+        // below a band of twelve, so the page is shown below the band
+        // from its top, a window-full at a time, behind honest
+        // [MORE]s, until the newest lines stand bottom-anchored.
+        var (screen, frames) = Watched(40, 20);
         var model = Model(screen, ZMachineVersion.V5);
 
-        for (var line = 0; line < 16; line++)
-        {
-            model.Print('x');
-            model.NewLine();
-        }
-
-        model.Flush();
-        var before = screen.MorePrompts;
+        Lines(model, 16);
         model.DrawImageBand(8, 12);
 
-        // [arc contract 3] The re-base never eats a line. Sixteen lines
-        // have gone by unread and only eight rows are left below a
-        // band of twelve, so the player is given the chance to read
-        // them before any of it is covered.
-        Assert.Equal(before + 1, screen.MorePrompts);
+        // Seventeen lines, counting the one the cursor is on, into a
+        // window of eight: two frames pass behind [MORE]s and the
+        // third is the tail.
+        Assert.Equal(2, frames.Count);
+
+        // The band's rows are the band's, and the text is all below.
+        Assert.Equal(new string(' ', 40), screen.Buffer.RowText(11));
+        Assert.StartsWith("j", screen.Buffer.RowText(12), StringComparison.Ordinal);
+        Assert.StartsWith("p", screen.Buffer.RowText(18), StringComparison.Ordinal);
     }
 
     [Fact]
     public void ARebaseWithRoomBelowItPausesForNothing()
     {
-        var screen = new RecordingScreen(40, 20, WithBand);
-        var model = Model(screen, ZMachineVersion.V5);
-
-        model.Print('x');
-        model.NewLine();
-        model.Flush();
-
-        var before = screen.MorePrompts;
-        model.DrawImageBand(8, 9);
-
         // [arc contract 3] An intro that fits below the band boots as
         // one composition, picture above and all its text below, with
         // no pause anywhere in it.
-        Assert.Equal(before, screen.MorePrompts);
+        var (screen, frames) = Watched(40, 20);
+        var model = Model(screen, ZMachineVersion.V5);
+
+        Lines(model, 1);
+        model.DrawImageBand(8, 9);
+
+        Assert.Empty(frames);
+        Assert.StartsWith("a", screen.Buffer.RowText(9), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ARebaseHoldsNobodyUpWhileCommandsComeFromAFile()
+    {
+        // [zm 10.2.4] A scripted run waits for no key, so the page is
+        // put below the band in one go rather than behind prompts
+        // nobody is there to answer.
+        var (screen, frames) = Watched(40, 20);
+        var model = Model(screen, ZMachineVersion.V5);
+
+        model.PrepareForInput(suppressPaging: true);
+        Lines(model, 16);
+        model.DrawImageBand(8, 12);
+
+        Assert.Empty(frames);
+        Assert.StartsWith("p", screen.Buffer.RowText(18), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void TakingTheBandDownPagesNothing()
+    {
+        // A clear gives the rows back, so nothing is being covered and
+        // there is nothing to read first.
+        var (screen, frames) = Watched(40, 20);
+        var model = Model(screen, ZMachineVersion.V5);
+
+        Lines(model, 16);
+        model.DrawImageBand(8, 12);
+
+        var before = frames.Count;
+        model.DrawImageBand(0, 12);
+
+        Assert.Equal(before, frames.Count);
+    }
+
+    [Fact]
+    public void TheFramesOfARebaseRunFromTheTopOfThePage()
+    {
+        // [arc contract 3] Page it below the band FROM ITS TOP, so
+        // the player reads what was about to be covered rather than
+        // being shown the end of it twice.
+        var (screen, frames) = Watched(40, 20);
+        var model = Model(screen, ZMachineVersion.V5);
+
+        Lines(model, 16);
+        model.DrawImageBand(8, 12);
+
+        Assert.Equal(["a", "i"], frames);
+    }
+
+    [Fact]
+    public void OnlyWhatWasOnTheScreenIsPagedAgainNotEverythingEverSaid()
+    {
+        // The page is what the player can see and has not read. What
+        // scrolled off above it they have already read, behind the
+        // [MORE]s that carried it off, and showing it again would be
+        // making them read it twice.
+        var (screen, frames) = Watched(40, 20);
+        var model = Model(screen, ZMachineVersion.V5);
+
+        Lines(model, 30);
+        var before = frames.Count;
+
+        model.DrawImageBand(8, 12);
+
+        // Twenty lines could be seen and eight rows are left, so two
+        // frames pass behind prompts. All thirty would be three.
+        Assert.Equal(2, frames.Count - before);
+    }
+
+    [Fact]
+    public void ARebaseWithRoomBelowItLeavesTheUnreadCountAlone()
+    {
+        // Nobody was held up, so nothing on the page has been read,
+        // and the [MORE] that was coming is still coming on time.
+        var (screen, frames) = Watched(40, 20);
+        var model = Model(screen, ZMachineVersion.V5);
+
+        Lines(model, 5);
+        model.DrawImageBand(8, 9);
+        Assert.Empty(frames);
+
+        // Eleven rows below the band, so the pause is due on the
+        // tenth line since the last one: five have gone by already.
+        Lines(model, 5);
+
+        Assert.Single(frames);
+    }
+
+    [Fact]
+    public void ARebaseThatPagedStartsTheUnreadCountAgain()
+    {
+        // The player has just read the whole page, so the next pause
+        // is a whole window away and not the very next line.
+        var (screen, frames) = Watched(40, 20);
+        var model = Model(screen, ZMachineVersion.V5);
+
+        Lines(model, 16);
+        model.DrawImageBand(8, 12);
+        Assert.Equal(2, frames.Count);
+
+        Lines(model, 5);
+
+        Assert.Equal(2, frames.Count);
+    }
+
+    /// <summary>
+    /// A screen that keeps the top line of every frame the player was
+    /// held up to read, so a test can say both how often they were
+    /// held up and what they were shown.
+    /// </summary>
+    private static (BufferedScreen Screen, List<string> Frames) Watched(int width, int height)
+    {
+        BufferedScreen? screen = null;
+        var frames = new List<string>();
+
+        screen = new BufferedScreen(
+            width,
+            height,
+            cursorStartsAtBottom: false,
+            repaint: () => { },
+            waitForKey: () =>
+            {
+                frames.Add(screen!.Buffer.RowText(screen.Buffer.LowerTop).TrimEnd());
+
+                return 13;
+            },
+            fontWidth: 1,
+            fontHeight: 1,
+            capabilities: WithBand);
+
+        return (screen, frames);
+    }
+
+    /// <summary>
+    /// That many lines, each a different letter, so a test can say
+    /// which of them ended up where.
+    /// </summary>
+    private static void Lines(ScreenModel model, int count)
+    {
+        for (var line = 0; line < count; line++)
+        {
+            model.Print((char)('a' + line));
+            model.NewLine();
+        }
+
+        model.Flush();
     }
 
     [Fact]

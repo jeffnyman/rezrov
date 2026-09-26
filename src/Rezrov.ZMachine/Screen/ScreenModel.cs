@@ -97,20 +97,17 @@ public sealed class ScreenModel : IScreenModel
     /// </remarks>
     public void DrawImageBand(int picture, int mode)
     {
-        var rows = picture == 0 ? 0 : Math.Clamp(mode, 0, Math.Max(_screen.Height - 1, 0));
+        BandRows = picture == 0 ? 0 : Math.Clamp(mode, 0, Math.Max(_screen.Height - 1, 0));
 
-        if (rows > BandRows && IsGrid && !_pagingSuppressed)
+        // [arc contract 3] The screen puts the page below the band and
+        // pages it there where it will not fit, since it is the one
+        // that holds the lines. Whether it held the player up is the
+        // one thing it knows and this does not: if it did, they have
+        // read what was on the page and the count starts again.
+        if (_screen.DrawImageBand(picture, mode, IsGrid && !_pagingSuppressed))
         {
-            var below = Math.Max(_screen.Height - rows - StatusLineRows - UpperWindow.Lines, 2);
-            if (_linesSincePause >= below - 1)
-            {
-                _screen.MorePrompt();
-                _linesSincePause = 0;
-            }
+            _linesSincePause = 0;
         }
-
-        BandRows = rows;
-        _screen.DrawImageBand(picture, mode);
     }
 
     /// <summary>[zm 8.4.2] A unit is a character here.</summary>
