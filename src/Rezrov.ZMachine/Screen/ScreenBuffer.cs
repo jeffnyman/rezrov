@@ -171,6 +171,11 @@ public sealed class ScreenBuffer
         _status = model.Status;
         _statusAttributes = model.StatusAttributes;
 
+        // Where the lower window began before any of this, so that a
+        // window which has moved can be laid out again where it is
+        // now.
+        var began = LowerTop;
+
         StatusRows = model.StatusLine is null ? 0 : 1;
         if (model.StatusLine is { } status)
         {
@@ -193,12 +198,33 @@ public sealed class ScreenBuffer
             CopyRow(BandRows + StatusRows + line, cells);
         }
 
-        // [zm 8.7.2.2] A split that would swallow the lower window's
-        // cursor moves it to the line just below the upper window.
-        if (CursorRow < LowerTop)
+        // [zm 8.7.2.1] The standard describes overlaying as what
+        // interpreters usually do and requires nothing either way:
+        // "It is usual for interpreters to print the upper window on
+        // the top n lines of the screen, overlaying any text which is
+        // already there". Both are conformant, so this is a choice.
+        //
+        // The choice is to keep the text. A window that grows over a
+        // line the player has not read takes it away from them, and a
+        // window that shrinks off a line leaves its own words sitting
+        // in rows that belong to the game again. Laying the lower
+        // window out below wherever it now begins answers both, and
+        // it is what an interpreter whose two windows are real panes
+        // does without having to think about it.
+        //
+        // [zm 8.7.2.2] This is also what moves a cursor the upper
+        // window would have swallowed: the text comes down and the
+        // cursor comes down with it, to the end of the line it
+        // belongs to rather than to the start of a line it does not.
+        //
+        // The test is an optimization rather than a rule. Laying out
+        // again when nothing has moved puts every line back exactly
+        // where it was, since the kept text is what the rows are made
+        // from either way. It is worth not doing, because most games
+        // split to the same height every turn.
+        if (LowerTop != began)
         {
-            CursorRow = LowerTop;
-            CursorColumn = 0;
+            Relay();
         }
 
         // The model's cursor counts from 1, this grid from 0, and the
