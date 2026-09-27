@@ -5,11 +5,11 @@ written for the Z-Machine, and the Glulx games that Inform 7 produces.
 This archive holds `rezrov-gui`, the graphical program, which plays a
 game in a window of its own and so can show the pictures a game carries.
 
-The two files beside it, `libSkiaSharp` and `libHarfBuzzSharp`, are the
-drawing and text shaping libraries the program needs. They have to stay
-in the same directory as the program, which is why this archive holds a
-directory rather than a single executable. Nothing else has to be
-installed, not even .NET.
+`libSkiaSharp` and `libHarfBuzzSharp` are the drawing and text shaping
+libraries the program needs, and they travel with it: beside it here,
+and inside the bundle on macOS. They have to stay where they are, which
+is why this archive holds a directory rather than a single executable.
+Nothing else has to be installed, not even .NET.
 
 The command line and terminal programs, `rezrov` and `rezrov-tui`, are
 in an archive of their own on the same release page.
@@ -52,11 +52,16 @@ family you have named is one your machine actually has.
 
 ## Platform notes
 
-- macOS: the program is not signed. Unpacked with `tar` it runs as it
-  is. If an archive unpacked through the Finder is refused as being from
-  an unidentified developer, run
-  `xattr -dr com.apple.quarantine .` in this directory, or allow it in
-  System Settings under Privacy and Security.
+- macOS: the program is `rezrov.app`, a bundle, which is the shape the
+  Dock and the application switcher read a program's name and icon out
+  of. Open it from the Finder, or name a story at a shell through the
+  `rezrov-gui` beside it, as the examples above do. The bundle carries
+  everything it needs, so it can be moved into Applications on its own,
+  though that `rezrov-gui` has to stay beside it to keep working. The
+  program is not signed: if an archive unpacked through the Finder is
+  refused as being from an unidentified developer, run `xattr -dr
+  com.apple.quarantine .` in this directory, or allow it in System
+  Settings under Privacy and Security.
 - Linux: `tar` keeps the executable permission. If a download loses it,
   `chmod +x rezrov-gui` restores it.
 

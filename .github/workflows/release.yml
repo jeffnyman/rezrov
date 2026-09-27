@@ -112,9 +112,20 @@ jobs:
           # apart from symbols, rather than a list of names, since which
           # native libraries it needs is the toolkit's business and may
           # change without this file hearing about it.
+          #
+          # On a Mac it goes into a bundle instead, since that is the
+          # only shape macOS reads a program's name and icon out of, and
+          # a program shipped loose is shown under the toolkit's name
+          # with no icon at all. The script puts a shim beside the
+          # bundle so that starting the program from a shell still works
+          # as it always did.
           gui="rezrov-gui-${version}-${{ matrix.rid }}"
           mkdir -p "dist/${gui}"
-          find "out/${{ matrix.rid }}/gui" -maxdepth 1 -type f ! -name '*.pdb' ! -name '*.dbg' -exec cp {} "dist/${gui}/" \;
+          if [ "${{ runner.os }}" = "macOS" ]; then
+            bash .github/scripts/bundle-mac-gui.sh "out/${{ matrix.rid }}/gui" release/rezrov.png "${version}" "dist/${gui}"
+          else
+            find "out/${{ matrix.rid }}/gui" -maxdepth 1 -type f ! -name '*.pdb' ! -name '*.dbg' -exec cp {} "dist/${gui}/" \;
+          fi
           cp release/gui-README.md "dist/${gui}/README.md"
           cp LICENSE "dist/${gui}/"
 

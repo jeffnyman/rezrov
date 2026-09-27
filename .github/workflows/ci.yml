@@ -140,6 +140,57 @@ jobs:
           lipo -info out/gui-universal/rezrov-gui | grep -q x86_64
           lipo -info out/gui-universal/rezrov-gui | grep -q arm64
 
+      # The Mac package is a bundle rather than a folder of files,
+      # because that is the only shape macOS reads a program's name and
+      # icon out of. The script that shapes it is in the same position
+      # the joining script was: a tag would be the first thing ever to
+      # run it. So it runs here too, over what the step above made.
+      - name: Bundle the Mac package as a release would
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          version="$(sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p' Directory.Build.props)"
+          bash .github/scripts/bundle-mac-gui.sh out/gui-universal release/rezrov.png "$version" out/mac
+
+          app=out/mac/rezrov.app
+
+          # What macOS reads the name and the icon out of, and what it
+          # is told to read them as.
+          plutil -lint "$app/Contents/Info.plist"
+          [ "$(plutil -extract CFBundleExecutable raw "$app/Contents/Info.plist")" = "rezrov-gui" ]
+          [ "$(plutil -extract CFBundleName raw "$app/Contents/Info.plist")" = "rezrov" ]
+          [ "$(plutil -extract CFBundleShortVersionString raw "$app/Contents/Info.plist")" = "$version" ]
+
+          # And the icon is an icon rather than a file named like one,
+          # which is the one thing a conversion can quietly not do.
+          file "$app/Contents/Resources/rezrov.icns" | grep -qi icon
+
+          # The program and the libraries it needs came along, and the
+          # joining survived the move into the bundle.
+          for name in rezrov-gui libSkiaSharp libHarfBuzzSharp; do
+            if ! ls "$app/Contents/MacOS/${name}"* > /dev/null 2>&1; then
+              echo "The bundle has no ${name}." >&2
+              exit 1
+            fi
+          done
+
+          lipo -info "$app/Contents/MacOS/rezrov-gui" | grep -q x86_64
+          lipo -info "$app/Contents/MacOS/rezrov-gui" | grep -q arm64
+
+          # Only what runs ships, which the release says of its own
+          # packaging and which a bundle is no exception to.
+          if find "$app" \( -name '*.pdb' -o -name '*.dbg' \) | grep -q .; then
+            echo "The bundle carries symbols." >&2
+            exit 1
+          fi
+
+          # A window needs a display, but saying the version does not,
+          # and asking through the shim is how someone with a shell
+          # starts the program. It answers only if the bundle holds
+          # together: the shim's way in, the executable, and the
+          # libraries beside it.
+          [ "$(out/mac/rezrov-gui --version)" = "rezrov-gui ${version}" ]
+
       # A window needs a display and a runner has none, but the font
       # measuring does not, and it is what the whole layout is built on.
       - name: Measure the fonts

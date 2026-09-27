@@ -145,16 +145,41 @@ internal static class Program
             return Probe();
         }
 
-        if (args.Length < 1 || !Options(args, 1))
+        // Nothing at all is what the Finder and the Dock hand a program
+        // they are asked to open, and the same goes for a double click
+        // anywhere else. There is no console in front of any of them, so
+        // a program that only complained on the error stream would be a
+        // program that did nothing when it was opened, which is the
+        // reason Trouble below shows what it says in a window too.
+        //
+        // Arguments that were given and did not make sense are a
+        // different thing: whoever typed them was at a shell, so they
+        // are answered there.
+        if (args.Length < 1)
+        {
+            Help(Console.Error);
+
+            _trouble = """
+                rezrov-gui plays a story file, and was opened without one.
+
+                Name one at a shell, as in rezrov-gui zork1.z3, and
+                rezrov-gui --help lists everything else it takes.
+                """;
+
+            _result = 2;
+        }
+        else if (!Options(args, 1))
         {
             Help(Console.Error);
             return 2;
         }
-
-        _path = args[0];
-        if (!Load(_blorb))
+        else
         {
-            _result = 1;
+            _path = args[0];
+            if (!Load(_blorb))
+            {
+                _result = 1;
+            }
         }
 
         AppBuilder.Configure<GameApp>()
@@ -1179,6 +1204,31 @@ internal static class Program
     /// <summary>The application the toolkit runs.</summary>
     private sealed class GameApp : Application
     {
+        /// <summary>
+        /// Tells the toolkit what this program is called.
+        /// </summary>
+        /// <remarks>
+        /// The toolkit names every program it runs "Avalonia
+        /// Application", and until now nothing here said otherwise,
+        /// because what Windows shows is the window's own title.
+        /// macOS shows the application's name instead: the name is
+        /// given to the process itself, and the Dock, the application
+        /// switcher and the application menu all read it from there,
+        /// so the program appeared under the toolkit's name rather
+        /// than its own.
+        ///
+        /// It belongs here rather than in
+        /// OnFrameworkInitializationCompleted below. The toolkit asks
+        /// for the name in a callback of its own that runs after this
+        /// method and before that one, so a name set down there would
+        /// be set after the only thing that reads it had already
+        /// looked.
+        /// </remarks>
+        public override void Initialize()
+        {
+            Name = "rezrov";
+        }
+
         public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop && _trouble is { } trouble)
