@@ -155,6 +155,44 @@ public sealed class GuiGlkDisplay : IGlkDisplay
         _repaint();
     }
 
+    /// <summary>
+    /// Says a last word in the game's own text and waits for a key.
+    /// </summary>
+    /// <remarks>
+    /// A window program has nowhere else to say it. Standard error
+    /// goes nowhere a player can see on Windows, and closing the
+    /// window the moment a game ends takes the ending away with it.
+    /// So the notice goes where the game's own words went, and the
+    /// window stays up until somebody has had a chance to read it.
+    ///
+    /// A game that never opened a window to print in gets no notice,
+    /// only the wait, since there is nowhere to put one.
+    /// </remarks>
+    public void Notice(string text)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+
+        lock (Sync)
+        {
+            if (_buffers.Keys.FirstOrDefault(w => w.Type == WindowType.TextBuffer) is { } window)
+            {
+                var into = Text(window);
+
+                into.Put('\n', GlkStyle.Alert, 0);
+
+                foreach (var character in text)
+                {
+                    into.Put(character, GlkStyle.Alert, 0);
+                }
+
+                into.Put('\n', GlkStyle.Alert, 0);
+            }
+        }
+
+        _repaint();
+        _presses.Take();
+    }
+
     public void Clear(GlkWindow window)
     {
         lock (Sync)

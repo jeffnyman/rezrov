@@ -708,6 +708,8 @@ internal static class Program
         };
         var machine = new GlulxMachine(memory, _seed is { } s ? new GlulxRandom((uint)s) : null, library);
 
+        string? ending = null;
+
         var worker = new Thread(() =>
         {
             try
@@ -717,11 +719,13 @@ internal static class Program
             catch (NotSupportedException e)
             {
                 Console.Error.WriteLine($"rezrov-gui: stopped: {e.Message}");
+                ending = $"Stopped: {e.Message}";
                 _result = 3;
             }
             catch (GlulxException e)
             {
                 Console.Error.WriteLine($"rezrov-gui: error: {e.Message}");
+                ending = $"Error: {e.Message}";
                 _result = 3;
             }
             catch (EndOfStreamException)
@@ -732,6 +736,13 @@ internal static class Program
             {
                 library.CloseFiles();
             }
+
+            // A window closing the instant a game ends takes the
+            // ending with it, and a game that stopped takes the
+            // reason, which on Windows has nowhere else to go.
+            display.Notice(ending is null
+                ? "[The game has ended. Press a key to leave.]"
+                : $"[{ending} Press a key to leave.]");
 
             Dispatcher.UIThread.Post(window.Close);
         })
@@ -921,6 +932,8 @@ internal static class Program
             return;
         }
 
+        string? ending = null;
+
         var worker = new Thread(() =>
         {
             try
@@ -930,8 +943,14 @@ internal static class Program
             catch (Exception e) when (e is NotSupportedException or InvalidDataException)
             {
                 Console.Error.WriteLine($"rezrov-gui: stopped: {e.Message}");
+                ending = $"Stopped: {e.Message}";
                 _result = 3;
             }
+
+            // A window closing the instant a game ends takes the
+            // ending with it, and a game that stopped takes the
+            // reason, which on Windows has nowhere else to go.
+            LastWord.Show(screen, input, ending);
 
             Dispatcher.UIThread.Post(window.Close);
         })
@@ -1115,10 +1134,8 @@ internal static class Program
                 ? "[The game has ended. Press a key to leave.]"
                 : $"[The game stopped: {ending} Press a key to leave.]");
 
-            // The window stays up until the player has had a chance to
-            // read how it ended, which the other two machines do not
-            // need because they print their endings through a library
-            // that waits for a key itself.
+            // The window stays up until the player has had a chance
+            // to read how it ended.
             display.ReadKey();
             Dispatcher.UIThread.Post(window.Close);
         })
