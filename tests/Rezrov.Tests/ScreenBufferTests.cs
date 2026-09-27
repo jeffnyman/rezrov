@@ -77,7 +77,10 @@ public class ScreenBufferTests
     [Fact]
     public void ASplitMovesACursorItWouldSwallow()
     {
-        // [zm 8.7.2.2]
+        // [zm 8.7.2.2] "the interpreter should move the lower
+        // window's cursor down to the line just below the upper
+        // window's new size". The clause is about the LINE and says
+        // nothing about the column.
         var (buffer, model) = MakeWithModel(10, 5);
         buffer.Print("x", Blank);
         Assert.Equal(0, buffer.CursorRow);
@@ -85,7 +88,13 @@ public class ScreenBufferTests
         model.SplitWindow(2);
         buffer.UpdateUpper(model);
 
-        Assert.Equal((2, 0), (buffer.CursorRow, buffer.CursorColumn));
+        // [zm 8.7.2.1] The x came down with the cursor rather than
+        // being covered over, so the cursor is after it and the next
+        // character written does not land on top of it. While the
+        // upper window overlaid the lower one there was no x left to
+        // be after, and this was column 0.
+        Assert.Equal("x", buffer.RowText(2).TrimEnd());
+        Assert.Equal((2, 1), (buffer.CursorRow, buffer.CursorColumn));
     }
 
     [Fact]
