@@ -292,6 +292,8 @@ internal static class Program
             }
         }
 
+        string? ending = null;
+
         var worker = new Thread(() =>
         {
             try
@@ -301,8 +303,14 @@ internal static class Program
             catch (Exception e) when (e is NotSupportedException or InvalidDataException)
             {
                 Console.Error.WriteLine($"rezrov-gtui: stopped: {e.Message}");
+                ending = $"Stopped: {e.Message}";
                 result = 3;
             }
+
+            // A window closing the instant a game ends takes the
+            // ending with it, and a game that stopped takes the
+            // reason, which on Windows has nowhere else to go.
+            LastWord.Show(screen, input, ending);
 
             window.Close();
         })

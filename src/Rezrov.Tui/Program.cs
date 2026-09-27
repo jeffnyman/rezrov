@@ -10,6 +10,7 @@ using Rezrov.Glulx.Glk;
 using Rezrov.ZMachine;
 using Rezrov.ZMachine.Execution;
 using Rezrov.ZMachine.Input;
+using Rezrov.ZMachine.Screen;
 using Rezrov.ZMachine.Sound;
 using Rezrov.ZMachine.Text;
 using Terminal.Gui.App;
@@ -280,16 +281,7 @@ internal static class Program
 
                 // Whatever happened, say so on screen and wait for a key
                 // before the terminal goes back to the shell.
-                var notice = new ZMachine.Screen.TextAttributes(ZMachine.Screen.TextStyle.ReverseVideo, screen.DefaultForeground, screen.DefaultBackground, 1);
-                screen.NewLine();
-                if (ending is not null)
-                {
-                    screen.Print(ending, notice);
-                    screen.NewLine();
-                }
-
-                screen.Print("[The game has ended. Press a key to leave.]", notice);
-                input.WaitForAnyKey();
+                LastWord.Show(screen, input, ending);
                 app.Invoke(() => app.RequestStop());
             })
             {
