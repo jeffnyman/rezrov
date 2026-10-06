@@ -1,4 +1,4 @@
-# What Rezrov plays
+# What Rezrov Plays
 
 Everything else the Z-Machine standard describes is there: the parser gets your commands, the transcript and command recording streams work, saved games are written in Quetzal format, undo works, and sound effects are found in a Blorb file and handed to the frontend, which on the console can only ring the bell for them and in the terminal program plays them. Version 6 games run too, on the eight-window screen model of the standard's section 8.8. Whether they draw their pictures depends on where they're played: the two text programs and the grid program tell the game there are none, and Infocom's Version 6 games answer by using their text-only modes, while the graphical program draws them. On the console their several windows come out as one stream of text, which reads roughly; the [terminal program](programs.md#the-terminal-program) shows them properly.
 

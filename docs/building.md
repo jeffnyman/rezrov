@@ -1,4 +1,6 @@
-# Building, testing, and releasing
+# Building, Testing, and Releasing
+
+This will be mainly of interest for anyone wanting to contribute to Rezrov.
 
 ## Building and Testing
 
@@ -11,7 +13,7 @@ dotnet test
 
 Neither needs the [`entharion` submodule](reference-material.md), so a plain clone builds and tests without pulling several hundred megabytes of reference material.
 
-The three interpreter libraries are built optimized even in the Debug configuration, because the test suite replays whole games through them and an unoptimized interpreter makes that run take minutes rather than seconds. The programs and the tests aren't, so debugging them is as usual. To step through the interpreter code itself with every local in view, build with optimization off for that session:
+The three interpreter libraries are built optimized even in the Debug configuration, because the test suite replays whole games through them and an unoptimized interpreter makes that run take minutes rather than seconds. The programs and the tests aren't built optimized, so debugging them is as usual. To step through the interpreter code itself with every local in view, build with optimization off for that session:
 
 ```sh
 dotnet build -p:Optimize=false
@@ -27,11 +29,11 @@ One thing worth knowing in advance, because the failure is misleading. In this m
 
 ### Speed
 
-Fast enough that it has never been worth optimizing, which is worth writing down so that nobody wonders. On an AMD Ryzen 7 9800X3D, a release build on .NET 10 plays Zork Zero's whole recorded walkthrough, 1853 commands, in about 1.4 seconds, which is well under a millisecond a turn. On the Glulx side, Anchorhead's 722 command walkthrough executes 680 million virtual machine instructions in about 16 seconds, which is roughly 41 million instructions a second; a debug build measures the same within the noise.
+So far, it's all fast enough that it has never been worth optimizing, which I feel is worth stating explicitly so that nobody (including future me) wonders. On an AMD Ryzen 7 9800X3D, a release build on .NET 10 plays *Zork Zero*'s whole recorded walkthrough, 1853 commands, in about 1.4 seconds, which is well under a millisecond a turn. On the Glulx side, *Anchorhead*'s 722 command walkthrough executes 680 million (!) virtual machine instructions in about 16 seconds, which is roughly 41 million instructions a second; a debug build measures the same within the noise.
 
-The interesting part of that is the ratio rather than the rate. Anchorhead spends about 940,000 instructions on a single turn, some twenty milliseconds, where Advent, running on the same Glulx engine, spends about 18,000: five and a half million instructions over its whole 298 command walkthrough against Anchorhead's 680 million over 722. Fifty times the work for a turn of the same game, and the difference isn't the interpreter but the game. Anchorhead is Inform 7 with deep rulebooks and Advent is Inform 6.
+The interesting part of that is the ratio rather than the rate. *Anchorhead* spends about 940,000 instructions on a single turn, some twenty milliseconds, where *Advent*, running on the same Glulx engine, spends about 18,000: five and a half million instructions over its whole 298 command walkthrough against *Anchorhead*'s 680 million over 722. Fifty times the work for a turn of the same game, and the difference isn't the interpreter but the game. *Anchorhead* is Inform 7 with deep rulebooks and *Advent* is Inform 6.
 
-The same gap shows on the Z-Machine, which is the better demonstration because both games run on the older and simpler of the two machines. Zork Zero, which is about as much as Infocom ever asked of it, takes well under a millisecond a turn. Bronze, which is Inform 7 compiled to the same machine, takes about thirty-four. A player notices none of this. What it does mean is that two games, Bronze and Anchorhead, account for most of the time the test suite takes, so if that ever becomes annoying, that's where the time is.
+The same gap shows on the Z-Machine, which is the better demonstration because both games run on the older and simpler of the two machines. *Zork Zero*, which is about as much as Infocom ever asked of it, takes well under a millisecond a turn. *Bronze*, which is Inform 7 compiled to the same machine, takes about thirty-four. A player notices none of this. What it does mean is that two games, *Bronze* and *Anchorhead*, account for most of the time the test suite takes, so if that ever becomes annoying, that's where the time is.
 
 ## Prerequisites
 
@@ -113,7 +115,11 @@ Both program projects have `PublishAot` set, so the command is only `dotnet publ
 
 ## Releasing
 
-A release is a version tag. The release workflow builds all four programs with NativeAOT on Windows, Linux for x64 and arm64, and macOS for both Intel and Apple silicon joined into a universal binary with `lipo`. It makes two archives per platform, one holding the three single-file programs and one holding the graphical program with the native libraries that must sit beside it, each with its own readme and the license, and publishes a GitHub Release with the archives and their checksums attached. The macOS graphical archive is shaped by `.github/scripts/bundle-mac-gui.sh` into a `rezrov.app` bundle, with the icon built from `release/rezrov.png` at the sizes macOS asks for; that script runs on every pull request as well, over a real pair of publishes, so that a tag is never the first thing to run it. The steps:
+A release is a version tag. The release workflow builds all four programs with NativeAOT on Windows, Linux for x64 and arm64, and macOS for both Intel and Apple silicon joined into a universal binary with `lipo`. It makes two archives per platform, one holding the three single-file programs and one holding the graphical program with the native libraries that must sit beside it, each with its own readme and the license, and publishes a GitHub Release with the archives and their checksums attached.
+
+The macOS graphical archive is shaped by `.github/scripts/bundle-mac-gui.sh` into a `rezrov.app` bundle, with the icon built from `release/rezrov.png` at the sizes macOS asks for; that script runs on every pull request as well, over a real pair of publishes, so that a tag is never the first thing to run it.
+
+The general steps:
 
 1. Set `Version` in `Directory.Build.props` to the new number and merge that change through a pull request as usual. The programs report this version through `--version`.
 2. Tag the merge on `main` and push the tag, for example `git tag v0.1.0 && git push origin v0.1.0`.
