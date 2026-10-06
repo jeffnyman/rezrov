@@ -9,7 +9,7 @@ dotnet build
 dotnet test
 ```
 
-Neither needs the `entharion` submodule described further down, so a plain clone builds and tests without pulling several hundred megabytes of reference material.
+Neither needs the [`entharion` submodule](reference-material.md), so a plain clone builds and tests without pulling several hundred megabytes of reference material.
 
 The three interpreter libraries are built optimized even in the Debug configuration, because the test suite replays whole games through them and an unoptimized interpreter makes that run take minutes rather than seconds. The programs and the tests are not, so debugging them is as usual. To step through the interpreter code itself with every local in view, build with optimization off for that session:
 

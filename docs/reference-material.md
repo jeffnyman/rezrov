@@ -22,7 +22,7 @@ The second form is only necessary if you intend to build the reference tools des
 - `zcode-checkers/` and `glulx-checkers/` hold the interpreter conformance suites. These matter more than the games early on: `czech`, `praxix.z5`, `strictz.z5`, and `etude.z5` exercise Z-Machine opcode behavior systematically, and `glulxercise-r13-s241202.ulx` does the same for Glulx.
 - `vendor/` holds third-party interpreters, compilers, and Glk libraries as nested submodules.
 
-Entharion's own README documents the story file collection in detail, including which Infocom release each binary came from. It is the authoritative source for that, and this file only covers getting the tools running.
+Entharion's own README documents the story file collection in detail, including which Infocom release each binary came from. It is the authoritative source for that, and this page only covers getting the tools running.
 
 ## Building the Reference Tools
 
