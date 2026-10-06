@@ -11,7 +11,7 @@ dotnet test
 
 Neither needs the [`entharion` submodule](reference-material.md), so a plain clone builds and tests without pulling several hundred megabytes of reference material.
 
-The three interpreter libraries are built optimized even in the Debug configuration, because the test suite replays whole games through them and an unoptimized interpreter makes that run take minutes rather than seconds. The programs and the tests are not, so debugging them is as usual. To step through the interpreter code itself with every local in view, build with optimization off for that session:
+The three interpreter libraries are built optimized even in the Debug configuration, because the test suite replays whole games through them and an unoptimized interpreter makes that run take minutes rather than seconds. The programs and the tests aren't, so debugging them is as usual. To step through the interpreter code itself with every local in view, build with optimization off for that session:
 
 ```sh
 dotnet build -p:Optimize=false
@@ -23,19 +23,19 @@ Tests are xUnit v3 on Microsoft Testing Platform, which means a test project is 
 dotnet run --project tests/Rezrov.Tests
 ```
 
-One thing worth knowing in advance, because the failure is misleading. In this mode `dotnet test` forwards any option it does not recognize to the test executable, which then rejects it. So `dotnet test -nologo` fails with "Zero tests ran" and exit code 5 rather than with a complaint about the flag. Other options from the VSTest era behave the same way. Plain `dotnet test` is the safe form.
+One thing worth knowing in advance, because the failure is misleading. In this mode `dotnet test` forwards any option it doesn't recognize to the test executable, which then rejects it. So `dotnet test -nologo` fails with "Zero tests ran" and exit code 5 rather than with a complaint about the flag. Other options from the VSTest era behave the same way. Plain `dotnet test` is the safe form.
 
 ### Speed
 
 Fast enough that it has never been worth optimizing, which is worth writing down so that nobody wonders. On an AMD Ryzen 7 9800X3D, a release build on .NET 10 plays Zork Zero's whole recorded walkthrough, 1853 commands, in about 1.4 seconds, which is well under a millisecond a turn. On the Glulx side, Anchorhead's 722 command walkthrough executes 680 million virtual machine instructions in about 16 seconds, which is roughly 41 million instructions a second; a debug build measures the same within the noise.
 
-The interesting part of that is the ratio rather than the rate. Anchorhead spends about 940,000 instructions on a single turn, some twenty milliseconds, where Advent, running on the same Glulx engine, spends about 18,000: five and a half million instructions over its whole 298 command walkthrough against Anchorhead's 680 million over 722. Fifty times the work for a turn of the same game, and the difference is not the interpreter but the game. Anchorhead is Inform 7 with deep rulebooks and Advent is Inform 6.
+The interesting part of that is the ratio rather than the rate. Anchorhead spends about 940,000 instructions on a single turn, some twenty milliseconds, where Advent, running on the same Glulx engine, spends about 18,000: five and a half million instructions over its whole 298 command walkthrough against Anchorhead's 680 million over 722. Fifty times the work for a turn of the same game, and the difference isn't the interpreter but the game. Anchorhead is Inform 7 with deep rulebooks and Advent is Inform 6.
 
-The same gap shows on the Z-Machine, which is the better demonstration because both games run on the older and simpler of the two machines. Zork Zero, which is about as much as Infocom ever asked of it, takes well under a millisecond a turn. Bronze, which is Inform 7 compiled to the same machine, takes about thirty-four. A player notices none of this. What it does mean is that two games, Bronze and Anchorhead, account for most of the time the test suite takes, so if that ever becomes annoying, that is where the time is.
+The same gap shows on the Z-Machine, which is the better demonstration because both games run on the older and simpler of the two machines. Zork Zero, which is about as much as Infocom ever asked of it, takes well under a millisecond a turn. Bronze, which is Inform 7 compiled to the same machine, takes about thirty-four. A player notices none of this. What it does mean is that two games, Bronze and Anchorhead, account for most of the time the test suite takes, so if that ever becomes annoying, that's where the time is.
 
 ## Prerequisites
 
-You will need the .NET SDK. The version is pinned in `global.json`, so you need **10.0.302 or newer within the 10.0.x band**. An older SDK will refuse to build rather than silently doing the wrong thing, and a future .NET 11 will not be picked up until that pin is raised deliberately.
+You will need the .NET SDK. The version is pinned in `global.json`, so you need **10.0.302 or newer within the 10.0.x band**. An older SDK will refuse to build rather than silently doing the wrong thing, and a future .NET 11 won't be picked up until that pin is raised deliberately.
 
 Verify what you have with `dotnet --list-sdks`.
 
@@ -84,11 +84,11 @@ Distribution repositories often lag behind. If the package above is unavailable 
 curl -sSL https://dot.net/v1/dotnet-install.sh | bash -s -- --channel 10.0
 ```
 
-That is everything needed to build, run, and test.
+That's everything needed to build, run, and test.
 
 ## Producing a Native Binary (optional)
 
-Rezrov targets NativeAOT, which compiles to a self-contained native executable with no .NET runtime dependency for the end user. That path needs a platform linker in addition to the SDK, so it is only worth installing if you intend to run `dotnet publish -p:PublishAot=true`. Ordinary `dotnet build` and `dotnet test` need nothing beyond the SDK.
+Rezrov targets NativeAOT, which compiles to a self-contained native executable with no .NET runtime dependency for the end user. That path needs a platform linker in addition to the SDK, so it's only worth installing if you intend to run `dotnet publish -p:PublishAot=true`. Ordinary `dotnet build` and `dotnet test` need nothing beyond the SDK.
 
 **Windows.** NativeAOT invokes the MSVC linker, so it needs the C++ build tools and the Windows SDK:
 
@@ -107,9 +107,9 @@ sudo apt update
 sudo apt install -y clang zlib1g-dev
 ```
 
-Note that NativeAOT does not cross-compile between operating systems. Each target runtime identifier has to be published on its own platform: `win-x64` on Windows, `linux-x64` on Linux, `osx-arm64` or `osx-x64` on macOS, where either kind of Mac can build both and `lipo` can join them.
+Note that NativeAOT doesn't cross-compile between operating systems. Each target runtime identifier has to be published on its own platform: `win-x64` on Windows, `linux-x64` on Linux, `osx-arm64` or `osx-x64` on macOS, where either kind of Mac can build both and `lipo` can join them.
 
-Both program projects have `PublishAot` set, so the command is only `dotnet publish src/Rezrov.Cli -c Release -r win-x64`, with the runtime identifier of the machine you are on, and likewise for `src/Rezrov.Tui`. The executable lands under the project's `bin/Release` directory.
+Both program projects have `PublishAot` set, so the command is only `dotnet publish src/Rezrov.Cli -c Release -r win-x64`, with the runtime identifier of the machine you're on, and likewise for `src/Rezrov.Tui`. The executable lands under the project's `bin/Release` directory.
 
 ## Releasing
 
@@ -118,7 +118,7 @@ A release is a version tag. The release workflow builds all four programs with N
 1. Set `Version` in `Directory.Build.props` to the new number and merge that change through a pull request as usual. The programs report this version through `--version`.
 2. Tag the merge on `main` and push the tag, for example `git tag v0.1.0 && git push origin v0.1.0`.
 
-The workflow refuses a tag that disagrees with the version in `Directory.Build.props`, so the two cannot drift apart. The release notes are generated from the pull requests merged since the previous tag, which is one more reason the pull request titles are kept to Conventional Commits.
+The workflow refuses a tag that disagrees with the version in `Directory.Build.props`, so the two can't drift apart. The release notes are generated from the pull requests merged since the previous tag, which is one more reason the pull request titles are kept to Conventional Commits.
 
 ## Commit Messages
 
