@@ -19,8 +19,8 @@
 # would grow that download by about half again.
 #
 # To cut a release: set Version in Directory.Build.props, merge that, then
-# tag main as v<version> and push the tag. The README's Releasing section
-# spells the steps out.
+# tag main as v<version> and push the tag. The Releasing section of
+# docs/building.md spells the steps out.
 
 name: release
 
