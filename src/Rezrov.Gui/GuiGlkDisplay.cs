@@ -35,7 +35,7 @@ public sealed class GuiGlkDisplay : IGlkDisplay
     private readonly Dictionary<GlkWindow, BufferText> _buffers = [];
     private readonly Dictionary<GlkWindow, IGlyphs> _fonts = [];
     private readonly StringBuilder _typing = new();
-    private readonly IGlyphs _glyphs;
+    private IGlyphs _glyphs;
     private readonly Action _repaint;
     private double _pixelWidth;
     private double _pixelHeight;
@@ -392,6 +392,36 @@ public sealed class GuiGlkDisplay : IGlkDisplay
 
         // A resize can arrive while the game is waiting for a key, and
         // the wait has to end so the game hears about it.
+        _presses.Add(new Press(PressKind.Wake, 0, ""));
+    }
+
+    /// <summary>
+    /// [glk #arrange_events] Sets every window in other fonts while the
+    /// game is played, and tells the game its windows were arranged again,
+    /// since a window holds a different number of characters in them.
+    /// </summary>
+    /// <remarks>
+    /// Told even when the window itself is the same size, which a resize
+    /// would not be, because what the game measures its windows in is
+    /// characters, and those are what have changed.
+    /// </remarks>
+    public void Restyle(IGlyphs glyphs)
+    {
+        ArgumentNullException.ThrowIfNull(glyphs);
+
+        lock (Sync)
+        {
+            _glyphs = glyphs;
+            _fonts.Clear();
+
+            foreach (var (window, text) in _buffers)
+            {
+                text.Restyle(Glyphs(window));
+            }
+
+            _resized = true;
+        }
+
         _presses.Add(new Press(PressKind.Wake, 0, ""));
     }
 

@@ -56,7 +56,12 @@ the way they would be typed, one to a line, in `%LOCALAPPDATA%\rezrov`
 on Windows, `~/Library/Application Support/rezrov` on macOS, and
 `~/.local/share/rezrov` on Linux. On a Mac, which has no menu bar in the
 window, edit that file by hand. An option typed at the command line
-still wins for that window.
+wins when a window opens, until options are kept from that window.
+
+Kept options change the window in front of you at once, apart from two
+cases: a Version 6 game and a Dialog game keep their type, taking only
+the new margin and smoothing, and the machine a game is told it runs on
+waits for the next story.
 
 ## Platform notes
 

@@ -14,10 +14,11 @@ namespace Rezrov.Gui;
 /// <remarks>
 /// What it shows is what is kept, not what this window happens to be
 /// using, since a window started with options of its own at a command
-/// line is not what the next one will be given. What it keeps applies
-/// to stories opened from now on. A window already open keeps the look
-/// it was opened with, and the machine a game was told it runs on is
-/// settled when the game starts.
+/// line is not what the next one will be given. The type, its size, the
+/// smoothing and the margin change in this window as soon as they are
+/// kept, replacing any it was started with. The machine a game is told
+/// it runs on, the Tandy bit, and the map at the start are read as a
+/// game starts, and so wait for the next one.
 ///
 /// Only a choice that differs from the program's own is written down,
 /// so the file says what the player changed, and putting everything back
@@ -121,7 +122,7 @@ internal static class OptionsWindow
         body.Children.Add(rows);
         body.Children.Add(new TextBlock
         {
-            Text = "These are kept for stories opened from now on. An option typed at a command line still wins for that window.",
+            Text = "The type, size, smoothing, and margin change here as soon as they are kept, taking the place of any typed at a command line. The rest apply to games started from now on.",
             TextWrapping = TextWrapping.Wrap,
             Opacity = 0.7,
             Margin = new Thickness(0, 16, 0, 0),

@@ -634,10 +634,39 @@ internal static class Program
     }
 
     /// <summary>
-    /// [babel legacy Z-code IFID] What to call the window: the game
-    /// Infocom made, where the story is one of theirs, and otherwise
-    /// the name of the file on disk, with what it runs on after it.
+    /// Takes up options the player has just kept: how this window looks
+    /// changes at once, and what a game is told as it starts waits for
+    /// the next one.
     /// </summary>
+    /// <remarks>
+    /// What was just kept is the latest thing the player said, so it
+    /// replaces whatever this window was started with, a command line
+    /// included: the look goes back to the program's own and the kept
+    /// options are laid over it, as they are when a window opens. The
+    /// machine, the Tandy bit, and the map at the start are read once,
+    /// as a window opens or a game starts, and so are left for then.
+    /// </remarks>
+    private static void Restyle(Board board)
+    {
+        _kept = true;
+
+        _prose = Glyphs.ProseFamily;
+        _sans = GuiAaGlyphs.SansFamily;
+        _fixed = Glyphs.FixedFamily;
+        _size = Glyphs.OrdinarySize;
+        _smoothing = TextRenderingMode.SubpixelAntialias;
+        _padding = Board.OrdinaryPadding;
+
+        foreach (var kept in KeptOptions.Load())
+        {
+            Options(kept, 0);
+        }
+
+        var glyphs = new Glyphs(_size, _prose, _fixed);
+        board.Display?.Restyle(glyphs);
+        board.Restyle(glyphs, _smoothing, _padding);
+    }
+
     /// <summary>
     /// What a story opened from this window is given of this window's own
     /// options: what it was started with, until the player keeps options
@@ -649,6 +678,11 @@ internal static class Program
     private static string? Beside() =>
         _path.Length == 0 ? null : Path.GetDirectoryName(Path.GetFullPath(_path));
 
+    /// <summary>
+    /// [babel legacy Z-code IFID] What to call the window: the game
+    /// Infocom made, where the story is one of theirs, and otherwise
+    /// the name of the file on disk, with what it runs on after it.
+    /// </summary>
     private static string Named() =>
         StoryBadges.Title(_path, _format, _bytes, _resources is not null);
 
@@ -864,6 +898,10 @@ internal static class Program
         board.UnitScreen = unit is null
             ? null
             : ((int)(columns * glyphs.CellWidth), (int)(rows * glyphs.CellHeight));
+
+        // [zm 8.8.1] A Version 6 game measures in the pixels of this
+        // font, so it keeps the font whatever the player changes later.
+        board.KeepsFont = header.Version == ZMachineVersion.V6;
 
         // The screen needs the input for the [MORE] key and the input
         // needs the screen for its echo, so each reaches the other
@@ -1441,7 +1479,7 @@ internal static class Program
                         split is null ? null : split.Toggle,
                         window.Close,
                         () => StoryAbout.Window(StoryAbout.Gather(_format, _bytes, _resources, _path)),
-                        () => OptionsWindow.Make(() => _kept = true))
+                        () => OptionsWindow.Make(() => Restyle(board)))
                     : null;
 
                 if (bar is not null)
