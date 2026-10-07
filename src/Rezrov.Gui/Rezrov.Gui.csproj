@@ -36,6 +36,12 @@
     <PackageReference Include="Avalonia.Desktop" />
 
     <!--
+      The theme the menu bar is drawn by. Nothing else in the window uses
+      a templated control, so nothing else looks any different for it.
+    -->
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+
+    <!--
       ANGLE is Avalonia's GPU path on Windows. The window renders through
       the software fallback without it, which is ample for text and the
       occasional picture, and leaving its native asset out takes five

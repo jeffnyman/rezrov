@@ -63,11 +63,20 @@
     megabytes out of the published folder. Its version is pinned here
     because central package management requires a version for every
     reference.
+
+    Avalonia.Themes.Fluent is what draws the menu bar. Without a theme a
+    templated control draws nothing at all, which is why everything else
+    in the window is built from plain controls. Measured on 2026-10-07,
+    it adds about 6.7 MB to the published executable and leaves the game
+    and the debugging layout pixel for pixel as they were, since those
+    set their own colors and fonts. It keeps the version of Avalonia
+    itself.
   -->
 
   <ItemGroup>
     <PackageVersion Include="Avalonia" Version="12.1.3" />
     <PackageVersion Include="Avalonia.Desktop" Version="12.1.3" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.1.3" />
     <PackageVersion Include="Avalonia.Angle.Windows.Natives" Version="2.1.27548.20260419" />
   </ItemGroup>
 
