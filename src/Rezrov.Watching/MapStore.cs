@@ -134,7 +134,14 @@ public sealed class MapStore
     /// This machine's own place for the things a program keeps for
     /// itself, which is where maps go.
     /// </summary>
-    private static string Ordinary() => Path.Combine(Kind(), "rezrov", "maps");
+    private static string Ordinary() => Path.Combine(Home(), "maps");
+
+    /// <summary>
+    /// The folder this program keeps everything of its own in, maps and
+    /// remembered options alike, so that a player looking for one finds
+    /// the other beside it.
+    /// </summary>
+    public static string Home() => Path.Combine(Kind(), "rezrov");
 
     /// <summary>
     /// The folder this machine keeps a program's own files in.

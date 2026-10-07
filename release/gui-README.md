@@ -50,6 +50,14 @@ rezrov-gui game.gblorb --font "Iowan Old Style, Charter, Georgia, serif" --size 
 measure without opening a window, which is a quick way to see whether a
 family you have named is one your machine actually has.
 
+To keep them from one session to the next, choose View, then Options,
+on Windows and Linux. They are kept in a file called `options`, written
+the way they would be typed, one to a line, in `%LOCALAPPDATA%\rezrov`
+on Windows, `~/Library/Application Support/rezrov` on macOS, and
+`~/.local/share/rezrov` on Linux. On a Mac, which has no menu bar in the
+window, edit that file by hand. An option typed at the command line
+still wins for that window.
+
 ## Platform notes
 
 - macOS: the program is `rezrov.app`, a bundle, which is the shape the

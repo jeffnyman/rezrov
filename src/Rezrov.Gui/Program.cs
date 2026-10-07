@@ -102,6 +102,13 @@ internal static class Program
     /// can be given the same choices in the same words.
     /// </summary>
     private static string[] _args = [];
+
+    /// <summary>
+    /// Whether the player has kept options from this window, after which
+    /// those are what a story opened from it should be given, rather than
+    /// whatever this window was started with.
+    /// </summary>
+    private static bool _kept;
     private static AudioEngine? _audio;
 
     /// <summary>
@@ -139,6 +146,14 @@ internal static class Program
         {
             Help(Console.Out);
             return 0;
+        }
+
+        // The options the player keeps come first, each read on its own
+        // so that one the file gets wrong costs only itself, and whatever
+        // is typed at the command line is read after them and wins.
+        foreach (var kept in KeptOptions.Load())
+        {
+            Options(kept, 0);
         }
 
         // The probe takes the same font options as a game does, so a
@@ -623,6 +638,14 @@ internal static class Program
     /// Infocom made, where the story is one of theirs, and otherwise
     /// the name of the file on disk, with what it runs on after it.
     /// </summary>
+    /// <summary>
+    /// What a story opened from this window is given of this window's own
+    /// options: what it was started with, until the player keeps options
+    /// of their own, and from then on nothing, since the kept ones are
+    /// read by the new window itself and say what the player wants now.
+    /// </summary>
+    private static IReadOnlyList<string> Carrying() => _kept ? [] : StoryOpener.Carried(_args);
+
     private static string? Beside() =>
         _path.Length == 0 ? null : Path.GetDirectoryName(Path.GetFullPath(_path));
 
@@ -1212,7 +1235,7 @@ internal static class Program
     /// </remarks>
     private static async Task OpenInstead(Window notice)
     {
-        if (await StoryOpener.Ask(notice, Beside(), StoryOpener.Carried(_args)))
+        if (await StoryOpener.Ask(notice, Beside(), Carrying()))
         {
             _result = 0;
             notice.Close();
@@ -1412,12 +1435,13 @@ internal static class Program
                 // can only ever be in one place.
                 var bar = MenuBar.Wanted
                     ? new MenuBar(
-                        () => _ = StoryOpener.Ask(window, Beside(), StoryOpener.Carried(_args)),
+                        () => _ = StoryOpener.Ask(window, Beside(), Carrying()),
                         word => board.AtPrompt && board.Understood.Contains(word),
                         board.Command,
                         split is null ? null : split.Toggle,
                         window.Close,
-                        () => StoryAbout.Window(StoryAbout.Gather(_format, _bytes, _resources, _path)))
+                        () => StoryAbout.Window(StoryAbout.Gather(_format, _bytes, _resources, _path)),
+                        () => OptionsWindow.Make(() => _kept = true))
                     : null;
 
                 if (bar is not null)
