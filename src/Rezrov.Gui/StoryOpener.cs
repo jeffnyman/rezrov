@@ -40,17 +40,21 @@ internal static class StoryOpener
 
     /// <summary>
     /// What the stories this program plays are called: the Z-machine's
-    /// versions, Glulx, the Å-machine, and Blorb packages, which are the
-    /// names the rest of the program already knows them by. Anything
-    /// called something else is still a choice away, under all files.
+    /// versions, Glulx, the Å-machine, and Blorb packages. Anything called
+    /// something else is still a choice away, under all files.
     /// </summary>
+    /// <remarks>
+    /// [blorb #file-suffixes] A Blorb file may always end in .blorb, should
+    /// end in .zblorb or .gblorb by the machine its game is for, and may
+    /// end in .blb, .zlb or .glb where a system allows only three letters.
+    /// </remarks>
     private static readonly FilePickerFileType Stories = new("Stories")
     {
         Patterns =
         [
             "*.z1", "*.z2", "*.z3", "*.z4", "*.z5", "*.z6", "*.z7", "*.z8",
             "*.ulx", "*.aastory",
-            "*.zblorb", "*.gblorb", "*.blorb", "*.blb",
+            "*.zblorb", "*.gblorb", "*.blorb", "*.blb", "*.zlb", "*.glb",
         ],
     };
 

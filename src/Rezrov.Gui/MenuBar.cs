@@ -59,11 +59,15 @@ internal sealed class MenuBar
     /// has no map to show.
     /// </param>
     /// <param name="quit">What leaving the game does.</param>
-    public MenuBar(Action open, Func<string, bool> offered, Action<string> type, Action? map, Action quit)
+    /// <param name="aboutGame">
+    /// The window saying what the story being played says about itself.
+    /// </param>
+    public MenuBar(Action open, Func<string, bool> offered, Action<string> type, Action? map, Action quit, Func<Window> aboutGame)
     {
         ArgumentNullException.ThrowIfNull(open);
         ArgumentNullException.ThrowIfNull(offered);
         ArgumentNullException.ThrowIfNull(type);
+        ArgumentNullException.ThrowIfNull(aboutGame);
 
         // The commands are typed into the game rather than done behind
         // its back, which is how Windows Frotz offers saving and
@@ -114,6 +118,8 @@ internal sealed class MenuBar
         }
 
         var help = new MenuItem { Header = "_Help" };
+        help.Items.Add(Item("About This _Game", () => Present(aboutGame())));
+        help.Items.Add(new Separator());
         help.Items.Add(Item("_About Rezrov", () => About()));
         _menu.Items.Add(help);
     }
@@ -211,11 +217,6 @@ internal sealed class MenuBar
     /// </summary>
     private void About()
     {
-        if (TopLevel.GetTopLevel(_menu) is not Window owner)
-        {
-            return;
-        }
-
         var close = new Button
         {
             Content = "Close",
@@ -254,13 +255,26 @@ internal sealed class MenuBar
         };
 
         close.Click += (_, _) => about.Close();
+        Present(about);
+    }
+
+    /// <summary>
+    /// Shows a window over this one until it is closed, and then gives the
+    /// keyboard back to whatever had it.
+    /// </summary>
+    private void Present(Window dialog)
+    {
+        if (TopLevel.GetTopLevel(_menu) is not Window owner)
+        {
+            return;
+        }
 
         // A window that has just come back from showing another one
         // modally gives the keyboard back to the game and then, as it
         // is let have its own controls again, takes it away. So the
         // keyboard is handed back once that has settled rather than
         // as the other window closes.
-        about.Closed += (_, _) => Dispatcher.UIThread.Post(() => _owner?.Focus(), DispatcherPriority.Background);
-        _ = about.ShowDialog(owner);
+        dialog.Closed += (_, _) => Dispatcher.UIThread.Post(() => _owner?.Focus(), DispatcherPriority.Background);
+        _ = dialog.ShowDialog(owner);
     }
 }
