@@ -59,9 +59,9 @@ window, edit that file by hand. An option typed at the command line
 wins when a window opens, until options are kept from that window.
 
 Kept options change the window in front of you at once, apart from two
-cases: a Version 6 game and a Dialog game keep their type, taking only
-the new margin and smoothing, and the machine a game is told it runs on
-waits for the next story.
+cases: a Version 6 game keeps its type, taking only the new margin and
+smoothing, and the machine a game is told it runs on waits for the next
+story.
 
 On Windows and Linux the stories you open are listed under Game, then
 Open Recent, and kept in a file called `recent` in the same folder.

@@ -111,12 +111,13 @@ public sealed class AaText
     /// </summary>
     public const double LineSpacing = 1.35;
 
-    private readonly IAaGlyphs _glyphs;
-    private readonly AaSheet _sheet;
     private readonly Group _root;
     private readonly List<Group> _open = [];
-    private readonly List<AaLook> _looks = [];
+    private readonly List<Step> _looks = [];
     private readonly List<bool> _shouts = [];
+
+    private IAaGlyphs _glyphs;
+    private AaSheet _sheet;
 
     private AaPage _page = new([], [], 0);
     private double _width = -1;
@@ -131,9 +132,11 @@ public sealed class AaText
 
         _glyphs = glyphs;
         _sheet = sheet;
-        _root = new Group(NoClass, []) { Look = sheet.Plain };
+
+        var plain = new Step(null, NoClass, span: false) { Look = sheet.Plain };
+        _root = new Group(NoClass, []) { Style = plain };
         _open.Add(_root);
-        _looks.Add(sheet.Plain);
+        _looks.Add(plain);
         _shouts.Add(false);
     }
 
@@ -144,7 +147,7 @@ public sealed class AaText
     public double Scroll { get; private set; }
 
     /// <summary>How text is set at this moment.</summary>
-    public AaLook Look => _looks[^1];
+    public AaLook Look => _looks[^1].Look;
 
     /// <summary>
     /// The style class of the div the story is writing inside, which is
@@ -166,18 +169,21 @@ public sealed class AaText
         }
 
         var words = _shouts[^1] ? text.ToUpperInvariant() : text;
-        var look = Look;
+        var style = _looks[^1];
         var children = _open[^1].Children;
 
         // A run holds as much as it can: the text arrives a character
-        // at a time, and a run for each would be thousands of them.
-        if (children.Count > 0 && children[^1] is Words last && last.Look == look && last.Link == _link)
+        // at a time, and a run for each would be thousands of them. Two
+        // runs are one only where the same classes made them, rather
+        // than where their looks merely match, since a look that matches
+        // at one size of type need not match at another.
+        if (children.Count > 0 && children[^1] is Words last && Step.Same(last.Style, style) && last.Link == _link)
         {
             last.Letters.Append(words);
         }
         else
         {
-            children.Add(new Words(new StringBuilder(words), look, _link));
+            children.Add(new Words(new StringBuilder(words), style, _link));
         }
 
         Changed();
@@ -209,12 +215,15 @@ public sealed class AaText
     /// <summary>Opens a div, which is a box of its own.</summary>
     public void EnterDiv(int styleClass)
     {
-        var look = _sheet.Inside(Look, styleClass, span: false);
-        var group = new Group(styleClass, []) { Look = look };
+        var style = new Step(_looks[^1], styleClass, span: false)
+        {
+            Look = _sheet.Inside(Look, styleClass, span: false),
+        };
+        var group = new Group(styleClass, []) { Style = style };
 
         _open[^1].Children.Add(group);
         _open.Add(group);
-        _looks.Add(look);
+        _looks.Add(style);
         _shouts.Add(_shouts[^1] || _sheet.Shouts(styleClass));
         Changed();
     }
@@ -238,7 +247,10 @@ public sealed class AaText
     /// </summary>
     public void EnterSpan(int styleClass)
     {
-        _looks.Add(_sheet.Inside(Look, styleClass, span: true));
+        _looks.Add(new Step(_looks[^1], styleClass, span: true)
+        {
+            Look = _sheet.Inside(Look, styleClass, span: true),
+        });
         _shouts.Add(_shouts[^1] || _sheet.Shouts(styleClass));
     }
 
@@ -270,7 +282,7 @@ public sealed class AaText
     {
         ArgumentNullException.ThrowIfNull(alt);
 
-        Add(new Shown(picture, alt, Look, _link));
+        Add(new Shown(picture, alt, _looks[^1], _link));
     }
 
     /// <summary>
@@ -287,13 +299,97 @@ public sealed class AaText
     /// written, since what is written has already been settled. The
     /// Dialog manual says as much: whether a body style reaches
     /// existing text is the interpreter's own business, and a story
-    /// that wants to be sure clears the screen after asking.
+    /// that wants to be sure clears the screen after asking. So the
+    /// body starts a chain of classes of its own, and the text before
+    /// it keeps the chain it was written under.
     /// </remarks>
-    public void SetBody(AaLook plain)
+    public void SetBody(int styleClass)
     {
-        _root.Look = plain;
-        _looks[0] = plain;
+        var body = new Step(null, styleClass, span: false)
+        {
+            Look = _sheet.Inside(_sheet.Plain, styleClass, span: false),
+        };
+
+        _root.Style = body;
+        _looks[0] = body;
         Changed();
+    }
+
+    /// <summary>
+    /// Sets everything in other faces and at another size, the text
+    /// already written included, for a player who changes them while the
+    /// story is played.
+    /// </summary>
+    /// <remarks>
+    /// [aam story] A look is the classes around a piece of text worked
+    /// out against the size and the faces of the moment, so each piece
+    /// keeps its classes as well as its look, and here every look is
+    /// worked out again from them. A heading twice the size of the prose
+    /// is still twice the size of it afterwards, at whatever size the
+    /// prose now is.
+    /// </remarks>
+    /// <param name="glyphs">The faces to measure with from now on.</param>
+    /// <param name="sheet">
+    /// The style sheet worked out at the new size.
+    /// </param>
+    public void Restyle(IAaGlyphs glyphs, AaSheet sheet)
+    {
+        ArgumentNullException.ThrowIfNull(glyphs);
+        ArgumentNullException.ThrowIfNull(sheet);
+
+        _glyphs = glyphs;
+        _sheet = sheet;
+
+        var done = new HashSet<Step>(ReferenceEqualityComparer.Instance);
+
+        foreach (var style in _looks)
+        {
+            Settle(style, done);
+        }
+
+        Settle(_root, done);
+        Changed();
+    }
+
+    /// <summary>
+    /// Works out again the look of a div and of everything inside it.
+    /// </summary>
+    private void Settle(Group group, HashSet<Step> done)
+    {
+        Settle(group.Style, done);
+
+        foreach (var node in group.Children)
+        {
+            switch (node)
+            {
+                case Group inner:
+                    Settle(inner, done);
+                    break;
+                case Words words:
+                    Settle(words.Style, done);
+                    break;
+                case Shown shown:
+                    Settle(shown.Style, done);
+                    break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Works out again the look a chain of classes comes to, outermost
+    /// first, and each step of it once however many pieces share it.
+    /// </summary>
+    private AaLook Settle(Step style, HashSet<Step> done)
+    {
+        if (!done.Add(style))
+        {
+            return style.Look;
+        }
+
+        var outer = style.Outer is { } outside ? Settle(outside, done) : _sheet.Plain;
+
+        style.Look = style.StyleClass == NoClass ? outer : _sheet.Inside(outer, style.StyleClass, style.Span);
+        return style.Look;
     }
 
     /// <summary>
@@ -439,10 +535,16 @@ public sealed class AaText
     private abstract record Node;
 
     /// <summary>A run of text all set the same way.</summary>
-    private sealed record Words(StringBuilder Letters, AaLook Look, int Link) : Node;
+    private sealed record Words(StringBuilder Letters, Step Style, int Link) : Node
+    {
+        public AaLook Look => Style.Look;
+    }
 
     /// <summary>A picture, or the words that stand in for one.</summary>
-    private sealed record Shown(Pixels? Picture, string Alt, AaLook Look, int Link) : Node;
+    private sealed record Shown(Pixels? Picture, string Alt, Step Style, int Link) : Node
+    {
+        public AaLook Look => Style.Look;
+    }
 
     /// <summary>[aam opcode] A bar showing how far along something is.</summary>
     private sealed record Bar(int Amount, int Total) : Node;
@@ -463,7 +565,61 @@ public sealed class AaText
     /// </remarks>
     private sealed record Group(int StyleClass, List<Node> Children) : Node
     {
+        public required Step Style { get; set; }
+
+        public AaLook Look => Style.Look;
+    }
+
+    /// <summary>
+    /// One class opened inside whatever was open around it, which is
+    /// what a look is worked out from.
+    /// </summary>
+    /// <remarks>
+    /// The look is kept beside the class, so that text is not worked out
+    /// again every time it is laid out, but only when the player changes
+    /// the type.
+    ///
+    /// A class rather than a record, since two steps that say the same
+    /// are still two places a look is kept, and each has to be found
+    /// and set again.
+    /// </remarks>
+    /// <param name="outer">
+    /// What was open around it, or null for the outermost, which is set
+    /// the way the frontend sets plain text.
+    /// </param>
+    /// <param name="styleClass">The class, or none.</param>
+    /// <param name="span">Whether it is a span rather than a div.</param>
+    private sealed class Step(Step? outer, int styleClass, bool span)
+    {
+        public Step? Outer { get; } = outer;
+
+        public int StyleClass { get; } = styleClass;
+
+        public bool Span { get; } = span;
+
         public AaLook Look { get; set; }
+
+        /// <summary>
+        /// Whether two steps come from the same classes opened in the same
+        /// order, and so always come to the same look.
+        /// </summary>
+        public static bool Same(Step? one, Step? other)
+        {
+            for (; one is not null && other is not null; one = one.Outer, other = other.Outer)
+            {
+                if (ReferenceEquals(one, other))
+                {
+                    return true;
+                }
+
+                if (one.StyleClass != other.StyleClass || one.Span != other.Span)
+                {
+                    return false;
+                }
+            }
+
+            return one is null && other is null;
+        }
     }
 
     /// <summary>
@@ -817,7 +973,7 @@ public sealed class AaText
         {
             if (shown.Picture is not { Width: > 0, Height: > 0 } picture)
             {
-                Write(new Words(new StringBuilder($"[{shown.Alt}]"), shown.Look, shown.Link));
+                Write(new Words(new StringBuilder($"[{shown.Alt}]"), shown.Style, shown.Link));
                 return;
             }
 

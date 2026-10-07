@@ -674,8 +674,24 @@ internal static class Program
 
         var glyphs = new Glyphs(_size, _prose, _fixed);
         board.Display?.Restyle(glyphs);
+
+        if (board.Page is { } page)
+        {
+            var faces = new GuiAaGlyphs(glyphs.Fonts, _prose, _sans, _fixed);
+            board.AaGlyphs = faces;
+            page.Restyle(faces, AaPlain());
+        }
+
         board.Restyle(glyphs, _smoothing, _padding);
     }
+
+    /// <summary>
+    /// [aam story] How a Dialog story's text is set where no class says
+    /// otherwise, which is the frontend's own choice and not the
+    /// story's: the prose family at the size the player chose, in the
+    /// colors the reference interpreter uses.
+    /// </summary>
+    private static AaLook AaPlain() => new(string.Empty, _size, false, false, 0, AaTheme.Ink, 0);
 
     /// <summary>
     /// What a story opened from this window is given of this window's own
@@ -1202,12 +1218,7 @@ internal static class Program
         var display = new GuiAaDisplay(
             story,
             faces,
-
-            // [aam story] How text is set where no class says
-            // otherwise, which is the frontend's own choice and not
-            // the story's. It is the prose family at the ordinary
-            // size, in the colors the reference interpreter uses.
-            new AaLook(string.Empty, _size, false, false, 0, AaTheme.Ink, 0),
+            AaPlain(),
             () => Dispatcher.UIThread.Post(board.InvalidateVisual),
             dialogs.OpenTranscript);
 
