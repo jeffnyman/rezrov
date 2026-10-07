@@ -54,14 +54,14 @@ family you have named is one your machine actually has.
 
 - macOS: the program is `rezrov.app`, a bundle, which is the shape the
   Dock and the application switcher read a program's name and icon out
-  of. Open it from the Finder, or name a story at a shell through the
-  `rezrov-gui` beside it, as the examples above do. The bundle carries
-  everything it needs, so it can be moved into Applications on its own,
-  though that `rezrov-gui` has to stay beside it to keep working. The
-  program is not signed: if an archive unpacked through the Finder is
-  refused as being from an unidentified developer, run `xattr -dr
-  com.apple.quarantine .` in this directory, or allow it in System
-  Settings under Privacy and Security.
+  of. Open it from the Finder and it offers to choose a story, or name
+  one at a shell through the `rezrov-gui` beside it, as the examples
+  above do. The bundle carries everything it needs, so it can be moved
+  into Applications on its own, though that `rezrov-gui` has to stay
+  beside it to keep working. The program is not signed: if an archive
+  unpacked through the Finder is refused as being from an unidentified
+  developer, run `xattr -dr com.apple.quarantine .` in this directory,
+  or allow it in System Settings under Privacy and Security.
 - Linux: `tar` keeps the executable permission. If a download loses it,
   `chmod +x rezrov-gui` restores it.
 

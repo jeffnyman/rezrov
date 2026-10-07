@@ -43,6 +43,10 @@ internal sealed class MenuBar
     // debugging, so it is remembered rather than assumed.
     private InputElement? _owner;
 
+    /// <param name="open">
+    /// What opening another story does, which is to ask which and play it
+    /// in a window of its own.
+    /// </param>
     /// <param name="offered">
     /// Whether a command can be typed for the player just now: whether
     /// the game is waiting for one, and knows the word.
@@ -55,8 +59,9 @@ internal sealed class MenuBar
     /// has no map to show.
     /// </param>
     /// <param name="quit">What leaving the game does.</param>
-    public MenuBar(Func<string, bool> offered, Action<string> type, Action? map, Action quit)
+    public MenuBar(Action open, Func<string, bool> offered, Action<string> type, Action? map, Action quit)
     {
+        ArgumentNullException.ThrowIfNull(open);
         ArgumentNullException.ThrowIfNull(offered);
         ArgumentNullException.ThrowIfNull(type);
 
@@ -68,6 +73,9 @@ internal sealed class MenuBar
         // asked as the menu opens rather than kept up to date, since it
         // is only true while the game sits at its prompt.
         var game = new MenuItem { Header = "_Game" };
+        game.Items.Add(Item("_Open Story...", open));
+        game.Items.Add(new Separator());
+
         var commands = Commands
             .Select(word => (Word: word, Item: Item(Labels[word], () =>
             {

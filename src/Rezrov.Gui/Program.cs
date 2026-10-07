@@ -96,6 +96,12 @@ internal static class Program
     private static string? _blorb;
     private static int _result;
     private static string? _trouble;
+
+    /// <summary>
+    /// The command line as given, so that a window opened from this one
+    /// can be given the same choices in the same words.
+    /// </summary>
+    private static string[] _args = [];
     private static AudioEngine? _audio;
 
     /// <summary>
@@ -121,6 +127,8 @@ internal static class Program
     [STAThread]
     internal static int Main(string[] args)
     {
+        _args = args;
+
         if (args is ["--version"])
         {
             Console.WriteLine($"rezrov-gui {ProgramVersion.Current}");
@@ -163,8 +171,9 @@ internal static class Program
             _trouble = """
                 rezrov-gui plays a story file, and was opened without one.
 
-                Name one at a shell, as in rezrov-gui zork1.z3, and
-                rezrov-gui --help lists everything else it takes.
+                Choose one here, or name one at a shell, as in
+                rezrov-gui zork1.z3, where rezrov-gui --help lists
+                everything else it takes.
                 """;
 
             _result = 2;
@@ -614,6 +623,9 @@ internal static class Program
     /// Infocom made, where the story is one of theirs, and otherwise
     /// the name of the file on disk, with what it runs on after it.
     /// </summary>
+    private static string? Beside() =>
+        _path.Length == 0 ? null : Path.GetDirectoryName(Path.GetFullPath(_path));
+
     private static string Named() =>
         StoryBadges.Title(_path, _format, _bytes, _resources is not null);
 
@@ -1191,6 +1203,23 @@ internal static class Program
     }
 
     /// <summary>
+    /// Opens a story from the notice that no game is being played, and
+    /// puts the notice away once one is.
+    /// </summary>
+    /// <remarks>
+    /// The notice was the whole of this window, and the story plays in a
+    /// window of its own, so there is nothing left here to keep.
+    /// </remarks>
+    private static async Task OpenInstead(Window notice)
+    {
+        if (await StoryOpener.Ask(notice, Beside(), StoryOpener.Carried(_args)))
+        {
+            _result = 0;
+            notice.Close();
+        }
+    }
+
+    /// <summary>
     /// Keeps the map for the next time this story is opened.
     /// </summary>
     /// <remarks>
@@ -1259,19 +1288,37 @@ internal static class Program
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop && _trouble is { } trouble)
             {
-                desktop.MainWindow = new Window
+                // Whatever went wrong, no game is being played, so the way
+                // on is to choose one. That is also all there is to do for
+                // a program opened with nothing to play, which is what the
+                // Finder and the Dock do.
+                var open = new Button
+                {
+                    Content = "Open a story...",
+                    IsDefault = true,
+                    HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
+                    Margin = new Thickness(0, 16, 0, 0),
+                };
+
+                var panel = new StackPanel { Margin = new Thickness(24) };
+                panel.Children.Add(new TextBlock
+                {
+                    Text = trouble,
+                    MaxWidth = 460,
+                    TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+                });
+                panel.Children.Add(open);
+
+                var notice = new Window
                 {
                     Title = "rezrov",
                     SizeToContent = SizeToContent.WidthAndHeight,
                     CanResize = false,
-                    Content = new TextBlock
-                    {
-                        Text = trouble,
-                        Margin = new Thickness(24),
-                        MaxWidth = 460,
-                        TextWrapping = Avalonia.Media.TextWrapping.Wrap,
-                    },
+                    Content = panel,
                 };
+
+                open.Click += (_, _) => _ = OpenInstead(notice);
+                desktop.MainWindow = notice;
             }
             else if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime playing)
             {
@@ -1365,6 +1412,7 @@ internal static class Program
                 // can only ever be in one place.
                 var bar = MenuBar.Wanted
                     ? new MenuBar(
+                        () => _ = StoryOpener.Ask(window, Beside(), StoryOpener.Carried(_args)),
                         word => board.AtPrompt && board.Understood.Contains(word),
                         board.Command,
                         split is null ? null : split.Toggle,
