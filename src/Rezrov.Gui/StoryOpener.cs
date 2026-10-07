@@ -116,11 +116,23 @@ public static class StoryOpener
             return false;
         }
 
-        return Open(owner, story, carried);
+        return Play(owner, story, carried);
     }
 
-    private static bool Open(Window owner, string story, IReadOnlyList<string> carried)
+    /// <summary>
+    /// Opens a window playing a story already chosen, as the list of
+    /// recent stories does.
+    /// </summary>
+    /// <param name="owner">The window asking.</param>
+    /// <param name="story">The story to play.</param>
+    /// <param name="carried">The options the new window is given.</param>
+    /// <returns>Whether a window was opened.</returns>
+    public static bool Play(Window owner, string story, IReadOnlyList<string> carried)
     {
+        ArgumentNullException.ThrowIfNull(owner);
+        ArgumentNullException.ThrowIfNull(story);
+        ArgumentNullException.ThrowIfNull(carried);
+
         if (Environment.ProcessPath is not { } program)
         {
             Tell(owner, "This program cannot tell where it was started from, so it has no way to start again.");
