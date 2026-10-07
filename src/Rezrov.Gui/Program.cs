@@ -205,6 +205,10 @@ internal static class Program
             {
                 _result = 1;
             }
+            else
+            {
+                RecentStories.Remember(_path);
+            }
         }
 
         AppBuilder.Configure<GameApp>()
@@ -1480,6 +1484,7 @@ internal static class Program
                 var bar = MenuBar.Wanted
                     ? new MenuBar(
                         () => _ = StoryOpener.Ask(window, Beside(), Carrying()),
+                        story => StoryOpener.Play(window, story, Carrying()),
                         word => board.AtPrompt && board.Understood.Contains(word),
                         board.Command,
                         split is null ? null : split.Toggle,

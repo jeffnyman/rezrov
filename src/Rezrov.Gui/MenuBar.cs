@@ -50,6 +50,10 @@ internal sealed class MenuBar
     /// What opening another story does, which is to ask which and play it
     /// in a window of its own.
     /// </param>
+    /// <param name="again">
+    /// What opening a story from the recent list does, which is to play
+    /// it in a window of its own.
+    /// </param>
     /// <param name="offered">
     /// Whether a command can be typed for the player just now: whether
     /// the game is waiting for one, and knows the word.
@@ -68,6 +72,7 @@ internal sealed class MenuBar
     /// <param name="options">The Options window.</param>
     public MenuBar(
         Action open,
+        Action<string> again,
         Func<string, bool> offered,
         Action<string> type,
         Action? map,
@@ -76,6 +81,7 @@ internal sealed class MenuBar
         Func<Window> options)
     {
         ArgumentNullException.ThrowIfNull(open);
+        ArgumentNullException.ThrowIfNull(again);
         ArgumentNullException.ThrowIfNull(offered);
         ArgumentNullException.ThrowIfNull(type);
         ArgumentNullException.ThrowIfNull(aboutGame);
@@ -90,6 +96,12 @@ internal sealed class MenuBar
         // is only true while the game sits at its prompt.
         var game = new MenuItem { Header = "_Game" };
         game.Items.Add(Keyed("_Open Story...", open, MenuKeys.Open));
+
+        // The list is read afresh each time the menu opens, since another
+        // window may have opened a story since, and a story may have been
+        // moved or deleted.
+        var recent = new MenuItem { Header = "Open _Recent" };
+        game.Items.Add(recent);
         game.Items.Add(new Separator());
 
         // A command's key does only what its item would: nothing, while
@@ -116,12 +128,22 @@ internal sealed class MenuBar
             game.Items.Add(item);
         }
 
-        game.SubmenuOpened += (_, _) =>
+        game.SubmenuOpened += (_, e) =>
         {
+            // The recent list opening is reported here too, and filling
+            // it again as it opens would pull it out from under the
+            // pointer.
+            if (e.Source != game)
+            {
+                return;
+            }
+
             foreach (var (word, item) in commands)
             {
                 item.IsEnabled = offered(word);
             }
+
+            Recent(recent, again);
         };
 
         game.Items.Add(new Separator());
@@ -248,6 +270,42 @@ internal sealed class MenuBar
     }
 
     private static bool Inside(object? element) => element is Menu or MenuItem;
+
+    /// <summary>
+    /// Fills the recent list with the stories that can still be opened,
+    /// and the item that clears it.
+    /// </summary>
+    /// <remarks>
+    /// A story is named by its file, since that is what a player chose it
+    /// by, with the whole path shown on pointing at it for two stories of
+    /// the same name. The first nine are numbered with the key that
+    /// chooses each, as menus of recent files have long been.
+    /// </remarks>
+    private static void Recent(MenuItem recent, Action<string> again)
+    {
+        recent.Items.Clear();
+
+        var stories = RecentStories.Offered();
+        recent.IsEnabled = stories.Count > 0;
+
+        for (var i = 0; i < stories.Count; i++)
+        {
+            var story = stories[i];
+
+            // A line under the next letter is how a header marks its key,
+            // so one in the file's own name is doubled to be shown as it
+            // is.
+            var name = Path.GetFileName(story).Replace("_", "__", StringComparison.Ordinal);
+            var number = i < 9 ? $"_{i + 1}" : $"{i + 1}";
+
+            var item = Item($"{number}  {name}", () => again(story));
+            ToolTip.SetTip(item, story);
+            recent.Items.Add(item);
+        }
+
+        recent.Items.Add(new Separator());
+        recent.Items.Add(Item("_Clear Recent", RecentStories.Clear));
+    }
 
     /// <summary>
     /// An item chosen with a key as well as from the menu.

@@ -63,6 +63,10 @@ cases: a Version 6 game and a Dialog game keep their type, taking only
 the new margin and smoothing, and the machine a game is told it runs on
 waits for the next story.
 
+On Windows and Linux the stories you open are listed under Game, then
+Open Recent, and kept in a file called `recent` in the same folder.
+Clear Recent at the bottom of that list empties it.
+
 ## Platform notes
 
 - macOS: the program is `rezrov.app`, a bundle, which is the shape the
