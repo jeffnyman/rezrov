@@ -60,6 +60,26 @@ public class GuiInputTests
     }
 
     [Fact]
+    public void OtherFontsTellTheGameItsWindowsWereArrangedAgain()
+    {
+        // [glk #arrange_events] The window is the same size, which a
+        // resize would not report, but it holds half as many characters
+        // in type twice the size, and characters are what a game lays its
+        // windows out in.
+        var display = new GuiGlkDisplay(new Cells(), () => { }, 800, 600);
+        var story = new GlkLibrary(display).OpenWindow(null, 0, 0, WindowType.TextBuffer, 1)!;
+
+        Assert.Equal(80, display.Width);
+
+        display.Restyle(new Cells(2));
+        var arranged = display.WaitForInput([story], [], TimeSpan.FromSeconds(2));
+
+        Assert.Equal(GlkInputKind.Arrange, arranged.Kind);
+        Assert.Equal(40, display.Width);
+        Assert.Equal(15, display.Height);
+    }
+
+    [Fact]
     public void AChosenCommandTakesThePlaceOfWhatWasBegun()
     {
         // [glk #line_events] A command chosen from a menu is the whole of
@@ -103,14 +123,14 @@ public class GuiInputTests
     /// A font of whole cells, which is all the display needs to work
     /// out how many of them the window holds.
     /// </summary>
-    private sealed class Cells : IGlyphs
+    private sealed class Cells(double scale = 1) : IGlyphs
     {
-        public double CellWidth => 10;
+        public double CellWidth => 10 * scale;
 
-        public double CellHeight => 20;
+        public double CellHeight => 20 * scale;
 
-        public double Width(string text, GlkStyle style) => (text?.Length ?? 0) * 10;
+        public double Width(string text, GlkStyle style) => (text?.Length ?? 0) * 10 * scale;
 
-        public double LineHeight(GlkStyle style) => 20;
+        public double LineHeight(GlkStyle style) => 20 * scale;
     }
 }

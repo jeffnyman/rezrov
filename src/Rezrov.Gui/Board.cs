@@ -47,6 +47,7 @@ internal sealed class Board : Control
     private readonly Dictionary<uint, ImmutableSolidColorBrush> _washes = [];
     private readonly HashSet<GlkWindow> _seen = [];
     private Glyphs _glyphs;
+    private double _padding;
     private GuiGlkDisplay? _display;
     private BufferedScreen? _screen;
     private GuiAaDisplay? _page;
@@ -110,7 +111,43 @@ internal sealed class Board : Control
     /// inside the padding, so a game that lays itself out to the
     /// screen lays itself out to what it can actually use.
     /// </remarks>
-    public double Padding { get; init; }
+    public double Padding
+    {
+        get => _padding;
+        init => _padding = value;
+    }
+
+    /// <summary>
+    /// Sets the game in another font, smoothing, and margin while it is
+    /// played, and tells it what that comes to.
+    /// </summary>
+    /// <remarks>
+    /// What the game is told is what a resize would tell it, since that
+    /// is what this is from where the game stands: a window holding a
+    /// different number of characters. The window itself keeps its size,
+    /// as it would if the player had changed nothing but the type.
+    ///
+    /// [zm 8.8.1] A game that measures in the font's own pixels keeps
+    /// the font it started with, since its windows were laid out in those
+    /// pixels and a character of another size would no longer fit the
+    /// room the game left it. That is every Version 6 game, the ones on
+    /// the fixed screen of Infocom's artwork included.
+    /// </remarks>
+    public void Restyle(Glyphs glyphs, TextRenderingMode smoothing, double padding)
+    {
+        ArgumentNullException.ThrowIfNull(glyphs);
+
+        if (!KeepsFont)
+        {
+            _glyphs = glyphs;
+        }
+
+        TextOptions.SetTextRenderingMode(this, smoothing);
+        _padding = padding;
+
+        Relay(Bounds.Size);
+        InvalidateVisual();
+    }
 
     /// <summary>The part of the window the game is drawn in.</summary>
     public Size Sheet => new(
@@ -226,6 +263,12 @@ internal sealed class Board : Control
     /// and runs its menu labels into each other.
     /// </remarks>
     public (int Width, int Height)? UnitScreen { get; set; }
+
+    /// <summary>
+    /// Whether the game measures in the pixels of the font it started
+    /// with, and so has to keep it however the player's options change.
+    /// </summary>
+    public bool KeepsFont { get; set; }
 
     /// <summary>
     /// [infocom pictures] The fonts to paint a fixed unit screen with,
@@ -709,12 +752,27 @@ internal sealed class Board : Control
     {
         ArgumentNullException.ThrowIfNull(e);
 
+        Relay(e.NewSize);
+        base.OnSizeChanged(e);
+    }
+
+    /// <summary>
+    /// Tells the game how much room it has in a window of this size.
+    /// </summary>
+    private void Relay(Size bounds)
+    {
+        // Before the window is laid out there is no size to tell.
+        if (bounds.Width <= 0 || bounds.Height <= 0)
+        {
+            return;
+        }
+
         // What the game is given is the size inside the padding, not
         // the size of the window, so it lays itself out to what it can
         // actually draw on.
         var inside = new Size(
-            Math.Max(e.NewSize.Width - (Padding * 2), 1),
-            Math.Max(e.NewSize.Height - (Padding * 2), 1));
+            Math.Max(bounds.Width - (Padding * 2), 1),
+            Math.Max(bounds.Height - (Padding * 2), 1));
 
         Display?.Resize(inside.Width, inside.Height);
         Page?.Resize(inside.Width, inside.Height);
@@ -729,8 +787,6 @@ internal sealed class Board : Control
                 Math.Max((int)(inside.Width / _glyphs.CellWidth), 1),
                 Math.Max((int)(inside.Height / _glyphs.CellHeight), 1));
         }
-
-        base.OnSizeChanged(e);
     }
 
     /// <summary>

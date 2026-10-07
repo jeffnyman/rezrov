@@ -69,6 +69,27 @@ public class BufferTextTests
     }
 
     [Fact]
+    public void TextSetInOtherFontsIsWrappedAfresh()
+    {
+        // A player who changes the type while a game is played sees the
+        // text already there set in the new type too. The lines were last
+        // wrapped at this same width, so it is the fonts that have to
+        // send them back to be wrapped again.
+        var text = new BufferText(new Ruler());
+        Print(text, "the quick brown fox");
+
+        Assert.Equal(2, text.Lines(100).Count);
+
+        text.Restyle(new Ruler(2));
+        var lines = text.Lines(100);
+
+        // Five characters to the line now, so "the " fills most of one
+        // and "quick" starts the next.
+        Assert.Equal(["the", " "], Words(lines[0]));
+        Assert.True(lines.Count > 2, $"{lines.Count} lines");
+    }
+
+    [Fact]
     public void AWordTooLongForALineIsBrokenRatherThanLost()
     {
         // Nothing can be done for a word wider than the whole window
@@ -623,14 +644,14 @@ public class BufferTextTests
     /// first line one further, the note is centered, and the alert is
     /// set against the far edge.
     /// </remarks>
-    private sealed class Ruler : IGlyphs
+    private sealed class Ruler(double scale = 1) : IGlyphs
     {
-        public double CellWidth => 10;
+        public double CellWidth => 10 * scale;
 
         public double CellHeight => 20;
 
         public double Width(string text, GlkStyle style) =>
-            text.Length * (style == GlkStyle.Header ? 20 : 10);
+            text.Length * (style == GlkStyle.Header ? 20 : 10) * scale;
 
         public double LineHeight(GlkStyle style) => style == GlkStyle.Header ? 40 : 20;
 

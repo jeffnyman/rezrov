@@ -68,9 +68,25 @@ public sealed record Line(IReadOnlyList<Piece> Pieces, IReadOnlyList<Inset> Imag
 public sealed class BufferText(IGlyphs glyphs)
 {
     private readonly List<Item> _items = [];
-    private readonly IGlyphs _glyphs = glyphs;
+    private IGlyphs _glyphs = glyphs;
     private List<Line> _lines = [];
     private double _width = -1;
+
+    /// <summary>
+    /// Sets the text in other fonts from now on, the text already there
+    /// included, for a player who changes them while the game is played.
+    /// </summary>
+    /// <remarks>
+    /// What is kept is runs of styled text, not text already measured,
+    /// so nothing has to be written again: the lines are simply forgotten
+    /// and wrapped afresh the next time they are asked for.
+    /// </remarks>
+    public void Restyle(IGlyphs glyphs)
+    {
+        ArgumentNullException.ThrowIfNull(glyphs);
+        _glyphs = glyphs;
+        _width = -1;
+    }
 
     /// <summary>
     /// How many characters have been printed, which is where a mark can
