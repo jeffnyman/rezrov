@@ -56,6 +56,11 @@ public sealed class GuiAaDisplay : IAaOutput
 
     private IAaGlyphs _glyphs;
     private AaSheet _sheet;
+
+    // The page where the story has said nothing about it, and what the
+    // story's body style says when it has.
+    private uint _paper;
+    private uint? _bodyPaper;
     private TextOutput? _transcript;
     private TextWriter? _written;
     private double _width;
@@ -75,12 +80,17 @@ public sealed class GuiAaDisplay : IAaOutput
     /// How to open a transcript when the story asks for one, or a
     /// function returning null where the player declined.
     /// </param>
+    /// <param name="paper">
+    /// The color of the page where the story gives it none, as
+    /// 0xAARRGGBB.
+    /// </param>
     public GuiAaDisplay(
         AaStory story,
         IAaGlyphs glyphs,
         AaLook plain,
         Action changed,
-        Func<TextWriter?> transcripts)
+        Func<TextWriter?> transcripts,
+        uint paper = AaTheme.Paper)
     {
         ArgumentNullException.ThrowIfNull(story);
         ArgumentNullException.ThrowIfNull(glyphs);
@@ -95,7 +105,7 @@ public sealed class GuiAaDisplay : IAaOutput
 
         Main = new AaText(glyphs, _sheet);
         Status = new AaText(glyphs, _sheet);
-        Background = AaTheme.Paper;
+        _paper = paper;
     }
 
     /// <summary>
@@ -120,7 +130,31 @@ public sealed class GuiAaDisplay : IAaOutput
     /// [aam opcode] What the whole page is painted on, which a story
     /// may set along with the color of its text.
     /// </summary>
-    public uint Background { get; private set; }
+    public uint Background
+    {
+        get
+        {
+            lock (Sync)
+            {
+                return _bodyPaper ?? _paper;
+            }
+        }
+    }
+
+    /// <summary>
+    /// The color of text no class gives a color to, which is what the
+    /// line under the status area is drawn in.
+    /// </summary>
+    public uint Ink
+    {
+        get
+        {
+            lock (Sync)
+            {
+                return _sheet.Plain.Ink;
+            }
+        }
+    }
 
     /// <summary>
     /// How wide the column of text is: as much of the window as the
@@ -212,12 +246,16 @@ public sealed class GuiAaDisplay : IAaOutput
     /// <param name="plain">
     /// How text is set where no class says otherwise.
     /// </param>
-    public void Restyle(IAaGlyphs glyphs, AaLook plain)
+    /// <param name="paper">
+    /// The color of the page where the story gives it none.
+    /// </param>
+    public void Restyle(IAaGlyphs glyphs, AaLook plain, uint paper)
     {
         ArgumentNullException.ThrowIfNull(glyphs);
 
         lock (Sync)
         {
+            _paper = paper;
             _glyphs = glyphs;
             _sheet = new AaSheet(_story.Styles, glyphs, plain);
 
@@ -503,9 +541,9 @@ public sealed class GuiAaDisplay : IAaOutput
     {
         lock (Sync)
         {
-            Background = _story.Styles.BackgroundColor(styleClass) is { IsSet: true } behind
+            _bodyPaper = _story.Styles.BackgroundColor(styleClass) is { IsSet: true } behind
                 ? behind.Value
-                : AaTheme.Paper;
+                : null;
 
             Main.SetBody(styleClass);
             Status.SetBody(styleClass);
@@ -745,7 +783,7 @@ public sealed class GuiAaDisplay : IAaOutput
             _dead = 0;
             _area = -1;
             _selfLink = false;
-            Background = AaTheme.Paper;
+            _bodyPaper = null;
         }
 
         _transcript?.Restart();

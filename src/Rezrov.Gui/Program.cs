@@ -93,6 +93,15 @@ internal static class Program
     private static string _fixed = Glyphs.FixedFamily;
     private static double _size = Glyphs.OrdinarySize;
     private static TextRenderingMode _smoothing = TextRenderingMode.SubpixelAntialias;
+
+    /// <summary>
+    /// The colors the player chose for text and the page where a game
+    /// leaves them to the interpreter, as 0x00RRGGBB, or null for each
+    /// machine's own.
+    /// </summary>
+    private static uint? _foreground;
+    private static uint? _background;
+
     private static string? _blorb;
     private static int _result;
     private static string? _trouble;
@@ -281,6 +290,14 @@ internal static class Program
                     break;
                 case "--smoothing" when i + 1 < args.Length && Smoothing(args[i + 1]) is { } mode:
                     _smoothing = mode;
+                    i++;
+                    break;
+                case "--foreground" when i + 1 < args.Length && ColorSchemes.Parse(args[i + 1]) is { } ink:
+                    _foreground = ink;
+                    i++;
+                    break;
+                case "--background" when i + 1 < args.Length && ColorSchemes.Parse(args[i + 1]) is { } paper:
+                    _background = paper;
                     i++;
                     break;
                 default:
@@ -507,6 +524,8 @@ internal static class Program
               --fixed <family>         set the grids and preformatted text in this one
               --size <pixels>          the size of ordinary text, from 6 to 72
               --smoothing <s>          subpixel, grayscale, or none
+              --foreground <#rrggbb>   the color of text a game leaves to the interpreter
+              --background <#rrggbb>   the color of the page behind it
               --map                    open the map beside the game at the start
               --debug                  lay the window out for debugging the game
               --padding <pixels>       blank between the game and the window, 0 to 64
@@ -666,32 +685,41 @@ internal static class Program
         _size = Glyphs.OrdinarySize;
         _smoothing = TextRenderingMode.SubpixelAntialias;
         _padding = Board.OrdinaryPadding;
+        _foreground = null;
+        _background = null;
 
         foreach (var kept in KeptOptions.Load())
         {
             Options(kept, 0);
         }
 
-        var glyphs = new Glyphs(_size, _prose, _fixed);
+        var glyphs = new Glyphs(_size, _prose, _fixed, _foreground, _background);
         board.Display?.Restyle(glyphs);
 
         if (board.Page is { } page)
         {
             var faces = new GuiAaGlyphs(glyphs.Fonts, _prose, _sans, _fixed);
             board.AaGlyphs = faces;
-            page.Restyle(faces, AaPlain());
+            page.Restyle(faces, AaPlain(), AaPaper());
         }
 
-        board.Restyle(glyphs, _smoothing, _padding);
+        board.Restyle(glyphs, _smoothing, _padding, _foreground, _background);
     }
 
     /// <summary>
     /// [aam story] How a Dialog story's text is set where no class says
     /// otherwise, which is the frontend's own choice and not the
     /// story's: the prose family at the size the player chose, in the
-    /// colors the reference interpreter uses.
+    /// text color they chose or else the one the reference interpreter
+    /// uses.
     /// </summary>
-    private static AaLook AaPlain() => new(string.Empty, _size, false, false, 0, AaTheme.Ink, 0);
+    private static AaLook AaPlain() =>
+        new(string.Empty, _size, false, false, 0, _foreground is { } ink ? 0xFF000000 | ink : AaTheme.Ink, 0);
+
+    /// <summary>
+    /// [aam story] The page a Dialog story is set on where it gives none.
+    /// </summary>
+    private static uint AaPaper() => _background is { } paper ? 0xFF000000 | paper : AaTheme.Paper;
 
     /// <summary>
     /// What a story opened from this window is given of this window's own
@@ -929,6 +957,8 @@ internal static class Program
         // font, so it keeps the font whatever the player changes later.
         board.KeepsFont = header.Version == ZMachineVersion.V6;
 
+        var defaults = ColorSchemes.Standard(_foreground, _background);
+
         // The screen needs the input for the [MORE] key and the input
         // needs the screen for its echo, so each reaches the other
         // through a variable filled in a moment later.
@@ -964,7 +994,13 @@ internal static class Program
                 // path where it issues draw_image at all. Only a story
                 // whose resource file declares an arc_image pack is
                 // ever told so; the interpreter sees to that.
-                | ScreenCapabilities.PictureBand);
+                | ScreenCapabilities.PictureBand,
+
+            // [zm 8.3.3] The game is told the standard colors nearest the
+            // player's, which are white on black where they chose none,
+            // and the window draws the exact ones wherever those are used.
+            foreground: defaults.Ink,
+            background: defaults.Paper);
 
         // [zm 10.3.2] Clicks are reported in screen units, which are
         // cells before Version 6 and the font's size in Version 6.
@@ -1220,7 +1256,8 @@ internal static class Program
             faces,
             AaPlain(),
             () => Dispatcher.UIThread.Post(board.InvalidateVisual),
-            dialogs.OpenTranscript);
+            dialogs.OpenTranscript,
+            AaPaper());
 
         board.AaGlyphs = faces;
         board.Page = display;
@@ -1404,8 +1441,13 @@ internal static class Program
             }
             else if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime playing)
             {
-                var glyphs = new Glyphs(_size, _prose, _fixed);
-                var board = new Board(glyphs, _smoothing) { Padding = _padding };
+                var glyphs = new Glyphs(_size, _prose, _fixed, _foreground, _background);
+                var board = new Board(glyphs, _smoothing)
+                {
+                    Padding = _padding,
+                    ChosenInk = _foreground,
+                    ChosenPaper = _background,
+                };
 
                 // An Aa-machine story says where the player is in no
                 // way anything here can read, so its map is honestly

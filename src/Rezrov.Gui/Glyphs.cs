@@ -149,20 +149,36 @@ internal sealed class Glyphs : IGlyphs
 
     private readonly Fonts _fonts;
     private readonly GlkLook _look;
+    private readonly uint _ink;
+    private readonly uint _paper;
 
     /// <param name="size">The size of ordinary text, in pixels.</param>
     /// <param name="prose">The family the prose is set in.</param>
     /// <param name="fixedWidth">The family fixed text is set in.</param>
-    public Glyphs(double size = OrdinarySize, string prose = ProseFamily, string fixedWidth = FixedFamily)
+    /// <param name="ink">
+    /// The color of text a game gives no color to, or null for this
+    /// frontend's own.
+    /// </param>
+    /// <param name="paper">The color of the page, likewise.</param>
+    public Glyphs(
+        double size = OrdinarySize,
+        string prose = ProseFamily,
+        string fixedWidth = FixedFamily,
+        uint? ink = null,
+        uint? paper = null)
     {
         _fonts = new Fonts(size, prose, fixedWidth);
-        _look = new GlkLook(WindowType.TextBuffer, GlkStyles.None, size, _fonts.CellWidth);
+        _ink = ink ?? GlkLook.Ink;
+        _paper = paper ?? GlkLook.Paper;
+        _look = new GlkLook(WindowType.TextBuffer, GlkStyles.None, size, _fonts.CellWidth, _ink, _paper);
     }
 
-    private Glyphs(Fonts fonts, GlkLook look)
+    private Glyphs(Fonts fonts, GlkLook look, uint ink, uint paper)
     {
         _fonts = fonts;
         _look = look;
+        _ink = ink;
+        _paper = paper;
     }
 
     /// <summary>
@@ -177,7 +193,7 @@ internal sealed class Glyphs : IGlyphs
     public double CellHeight => _fonts.CellHeight;
 
     public IGlyphs Bound(WindowType type, GlkStyles styles) =>
-        new Glyphs(_fonts, new GlkLook(type, styles, _fonts.Size, _fonts.CellWidth));
+        new Glyphs(_fonts, new GlkLook(type, styles, _fonts.Size, _fonts.CellWidth, _ink, _paper), _ink, _paper);
 
     public GlkAppearance Look(GlkStyle style) => _look.Of(style);
 

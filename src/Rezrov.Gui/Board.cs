@@ -118,8 +118,8 @@ internal sealed class Board : Control
     }
 
     /// <summary>
-    /// Sets the game in another font, smoothing, and margin while it is
-    /// played, and tells it what that comes to.
+    /// Sets the game in another font, smoothing, margin, and colors
+    /// while it is played, and tells it what that comes to.
     /// </summary>
     /// <remarks>
     /// What the game is told is what a resize would tell it, since that
@@ -133,7 +133,7 @@ internal sealed class Board : Control
     /// room the game left it. That is every Version 6 game, the ones on
     /// the fixed screen of Infocom's artwork included.
     /// </remarks>
-    public void Restyle(Glyphs glyphs, TextRenderingMode smoothing, double padding)
+    public void Restyle(Glyphs glyphs, TextRenderingMode smoothing, double padding, uint? ink, uint? paper)
     {
         ArgumentNullException.ThrowIfNull(glyphs);
 
@@ -144,6 +144,8 @@ internal sealed class Board : Control
 
         TextOptions.SetTextRenderingMode(this, smoothing);
         _padding = padding;
+        ChosenInk = ink;
+        ChosenPaper = paper;
 
         Relay(Bounds.Size);
         InvalidateVisual();
@@ -271,6 +273,15 @@ internal sealed class Board : Control
     public bool KeepsFont { get; set; }
 
     /// <summary>
+    /// [zm 8.3] The color the player chose for a Z-machine game's default
+    /// text, or null to draw the default as the color it is.
+    /// </summary>
+    public uint? ChosenInk { get; set; }
+
+    /// <summary>[zm 8.3] The page behind it, likewise.</summary>
+    public uint? ChosenPaper { get; set; }
+
+    /// <summary>
     /// [infocom pictures] The fonts to paint a fixed unit screen with,
     /// which are smaller than the reading fonts because the whole
     /// screen is scaled up afterwards. Setting this replaces the fonts
@@ -337,7 +348,7 @@ internal sealed class Board : Control
             // sheet of paper a little too small for it.
             lock (screen.Sync)
             {
-                context.FillRectangle(Brush(screen.DefaultBackground), Whole);
+                context.FillRectangle(PaperOf(screen.DefaultBackground), Whole);
 
                 if (Fitted() is { } fit)
                 {
@@ -357,7 +368,10 @@ internal sealed class Board : Control
             return;
         }
 
-        context.FillRectangle(Brush(GlkLook.Paper), Whole);
+        // The margin is the page the player chose, or this frontend's own
+        // where they chose none, so the game does not sit in a frame of
+        // another color.
+        context.FillRectangle(Brush(_glyphs.Look(GlkStyle.Normal).Colors.Paper), Whole);
 
         if (Display is not { Root: { } root })
         {
@@ -909,7 +923,7 @@ internal sealed class Board : Control
             // [aam output] The line that sets the status area off from
             // the text, which the reference interpreter draws in the
             // color of the text itself.
-            context.FillRectangle(Washed(AaTheme.Ink), new Rect(left, status, width, page.Rule));
+            context.FillRectangle(Washed(page.Ink), new Rect(left, status, width, page.Rule));
         }
 
         var top = status + page.Rule;
@@ -1207,7 +1221,7 @@ internal sealed class Board : Control
             FlowDirection.LeftToRight,
             _glyphs.Face(look),
             look.Size,
-            Brush(link == 0 ? look.Colors.Ink : GlkLook.Linked));
+            Brush(link == 0 ? look.Colors.Ink : GlkLook.LinkOn(look.Colors.Paper)));
 
         if (link != 0)
         {
@@ -1409,7 +1423,7 @@ internal sealed class Board : Control
         // stretches that differ are painted over it. Most screens are
         // one color throughout, so this is usually a single rectangle
         // where filling every cell would be thousands of them.
-        var plain = Brush(screen.DefaultBackground);
+        var plain = PaperOf(screen.DefaultBackground);
         context.FillRectangle(
             plain,
             new Rect(0, 0, screen.Width * _glyphs.CellWidth, screen.Height * _glyphs.CellHeight));
@@ -1438,7 +1452,7 @@ internal sealed class Board : Control
         if (screen.Cursor is { } cursor)
         {
             context.FillRectangle(
-                Brush(ScreenColor.White),
+                InkOf(screen.DefaultForeground),
                 new Rect(
                     cursor.Column * _glyphs.CellWidth,
                     ((cursor.Row + 1) * _glyphs.CellHeight) - 2,
@@ -1601,17 +1615,17 @@ internal sealed class Board : Control
     /// [zm 8.7.1] What is behind a cell. Reverse video swaps the two
     /// colors rather than being a color of its own.
     /// </summary>
-    private static IBrush Behind(ZCell cell) =>
-        Brush(cell.Attributes.Style.HasFlag(ZStyle.ReverseVideo)
-            ? cell.Attributes.Foreground
-            : cell.Attributes.Background);
+    private IBrush Behind(ZCell cell) =>
+        cell.Attributes.Style.HasFlag(ZStyle.ReverseVideo)
+            ? InkOf(cell.Attributes.Foreground)
+            : PaperOf(cell.Attributes.Background);
 
     private void PaintCell(DrawingContext context, ZCell cell, int row, int column)
     {
         var attributes = cell.Attributes;
 
         var reversed = attributes.Style.HasFlag(ZStyle.ReverseVideo);
-        var ink = Brush(reversed ? attributes.Background : attributes.Foreground);
+        var ink = reversed ? PaperOf(attributes.Background) : InkOf(attributes.Foreground);
 
         var place = new Rect(
             column * _glyphs.CellWidth,
@@ -1647,9 +1661,6 @@ internal sealed class Board : Control
     }
 
     /// <summary>
-    /// [zm 8.3.1] A Z-machine color as something to paint with.
-    /// </summary>
-    /// <summary>
     /// [glk #stream_style_hints] A color, whose top eight bits are zero
     /// and whose other three are red, green, and blue, as something to
     /// paint with.
@@ -1671,6 +1682,30 @@ internal sealed class Board : Control
         return brush;
     }
 
+    /// <summary>
+    /// [zm 8.3] The color of text in a Z-machine color: the player's own
+    /// where the color is the screen's default and they chose one, and
+    /// the color itself otherwise.
+    /// </summary>
+    /// <remarks>
+    /// The game was told the nearest standard color as its default, and
+    /// a cell remembers only the number, so the number is what is
+    /// matched. Text the game deliberately wrote in that same color comes
+    /// out in the player's color too, which is the price of a header that
+    /// has room for nothing finer, and a small one.
+    /// </remarks>
+    private IBrush InkOf(ScreenColor color) =>
+        ChosenInk is { } ink && Screen is { } screen && color == screen.DefaultForeground ? Brush(ink) : Brush(color);
+
+    /// <summary>
+    /// [zm 8.3] The color of the page behind text, the same way.
+    /// </summary>
+    private IBrush PaperOf(ScreenColor color) =>
+        ChosenPaper is { } paper && Screen is { } screen && color == screen.DefaultBackground ? Brush(paper) : Brush(color);
+
+    /// <summary>
+    /// [zm 8.3.1] A Z-machine color as something to paint with.
+    /// </summary>
     private static IBrush Brush(ScreenColor color) => color switch
     {
         ScreenColor.Black or ScreenColor.Default => Brushes.Black,

@@ -291,6 +291,29 @@ public class GuiAaDisplayTests
     }
 
     [Fact]
+    public void ThePlayersPageGivesWayToABodyStyleThatColorsIt()
+    {
+        // [aam opcode] The player's page is what a story is set on until
+        // its body style gives a page of its own, which then stays the
+        // story's whatever the player changes, until the story restarts.
+        var story = Conformance("body_not_status");
+        var body = Enumerable.Range(0, story.Styles.Count)
+            .Single(i => story.Styles.Name(i) == "body");
+        var display = new GuiAaDisplay(story, new AaRuler(), AaRuler.Plain, () => { }, () => null, 0xFF1E1E1E);
+
+        Assert.Equal(0xFF1E1E1E, display.Background);
+
+        display.SetBody(body);
+        display.Restyle(new AaRuler(), AaRuler.Plain, 0xFFF4ECD8);
+
+        Assert.Equal(0xFF000000, display.Background);
+
+        display.Restart();
+
+        Assert.Equal(0xFFF4ECD8, display.Background);
+    }
+
+    [Fact]
     public void ATranscriptRecordsWhatTheStoryPrinted()
     {
         var written = new StringWriter();
