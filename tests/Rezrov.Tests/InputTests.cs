@@ -334,6 +334,144 @@ public class InputTests
         Assert.Equal("look", Text(input.ReadLine(Request(initial: "look"))));
     }
 
+    [Fact]
+    public void AQueuedCommandTakesThePlaceOfWhatWasBegun()
+    {
+        // A command chosen from a menu is what the player meant, so a
+        // half-typed line is rubbed out rather than added to, on the
+        // screen as well as in what the game is given.
+        var screen = Grid();
+        var input = new BufferedInput(screen);
+
+        foreach (var character in "tak")
+        {
+            input.Enqueue(character);
+        }
+
+        input.EnqueueCommand("save");
+
+        var line = input.ReadLine(Request());
+
+        Assert.Equal("save", Text(line));
+        Assert.Equal(Zscii.Newline, line.Terminator);
+        Assert.Equal("save", screen.Buffer.RowText(0).TrimEnd());
+    }
+
+    [Fact]
+    public void AQueuedCommandLeavesWhatTheGameLeftBehind()
+    {
+        // [zm op:read] The leftover characters are the game's, as they
+        // are to the delete key, so only what the player typed goes.
+        var screen = Grid();
+        var input = new BufferedInput(screen);
+
+        input.Enqueue('x');
+        input.EnqueueCommand("undo");
+
+        Assert.Equal("againundo", Text(input.ReadLine(Request(initial: "again"))));
+    }
+
+    [Fact]
+    public void AWaitForAKeyPassesOverAQueuedCommand()
+    {
+        // A command is not a key, so a game asking for one key is given
+        // the next real key rather than the first letter of a command.
+        var input = new BufferedInput(Grid());
+
+        input.EnqueueCommand("restart");
+        input.Enqueue('y');
+
+        Assert.Equal((ushort)'y', input.ReadKey(null));
+    }
+
+    [Fact]
+    public void ATimedWaitForAKeyEndsWhenTheInterruptSaysSo()
+    {
+        // [zm 10.5.3] With nothing typed, the wait gives up at each
+        // interval to run the interrupt, and an interrupt that answers
+        // true ends it with no key at all.
+        var input = new BufferedInput(Grid());
+        var runs = 0;
+        var timer = new InputTimer(1, () => ++runs == 2);
+
+        Assert.Equal((ushort)0, input.ReadKey(timer));
+        Assert.Equal(2, runs);
+    }
+
+    [Fact]
+    public void ATimedWaitForAKeyGoesOnUntilAKeyArrives()
+    {
+        // An interrupt that answers false leaves the wait running, and
+        // the key that comes is the one the game is given.
+        var input = new BufferedInput(Grid());
+        var runs = 0;
+        var timer = new InputTimer(1, () =>
+        {
+            if (++runs == 2)
+            {
+                input.Enqueue('k');
+            }
+
+            return false;
+        });
+
+        Assert.Equal((ushort)'k', input.ReadKey(timer));
+        Assert.True(runs >= 2);
+    }
+
+    [Fact]
+    public void ATimedWaitForAKeyPassesOverACommandAndKeepsTiming()
+    {
+        // A command arriving while a timed key is waited for is let go,
+        // and the timing carries on as though it had never come.
+        var input = new BufferedInput(Grid());
+        var runs = 0;
+
+        input.EnqueueCommand("save");
+        var timer = new InputTimer(1, () => ++runs == 1);
+
+        Assert.Equal((ushort)0, input.ReadKey(timer));
+        Assert.Equal(1, runs);
+    }
+
+    [Fact]
+    public void ATimedLineThatIsInterruptedKeepsWhatWasTyped()
+    {
+        // [zm op:read] An interrupt that says stop ends the line with
+        // what was typed so far, under terminator 0.
+        var input = new BufferedInput(Grid());
+
+        input.Enqueue('n');
+        input.Enqueue('o');
+        var timer = new InputTimer(1, () => true);
+
+        var line = input.ReadLine(Request() with { Timer = timer });
+
+        Assert.Equal("no", Text(line));
+        Assert.Equal((ushort)0, line.Terminator);
+    }
+
+    [Fact]
+    public async Task ReadingALineIsSaidOnlyWhileALineIsRead()
+    {
+        // What a menu offering commands asks before it offers them. The
+        // line is read on its own thread, as the interpreter's is.
+        var input = new BufferedInput(Grid());
+        var cancel = TestContext.Current.CancellationToken;
+
+        Assert.False(input.IsReadingLine);
+
+        var reading = Task.Run(() => input.ReadLine(Request()), cancel);
+        var waited = SpinWait.SpinUntil(() => input.IsReadingLine, TimeSpan.FromSeconds(5));
+
+        input.EnqueueCommand("look");
+        var line = await reading.WaitAsync(TimeSpan.FromSeconds(5), cancel);
+
+        Assert.True(waited);
+        Assert.Equal("look", Text(line));
+        Assert.False(input.IsReadingLine);
+    }
+
     private static (ZMemory Memory, StoryHeader Header) Story(ZMachineVersion version, params byte[] terminators)
     {
         var bytes = new byte[2048];

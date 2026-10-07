@@ -405,6 +405,16 @@ public sealed class GuiGlkDisplay : IGlkDisplay
         _presses.Add(new Press(PressKind.Text, 0, text));
     }
 
+    /// <summary>
+    /// A whole command, chosen rather than typed, to take the place of
+    /// whatever line the player had begun and be entered at once.
+    /// </summary>
+    public void Command(string command)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+        _presses.Add(new Press(PressKind.Command, 0, command));
+    }
+
     // [glk #line_events] A line, edited here as it is typed, and given
     // to the game when the player presses enter.
     private GlkInput ReadLine(GlkWindow window, TimeSpan? timeout)
@@ -460,6 +470,21 @@ public sealed class GuiGlkDisplay : IGlkDisplay
 
                 Interrupt(window);
                 return GlkInput.Woken;
+            }
+
+            if (press.Kind == PressKind.Command)
+            {
+                // [glk #line_events] The line becomes the command, the
+                // game's own initial text included, since the whole line
+                // is the player's to edit and a command chosen from a
+                // menu is the whole of what they meant.
+                lock (Sync)
+                {
+                    _typing.Clear();
+                    _typing.Append(press.Text);
+                }
+
+                return Complete(window);
             }
 
             if (press.Kind == PressKind.Text)
@@ -673,6 +698,9 @@ public sealed class GuiGlkDisplay : IGlkDisplay
         Text,
         Wake,
         Point,
+
+        // A whole line, which a wait for a single key passes over.
+        Command,
     }
 
     private readonly record struct Press(PressKind Kind, uint Key, string Text, GlkInput? Input = null);

@@ -38,12 +38,20 @@ public sealed class GuiAaDisplay : IAaOutput
     /// </summary>
     private const int Columns = 60;
 
+    /// <summary>
+    /// What stands on the key queue for a whole command, which waits on a
+    /// queue of its own. Every other negative key is a link, numbered
+    /// from one, and nothing is ever numbered this low.
+    /// </summary>
+    private const int CommandKey = int.MinValue;
+
     private readonly AaStory _story;
     private readonly IAaGlyphs _glyphs;
     private readonly AaSheet _sheet;
     private readonly Action _changed;
     private readonly Func<TextWriter?> _transcripts;
     private readonly BlockingCollection<int> _keys = [];
+    private readonly ConcurrentQueue<string> _commands = [];
     private readonly Dictionary<int, Pixels?> _pictures = [];
     private readonly List<string> _links = [];
     private readonly StringBuilder _self = new();
@@ -55,6 +63,9 @@ public sealed class GuiAaDisplay : IAaOutput
     private int _area = -1;
     private int _dead;
     private bool _selfLink;
+
+    // Set on the machine's thread and read on the toolkit's.
+    private volatile bool _readingLine;
 
     /// <param name="story">The story being played.</param>
     /// <param name="glyphs">The faces to measure and draw with.</param>
@@ -190,6 +201,23 @@ public sealed class GuiAaDisplay : IAaOutput
     public void Enqueue(int key) => _keys.Add(key);
 
     /// <summary>
+    /// Whether the story is waiting for a whole command just now, rather
+    /// than for a key or for nothing at all.
+    /// </summary>
+    public bool IsReadingLine => _readingLine;
+
+    /// <summary>
+    /// A whole command, chosen rather than typed, to take the place of
+    /// whatever line the player had begun and be entered at once.
+    /// </summary>
+    public void Command(string command)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+        _commands.Enqueue(command);
+        _keys.Add(CommandKey);
+    }
+
+    /// <summary>
     /// [aam output] Whether a link is still one: a story may turn the
     /// links it has already shown back into ordinary text, and the
     /// words stay where they are when it does.
@@ -217,11 +245,31 @@ public sealed class GuiAaDisplay : IAaOutput
     /// </summary>
     public string ReadLine()
     {
+        _readingLine = true;
+        try
+        {
+            return Line();
+        }
+        finally
+        {
+            _readingLine = false;
+        }
+    }
+
+    private string Line()
+    {
         var typed = new StringBuilder();
 
         while (true)
         {
             var key = _keys.Take();
+
+            // Looked for before the links are, since a link is any other
+            // negative key.
+            if (key == CommandKey && _commands.TryDequeue(out var command))
+            {
+                return Commanded(typed, command);
+            }
 
             if (key is '\r' or '\n')
             {
@@ -264,12 +312,39 @@ public sealed class GuiAaDisplay : IAaOutput
         }
     }
 
+    /// <summary>
+    /// A queued command in place of the line: whatever the player had
+    /// begun is rubbed out, and the command is written and entered.
+    /// </summary>
+    private string Commanded(StringBuilder typed, string command)
+    {
+        lock (Sync)
+        {
+            for (var i = 0; i < typed.Length; i++)
+            {
+                Main.Backspace();
+            }
+        }
+
+        Write(command);
+        Newline();
+        return command;
+    }
+
     /// <summary>The next single key the player presses.</summary>
     public int ReadKey()
     {
         while (true)
         {
             var key = _keys.Take();
+
+            // A command is not a key, and is let go rather than left to
+            // turn up as one later.
+            if (key == CommandKey)
+            {
+                _commands.TryDequeue(out _);
+                continue;
+            }
 
             // A click on a link is not a key, and a story waiting for
             // one is not waiting for that.

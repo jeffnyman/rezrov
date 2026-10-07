@@ -39,6 +39,12 @@ public class AaTextTests
             // meant somebody to take.
             Assert.Equal(nodes, Reachable(table));
 
+            // Every word the dictionary holds is found by looking for it.
+            for (var i = 0; i < story.Dictionary.Count; i++)
+            {
+                Assert.True(story.Dictionary.Contains(story.Dictionary.Text(i)));
+            }
+
             // [aam story] A dictionary word is two characters or more
             // and is always in lowercase, which is what input is
             // converted to before anything is looked up.
@@ -76,6 +82,24 @@ public class AaTextTests
 
             Assert.True(story.Language.StopCharacters.Count > 0, $"{name} declares no stop characters.");
         }
+    }
+
+    [Fact]
+    public void AGameOnTheStandardLibraryKnowsTheCommandsAMenuOffers()
+    {
+        // The Dialog standard library gives every game built on it the
+        // words for saving, restoring, restarting and undoing, and a
+        // menu offers those commands only to a game that knows them.
+        var path = Corpus.AaStoryFile("cloak-of-darkness.aastory");
+        Assert.SkipUnless(path is not null, "The entharion submodule is not populated.");
+
+        var story = AaStory.Read(File.ReadAllBytes(path!));
+
+        Assert.True(story.Dictionary.Contains("save"));
+        Assert.True(story.Dictionary.Contains("restore"));
+        Assert.True(story.Dictionary.Contains("restart"));
+        Assert.True(story.Dictionary.Contains("undo"));
+        Assert.False(story.Dictionary.Contains("xyzzyplugh"));
     }
 
     [Fact]

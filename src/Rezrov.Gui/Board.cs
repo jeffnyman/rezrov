@@ -173,6 +173,42 @@ internal sealed class Board : Control
     public BufferedInput? Keys { get; set; }
 
     /// <summary>
+    /// The commands a menu may type for the player that this game knows
+    /// the words for, which is none until the game is started.
+    /// </summary>
+    public IReadOnlySet<string> Understood { get; set; } = new HashSet<string>();
+
+    /// <summary>
+    /// Whether the game is waiting for a whole command just now, which is
+    /// the only time a command can be typed for the player. A game
+    /// waiting for one key, or for a click, or busy, is not.
+    /// </summary>
+    public bool AtPrompt =>
+        Page is { } page ? page.IsReadingLine
+        : Keys is { } keys ? keys.IsReadingLine
+        : Display?.Typing is not null;
+
+    /// <summary>
+    /// Types a whole command for the player, in place of whatever they
+    /// had begun, and enters it.
+    /// </summary>
+    public void Command(string command)
+    {
+        if (Page is { } page)
+        {
+            page.Command(command);
+        }
+        else if (Keys is { } keys)
+        {
+            keys.EnqueueCommand(command);
+        }
+        else
+        {
+            Display?.Command(command);
+        }
+    }
+
+    /// <summary>
     /// [zm 8.8.6] The pictures a Version 6 game draws.
     /// </summary>
     public GuiPictures? Pictures { get; set; }

@@ -43,14 +43,55 @@ internal sealed class MenuBar
     // debugging, so it is remembered rather than assumed.
     private InputElement? _owner;
 
+    /// <param name="offered">
+    /// Whether a command can be typed for the player just now: whether
+    /// the game is waiting for one, and knows the word.
+    /// </param>
+    /// <param name="type">
+    /// What typing a command for the player does.
+    /// </param>
     /// <param name="map">
     /// What opening and closing the map does, or null where the window
     /// has no map to show.
     /// </param>
     /// <param name="quit">What leaving the game does.</param>
-    public MenuBar(Action? map, Action quit)
+    public MenuBar(Func<string, bool> offered, Action<string> type, Action? map, Action quit)
     {
+        ArgumentNullException.ThrowIfNull(offered);
+        ArgumentNullException.ThrowIfNull(type);
+
+        // The commands are typed into the game rather than done behind
+        // its back, which is how Windows Frotz offers saving and
+        // restoring too: the game does the saving, with its own prompt
+        // and its own way of asking for a file, and nothing here needs
+        // to know how any machine saves. Whether each one is offered is
+        // asked as the menu opens rather than kept up to date, since it
+        // is only true while the game sits at its prompt.
         var game = new MenuItem { Header = "_Game" };
+        var commands = Commands
+            .Select(word => (Word: word, Item: Item(Labels[word], () =>
+            {
+                if (offered(word))
+                {
+                    type(word);
+                }
+            })))
+            .ToList();
+
+        foreach (var (_, item) in commands)
+        {
+            game.Items.Add(item);
+        }
+
+        game.SubmenuOpened += (_, _) =>
+        {
+            foreach (var (word, item) in commands)
+            {
+                item.IsEnabled = offered(word);
+            }
+        };
+
+        game.Items.Add(new Separator());
         game.Items.Add(Item("_Quit", quit));
         _menu.Items.Add(game);
 
@@ -68,6 +109,26 @@ internal sealed class MenuBar
         help.Items.Add(Item("_About Rezrov", () => About()));
         _menu.Items.Add(help);
     }
+
+    /// <summary>
+    /// The commands the Game menu offers to type for the player, in the
+    /// order it offers them.
+    /// </summary>
+    /// <remarks>
+    /// Each is a word a game's own dictionary either holds or does not,
+    /// which is how a game that never had undo, as none of Infocom's did
+    /// before Version 5, is left without the item rather than given a
+    /// word it can only complain about.
+    /// </remarks>
+    public static IReadOnlyList<string> Commands { get; } = ["save", "restore", "undo", "restart"];
+
+    private static readonly Dictionary<string, string> Labels = new()
+    {
+        ["save"] = "_Save...",
+        ["restore"] = "_Restore...",
+        ["undo"] = "_Undo",
+        ["restart"] = "Res_tart",
+    };
 
     /// <summary>Whether a window on this machine has a menu bar.</summary>
     public static bool Wanted => !OperatingSystem.IsMacOS();
