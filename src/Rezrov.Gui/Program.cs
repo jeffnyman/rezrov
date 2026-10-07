@@ -571,13 +571,14 @@ internal static class Program
         var least = (
             Width: glyphs.CellWidth * (Screenful.Columns / 2),
             Height: glyphs.CellHeight * (Screenful.Rows / 2));
+        var scaling = 1.0;
 
         if (window.Screens?.Primary is { } screen)
         {
             // The working area is in the screen's own pixels and a
             // window is measured in the toolkit's, which are the same
             // pixels divided by whatever the display is scaled by.
-            var scaling = screen.Scaling > 0 ? screen.Scaling : 1;
+            scaling = screen.Scaling > 0 ? screen.Scaling : 1;
             var room = (
                 Width: (screen.WorkingArea.Width / scaling) - Margin,
                 Height: (screen.WorkingArea.Height / scaling) - Margin - chrome);
@@ -600,8 +601,13 @@ internal static class Program
             Drawn());
 
         // Whatever the window carries above the game, a menu bar, is
-        // added last, outside the rows, for the same reason.
-        return ((columns * glyphs.CellWidth) + blank, (rows * glyphs.CellHeight) + blank + chrome);
+        // added last, outside the rows, for the same reason. And the
+        // whole is rounded up to pixels the display can give, or a
+        // scaled display gives a fraction less and the game a column
+        // and a row less with it.
+        return (
+            Screenful.Whole((columns * glyphs.CellWidth) + blank, scaling),
+            Screenful.Whole((rows * glyphs.CellHeight) + blank + chrome, scaling));
     }
 
     /// <summary>
