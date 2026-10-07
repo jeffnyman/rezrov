@@ -1416,7 +1416,8 @@ internal static class Program
                         word => board.AtPrompt && board.Understood.Contains(word),
                         board.Command,
                         split is null ? null : split.Toggle,
-                        window.Close)
+                        window.Close,
+                        () => StoryAbout.Window(StoryAbout.Gather(_format, _bytes, _resources, _path)))
                     : null;
 
                 if (bar is not null)
