@@ -74,4 +74,54 @@ public class ScreenfulTests
         // 200, so there is nothing to bring in.
         Assert.Equal((152, 45), Screenful.Fit(1368, 855, Cell, Line, Shape));
     }
+
+    [Fact]
+    public void AScaledDisplayGivesTheWindowEveryColumnItWasSizedFor()
+    {
+        // The case that was found: 118 columns and a margin of six each
+        // side is 1074 wide, which at 175% is 1879.5 of the display's
+        // pixels. Cut to 1879 that held 117.97 columns, and the game was
+        // told 117.
+        var asked = Screenful.Whole(1074, 1.75);
+        var given = Given(asked, 1.75);
+
+        Assert.Equal(1880, Math.Floor(asked * 1.75));
+        Assert.Equal(118, (int)((given - 12) / Cell));
+    }
+
+    [Theory]
+    [InlineData(1.0)]
+    [InlineData(1.25)]
+    [InlineData(1.5)]
+    [InlineData(1.75)]
+    [InlineData(2.0)]
+    [InlineData(2.25)]
+    [InlineData(2.5)]
+    [InlineData(3.0)]
+    public void AWindowComesBackNoSmallerThanAskedAndNoPixelLarger(double scaling)
+    {
+        // Every size a window might be asked for, in quarter pixels,
+        // at each scaling a display offers: what the display gives is
+        // never less than was wanted, and never a whole pixel more.
+        for (var size = 600.0; size < 1400; size += 0.25)
+        {
+            var given = Given(Screenful.Whole(size, scaling), scaling);
+
+            Assert.True(given >= size, $"{size} at {scaling} came back {given}.");
+            Assert.True((given - size) * scaling < 1, $"{size} at {scaling} came back {given}.");
+        }
+    }
+
+    [Fact]
+    public void ADisplayThatIsNotScaledIsAskedForWhatWasWanted()
+    {
+        Assert.Equal(1074, Given(Screenful.Whole(1074, 1), 1));
+    }
+
+    /// <summary>
+    /// What a display gives a window asked for at this size: whole
+    /// pixels of its own, with any fraction cut off, as it was measured
+    /// to do at 175%.
+    /// </summary>
+    private static double Given(double asked, double scaling) => Math.Floor(asked * scaling) / scaling;
 }

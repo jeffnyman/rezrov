@@ -46,6 +46,44 @@ public static class Screenful
     }
 
     /// <summary>
+    /// A window size the display can give exactly, so that the window
+    /// opens with all the room it was asked for.
+    /// </summary>
+    /// <remarks>
+    /// A size is asked for in the toolkit's pixels, and the display
+    /// gives it in its own, which are those multiplied by how far the
+    /// display is scaled. At a scaling of 1.75, a window 1074 wide is
+    /// 1879.5 of the display's pixels, and the half is cut off rather
+    /// than rounded, so the window comes back 1073.71 wide. A window
+    /// sized for 118 columns then holds 117.97 of them, and the game is
+    /// told 117. So the size is rounded up to whole pixels of the
+    /// display before it is asked for.
+    ///
+    /// The half pixel added after rounding up keeps the cut on the right
+    /// side of the whole number: a size that comes to 1880 pixels when
+    /// multiplied back out may come to 1879.9999999 in floating point,
+    /// and cutting that off would lose the pixel all over again. Where a
+    /// display rounds instead, the half costs at most one pixel more.
+    /// </remarks>
+    /// <param name="size">
+    /// The width or height wanted, in the toolkit's pixels.
+    /// </param>
+    /// <param name="scaling">How far the display is scaled.</param>
+    public static double Whole(double size, double scaling)
+    {
+        if (scaling <= 0)
+        {
+            return size;
+        }
+
+        // The small allowance stops a size that is already whole, give or
+        // take the last bit of a double, from being rounded up a pixel.
+        var pixels = Math.Ceiling((size * scaling) - 1e-6);
+
+        return (pixels + 0.5) / scaling;
+    }
+
+    /// <summary>
     /// The same, brought into the shape the artwork was drawn for.
     /// </summary>
     /// <remarks>
