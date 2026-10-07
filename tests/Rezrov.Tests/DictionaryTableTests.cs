@@ -8,6 +8,9 @@ public class DictionaryTableTests
 {
     private const int DictionaryAddress = 0x200;
 
+    // The commands the graphical program's Game menu offers to type.
+    private static readonly string[] MenuCommands = ["save", "restore", "restart", "undo"];
+
     // The three separators Inform always uses: full stop, comma, double
     // quote. [zm 13.2]
     private static readonly byte[] Separators = [(byte)'.', (byte)',', (byte)'"'];
@@ -218,5 +221,33 @@ public class DictionaryTableTests
         Assert.Equal(new Token(5, 7, dictionary.Lookup("mailbox")), tokens[1]);
         Assert.Equal(new Token(12, 1, 0), tokens[2]);
         Assert.Equal(new Token(14, 4, 0), tokens[3]);
+    }
+
+    [Theory]
+    [InlineData("zork1-r88-s840726.z3", "save restore restart")]
+    [InlineData("beyondzork-r57-s871221.z5", "save restore restart undo")]
+    [InlineData("journey-r83-s890706.z6", "")]
+    public void AGamesOwnDictionarySaysWhichCommandsItKnows(string name, string known)
+    {
+        // A menu offers to type a command only for a game whose
+        // dictionary holds the word, since a word the game does not know
+        // only earns the player a complaint. These three are the cases
+        // that decide it. Infocom's games before Version 5 have no undo,
+        // Beyond Zork has all four, and Journey is played by choosing
+        // from its own menus and has no parser to type a command at.
+        // [zm 13] Before Version 4 a dictionary keeps only six letters
+        // of a word, which the lookup accounts for by encoding the word
+        // the way the game does.
+        var path = Corpus.StoryFiles().FirstOrDefault(f => Path.GetFileName(f) == name);
+        Assert.SkipUnless(path is not null, "The entharion submodule is not populated.");
+
+        var memory = new ZMemory(File.ReadAllBytes(path!));
+        var header = new StoryHeader(memory);
+        var dictionary = DictionaryTable.Standard(
+            memory, header, new ZTextDecoder(memory, header), ZTextEncoder.ForStory(header, memory));
+
+        var found = MenuCommands.Where(word => dictionary.Lookup(word) != 0);
+
+        Assert.Equal(known, string.Join(' ', found));
     }
 }

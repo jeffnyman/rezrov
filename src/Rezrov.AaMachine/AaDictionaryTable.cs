@@ -51,6 +51,29 @@ public sealed class AaDictionaryTable
     /// <summary>A word as text.</summary>
     public string Text(int index) => _characters.Text(Characters(index));
 
+    /// <summary>
+    /// Whether the game knows a word, given in lowercase as the
+    /// dictionary keeps it.
+    /// </summary>
+    /// <remarks>
+    /// Read from end to end, which is fine for asking about a handful of
+    /// words once rather than for parsing every command.
+    /// </remarks>
+    public bool Contains(string word)
+    {
+        ArgumentNullException.ThrowIfNull(word);
+
+        for (var i = 0; i < Count; i++)
+        {
+            if (string.Equals(Text(i), word, StringComparison.Ordinal))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     internal static AaDictionaryTable Read(ReadOnlySpan<byte> chunk, AaCharacterSet characters)
     {
         if (chunk.Length < 2)

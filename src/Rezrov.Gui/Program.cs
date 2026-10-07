@@ -711,6 +711,12 @@ internal static class Program
 
         board.Display = display;
 
+        // Glulx keeps its dictionary in whatever shape the compiler
+        // chose rather than one the machine defines, so there is nothing
+        // here to look the words up in. Its games are Inform's, whose
+        // library gives every one of them all four.
+        board.Understood = MenuBar.Commands.ToHashSet();
+
         // [glk #stream_styles] A Glulx story keeps nothing an
         // interpreter can ask: no status line holding the room, no
         // agreed global, no object tree. It does print the room's name
@@ -890,6 +896,11 @@ internal static class Program
             // or the other and behave differently.
             interpreterNumber: _machine,
             tandy: _tandy);
+
+        // [zm 13] The commands a menu may type are the ones whose words
+        // the game's own dictionary holds. Asked once, before the game
+        // has run, so nothing is read while it is moving.
+        board.Understood = MenuBar.Commands.Where(word => interpreter.Dictionary.Lookup(word) != 0).ToHashSet();
 
         // Where the player is standing, turn by turn, which the machine
         // reads out of a global before Version 4 and off the status
@@ -1119,6 +1130,10 @@ internal static class Program
 
         board.AaGlyphs = faces;
         board.Page = display;
+
+        // [aam story] As for the Z-machine, the commands a menu may type
+        // are the ones whose words the story's dictionary holds.
+        board.Understood = MenuBar.Commands.Where(story.Dictionary.Contains).ToHashSet();
         display.Resize(board.Sheet.Width, board.Sheet.Height);
 
         var machine = new Machine(story, display, _seed);
@@ -1348,7 +1363,13 @@ internal static class Program
                 // the debugging layout included. What the window holds is
                 // put together first and given to it once, since a control
                 // can only ever be in one place.
-                var bar = MenuBar.Wanted ? new MenuBar(split is null ? null : split.Toggle, window.Close) : null;
+                var bar = MenuBar.Wanted
+                    ? new MenuBar(
+                        word => board.AtPrompt && board.Understood.Contains(word),
+                        board.Command,
+                        split is null ? null : split.Toggle,
+                        window.Close)
+                    : null;
 
                 if (bar is not null)
                 {

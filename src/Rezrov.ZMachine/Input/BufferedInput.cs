@@ -16,13 +16,21 @@ namespace Rezrov.ZMachine.Input;
 /// describe. [zm 10.3] Mouse clicks arrive on the same queue as the
 /// click characters the standard defines, with their position kept
 /// for the interpreter to pass on.
+///
+/// A whole command can be queued as well, for a frontend that offers
+/// the commands a player types most as something to choose instead. It
+/// takes the place of whatever the player had begun to type, and a wait
+/// for a single key passes over it, since a key is not what it is.
 /// </remarks>
 public sealed class BufferedInput : IInput
 {
-    private readonly BlockingCollection<(ushort Zscii, MouseClick? Click)> _keys = [];
+    private readonly BlockingCollection<Pressed> _keys = [];
     private readonly BufferedScreen _screen;
     private readonly int _unitsPerColumn;
     private readonly int _unitsPerRow;
+
+    // Set on the interpreter's thread and read on the frontend's.
+    private volatile bool _readingLine;
 
     /// <param name="screen">The screen typing is echoed to.</param>
     /// <param name="unitsPerColumn">
@@ -47,8 +55,24 @@ public sealed class BufferedInput : IInput
     /// <summary>The click behind the last click character read.</summary>
     public MouseClick? LastClick { get; private set; }
 
+    /// <summary>
+    /// Whether the game is waiting for a whole command just now, rather
+    /// than for a key or for nothing at all.
+    /// </summary>
+    public bool IsReadingLine => _readingLine;
+
     /// <summary>Queues a key, from the UI thread.</summary>
-    public void Enqueue(ushort zscii) => _keys.Add((zscii, null));
+    public void Enqueue(ushort zscii) => _keys.Add(new Pressed(zscii, null, null));
+
+    /// <summary>
+    /// Queues a whole command, from the UI thread, to be given to the game
+    /// as if the player had typed it and pressed enter.
+    /// </summary>
+    public void EnqueueCommand(string command)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+        _keys.Add(new Pressed(0, null, command));
+    }
 
     /// <summary>
     /// Queues a click at a cell, from the UI thread, as [zm 3.8.2]
@@ -57,26 +81,50 @@ public sealed class BufferedInput : IInput
     public void EnqueueClick(int column, int row, bool doubleClick, int buttons)
     {
         var click = new MouseClick((column * _unitsPerColumn) + 1, (row * _unitsPerRow) + 1, buttons);
-        _keys.Add((doubleClick ? Zscii.DoubleClick : Zscii.SingleClick, click));
+        _keys.Add(new Pressed(doubleClick ? Zscii.DoubleClick : Zscii.SingleClick, click, null));
     }
 
     /// <summary>Waits for any key, for [MORE] and the ending.</summary>
-    public ushort WaitForAnyKey() => Take().Zscii;
+    public ushort WaitForAnyKey()
+    {
+        TryTake(null, false, out var item);
+        return item.Zscii;
+    }
 
     public LineInput ReadLine(LineInputRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
 
+        _readingLine = true;
+        try
+        {
+            return Line(request);
+        }
+        finally
+        {
+            _readingLine = false;
+        }
+    }
+
+    private LineInput Line(LineInputRequest request)
+    {
         var text = new List<ushort>(request.Initial);
 
         while (true)
         {
-            if (!TryTake(request.Timer, out var key))
+            if (!TryTake(request.Timer, true, out var item))
             {
                 // [zm op:read] The interrupt said stop: what was typed so
                 // far, under terminator 0.
                 return new LineInput(text, 0);
             }
+
+            if (item.Command is { } command)
+            {
+                return Commanded(request, text, command);
+            }
+
+            var key = item.Zscii;
 
             if (key == Zscii.Newline)
             {
@@ -111,37 +159,72 @@ public sealed class BufferedInput : IInput
         }
     }
 
-    public ushort ReadKey(InputTimer? timer) => TryTake(timer, out var key) ? key : (ushort)0;
+    public ushort ReadKey(InputTimer? timer) => TryTake(timer, false, out var item) ? item.Zscii : (ushort)0;
 
-    private (ushort Zscii, MouseClick? Click) Take()
+    /// <summary>
+    /// A queued command in place of the line: whatever the player had
+    /// begun is rubbed out and the command is typed and entered.
+    /// </summary>
+    /// <remarks>
+    /// Only what the player typed is rubbed out. Text the game put on the
+    /// line before asking is the game's, as the delete key already treats
+    /// it, and at an ordinary prompt there is none.
+    /// </remarks>
+    private LineInput Commanded(LineInputRequest request, List<ushort> text, string command)
     {
-        var item = _keys.Take();
-        LastClick = item.Click;
-        return item;
-    }
-
-    // Waits for a key, running the timer's interrupt at each interval
-    // until it asks for the wait to end.
-    private bool TryTake(InputTimer? timer, out ushort key)
-    {
-        if (timer is null)
+        while (text.Count > request.Initial.Count)
         {
-            key = Take().Zscii;
-            return true;
+            text.RemoveAt(text.Count - 1);
+            _screen.EchoBackspace();
         }
 
-        (ushort Zscii, MouseClick? Click) item;
-        while (!_keys.TryTake(out item, timer.Interval))
+        foreach (var character in command)
         {
-            if (timer.Interrupt())
+            if (Zscii.FromUnicode(character, UnicodeTranslationTable.Default) is { } key
+                && Zscii.IsDefinedForInputAndOutput(key)
+                && text.Count < request.MaxLength)
             {
-                key = 0;
-                return false;
+                text.Add(key);
+                _screen.Echo(character);
             }
         }
 
-        LastClick = item.Click;
-        key = item.Zscii;
-        return true;
+        _screen.EchoNewLine();
+        return new LineInput(text, Zscii.Newline);
     }
+
+    // Waits for the next thing on the queue, running the timer's
+    // interrupt at each interval until it asks for the wait to end. A
+    // command is passed over unless a whole line is what is wanted.
+    private bool TryTake(InputTimer? timer, bool commands, out Pressed item)
+    {
+        while (true)
+        {
+            if (timer is null)
+            {
+                item = _keys.Take();
+            }
+            else
+            {
+                while (!_keys.TryTake(out item, timer.Interval))
+                {
+                    if (timer.Interrupt())
+                    {
+                        item = default;
+                        return false;
+                    }
+                }
+            }
+
+            if (item.Command is not null && !commands)
+            {
+                continue;
+            }
+
+            LastClick = item.Click;
+            return true;
+        }
+    }
+
+    private readonly record struct Pressed(ushort Zscii, MouseClick? Click, string? Command);
 }
