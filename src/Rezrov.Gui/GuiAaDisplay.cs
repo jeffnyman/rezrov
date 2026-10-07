@@ -46,8 +46,6 @@ public sealed class GuiAaDisplay : IAaOutput
     private const int CommandKey = int.MinValue;
 
     private readonly AaStory _story;
-    private readonly IAaGlyphs _glyphs;
-    private readonly AaSheet _sheet;
     private readonly Action _changed;
     private readonly Func<TextWriter?> _transcripts;
     private readonly BlockingCollection<int> _keys = [];
@@ -56,6 +54,8 @@ public sealed class GuiAaDisplay : IAaOutput
     private readonly List<string> _links = [];
     private readonly StringBuilder _self = new();
 
+    private IAaGlyphs _glyphs;
+    private AaSheet _sheet;
     private TextOutput? _transcript;
     private TextWriter? _written;
     private double _width;
@@ -192,6 +192,37 @@ public sealed class GuiAaDisplay : IAaOutput
         {
             _width = width;
             _height = height;
+        }
+
+        _changed();
+    }
+
+    /// <summary>
+    /// [aam story] Sets the story in other faces and at another size
+    /// while it is played, the text already on the page included.
+    /// </summary>
+    /// <remarks>
+    /// The style sheet is worked out again at the new size, since every
+    /// size and margin a story gives in ems is a multiple of it, and the
+    /// text is worked out again from the classes it was written in. The
+    /// story is told nothing: it asks how wide the window is when it
+    /// wants to know, and the answer is already the new one.
+    /// </remarks>
+    /// <param name="glyphs">The faces to measure and draw with.</param>
+    /// <param name="plain">
+    /// How text is set where no class says otherwise.
+    /// </param>
+    public void Restyle(IAaGlyphs glyphs, AaLook plain)
+    {
+        ArgumentNullException.ThrowIfNull(glyphs);
+
+        lock (Sync)
+        {
+            _glyphs = glyphs;
+            _sheet = new AaSheet(_story.Styles, glyphs, plain);
+
+            Main.Restyle(glyphs, _sheet);
+            Status.Restyle(glyphs, _sheet);
         }
 
         _changed();
@@ -472,14 +503,12 @@ public sealed class GuiAaDisplay : IAaOutput
     {
         lock (Sync)
         {
-            var plain = _sheet.Inside(_sheet.Plain, styleClass, span: false);
-
             Background = _story.Styles.BackgroundColor(styleClass) is { IsSet: true } behind
                 ? behind.Value
                 : AaTheme.Paper;
 
-            Main.SetBody(plain);
-            Status.SetBody(plain);
+            Main.SetBody(styleClass);
+            Status.SetBody(styleClass);
         }
 
         _transcript?.SetBody(styleClass);

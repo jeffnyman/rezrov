@@ -228,6 +228,103 @@ public class AaPageTests
     }
 
     [Fact]
+    public void TextAlreadyWrittenIsSetAgainInTypeOfAnotherSize()
+    {
+        var ruler = new AaRuler();
+        var text = Plain();
+        text.Put("hello");
+
+        text.Restyle(ruler, new AaSheet(AaStyles.None, ruler, AaRuler.Plain with { Size = Size * 2 }));
+
+        var piece = Assert.Single(Assert.Single(text.Lay(400).Lines).Pieces);
+
+        Assert.Equal(Size * 2, piece.Look.Size);
+        Assert.Equal(5 * Size * 2, piece.Width);
+    }
+
+    [Fact]
+    public void AClassKeepsItsProportionToThePlainTextAtAnySize()
+    {
+        // [aam story] The title asks for text half again as large as
+        // what is around it, so with the plain text doubled the title is
+        // three times what it was, and so are its spacing and its
+        // margin, which are measured in its own text. A span is worked
+        // out again as a div is.
+        var styles = Story("tethered.aastory");
+        var title = Enumerable.Range(0, styles.Count).Single(styles.IsUppercase);
+        var ruler = new AaRuler();
+
+        var text = Plain(styles);
+        text.Put("before");
+        text.EnterDiv(title);
+        text.Put("act one");
+        text.LeaveDiv();
+        text.EnterSpan(title);
+        text.Put("said");
+        text.LeaveSpan();
+
+        text.Restyle(ruler, new AaSheet(styles, ruler, AaRuler.Plain with { Size = Size * 2 }));
+
+        var page = text.Lay(800);
+        var banner = page.Lines[1];
+        var shouted = banner.Pieces[0];
+
+        Assert.Equal(Size * 2, page.Lines[0].Pieces[0].Look.Size);
+        Assert.Equal(Size * 3, shouted.Look.Size);
+        Assert.Equal(Size * 3, shouted.Look.Spacing);
+        Assert.Equal((LineHeight * 2) + (Size * 3 * 1.5), banner.Top);
+        Assert.Equal(Size * 3, page.Lines[^1].Pieces[0].Look.Size);
+    }
+
+    [Fact]
+    public void TextWrittenAfterwardsInsideAClassStillOpenTakesTheNewSize()
+    {
+        var styles = Story("tethered.aastory");
+        var title = Enumerable.Range(0, styles.Count).Single(styles.IsUppercase);
+        var ruler = new AaRuler();
+
+        var text = Plain(styles);
+        text.EnterDiv(title);
+        text.Put("act ");
+
+        text.Restyle(ruler, new AaSheet(styles, ruler, AaRuler.Plain with { Size = Size * 2 }));
+        text.Put("two");
+
+        // Written before and after, but in the same class, so one run.
+        var piece = Assert.Single(text.Lay(800).Lines[0].Pieces, p => p.Words == "TWO");
+
+        Assert.Equal(Size * 3, piece.Look.Size);
+        Assert.Equal(Size * 3, text.Look.Size);
+    }
+
+    [Fact]
+    public void ABodyStyleStillReachesOnlyTheTextAfterItOnceTheTypeChanges()
+    {
+        // [aam opcode] Text written before the story set a body style
+        // keeps the body it was written under, at the new size as at the
+        // old.
+        var styles = Story("tethered.aastory");
+        var title = Enumerable.Range(0, styles.Count).Single(styles.IsUppercase);
+        var ruler = new AaRuler();
+
+        var text = Plain(styles);
+        text.Put("before");
+        text.EndParagraph();
+        text.SetBody(title);
+        text.Put("after");
+
+        text.Restyle(ruler, new AaSheet(styles, ruler, AaRuler.Plain with { Size = Size * 2 }));
+
+        var looks = text.Lay(800).Lines
+            .SelectMany(line => line.Pieces)
+            .Where(piece => piece.Words.Trim().Length > 0)
+            .Select(piece => piece.Look.Size)
+            .ToList();
+
+        Assert.Equal([Size * 2, Size * 3], looks);
+    }
+
+    [Fact]
     public void TwoMarginsThatMeetAreOneGapRatherThanTwo()
     {
         // The story's room headings ask for a third of a line above
