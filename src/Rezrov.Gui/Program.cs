@@ -5,6 +5,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Themes.Fluent;
 using Avalonia.Threading;
 using Rezrov.AaMachine;
 using Rezrov.AaMachine.Execution;
@@ -540,7 +541,7 @@ internal static class Program
     /// lays its windows out again, and [zm 8.4] a Z-machine game is
     /// told its screen changed.
     /// </remarks>
-    private static (double Width, double Height) Opening(Window window, Glyphs glyphs)
+    private static (double Width, double Height) Opening(Window window, Glyphs glyphs, double chrome)
     {
         var wanted = Page(glyphs);
         var least = (
@@ -555,7 +556,7 @@ internal static class Program
             var scaling = screen.Scaling > 0 ? screen.Scaling : 1;
             var room = (
                 Width: (screen.WorkingArea.Width / scaling) - Margin,
-                Height: (screen.WorkingArea.Height / scaling) - Margin);
+                Height: (screen.WorkingArea.Height / scaling) - Margin - chrome);
 
             wanted = (
                 Math.Max(Math.Min(wanted.Width, room.Width), least.Width),
@@ -574,7 +575,9 @@ internal static class Program
             glyphs.CellHeight,
             Drawn());
 
-        return ((columns * glyphs.CellWidth) + blank, (rows * glyphs.CellHeight) + blank);
+        // Whatever the window carries above the game, a menu bar, is
+        // added last, outside the rows, for the same reason.
+        return ((columns * glyphs.CellWidth) + blank, (rows * glyphs.CellHeight) + blank + chrome);
     }
 
     /// <summary>
@@ -1227,6 +1230,14 @@ internal static class Program
         public override void Initialize()
         {
             Name = "rezrov";
+
+            // The theme the menu bar needs, since a templated control
+            // draws nothing without one. Everything else in the window
+            // sets its own colors and fonts and is untouched by it; the
+            // one thing that changes is the small window that reports a
+            // problem, which now follows the system's light or dark
+            // setting as other programs do.
+            Styles.Add(new FluentTheme());
         }
 
         public override void OnFrameworkInitializationCompleted()
@@ -1310,7 +1321,6 @@ internal static class Program
                 {
                     Title = $"{Named()} - rezrov",
                     Icon = Mark(),
-                    Content = content,
                     WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 };
 
@@ -1334,7 +1344,29 @@ internal static class Program
                     },
                     RoutingStrategies.Tunnel);
 
-                var (width, height) = Opening(window, glyphs);
+                // The menu goes above everything else the window holds,
+                // the debugging layout included. What the window holds is
+                // put together first and given to it once, since a control
+                // can only ever be in one place.
+                var bar = MenuBar.Wanted ? new MenuBar(split is null ? null : split.Toggle, window.Close) : null;
+
+                if (bar is not null)
+                {
+                    var dock = new DockPanel();
+                    DockPanel.SetDock(bar.Control, Dock.Top);
+                    dock.Children.Add(bar.Control);
+                    dock.Children.Add(content);
+                    content = dock;
+                }
+
+                window.Content = content;
+                bar?.Guard(window);
+
+                // And the window is made taller by the bar's height, so
+                // that the game is not the one to pay for it.
+                var chrome = bar?.Height() ?? 0;
+
+                var (width, height) = Opening(window, glyphs, chrome);
 
                 if (bench is not null)
                 {
