@@ -36,6 +36,8 @@ public static class KeptOptions
         ["--size"] = true,
         ["--smoothing"] = true,
         ["--padding"] = true,
+        ["--foreground"] = true,
+        ["--background"] = true,
         ["--interpreter"] = true,
         ["--map"] = false,
         ["--tandy"] = false,

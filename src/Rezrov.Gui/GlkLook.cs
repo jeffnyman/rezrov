@@ -41,11 +41,19 @@ public sealed class GlkLook
     /// </remarks>
     public const uint Linked = 0x00215FA6;
 
+    /// <summary>
+    /// The color a link is drawn in on a dark page, where the ordinary
+    /// blue would all but disappear.
+    /// </summary>
+    public const uint LinkedOnDark = 0x008AB4F8;
+
     private readonly Dictionary<GlkStyle, GlkAppearance> _looks = [];
     private readonly WindowType _type;
     private readonly GlkStyles _styles;
     private readonly double _size;
     private readonly double _step;
+    private readonly uint _ink;
+    private readonly uint _paper;
 
     /// <param name="type">Which kind of window the styles are for.</param>
     /// <param name="styles">The hints the window was opened with.</param>
@@ -56,7 +64,12 @@ public sealed class GlkLook
     /// only that one step be clearly visible, and a character's width
     /// is the obvious answer for a page of text.
     /// </param>
-    public GlkLook(WindowType type, GlkStyles styles, double size, double step)
+    /// <param name="ink">
+    /// The color of text no hint gives a color to, which is the player's
+    /// choice where they made one.
+    /// </param>
+    /// <param name="paper">The color of the page no hint colors.</param>
+    public GlkLook(WindowType type, GlkStyles styles, double size, double step, uint ink = Ink, uint paper = Paper)
     {
         ArgumentNullException.ThrowIfNull(styles);
 
@@ -64,7 +77,16 @@ public sealed class GlkLook
         _styles = styles;
         _size = size;
         _step = step;
+        _ink = ink;
+        _paper = paper;
     }
+
+    /// <summary>
+    /// [glk #link_creating] The color a link is drawn in on the given
+    /// page: the usual blue, or a lighter one where the page is dark,
+    /// since a link has to be seen to be clicked.
+    /// </summary>
+    public static uint LinkOn(uint paper) => ColorSchemes.IsDark(paper) ? LinkedOnDark : Linked;
 
     /// <summary>
     /// What a style comes out looking like, worked out once and kept,
@@ -104,8 +126,8 @@ public sealed class GlkLook
                 ? spaced != 0
                 : style != GlkStyle.Preformatted);
 
-        var text = _styles.Hint(style, StyleHint.TextColor) is { } ink ? Color(ink) : Ink;
-        var back = _styles.Hint(style, StyleHint.BackColor) is { } paper ? Color(paper) : Paper;
+        var text = _styles.Hint(style, StyleHint.TextColor) is { } ink ? Color(ink) : _ink;
+        var back = _styles.Hint(style, StyleHint.BackColor) is { } paper ? Color(paper) : _paper;
         var reverse = _styles.Hint(style, StyleHint.ReverseColor) is { } flipped && flipped != 0;
 
         // [glk #stream_style_hints] Setting a line against both edges

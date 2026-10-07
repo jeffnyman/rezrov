@@ -46,6 +46,12 @@ rezrov-gui game.gblorb --font "Iowan Old Style, Charter, Georgia, serif" --size 
   is the default and is what the rest of your desktop uses; grayscale
   is worth trying if text looks heavy on your display.
 
+`--foreground <#rrggbb>` and `--background <#rrggbb>` set the color of
+text and of the page, for whatever a game leaves to the interpreter. A
+game that chooses its own colors keeps them. Without these each kind of
+game keeps the look it always had, white on black for Infocom's games
+and dark text on a light page for the rest.
+
 `rezrov-gui --probe` takes the same four options and prints what they
 measure without opening a window, which is a quick way to see whether a
 family you have named is one your machine actually has.

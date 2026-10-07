@@ -15,10 +15,10 @@ namespace Rezrov.Gui;
 /// What it shows is what is kept, not what this window happens to be
 /// using, since a window started with options of its own at a command
 /// line is not what the next one will be given. The type, its size, the
-/// smoothing and the margin change in this window as soon as they are
-/// kept, replacing any it was started with. The machine a game is told
-/// it runs on, the Tandy bit, and the map at the start are read as a
-/// game starts, and so wait for the next one.
+/// smoothing, the margin and the colors change in this window as soon
+/// as they are kept, replacing any it was started with. The machine a
+/// game is told it runs on, the Tandy bit, and the map at the start are
+/// read as a game starts, and so wait for the next one.
 ///
 /// Only a choice that differs from the program's own is written down,
 /// so the file says what the player changed, and putting everything back
@@ -44,6 +44,38 @@ internal static class OptionsWindow
         var machine = Choice([OwnMachine, .. InterpreterNumbers.AllNames], Value(now, "--interpreter", OwnMachine));
         var map = new CheckBox { Content = "Open the map beside the game at the start", IsChecked = now.ContainsKey("--map") };
         var tandy = new CheckBox { Content = "Set the Tandy bit for a Version 1 to 3 game", IsChecked = now.ContainsKey("--tandy") };
+
+        var keptInk = ColorSchemes.Parse(now.GetValueOrDefault("--foreground"));
+        var keptPaper = ColorSchemes.Parse(now.GetValueOrDefault("--background"));
+        var scheme = Choice(
+            [ColorSchemes.GameOwn, .. ColorSchemes.Named.Select(s => s.Name), ColorSchemes.Custom],
+            ColorSchemes.NameOf(keptInk, keptPaper));
+        var (ink, inkSwatch) = Colored(keptInk);
+        var (paper, paperSwatch) = Colored(keptPaper);
+
+        // A named scheme fills the two colors in and holds them, so what
+        // is shown is what will be kept; only Custom lets them be typed.
+        void Schemed()
+        {
+            var chosen = scheme.SelectedItem as string;
+
+            if (chosen == ColorSchemes.GameOwn)
+            {
+                ink.Text = string.Empty;
+                paper.Text = string.Empty;
+            }
+            else if (ColorSchemes.Named.FirstOrDefault(s => s.Name == chosen) is { } named)
+            {
+                ink.Text = ColorSchemes.Written(named.Ink);
+                paper.Text = ColorSchemes.Written(named.Paper);
+            }
+
+            ink.IsEnabled = chosen == ColorSchemes.Custom;
+            paper.IsEnabled = chosen == ColorSchemes.Custom;
+        }
+
+        scheme.SelectionChanged += (_, _) => Schemed();
+        Schemed();
 
         var rows = new Grid
         {
@@ -95,6 +127,10 @@ internal static class OptionsWindow
         Add("Size in pixels", size);
         Add("Smoothing", smoothing);
         Add("Margin in pixels", padding);
+        Heading("Colors");
+        Add("Scheme", scheme);
+        Add("Text", Paired(ink, inkSwatch));
+        Add("Page", Paired(paper, paperSwatch));
         Heading("Window");
         Across(map);
         Heading("Machine");
@@ -122,7 +158,7 @@ internal static class OptionsWindow
         body.Children.Add(rows);
         body.Children.Add(new TextBlock
         {
-            Text = "The type, size, smoothing, and margin change here as soon as they are kept, taking the place of any typed at a command line. The rest apply to games started from now on.",
+            Text = "The type, size, smoothing, margin, and colors change here as soon as they are kept, taking the place of any typed at a command line. The rest apply to games started from now on. A game that chooses its own colors keeps them.",
             TextWrapping = TextWrapping.Wrap,
             Opacity = 0.7,
             Margin = new Thickness(0, 16, 0, 0),
@@ -149,6 +185,7 @@ internal static class OptionsWindow
             padding.Value = (decimal)Board.OrdinaryPadding;
             smoothing.SelectedItem = "subpixel";
             machine.SelectedItem = OwnMachine;
+            scheme.SelectedItem = ColorSchemes.GameOwn;
             map.IsChecked = false;
             tandy.IsChecked = false;
         };
@@ -174,6 +211,25 @@ internal static class OptionsWindow
             Differs("--smoothing", smoothing.SelectedItem as string, "subpixel");
             Differs("--padding", Whole(padding.Value), Whole(Board.OrdinaryPadding));
             Differs("--interpreter", machine.SelectedItem as string, OwnMachine);
+
+            // A color left empty is left to the game, and one that cannot
+            // be read is said rather than quietly dropped.
+            foreach (var (option, field, name) in new[] { ("--foreground", ink, "text"), ("--background", paper, "page") })
+            {
+                if (string.IsNullOrWhiteSpace(field.Text))
+                {
+                    continue;
+                }
+
+                if (ColorSchemes.Parse(field.Text) is not { } color)
+                {
+                    trouble.Text = $"The {name} color should be a # and six hex digits, like #1A1A1A.";
+                    trouble.IsVisible = true;
+                    return;
+                }
+
+                chosen.Add([option, ColorSchemes.Written(color)]);
+            }
 
             if (map.IsChecked == true)
             {
@@ -206,6 +262,47 @@ internal static class OptionsWindow
         Value(kept, option, standard.ToString(CultureInfo.InvariantCulture));
 
     private static TextBox Text(string value) => new() { Text = value };
+
+    /// <summary>
+    /// A field for a color, and a patch beside it showing the color typed,
+    /// or nothing while what is typed is not yet a color.
+    /// </summary>
+    private static (TextBox Field, Border Swatch) Colored(uint? color)
+    {
+        var field = new TextBox
+        {
+            Text = color is { } given ? ColorSchemes.Written(given) : string.Empty,
+            Width = 140,
+            HorizontalAlignment = HorizontalAlignment.Left,
+        };
+
+        var swatch = new Border
+        {
+            Width = 28,
+            Height = 28,
+            CornerRadius = new CornerRadius(4),
+            BorderThickness = new Thickness(1),
+            BorderBrush = Brushes.Gray,
+            VerticalAlignment = VerticalAlignment.Center,
+        };
+
+        void Shown() => swatch.Background = ColorSchemes.Parse(field.Text) is { } typed
+            ? new SolidColorBrush(Color.FromRgb((byte)(typed >> 16), (byte)(typed >> 8), (byte)typed))
+            : null;
+
+        field.TextChanged += (_, _) => Shown();
+        Shown();
+
+        return (field, swatch);
+    }
+
+    private static StackPanel Paired(Control field, Control swatch)
+    {
+        var pair = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 10 };
+        pair.Children.Add(field);
+        pair.Children.Add(swatch);
+        return pair;
+    }
 
     private static NumericUpDown Number(string value, int least, int most) => new()
     {

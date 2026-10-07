@@ -204,6 +204,30 @@ public class GlkStyleTests
         Assert.Equal(Justification.Centered, look.Of(GlkStyle.User2).Justification);
     }
 
+    [Fact]
+    public void ThePlayersColorsAreTheOnesNoHintGives()
+    {
+        // [glk #stream_style_hints] The player chooses what the library
+        // leaves to itself, and a color the game hinted is the game's.
+        var glk = new GlkLibrary(new RecordingGlkDisplay());
+        glk.SetStyleHint(WindowType.AllTypes, GlkStyle.Alert, StyleHint.TextColor, 0xC00000);
+        var window = glk.OpenWindow(null, 0, 0, WindowType.TextBuffer, 1)!;
+
+        var look = new GlkLook(WindowType.TextBuffer, window.Styles, 16, 8, ink: 0xD8D8D8, paper: 0x1E1E1E);
+
+        Assert.Equal((0xD8D8D8u, 0x1E1E1Eu), look.Of(GlkStyle.Normal).Colors);
+        Assert.Equal(0xC00000u, look.Of(GlkStyle.Alert).Colors.Ink);
+        Assert.Equal(0x1E1E1Eu, look.Of(GlkStyle.Alert).Colors.Paper);
+    }
+
+    [Fact]
+    public void ALinkIsLighterOnADarkPage()
+    {
+        // [glk #link_creating] A link has to be seen to be clicked.
+        Assert.Equal(GlkLook.Linked, GlkLook.LinkOn(GlkLook.Paper));
+        Assert.Equal(GlkLook.LinkedOnDark, GlkLook.LinkOn(0x1E1E1E));
+    }
+
     /// <summary>
     /// A frontend's styles for a window opened with the given hints,
     /// which are set and frozen the way a game would set and freeze
