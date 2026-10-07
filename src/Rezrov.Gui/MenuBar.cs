@@ -43,6 +43,9 @@ internal sealed class MenuBar
     // debugging, so it is remembered rather than assumed.
     private InputElement? _owner;
 
+    // The items with a key of their own, and what each key does.
+    private readonly List<(KeyGesture Key, Action Chosen)> _keys = [];
+
     /// <param name="open">
     /// What opening another story does, which is to ask which and play it
     /// in a window of its own.
@@ -86,17 +89,26 @@ internal sealed class MenuBar
         // asked as the menu opens rather than kept up to date, since it
         // is only true while the game sits at its prompt.
         var game = new MenuItem { Header = "_Game" };
-        game.Items.Add(Item("_Open Story...", open));
+        game.Items.Add(Keyed("_Open Story...", open, MenuKeys.Open));
         game.Items.Add(new Separator());
 
+        // A command's key does only what its item would: nothing, while
+        // the item would be grayed out.
         var commands = Commands
-            .Select(word => (Word: word, Item: Item(Labels[word], () =>
+            .Select(word =>
             {
-                if (offered(word))
+                void Chosen()
                 {
-                    type(word);
+                    if (offered(word))
+                    {
+                        type(word);
+                    }
                 }
-            })))
+
+                return (Word: word, Item: MenuKeys.Commands.TryGetValue(word, out var key)
+                    ? Keyed(Labels[word], Chosen, key)
+                    : Item(Labels[word], Chosen));
+            })
             .ToList();
 
         foreach (var (_, item) in commands)
@@ -123,7 +135,7 @@ internal sealed class MenuBar
             // The gesture is only what the item says. The key itself is
             // caught by the window on its way down, as it was before
             // there was a menu to mention it.
-            view.Items.Add(Item("_Map", map, new KeyGesture(Key.M, KeyModifiers.Control)));
+            view.Items.Add(Item("_Map", map, MenuKeys.Map));
             view.Items.Add(new Separator());
         }
 
@@ -199,6 +211,25 @@ internal sealed class MenuBar
         // it was taken from.
         _menu.Closed += (_, _) => _owner?.Focus();
 
+        // An item's key is caught on the way down, before the game's
+        // panel sees it, as the map's is. The item only names it: the
+        // toolkit shows a key beside an item without ever acting on it.
+        window.AddHandler(
+            InputElement.KeyDownEvent,
+            (_, e) =>
+            {
+                foreach (var (key, chosen) in _keys)
+                {
+                    if (key.Matches(e))
+                    {
+                        chosen();
+                        e.Handled = true;
+                        return;
+                    }
+                }
+            },
+            RoutingStrategies.Tunnel);
+
         // A bare Alt is let through to the game but not to the bar. Only
         // the release of Alt is held back, and only while something other
         // than the menu has the keyboard, so Alt held down while another
@@ -217,6 +248,15 @@ internal sealed class MenuBar
     }
 
     private static bool Inside(object? element) => element is Menu or MenuItem;
+
+    /// <summary>
+    /// An item chosen with a key as well as from the menu.
+    /// </summary>
+    private MenuItem Keyed(string header, Action chosen, KeyGesture key)
+    {
+        _keys.Add((key, chosen));
+        return Item(header, chosen, key);
+    }
 
     private static MenuItem Item(string header, Action chosen, KeyGesture? gesture = null)
     {

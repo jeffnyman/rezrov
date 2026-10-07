@@ -1462,7 +1462,7 @@ internal static class Program
                     (_, e) =>
                     {
                         if (split is not null
-                            && e.Key == Key.M
+                            && e.Key == MenuKeys.Map.Key
                             && (e.KeyModifiers.HasFlag(KeyModifiers.Control)
                                 || e.KeyModifiers.HasFlag(KeyModifiers.Meta)))
                         {
