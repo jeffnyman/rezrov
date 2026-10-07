@@ -59,6 +59,38 @@ public class GuiInputTests
         Assert.Equal("look", Read(display, story));
     }
 
+    [Fact]
+    public void AChosenCommandTakesThePlaceOfWhatWasBegun()
+    {
+        // [glk #line_events] A command chosen from a menu is the whole of
+        // what the player meant, so whatever they had begun to type is
+        // replaced rather than added to.
+        var display = new GuiGlkDisplay(new Cells(), () => { }, 800, 600);
+        var story = new GlkLibrary(display).OpenWindow(null, 0, 0, WindowType.TextBuffer, 1)!;
+
+        display.Typed("tak");
+        display.Command("save");
+
+        Assert.Equal("save", Read(display, story));
+    }
+
+    [Fact]
+    public void AWaitForAKeyPassesOverAChosenCommand()
+    {
+        // [glk #char_events] A command is not a key, so a game asking for
+        // one key is given the next real one.
+        var display = new GuiGlkDisplay(new Cells(), () => { }, 800, 600);
+        var story = new GlkLibrary(display).OpenWindow(null, 0, 0, WindowType.TextBuffer, 1)!;
+
+        display.Command("restart");
+        display.Typed("y");
+
+        var key = display.WaitForInput([], [story], TimeSpan.FromSeconds(2));
+
+        Assert.Equal(GlkInputKind.Key, key.Kind);
+        Assert.Equal('y', (char)key.Key);
+    }
+
     /// <summary>
     /// The next line the display has for the game. A timeout rather
     /// than a wait without end, so that a display which has lost the

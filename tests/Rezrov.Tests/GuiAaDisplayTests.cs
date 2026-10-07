@@ -167,6 +167,66 @@ public class GuiAaDisplayTests
     }
 
     [Fact]
+    public void AChosenCommandTakesThePlaceOfWhatWasBegun()
+    {
+        // A command chosen from a menu is the whole of what the player
+        // meant, so what they had begun is rubbed out from the page as
+        // well as from the line.
+        var display = Blank();
+
+        display.Enqueue('t');
+        display.Enqueue('a');
+        display.Enqueue('k');
+        display.Command("look");
+
+        Assert.Equal("look", display.ReadLine());
+
+        var page = Words(display.Main.Lay(display.Column));
+        Assert.Contains("look", page, StringComparison.Ordinal);
+        Assert.DoesNotContain("tak", page, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AWaitForAKeyLetsAChosenCommandGo()
+    {
+        // A command is not a key. It is let go rather than kept back to
+        // turn up later as the next line.
+        var display = Blank();
+
+        display.Command("save");
+        display.Enqueue(' ');
+
+        Assert.Equal(' ', display.ReadKey());
+
+        display.Enqueue('o');
+        display.Enqueue('k');
+        display.Enqueue('\n');
+
+        Assert.Equal("ok", display.ReadLine());
+    }
+
+    [Fact]
+    public async Task ReadingALineIsSaidOnlyWhileALineIsRead()
+    {
+        // What a menu offering commands asks before it offers them. The
+        // line is read on its own thread, as the machine's is.
+        var display = Blank();
+        var cancel = TestContext.Current.CancellationToken;
+
+        Assert.False(display.IsReadingLine);
+
+        var reading = Task.Run(display.ReadLine, cancel);
+        var waited = SpinWait.SpinUntil(() => display.IsReadingLine, TimeSpan.FromSeconds(5));
+
+        display.Command("look");
+        var line = await reading.WaitAsync(TimeSpan.FromSeconds(5), cancel);
+
+        Assert.True(waited);
+        Assert.Equal("look", line);
+        Assert.False(display.IsReadingLine);
+    }
+
+    [Fact]
     public void AKeyIsWaitedForAndAClickIsNot()
     {
         var display = Blank();

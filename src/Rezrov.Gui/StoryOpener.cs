@@ -23,21 +23,8 @@ namespace Rezrov.Gui;
 /// rezrov.app, so the new window is the bundled program too, under its
 /// own name and icon.
 /// </remarks>
-internal static class StoryOpener
+public static class StoryOpener
 {
-    // How the program looks and which machine it says it is: the player's
-    // choices, which the new window keeps. Each is given with a value.
-    private static readonly HashSet<string> CarriedWithValue =
-        ["--font", "--sans", "--fixed", "--size", "--smoothing", "--padding", "--interpreter"];
-
-    // The same, given on their own.
-    private static readonly HashSet<string> CarriedAlone = ["--map", "--tandy"];
-
-    // Choices about the story that was being played rather than about the
-    // player, which mean nothing to another one. Each has a value, which
-    // goes with it.
-    private static readonly HashSet<string> LeftWithValue = ["--blorb", "--commands", "--pictures", "--seed"];
-
     /// <summary>
     /// What the stories this program plays are called: the Z-machine's
     /// versions, Glulx, the Å-machine, and Blorb packages. Anything called
@@ -77,19 +64,25 @@ internal static class StoryOpener
         {
             var option = args[i];
 
-            if (CarriedWithValue.Contains(option) && i + 1 < args.Count)
+            // How the program looks and which machine it says it is are
+            // the player's own choices, the same ones that can be kept
+            // between sessions, and the new window is given them too.
+            if (KeptOptions.Keepable.TryGetValue(option, out var valued))
             {
-                carried.Add(option);
-                carried.Add(args[++i]);
+                if (!valued)
+                {
+                    carried.Add(option);
+                }
+                else if (i + 1 < args.Count)
+                {
+                    carried.Add(option);
+                    carried.Add(args[++i]);
+                }
             }
-            else if (CarriedAlone.Contains(option))
-            {
-                carried.Add(option);
-            }
-            else if (LeftWithValue.Contains(option))
-            {
-                i++;
-            }
+
+            // Anything else, an option about the story being played or a
+            // value given to one, is not a choice that can be kept, and
+            // so is left behind.
         }
 
         return carried;

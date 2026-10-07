@@ -62,12 +62,21 @@ internal sealed class MenuBar
     /// <param name="aboutGame">
     /// The window saying what the story being played says about itself.
     /// </param>
-    public MenuBar(Action open, Func<string, bool> offered, Action<string> type, Action? map, Action quit, Func<Window> aboutGame)
+    /// <param name="options">The Options window.</param>
+    public MenuBar(
+        Action open,
+        Func<string, bool> offered,
+        Action<string> type,
+        Action? map,
+        Action quit,
+        Func<Window> aboutGame,
+        Func<Window> options)
     {
         ArgumentNullException.ThrowIfNull(open);
         ArgumentNullException.ThrowIfNull(offered);
         ArgumentNullException.ThrowIfNull(type);
         ArgumentNullException.ThrowIfNull(aboutGame);
+        ArgumentNullException.ThrowIfNull(options);
 
         // The commands are typed into the game rather than done behind
         // its back, which is how Windows Frotz offers saving and
@@ -107,15 +116,19 @@ internal sealed class MenuBar
         game.Items.Add(Item("_Quit", quit));
         _menu.Items.Add(game);
 
+        var view = new MenuItem { Header = "_View" };
+
         if (map is not null)
         {
             // The gesture is only what the item says. The key itself is
             // caught by the window on its way down, as it was before
             // there was a menu to mention it.
-            var view = new MenuItem { Header = "_View" };
             view.Items.Add(Item("_Map", map, new KeyGesture(Key.M, KeyModifiers.Control)));
-            _menu.Items.Add(view);
+            view.Items.Add(new Separator());
         }
+
+        view.Items.Add(Item("_Options...", () => Present(options())));
+        _menu.Items.Add(view);
 
         var help = new MenuItem { Header = "_Help" };
         help.Items.Add(Item("About This _Game", () => Present(aboutGame())));
