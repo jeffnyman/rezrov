@@ -15,7 +15,7 @@ namespace Rezrov.Gui;
 /// keyboard layout and on any dead keys before it, and the toolkit has
 /// already worked that out by the time it reports text.
 /// </remarks>
-internal static class GuiKeyMap
+public static class GuiKeyMap
 {
     /// <summary>
     /// The Glk key code for a key, or null for one Glk does not name.
