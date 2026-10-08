@@ -73,6 +73,13 @@ On Windows and Linux the stories you open are listed under Game, then
 Open Recent, and kept in a file called `recent` in the same folder.
 Clear Recent at the bottom of that list empties it.
 
+## Screen readers
+
+A screen reader is told what the game prints, a turn at a time, as the
+game waits for you. Status lines and what you type are left out. This
+has been heard with Narrator on Windows; VoiceOver and Orca should work
+the same way but have not been tried yet.
+
 ## Platform notes
 
 - macOS: the program is `rezrov.app`, a bundle, which is the shape the

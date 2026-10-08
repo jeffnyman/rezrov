@@ -61,6 +61,15 @@ public sealed class GuiGlkDisplay : IGlkDisplay
     public object Sync { get; } = new();
 
     /// <summary>
+    /// What the game printed in its text buffers since it last waited for
+    /// the player, for a screen reader to be told. Text grids are left
+    /// out, being status lines and the like that are drawn again every
+    /// turn, and so is the player's own line, which goes into the window
+    /// without passing through here.
+    /// </summary>
+    public Narration Narration { get; } = new();
+
+    /// <summary>
     /// [glk #window_arrangement] The top of the window tree, or null
     /// before the game opens its first window.
     /// </summary>
@@ -152,6 +161,11 @@ public sealed class GuiGlkDisplay : IGlkDisplay
             Text(window).Put(character, style, link);
         }
 
+        if (window.Type == WindowType.TextBuffer && Rune.IsValid(character))
+        {
+            Narration.Add(new Rune(character).ToString());
+        }
+
         _repaint();
     }
 
@@ -188,6 +202,10 @@ public sealed class GuiGlkDisplay : IGlkDisplay
                 into.Put('\n', GlkStyle.Alert, 0);
             }
         }
+
+        Narration.Break();
+        Narration.Add(text);
+        Narration.Ready();
 
         _repaint();
         _presses.Take();
@@ -286,6 +304,11 @@ public sealed class GuiGlkDisplay : IGlkDisplay
     {
         ArgumentNullException.ThrowIfNull(lineRequests);
         ArgumentNullException.ThrowIfNull(charRequests);
+
+        if (lineRequests.Count > 0 || charRequests.Count > 0)
+        {
+            Narration.Ready();
+        }
 
         lock (Sync)
         {

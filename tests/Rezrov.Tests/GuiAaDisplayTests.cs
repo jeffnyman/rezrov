@@ -314,6 +314,38 @@ public class GuiAaDisplayTests
     }
 
     [Fact]
+    public void AScreenReaderIsToldTheMainTextAndNotTheStatusOrThePlayersLine()
+    {
+        // [aam output] A div is a block of its own, so its edges are line
+        // breaks to someone listening; the status area is drawn again
+        // every turn; and what the player types is theirs.
+        var told = new List<string>();
+        var display = Blank();
+        display.Narration.Spoken = told.Add;
+
+        display.EnterDiv(0);
+        display.Write("Foyer of the Opera House");
+        display.LeaveDiv(0);
+        display.Write("You are standing in a spacious hall.");
+        display.EnterStatus(0, 0);
+        display.Write("Score: 0 of 2");
+        display.LeaveStatus();
+
+        foreach (var key in "west\r")
+        {
+            display.Enqueue(key);
+        }
+
+        Assert.Equal("west", display.ReadLine());
+        Assert.Equal(["Foyer of the Opera House\nYou are standing in a spacious hall."], told);
+
+        display.Enqueue('x');
+        display.ReadKey();
+
+        Assert.Single(told);
+    }
+
+    [Fact]
     public void ATranscriptRecordsWhatTheStoryPrinted()
     {
         var written = new StringWriter();

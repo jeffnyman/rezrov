@@ -75,6 +75,16 @@ public class BufferedScreen : IScreen
     public object Sync { get; } = new();
 
     /// <summary>
+    /// What to do with the lower window's text as the game prints it, for
+    /// a frontend that tells a screen reader what was printed. A line the
+    /// game ends arrives as a newline, and one the width of the window
+    /// ended as a space, since the words either side were printed as one
+    /// line. The upper window, the status line, and the player's own
+    /// typing never arrive. Called on the machine's thread.
+    /// </summary>
+    public Action<string>? Prose { get; set; }
+
+    /// <summary>
     /// [zm 8.8.6] The pictures the game has drawn and where they went,
     /// to be read under <see cref="Sync"/>. Empty for a game that draws
     /// none, and for every game before Version 6.
@@ -132,6 +142,7 @@ public class BufferedScreen : IScreen
             Buffer.Print(text, attributes);
         }
 
+        Prose?.Invoke(text);
         _repaint();
     }
 
@@ -142,6 +153,7 @@ public class BufferedScreen : IScreen
             Buffer.NewLine();
         }
 
+        Prose?.Invoke("\n");
         _repaint();
     }
 
@@ -152,6 +164,7 @@ public class BufferedScreen : IScreen
             Buffer.WrapLine();
         }
 
+        Prose?.Invoke(" ");
         _repaint();
     }
 
@@ -363,8 +376,19 @@ public class BufferedScreen : IScreen
         _repaint();
     }
 
-    /// <summary>The return key, as the player sees it.</summary>
-    public void EchoNewLine() => NewLine();
+    /// <summary>
+    /// The return key, as the player sees it. Not prose, since it is the
+    /// player's own.
+    /// </summary>
+    public void EchoNewLine()
+    {
+        lock (Sync)
+        {
+            Buffer.NewLine();
+        }
+
+        _repaint();
+    }
 
     /// <summary>Fits the grid to a new terminal size.</summary>
     public void Resize(int width, int height)

@@ -707,6 +707,13 @@ internal static class Program
     }
 
     /// <summary>
+    /// Has each turn a game finishes told to a screen reader, carried
+    /// from the game's thread to the window's, where the reader is told.
+    /// </summary>
+    private static void Announcing(Narration narration, Board board) =>
+        narration.Spoken = turn => Dispatcher.UIThread.Post(() => board.Announce(turn));
+
+    /// <summary>
     /// [aam story] How a Dialog story's text is set where no class says
     /// otherwise, which is the frontend's own choice and not the
     /// story's: the prose family at the size the player chose, in the
@@ -832,6 +839,7 @@ internal static class Program
             board.Sheet.Width,
             board.Sheet.Height);
 
+        Announcing(display.Narration, board);
         board.Display = display;
 
         // Glulx keeps its dictionary in whatever shape the compiler
@@ -1007,6 +1015,13 @@ internal static class Program
         input = header.Version == ZMachineVersion.V6
             ? new BufferedInput(screen, screen.FontWidth, screen.FontHeight)
             : new BufferedInput(screen);
+
+        // A screen reader is told the lower window's prose a turn at a
+        // time, as the game waits for the player.
+        var narration = new Narration();
+        Announcing(narration, board);
+        screen.Prose = narration.Add;
+        input.Waiting = narration.Ready;
 
         board.Screen = screen;
         board.Keys = input;
@@ -1260,6 +1275,7 @@ internal static class Program
             AaPaper());
 
         board.AaGlyphs = faces;
+        Announcing(display.Narration, board);
         board.Page = display;
 
         // [aam story] As for the Z-machine, the commands a menu may type

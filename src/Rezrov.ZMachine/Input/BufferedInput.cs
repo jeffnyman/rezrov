@@ -61,6 +61,13 @@ public sealed class BufferedInput : IInput
     /// </summary>
     public bool IsReadingLine => _readingLine;
 
+    /// <summary>
+    /// What to do as the game starts waiting for the player, for a line
+    /// or a key, which is the moment a frontend that tells a screen reader
+    /// what was printed tells it. Called on the machine's thread.
+    /// </summary>
+    public Action? Waiting { get; set; }
+
     /// <summary>Queues a key, from the UI thread.</summary>
     public void Enqueue(ushort zscii) => _keys.Add(new Pressed(zscii, null, null));
 
@@ -87,6 +94,7 @@ public sealed class BufferedInput : IInput
     /// <summary>Waits for any key, for [MORE] and the ending.</summary>
     public ushort WaitForAnyKey()
     {
+        Waiting?.Invoke();
         TryTake(null, false, out var item);
         return item.Zscii;
     }
@@ -95,6 +103,7 @@ public sealed class BufferedInput : IInput
     {
         ArgumentNullException.ThrowIfNull(request);
 
+        Waiting?.Invoke();
         _readingLine = true;
         try
         {
@@ -159,7 +168,11 @@ public sealed class BufferedInput : IInput
         }
     }
 
-    public ushort ReadKey(InputTimer? timer) => TryTake(timer, false, out var item) ? item.Zscii : (ushort)0;
+    public ushort ReadKey(InputTimer? timer)
+    {
+        Waiting?.Invoke();
+        return TryTake(timer, false, out var item) ? item.Zscii : (ushort)0;
+    }
 
     /// <summary>
     /// A queued command in place of the line: whatever the player had

@@ -111,6 +111,42 @@ public class GuiInputTests
         Assert.Equal('y', (char)key.Key);
     }
 
+    [Fact]
+    public void AScreenReaderIsToldTheTextBuffersAndNotTheGridsOrThePlayersLine()
+    {
+        // [glk #window_textgrid] A grid is a status line or the like,
+        // drawn again every turn, and [glk #line_events] the line the
+        // player typed goes into the window as it is entered.
+        var told = new List<string>();
+        var display = new GuiGlkDisplay(new Cells(), () => { }, 800, 600);
+        display.Narration.Spoken = told.Add;
+
+        var glk = new GlkLibrary(display);
+        var story = glk.OpenWindow(null, 0, 0, WindowType.TextBuffer, 1)!;
+        var status = glk.OpenWindow(story, WindowMethod.Above | WindowMethod.Fixed, 1, WindowType.TextGrid, 2)!;
+
+        foreach (var character in "At End Of Road\nA small stream flows.")
+        {
+            display.Print(story, character, GlkStyle.Normal, 0);
+        }
+
+        foreach (var character in "Score: 36")
+        {
+            display.Print(status, character, GlkStyle.Normal, 0);
+        }
+
+        display.Typed("look\n");
+        Assert.Equal("look", Read(display, story));
+        Assert.Equal(["At End Of Road\nA small stream flows."], told);
+
+        // The line just entered went into the window, and the next wait
+        // has nothing new to tell.
+        display.Typed("north\n");
+        Read(display, story);
+
+        Assert.Single(told);
+    }
+
     /// <summary>
     /// The next line the display has for the game. A timeout rather
     /// than a wait without end, so that a display which has lost the
