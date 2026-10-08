@@ -388,6 +388,25 @@ public sealed class GuiGlkDisplay : IGlkDisplay
     public void Wake() => _presses.Add(new Press(PressKind.Wake, 0, ""));
 
     /// <summary>
+    /// [glk #window_textgrid] What the game's text grids show, for a
+    /// screen reader asked to read the status line. A grid is where a
+    /// Glk game keeps its status line, and a game with more than one,
+    /// a map beside a status line, is read in the order its windows
+    /// were split.
+    /// </summary>
+    public string StatusText()
+    {
+        lock (Sync)
+        {
+            var rows = Leaves(Root)
+                .OfType<TextGridWindow>()
+                .SelectMany(grid => Enumerable.Range(0, grid.Height).Select(grid.Row));
+
+            return Narration.Tidy(string.Join('\n', rows));
+        }
+    }
+
+    /// <summary>
     /// [glk #mouse_events] and [glk #link_events] The player touched a
     /// window or selected a link in one, worked out by whatever knows
     /// where the pointer landed.

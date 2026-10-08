@@ -147,6 +147,29 @@ public class GuiInputTests
         Assert.Single(told);
     }
 
+    [Fact]
+    public void AScreenReaderAskedForTheStatusLineHearsTheGrids()
+    {
+        // [glk #window_textgrid] A grid is where a Glk game keeps its
+        // status line.
+        var display = new GuiGlkDisplay(new Cells(), () => { }, 800, 600);
+        var glk = new GlkLibrary(display);
+        var story = glk.OpenWindow(null, 0, 0, WindowType.TextBuffer, 1)!;
+        var status = (TextGridWindow)glk.OpenWindow(story, WindowMethod.Above | WindowMethod.Fixed, 1, WindowType.TextGrid, 2)!;
+
+        foreach (var character in "You are standing at the end of a road.")
+        {
+            story.Stream.PutChar(character);
+        }
+
+        foreach (var character in " At End Of Road        Score: 36")
+        {
+            status.Stream.PutChar(character);
+        }
+
+        Assert.Equal("At End Of Road Score: 36", display.StatusText());
+    }
+
     /// <summary>
     /// The next line the display has for the game. A timeout rather
     /// than a wait without end, so that a display which has lost the

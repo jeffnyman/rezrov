@@ -65,6 +65,12 @@ internal sealed class MenuBar
     /// What opening and closing the map does, or null where the window
     /// has no map to show.
     /// </param>
+    /// <param name="status">
+    /// What having a screen reader read the status line does.
+    /// </param>
+    /// <param name="repeat">
+    /// What having a screen reader read the last turn again does.
+    /// </param>
     /// <param name="quit">What leaving the game does.</param>
     /// <param name="aboutGame">
     /// The window saying what the story being played says about itself.
@@ -76,6 +82,8 @@ internal sealed class MenuBar
         Func<string, bool> offered,
         Action<string> type,
         Action? map,
+        Action status,
+        Action repeat,
         Action quit,
         Func<Window> aboutGame,
         Func<Window> options)
@@ -160,6 +168,12 @@ internal sealed class MenuBar
             view.Items.Add(Item("_Map", map, MenuKeys.Map));
             view.Items.Add(new Separator());
         }
+
+        // A screen reader is told each turn as it is printed and nothing
+        // else, so what a player listening needs to ask for again is here.
+        view.Items.Add(Keyed("Read _Status Line", status, MenuKeys.Status));
+        view.Items.Add(Keyed("Read _Last Turn", repeat, MenuKeys.Repeat));
+        view.Items.Add(new Separator());
 
         view.Items.Add(Item("_Options...", () => Present(options())));
         _menu.Items.Add(view);

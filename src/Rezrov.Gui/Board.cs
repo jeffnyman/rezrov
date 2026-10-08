@@ -407,6 +407,11 @@ internal sealed class Board : Control
     /// </summary>
     private string _told = string.Empty;
 
+    /// <summary>
+    /// What the game last said, to be read again on request.
+    /// </summary>
+    private string _turn = string.Empty;
+
     private Told? _teller;
 
     /// <summary>
@@ -435,6 +440,56 @@ internal sealed class Board : Control
     {
         ArgumentNullException.ThrowIfNull(text);
 
+        _turn = text;
+        Say(text);
+    }
+
+    /// <summary>
+    /// Has a screen reader read the last turn again, for a player who
+    /// missed it or wants it again.
+    /// </summary>
+    public void ReadAgain() => Say(_turn.Length > 0 ? _turn : "The game has said nothing yet.");
+
+    /// <summary>
+    /// Has a screen reader read the status line, which it is not told
+    /// every turn, since it is drawn again every turn.
+    /// </summary>
+    public void ReadStatus() => Say(Status() is { Length: > 0 } status ? status : "This game has no status line.");
+
+    /// <summary>
+    /// The status line of whichever machine is playing: [aam opcode] a
+    /// Dialog story's status area, [glk #window_textgrid] a Glk game's
+    /// text grids, or a Z-machine game's [zm 8.2] status line and
+    /// [zm 8.7.2] upper window.
+    /// </summary>
+    private string Status()
+    {
+        if (Page is { } page)
+        {
+            return page.StatusText();
+        }
+
+        if (Display is { } display)
+        {
+            return display.StatusText();
+        }
+
+        if (Screen is { } screen)
+        {
+            lock (screen.Sync)
+            {
+                return Narration.Status(screen.Buffer);
+            }
+        }
+
+        return string.Empty;
+    }
+
+    /// <summary>
+    /// Has a screen reader read something, by naming the panel for it.
+    /// </summary>
+    private void Say(string text)
+    {
         var before = _told;
         _told = text;
         _teller?.RaisePropertyChangedEvent(AutomationElementIdentifiers.NameProperty, before, text);

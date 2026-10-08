@@ -128,6 +128,28 @@ public sealed class GuiAaDisplay : IAaOutput
     /// </summary>
     public Narration Narration { get; } = new();
 
+    /// <summary>
+    /// [aam opcode] What the status area shows, for a screen reader asked
+    /// to read the status line: each line as it is laid out, with a score
+    /// floated to the right read after the room it is beside.
+    /// </summary>
+    public string StatusText()
+    {
+        lock (Sync)
+        {
+            // A box floated to the right is laid out before the line it
+            // sits beside, so the lines are taken top to bottom and then
+            // left to right, which is the order an eye reads them in.
+            var lines = Status.Lay(Column).Lines
+                .Where(line => line.Pieces.Count > 0)
+                .OrderBy(line => line.Top)
+                .ThenBy(line => line.Pieces.Min(piece => piece.Left))
+                .Select(line => string.Concat(line.Pieces.OrderBy(piece => piece.Left).Select(piece => piece.Words)));
+
+            return Narration.Tidy(string.Join('\n', lines));
+        }
+    }
+
     /// <summary>Whether what is written now is prose to be told.</summary>
     private bool Told => _area != 0 && !_readingLine;
 

@@ -80,6 +80,9 @@ game waits for you. Status lines and what you type are left out. This
 has been heard with Narrator on Windows; VoiceOver and Orca should work
 the same way but have not been tried yet.
 
+Ctrl+L reads the status line, and Ctrl+P reads the last turn again. Both
+are in the View menu too.
+
 ## Platform notes
 
 - macOS: the program is `rezrov.app`, a bundle, which is the shape the
