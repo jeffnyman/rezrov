@@ -1,6 +1,8 @@
 using System.Globalization;
 using System.Runtime.InteropServices;
 using Avalonia;
+using Avalonia.Automation;
+using Avalonia.Automation.Peers;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
@@ -398,6 +400,61 @@ internal sealed class Board : Control
             _canvases[window].Bitmap.Dispose();
             _canvases.Remove(window);
         }
+    }
+
+    /// <summary>
+    /// What a screen reader was last told the game said.
+    /// </summary>
+    private string _told = string.Empty;
+
+    private Told? _teller;
+
+    /// <summary>
+    /// Tells a screen reader what the game printed since the player last
+    /// had a turn. Called on the toolkit's thread.
+    /// </summary>
+    /// <remarks>
+    /// The window draws its own text, so a screen reader sees nothing of
+    /// it unless told. The game's panel is named for what the game last
+    /// said, and a reader speaks a change to the name of whatever has the
+    /// keyboard, which this panel has whenever the game is being played.
+    ///
+    /// It is not a live region as well, though that is the arrangement a
+    /// web page uses for text that arrives on its own. The toolkit only
+    /// reports a live region changing along with its name changing, and
+    /// a reader told both about the panel with the keyboard speaks the
+    /// turn twice. Narrator was heard to.
+    ///
+    /// A reader is only told about a control it has already asked after,
+    /// since the toolkit makes its side of a control the first time a
+    /// reader asks. Readers ask about whatever has the keyboard as soon
+    /// as a window opens, and this panel has it, so by the time a game
+    /// first waits for the player the reader is listening.
+    /// </remarks>
+    public void Announce(string text)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+
+        var before = _told;
+        _told = text;
+        _teller?.RaisePropertyChangedEvent(AutomationElementIdentifiers.NameProperty, before, text);
+    }
+
+    protected override AutomationPeer OnCreateAutomationPeer() => _teller = new Told(this);
+
+    /// <summary>
+    /// How the game's panel appears to a screen reader: text, named for
+    /// whatever the game last said, and read out when that changes.
+    /// </summary>
+    private sealed class Told(Board board) : ControlAutomationPeer(board)
+    {
+        protected override AutomationControlType GetAutomationControlTypeCore() => AutomationControlType.Text;
+
+        protected override string? GetNameCore() => board._told;
+
+        protected override bool IsContentElementCore() => true;
+
+        protected override bool IsControlElementCore() => true;
     }
 
     protected override void OnKeyDown(KeyEventArgs e)

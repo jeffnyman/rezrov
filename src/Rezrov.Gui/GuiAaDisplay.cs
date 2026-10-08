@@ -120,6 +120,17 @@ public sealed class GuiAaDisplay : IAaOutput
     /// </remarks>
     public object Sync { get; } = new();
 
+    /// <summary>
+    /// [aam output] What the story printed in its main text since it last
+    /// waited for the player, for a screen reader to be told. The status
+    /// area is left out, being drawn again every turn, and so is the line
+    /// the player types, which is written here while it is being read.
+    /// </summary>
+    public Narration Narration { get; } = new();
+
+    /// <summary>Whether what is written now is prose to be told.</summary>
+    private bool Told => _area != 0 && !_readingLine;
+
     /// <summary>The main run of the story's text.</summary>
     public AaText Main { get; }
 
@@ -314,6 +325,7 @@ public sealed class GuiAaDisplay : IAaOutput
     /// </summary>
     public string ReadLine()
     {
+        Narration.Ready();
         _readingLine = true;
         try
         {
@@ -403,6 +415,8 @@ public sealed class GuiAaDisplay : IAaOutput
     /// <summary>The next single key the player presses.</summary>
     public int ReadKey()
     {
+        Narration.Ready();
+
         while (true)
         {
             var key = _keys.Take();
@@ -443,6 +457,11 @@ public sealed class GuiAaDisplay : IAaOutput
             Pane.Put(text);
         }
 
+        if (Told)
+        {
+            Narration.Add(text);
+        }
+
         _transcript?.Write(text);
         _changed();
     }
@@ -454,6 +473,11 @@ public sealed class GuiAaDisplay : IAaOutput
         lock (Sync)
         {
             Pane.Put("\u00a0");
+        }
+
+        if (Told)
+        {
+            Narration.Add(' ');
         }
 
         _transcript?.NoBreakSpace();
@@ -469,6 +493,11 @@ public sealed class GuiAaDisplay : IAaOutput
             Pane.Put(new string(' ', Math.Clamp(count, 0, 1000)));
         }
 
+        if (Told)
+        {
+            Narration.Add(' ');
+        }
+
         _transcript?.Spaces(count);
         _changed();
     }
@@ -478,6 +507,11 @@ public sealed class GuiAaDisplay : IAaOutput
         lock (Sync)
         {
             Pane.Newline();
+        }
+
+        if (Told)
+        {
+            Narration.Break();
         }
 
         _transcript?.Newline();
@@ -491,6 +525,11 @@ public sealed class GuiAaDisplay : IAaOutput
             Pane.EndParagraph();
         }
 
+        if (Told)
+        {
+            Narration.Break();
+        }
+
         _transcript?.EndParagraph();
         _changed();
     }
@@ -502,6 +541,14 @@ public sealed class GuiAaDisplay : IAaOutput
             Pane.EnterDiv(styleClass);
         }
 
+        // A div is a block of its own on the page, so its edges are
+        // line breaks to someone listening, or a heading runs straight
+        // on into the paragraph after it.
+        if (Told)
+        {
+            Narration.Break();
+        }
+
         _transcript?.EnterDiv(styleClass);
         _changed();
     }
@@ -511,6 +558,11 @@ public sealed class GuiAaDisplay : IAaOutput
         lock (Sync)
         {
             Pane.LeaveDiv();
+        }
+
+        if (Told)
+        {
+            Narration.Break();
         }
 
         _transcript?.LeaveDiv(styleClass);
@@ -857,6 +909,7 @@ public sealed class GuiAaDisplay : IAaOutput
         EndParagraph();
         Write(text);
         Newline();
+        Narration.Ready();
     }
 
     /// <summary>
