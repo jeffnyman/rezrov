@@ -1,4 +1,5 @@
 using System.Text;
+using Rezrov.ZMachine.Screen;
 
 namespace Rezrov.Gui;
 
@@ -76,6 +77,26 @@ public sealed class Narration
         {
             Spoken?.Invoke(turn);
         }
+    }
+
+    /// <summary>
+    /// A Z-machine game's [zm 8.2] status line and [zm 8.7.2] upper
+    /// window, as they are read: the rows between any picture band and
+    /// the lower window, which is where both are drawn.
+    /// </summary>
+    /// <remarks>
+    /// The status line of a Version 3 game sets the score against the
+    /// right edge with a run of spaces between, and a reader is better
+    /// told the two with one space than a pause it cannot explain.
+    /// </remarks>
+    public static string Status(ScreenBuffer buffer)
+    {
+        ArgumentNullException.ThrowIfNull(buffer);
+
+        var rows = Enumerable.Range(buffer.BandRows, Math.Max(buffer.LowerTop - buffer.BandRows, 0))
+            .Select(row => buffer.RowText(row).Replace('\0', ' '));
+
+        return Tidy(string.Join('\n', rows));
     }
 
     /// <summary>

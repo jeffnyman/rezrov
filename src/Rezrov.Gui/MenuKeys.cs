@@ -32,6 +32,15 @@ public static class MenuKeys
     public static KeyGesture Map { get; } = new(Key.M, KeyModifiers.Control);
 
     /// <summary>
+    /// Having a screen reader read the status line, which it is not told
+    /// every turn, since it is drawn again every turn.
+    /// </summary>
+    public static KeyGesture Status { get; } = new(Key.L, KeyModifiers.Control);
+
+    /// <summary>Having a screen reader read the last turn again.</summary>
+    public static KeyGesture Repeat { get; } = new(Key.P, KeyModifiers.Control);
+
+    /// <summary>
     /// The commands from the Game menu that are given a key, by the word
     /// typed for the player.
     /// </summary>
@@ -44,5 +53,5 @@ public static class MenuKeys
 
     /// <summary>Every key taken, pasting included.</summary>
     public static IEnumerable<KeyGesture> All =>
-        [Open, Map, .. Commands.Values, new KeyGesture(Key.V, KeyModifiers.Control)];
+        [Open, Map, Status, Repeat, .. Commands.Values, new KeyGesture(Key.V, KeyModifiers.Control)];
 }

@@ -115,6 +115,24 @@ public class UpperWindowGrowthTests
         Assert.Equal(string.Empty, Row(screen, 5));
     }
 
+    [Fact]
+    public void AScreenReaderAskedForTheStatusLineHearsItAndNotTheStory()
+    {
+        // [zm 8.2] The status line of a Version 3 game sets the score
+        // against the right edge; read aloud, the gap is one space.
+        var (screen, model) = Grid(60, 10, ZMachineVersion.V3);
+
+        Say(model, "You are standing in an open field.");
+        model.ShowStatusLine("West of House", false, 0, 1);
+        model.Flush();
+
+        var status = Rezrov.Gui.Narration.Status(screen.Buffer);
+
+        Assert.StartsWith("West of House ", status);
+        Assert.DoesNotContain("  ", status);
+        Assert.DoesNotContain("open field", status);
+    }
+
     private static (BufferedScreen Screen, ScreenModel Model) Grid(int width, int height, ZMachineVersion version)
     {
         var screen = new BufferedScreen(

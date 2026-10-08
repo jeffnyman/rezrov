@@ -346,6 +346,17 @@ public class GuiAaDisplayTests
     }
 
     [Fact]
+    public void AScreenReaderAskedForTheStatusLineHearsTheRoomAndThenTheScore()
+    {
+        // [aam opcode] Cloak of Darkness floats its score to the right of
+        // the room, and a float is laid out before the line beside it,
+        // but an eye reads the room first and so is a listener told it.
+        var display = Play(Story("cloak-of-darkness.aastory"), []);
+
+        Assert.Equal("Foyer of the Opera House\nScore: 0 of 2", display.StatusText());
+    }
+
+    [Fact]
     public void ATranscriptRecordsWhatTheStoryPrinted()
     {
         var written = new StringWriter();
