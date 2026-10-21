@@ -109,6 +109,16 @@ public class AcceptanceTests
         Assert.Equal(Path.Combine(Path.GetDirectoryName(ScriptPath)!, "sounds", "lurking.blb"), script.BlorbPath);
     }
 
+    [Fact]
+    public void AHeightDirectiveNamesTheScreenHeight()
+    {
+        var script = AcceptanceScript.Parse("! SEED=1\n! GAME=random.z5\n! UPPER=yes\n! HEIGHT=24\n", ScriptPath);
+        var plain = AcceptanceScript.Parse("! SEED=1\n! GAME=random.z5\n", ScriptPath);
+
+        Assert.Equal(24, script.Height);
+        Assert.Null(plain.Height);
+    }
+
     [Theory]
     [InlineData("! SEED=20\n", "no GAME directive")]
     [InlineData("! GAME=zork1.z3\n", "no SEED directive")]
@@ -116,6 +126,9 @@ public class AcceptanceTests
     [InlineData("! GAME=zork1.z3\n! SEED=soon\n", "line 2: SEED must be")]
     [InlineData("! GAME=zork1.z3\n! SEED=1\n! SAVE=here\n", "line 3: there is no SAVE directive")]
     [InlineData("! GAME=zork1.z3\n! SEED=1\n! hello\n", "line 3: a directive is written")]
+    [InlineData("! GAME=zork1.z3\n! SEED=1\n! HEIGHT=0\n", "line 3: HEIGHT must be a whole number of 1 to 255")]
+    [InlineData("! GAME=zork1.z3\n! SEED=1\n! HEIGHT=256\n", "line 3: HEIGHT must be")]
+    [InlineData("! GAME=zork1.z3\n! SEED=1\n! HEIGHT=tall\n", "line 3: HEIGHT must be")]
     public void AScriptThatCannotBeUsedSaysWhy(string text, string reason)
     {
         var e = Assert.Throws<InvalidDataException>(() => AcceptanceScript.Parse(text, ScriptPath));

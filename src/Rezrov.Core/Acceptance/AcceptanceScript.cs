@@ -6,17 +6,18 @@ namespace Rezrov.Core.Acceptance;
 /// </summary>
 /// <remarks>
 /// The file is plain text. A line beginning with <c>!</c> is a
-/// directive, written <c>! NAME=value</c>, and six are known: GAME
+/// directive, written <c>! NAME=value</c>, and seven are known: GAME
 /// names the story file, SEED gives the session seed that makes the
 /// game's dice repeat, BLORB names a resource file, INTERPRETER names
 /// the machine the game should take itself to be on, since some games
 /// behave differently by it, TANDY set to yes gives the game the
 /// Tandy bit, which a few early ones read, and UPPER set to yes puts
 /// the upper window into the play, for a game that draws its text
-/// there rather than printing it. Paths are relative to the
-/// script, not to wherever the interpreter happens to be run from, so a
-/// script can sit beside the games it plays and still work from
-/// anywhere. A SEED line after some commands is a change of seed that
+/// there rather than printing it, and HEIGHT names the screen height
+/// in lines the game is told, for a game that lays that window out
+/// by it. Paths are relative to the script, not to wherever the
+/// interpreter happens to be run from, so a script can sit beside the
+/// games it plays and still work from anywhere. A SEED line after some commands is a change of seed that
 /// takes effect when the play reaches it, so that each stretch of a
 /// long script can have the seed that makes it go the way it should,
 /// and settling one stretch never disturbs the ones before it. A line
@@ -88,7 +89,7 @@ public sealed class AcceptanceScript
         ["<space>"] = 32,
     };
 
-    private AcceptanceScript(string scriptPath, string gamePath, string? blorbPath, string? interpreter, bool tandy, bool upper, bool graphics, bool pictures, int seed, IReadOnlyList<string> commands, IReadOnlyList<int> commandLines, IReadOnlyDictionary<int, int> seedChanges)
+    private AcceptanceScript(string scriptPath, string gamePath, string? blorbPath, string? interpreter, bool tandy, bool upper, int? height, bool graphics, bool pictures, int seed, IReadOnlyList<string> commands, IReadOnlyList<int> commandLines, IReadOnlyDictionary<int, int> seedChanges)
     {
         ScriptPath = scriptPath;
         GamePath = gamePath;
@@ -96,6 +97,7 @@ public sealed class AcceptanceScript
         Interpreter = interpreter;
         Tandy = tandy;
         Upper = upper;
+        Height = height;
         Graphics = graphics;
         Pictures = pictures;
         Seed = seed;
@@ -133,6 +135,15 @@ public sealed class AcceptanceScript
     /// console.
     /// </summary>
     public bool Upper { get; }
+
+    /// <summary>
+    /// [zm 8.4.1] The screen height in lines the game is told, from 1
+    /// to 255, or null for the stream's own 255, which means infinite.
+    /// A game that lays its upper window out by the height draws it
+    /// that many rows deep, so a script that puts the window into the
+    /// play can keep each screen it records to the size of a real one.
+    /// </summary>
+    public int? Height { get; }
 
     /// <summary>
     /// [glk #graphics_testing] Whether the game is told it may open a
@@ -210,6 +221,7 @@ public sealed class AcceptanceScript
         string? interpreter = null;
         var tandy = false;
         var upper = false;
+        int? height = null;
         var graphics = false;
         var pictures = false;
         int? seed = null;
@@ -326,6 +338,14 @@ public sealed class AcceptanceScript
                         _ => throw new InvalidDataException($"{name}, line {i + 1}: UPPER must be yes or no"),
                     };
                     break;
+                case "HEIGHT":
+                    if (!int.TryParse(value, out var rows) || rows < 1 || rows > 255)
+                    {
+                        throw new InvalidDataException($"{name}, line {i + 1}: HEIGHT must be a whole number of 1 to 255");
+                    }
+
+                    height = rows;
+                    break;
                 case "GRAPHICS":
                     graphics = value.ToUpperInvariant() switch
                     {
@@ -363,7 +383,7 @@ public sealed class AcceptanceScript
 
                     break;
                 default:
-                    throw new InvalidDataException($"{name}, line {i + 1}: there is no {key} directive; the directives are GAME, SEED, BLORB, INTERPRETER, TANDY, UPPER, and GRAPHICS");
+                    throw new InvalidDataException($"{name}, line {i + 1}: there is no {key} directive; the directives are GAME, SEED, BLORB, INTERPRETER, TANDY, UPPER, HEIGHT, PICTURES, and GRAPHICS");
             }
         }
 
@@ -377,6 +397,6 @@ public sealed class AcceptanceScript
             throw new InvalidDataException($"{name}: no SEED directive gives the random number seed");
         }
 
-        return new AcceptanceScript(fullPath, game, blorb, interpreter, tandy, upper, graphics, pictures, seed.Value, commands, commandLines, seedChanges);
+        return new AcceptanceScript(fullPath, game, blorb, interpreter, tandy, upper, height, graphics, pictures, seed.Value, commands, commandLines, seedChanges);
     }
 }

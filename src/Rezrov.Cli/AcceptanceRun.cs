@@ -184,15 +184,18 @@ public static class AcceptanceRun
         // pixels, so it is given a size in them: 80 by 25 cells of 8 by
         // 16 is 640 by 400, exactly twice the screen the artwork was
         // drawn for. Without pictures the old shape is kept, so every
-        // recording that existed before reads the same.
+        // recording that existed before reads the same. [zm 8.4.1] A
+        // HEIGHT directive names the screen's height in lines either
+        // way, as Quiddity's runner does, so that a script records the
+        // same on both.
         var screen = script.Pictures
             ? new TextWriterScreen(
                 (TextWriter?)screenWriter ?? output,
                 width: 80,
-                height: 25,
+                height: script.Height ?? 25,
                 showUpperWindow: script.Upper,
                 hasPictures: true)
-            : new TextWriterScreen((TextWriter?)screenWriter ?? output, showUpperWindow: script.Upper);
+            : new TextWriterScreen((TextWriter?)screenWriter ?? output, height: script.Height ?? 255, showUpperWindow: script.Upper);
 
         var interpreter = new Interpreter(
             memory,
@@ -481,6 +484,11 @@ public static class AcceptanceRun
         if (script.Upper)
         {
             yield return "UPPER";
+        }
+
+        if (script.Height is not null)
+        {
+            yield return "HEIGHT";
         }
 
         if (script.Pictures)
