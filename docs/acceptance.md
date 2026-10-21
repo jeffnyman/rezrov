@@ -16,9 +16,10 @@ A line beginning with `!` is a directive. `GAME` names the story file and `SEED`
 - `INTERPRETER` names the machine, as `--interpreter` does, for a game that plays differently by it.
 - `TANDY` set to `yes` sets the Tandy bit, as `--tandy` does.
 - `UPPER` set to `yes` puts the upper window into the play: whenever the game pauses for input and has changed that window since it was last shown, its rows are written out, which is how a game like *Custard*, which draws all of its text there, can be scripted at all.
+- `HEIGHT` names the screen height in lines the game is told, from 1 to 255. Without it the play is a stream with no bottom, which a game is told as 255 lines, and a game that lays its upper window out by the height then records a window 255 rows deep at every pause. `HEIGHT=24` with `UPPER=yes` records a screen a player would recognize. Quiddity's runner reads it the same way, so a script that uses it records the same on both.
 - `PICTURES` set to `yes` tells a Version 6 game the screen can show pictures, which sends Infocom's four down their graphical paths instead of their text-only ones; a stream of text can't show a picture, so what the play records is which pictures are on the screen and where, written out whenever that changes. That's what catches a picture wrongly erased or left behind when the text scrolls, which is the way a Version 6 game goes wrong.
 
-An Å-machine game is scripted the same way, with the seed and the commands; the directives that belong to the other two machines, which are `INTERPRETER`, `TANDY`, `UPPER`, `PICTURES`, and `BLORB`, mean nothing to it and a script that carries one is told so.
+An Å-machine game is scripted the same way, with the seed and the commands; the directives that belong to the other two machines, which are `INTERPRETER`, `TANDY`, `UPPER`, `HEIGHT`, `PICTURES`, and `BLORB`, mean nothing to it and a script that carries one is told so.
 
 It's important to note that paths are relative to the script, not to wherever you run it from.
 
