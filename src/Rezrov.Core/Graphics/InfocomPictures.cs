@@ -46,8 +46,8 @@ public sealed record InfocomPicture(int Number, int Width, int Height, int? Tran
 /// the two tools that have always decoded it, Mark Howell's
 /// <c>pix2gif</c> and Frotz's <c>x_oldpic.c</c>, and checked against
 /// the pictures <c>pix2gif</c> produces. Neither tool's code is used:
-/// one states no license at all and the other is under the GPL, and
-/// this program is under the MIT license.
+/// what is here was written from what the two of them do, not taken
+/// from how either does it.
 /// </remarks>
 public sealed class InfocomPictures
 {

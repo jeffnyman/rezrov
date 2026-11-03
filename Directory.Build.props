@@ -93,7 +93,7 @@
     <Authors>Jeff Nyman</Authors>
     <Product>Rezrov</Product>
     <Copyright>Copyright (c) 2026 Jeff Nyman</Copyright>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
   </PropertyGroup>
 
 </Project>

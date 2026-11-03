@@ -362,7 +362,13 @@ internal sealed class MenuBar
             Margin = new Thickness(0, 8, 0, 0),
         });
         panel.Children.Add(new TextBlock { Text = "https://github.com/jeffnyman/rezrov" });
-        panel.Children.Add(new TextBlock { Text = "MIT License. Copyright (c) 2026 Jeff Nyman." });
+        panel.Children.Add(new TextBlock { Text = "Copyright (C) 2026 Jeff Nyman." });
+        panel.Children.Add(new TextBlock
+        {
+            Text = "Free software under the GNU General Public License, version 3 or later, with no warranty.",
+            TextWrapping = TextWrapping.Wrap,
+            MaxWidth = 380,
+        });
         panel.Children.Add(close);
 
         var about = new Window
